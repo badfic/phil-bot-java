@@ -1,1 +1,1 @@
-worker: java -jar target/java-getting-started-1.0.jar
+worker: java -jar target/philbot-0.0.1-SNAPSHOT.jar
