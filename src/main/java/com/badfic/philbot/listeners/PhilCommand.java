@@ -1,7 +1,7 @@
 package com.badfic.philbot.listeners;
 
 import com.badfic.philbot.config.PhilbotAppConfig;
-import com.badfic.philbot.data.PhilConfigJson;
+import com.badfic.philbot.model.PhilConfigJson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -36,6 +36,10 @@ public class PhilCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (event.getAuthor().isBot()) {
+            return;
+        }
+
         String channelName = event.getChannel().getName();
 
         List<String> responses;

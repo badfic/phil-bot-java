@@ -1,10 +1,14 @@
 package com.badfic.philbot.data;
 
+import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -20,6 +24,10 @@ public class Phrase {
 
     @Column
     private long counter;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "discord_user_id", nullable = false)
+    private DiscordUser discordUser;
 
     public UUID getId() {
         return id;
@@ -45,4 +53,32 @@ public class Phrase {
         this.counter = counter;
     }
 
+    public DiscordUser getDiscordUser() {
+        return discordUser;
+    }
+
+    public void setDiscordUser(DiscordUser discordUser) {
+        this.discordUser = discordUser;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "phrase='" + phrase + '\'' +
+                ", count=" + counter +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Phrase phrase = (Phrase) o;
+        return id.equals(phrase.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

@@ -47,17 +47,18 @@ public class PhilbotAppConfig {
         client.setOwnerId("741504913422417992");
         client.setPrefix("!!");
         client.addCommands(commands.toArray(new Command[0]));
+        client.setActivity(Activity.playing("with our feelings"));
         return client.build();
     }
 
     @Bean
     public JDA jda(List<EventListener> eventListeners) throws Exception {
         return JDABuilder.createDefault(botToken)
-                .setActivity(Activity.playing("with our feelings"))
                 .disableIntents(GUILD_PRESENCES, GUILD_MESSAGE_TYPING, GUILD_MESSAGE_REACTIONS, GUILD_MESSAGE_TYPING, GUILD_EMOJIS, GUILD_INVITES,
                         GUILD_VOICE_STATES, DIRECT_MESSAGES, DIRECT_MESSAGE_REACTIONS, DIRECT_MESSAGE_TYPING)
                 .disableCache(VOICE_STATE, ACTIVITY, CLIENT_STATUS, EMOTE)
                 .addEventListeners(eventListeners.toArray(new EventListener[0]))
+                .setActivity(Activity.playing("with our feelings"))
                 .build();
     }
 

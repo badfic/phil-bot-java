@@ -1,0 +1,1 @@
+CREATE INDEX phrase__discord_user_id__idx ON phrase (discord_user_id);

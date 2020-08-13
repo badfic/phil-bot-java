@@ -1,4 +1,4 @@
-package com.badfic.philbot.data;
+package com.badfic.philbot.model;
 
 import java.util.List;
 import java.util.Set;
