@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners;
 
+import com.badfic.philbot.config.PhilbotAppConfig;
 import com.badfic.philbot.data.Phrase;
 import com.badfic.philbot.repository.PhraseRepository;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -18,12 +19,14 @@ public class MessageListener extends ListenerAdapter {
 
     private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer)\\b", Pattern.CASE_INSENSITIVE);
 
+    private final boolean isTestEnvironment;
     private final PhilCommand philCommand;
     private final CommandClient commandClient;
     private final PhraseRepository phraseRepository;
 
     @Autowired
-    public MessageListener(PhilCommand philCommand, CommandClient commandClient, PhraseRepository phraseRepository) {
+    public MessageListener(PhilCommand philCommand, CommandClient commandClient, PhraseRepository phraseRepository, PhilbotAppConfig philbotAppConfig) {
+        isTestEnvironment = "test".equalsIgnoreCase(philbotAppConfig.nodeEnvironment);
         this.philCommand = philCommand;
         this.commandClient = commandClient;
         this.phraseRepository = phraseRepository;
@@ -39,6 +42,10 @@ public class MessageListener extends ListenerAdapter {
 
         if (PHIL_PATTERN.matcher(msgContent).find()) {
             philCommand.execute(new CommandEvent(event, null, commandClient));
+            return;
+        }
+
+        if (isTestEnvironment && !"test-channel".equalsIgnoreCase(event.getChannel().getName())) {
             return;
         }
 
