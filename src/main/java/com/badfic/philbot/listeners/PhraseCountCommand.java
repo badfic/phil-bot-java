@@ -27,9 +27,10 @@ public class PhraseCountCommand extends Command {
         isTestEnvironment = "test".equalsIgnoreCase(philbotAppConfig.nodeEnvironment);
         name = "phraseCount";
         help = "Counts how many times someone has said a given word.\n" +
-                "To see the counts for a given user: `!!phraseCount count @user`\n" +
-                "To start counting the word 'peanut' for a user: `!!phraseCount add peanut @user`\n" +
-                "To stop counting the word 'peanut' for a user: `!!phraseCount remove peanut @user`";
+                "\tTo see the counts for a given user: `!!phraseCount count @user`\n" +
+                "\tTo start counting the word 'peanut' for a user: `!!phraseCount add peanut @user`\n" +
+                "\tTo stop counting the word 'peanut' for a user: `!!phraseCount remove peanut @user`\n";
+        requiredRole = "Queens of the Castle";
         this.discordUserRepository = discordUserRepository;
         this.phraseRepository = phraseRepository;
     }
@@ -40,16 +41,11 @@ public class PhraseCountCommand extends Command {
             return;
         }
 
-        String eventAuthorMention = event.getAuthor().getAsMention();
-        if (event.getMember().getRoles().stream().noneMatch(r -> r.getName().equalsIgnoreCase("queens of the castle"))) {
-            event.getChannel().sendMessage(eventAuthorMention + ", access denied, `!!phraseCount` is a mod only command.").queue();
-            return;
-        }
-
         if (isTestEnvironment && !"test-channel".equalsIgnoreCase(event.getChannel().getName())) {
             return;
         }
 
+        String eventAuthorMention = event.getAuthor().getAsMention();
         List<User> mentionedUsers = event.getMessage().getMentionedUsers();
         if (CollectionUtils.isEmpty(mentionedUsers)) {
             event.getChannel().sendMessage(eventAuthorMention + ", you must mention a user. Example: `!!phraseCount count @user`").queue();
