@@ -39,14 +39,17 @@ public class PhraseCountCommand extends Command {
             return;
         }
 
+        String eventAuthorMention = event.getAuthor().getAsMention();
+        if (event.getMember().getRoles().stream().noneMatch(r -> r.getName().equalsIgnoreCase("queens of the castle"))) {
+            event.getChannel().sendMessage(eventAuthorMention + ", access denied, `!!phraseCount` is a mod only command.").queue();
+            return;
+        }
+
         if (isTestEnvironment && !"test-channel".equalsIgnoreCase(event.getChannel().getName())) {
             return;
         }
 
-        String eventAuthorMention = event.getAuthor().getAsMention();
-
         List<User> mentionedUsers = event.getMessage().getMentionedUsers();
-
         if (CollectionUtils.isEmpty(mentionedUsers)) {
             event.getChannel().sendMessage(eventAuthorMention + ", you must mention a user. Example: `!!phraseCount count @user`").queue();
             return;
@@ -59,63 +62,110 @@ public class PhraseCountCommand extends Command {
 
         String msgContent = event.getMessage().getContentRaw();
         if (msgContent.startsWith("!!phraseCount count")) {
-            User user = mentionedUsers.get(0);
-            Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(user.getId());
-
-            if (!optionalUserEntity.isPresent()) {
-                event.getChannel().sendMessage(eventAuthorMention
-                        + ", that user does not have any phrases set up. Set up a phrase with: `!!phraseCount add [phrase] @user`").queue();
-                return;
-            }
-
-            DiscordUser discordUser = optionalUserEntity.get();
-            List<Phrase> phrases = phraseRepository.findAllByDiscordUser(discordUser);
-
-            event.getChannel().sendMessage(eventAuthorMention + "```\n" + phrases.toString() + "```").queue();
+            countPhrase(event);
         } else if (msgContent.startsWith("!!phraseCount add")) {
-            String[] items = event.getArgs().split("\\s+");
-
-            if (items.length < 3) {
-                event.getChannel().sendMessage(eventAuthorMention
-                        + ", unrecognized phrase in `add` command. Example: `!!phraseCount add [phrase] @user`").queue();
-                return;
-            }
-
-            String lastArg = items[items.length - 1];
-            if (!lastArg.startsWith("<@")) {
-                event.getChannel().sendMessage(eventAuthorMention
-                        + ", unrecognized ordering of `add` command, the @user must be at the end of the command. Example: `!!phraseCount add [phrase] @user`")
-                        .queue();
-                return;
-            }
-
-            String phraseToAdd = msgContent.replace("!!phraseCount add ", "").replace(" " + lastArg, "");
-
-            User user = mentionedUsers.get(0);
-            Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(user.getId());
-
-            if (!optionalUserEntity.isPresent()) {
-                DiscordUser newUser = new DiscordUser();
-                newUser.setId(user.getId());
-                optionalUserEntity = Optional.of(discordUserRepository.save(newUser));
-            }
-
-            DiscordUser userEntity = optionalUserEntity.get();
-
-            List<Phrase> existingPhrases = phraseRepository.findAllByDiscordUser(userEntity);
-
-            if (existingPhrases.stream().noneMatch(p -> p.getPhrase().equalsIgnoreCase(phraseToAdd))) {
-                Phrase phrase = new Phrase();
-                phrase.setPhrase(phraseToAdd);
-                phrase.setDiscordUser(userEntity);
-                phrase.setId(UUID.randomUUID());
-                phraseRepository.save(phrase);
-            }
-
-            event.getChannel().sendMessage(eventAuthorMention + ", added phrase `" + phraseToAdd + "` for user " + user.getAsMention()).queue();
+            addPhrase(event);
+        } else if (msgContent.startsWith("!!phraseCount remove")) {
+            removePhrase(event);
         } else {
             event.getChannel().sendMessage(eventAuthorMention + ", unrecognized command.").queue();
         }
+    }
+
+    private void countPhrase(CommandEvent event) {
+        String eventAuthorMention = event.getAuthor().getAsMention();
+        User user = event.getMessage().getMentionedUsers().get(0);
+        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(user.getId());
+
+        if (!optionalUserEntity.isPresent()) {
+            event.getChannel().sendMessage(eventAuthorMention
+                    + ", that user does not have any phrases set up. Set up a phrase with: `!!phraseCount add [phrase] @user`").queue();
+            return;
+        }
+
+        DiscordUser discordUser = optionalUserEntity.get();
+        List<Phrase> phrases = phraseRepository.findAllByDiscordUser(discordUser);
+
+        event.getChannel().sendMessageFormat("%s\n```\n%s\n```", eventAuthorMention, phrases.toString()).queue();
+    }
+
+    private void addPhrase(CommandEvent event) {
+        String eventAuthorMention = event.getAuthor().getAsMention();
+        String[] items = event.getArgs().split("\\s+");
+
+        if (items.length < 3) {
+            event.getChannel().sendMessage(eventAuthorMention
+                    + ", unrecognized phrase in `add` command. Example: `!!phraseCount add [phrase] @user`").queue();
+            return;
+        }
+
+        String lastArg = items[items.length - 1];
+        if (!lastArg.startsWith("<@")) {
+            event.getChannel().sendMessage(eventAuthorMention
+                    + ", unrecognized ordering of `add` command, the @user must be at the end of the command. Example: `!!phraseCount add [phrase] @user`")
+                    .queue();
+            return;
+        }
+
+        String phraseToAdd = event.getMessage().getContentRaw().replace("!!phraseCount add ", "").replace(" " + lastArg, "");
+
+        User user = event.getMessage().getMentionedUsers().get(0);
+        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(user.getId());
+
+        if (!optionalUserEntity.isPresent()) {
+            DiscordUser newUser = new DiscordUser();
+            newUser.setId(user.getId());
+            optionalUserEntity = Optional.of(discordUserRepository.save(newUser));
+        }
+
+        DiscordUser userEntity = optionalUserEntity.get();
+
+        List<Phrase> existingPhrases = phraseRepository.findAllByDiscordUser(userEntity);
+
+        if (existingPhrases.stream().noneMatch(p -> p.getPhrase().equalsIgnoreCase(phraseToAdd))) {
+            Phrase phrase = new Phrase();
+            phrase.setPhrase(phraseToAdd);
+            phrase.setDiscordUser(userEntity);
+            phrase.setId(UUID.randomUUID());
+            phraseRepository.save(phrase);
+        }
+
+        event.getChannel().sendMessageFormat("%s, added phrase `%s` for user %s", eventAuthorMention, phraseToAdd, user.getAsMention()).queue();
+    }
+
+    private void removePhrase(CommandEvent event) {
+        String eventAuthorMention = event.getAuthor().getAsMention();
+        String[] items = event.getArgs().split("\\s+");
+
+        if (items.length < 3) {
+            event.getChannel().sendMessage(eventAuthorMention
+                    + ", unrecognized phrase in `remove` command. Example: `!!phraseCount remove [phrase] @user`").queue();
+            return;
+        }
+
+        String lastArg = items[items.length - 1];
+        if (!lastArg.startsWith("<@")) {
+            event.getChannel().sendMessage(eventAuthorMention
+                    + ", unrecognized ordering of `remove` command, the @user must be at the end of the command. Example: " +
+                    "`!!phraseCount remove [phrase] @user`")
+                    .queue();
+            return;
+        }
+
+        String phraseToRemove = event.getMessage().getContentRaw().replace("!!phraseCount remove ", "").replace(" " + lastArg, "");
+        User user = event.getMessage().getMentionedUsers().get(0);
+        List<Phrase> existingPhrases = phraseRepository.findAllByDiscordUser_id(user.getId());
+
+        Optional<Phrase> foundPhraseEntity = existingPhrases.stream().filter(p -> p.getPhrase().equalsIgnoreCase(phraseToRemove)).findFirst();
+
+        if (!foundPhraseEntity.isPresent()) {
+            event.getChannel().sendMessageFormat("%s, unrecognized phrase in `remove` command. That user does not have [phrase=%s] registered",
+                    eventAuthorMention, phraseToRemove).queue();
+            return;
+        }
+
+        phraseRepository.delete(foundPhraseEntity.get());
+        event.getChannel().sendMessageFormat("%s, removed [phrase=%s] for user %s", eventAuthorMention, phraseToRemove, user.getAsMention()).queue();
     }
 
 }
