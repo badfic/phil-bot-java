@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners;
 
+import com.badfic.philbot.config.PhilbotAppConfig;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.Phrase;
 import com.badfic.philbot.repository.DiscordUserRepository;
@@ -17,11 +18,13 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class PhraseCountCommand extends Command {
 
+    private final boolean isTestEnvironment;
     private final DiscordUserRepository discordUserRepository;
     private final PhraseRepository phraseRepository;
 
     @Autowired
-    public PhraseCountCommand(DiscordUserRepository discordUserRepository, PhraseRepository phraseRepository) throws Exception {
+    public PhraseCountCommand(DiscordUserRepository discordUserRepository, PhraseRepository phraseRepository, PhilbotAppConfig philbotAppConfig) {
+        isTestEnvironment = "test".equalsIgnoreCase(philbotAppConfig.nodeEnvironment);
         name = "phraseCount";
         help = "Counts how many times someone has said a given word.\n" +
                 "To see the counts for a given user: `!!phraseCount count @user`\n" +
@@ -33,6 +36,10 @@ public class PhraseCountCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
         if (event.getAuthor().isBot()) {
+            return;
+        }
+
+        if (isTestEnvironment && !"test-channel".equalsIgnoreCase(event.getChannel().getName())) {
             return;
         }
 
