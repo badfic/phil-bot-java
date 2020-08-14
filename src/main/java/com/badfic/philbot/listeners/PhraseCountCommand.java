@@ -86,6 +86,12 @@ public class PhraseCountCommand extends Command {
         DiscordUser discordUser = optionalUserEntity.get();
         List<Phrase> phrases = phraseRepository.findAllByDiscordUser(discordUser);
 
+        if (CollectionUtils.isEmpty(phrases)) {
+            event.getChannel().sendMessage(eventAuthorMention
+                    + ", that user does not have any phrases set up. Set up a phrase with: `!!phraseCount add [phrase] @user`").queue();
+            return;
+        }
+
         event.getChannel().sendMessageFormat("%s\n```\n%s\n```", eventAuthorMention, phrases.toString()).queue();
     }
 
