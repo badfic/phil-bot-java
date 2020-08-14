@@ -46,7 +46,7 @@ public class MessageListener extends ListenerAdapter {
 
         if (!CollectionUtils.isEmpty(phrases)) {
             for (Phrase phrase : phrases) {
-                Pattern phrasePattern = Pattern.compile("\\b(" + Pattern.quote(phrase.getPhrase()) + ")\\b");
+                Pattern phrasePattern = Pattern.compile("\\b(" + Pattern.quote(phrase.getPhrase()) + ")\\b", Pattern.CASE_INSENSITIVE);
 
                 if (phrasePattern.matcher(msgContent).find()) {
                     phrase.setCounter(phrase.getCounter() + 1);
