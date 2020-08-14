@@ -24,7 +24,6 @@ public class PhilCommand extends Command {
         isTestEnvironment = "test".equalsIgnoreCase(philbotAppConfig.nodeEnvironment);
         name = "phil";
         help = "provides a random message";
-        aliases = new String[] {"klemmer", "KLEMMER", "PHIL"};
         kidFriendlyConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("kidFriendlyConfig.json"), PhilConfigJson.class);
         nsfwConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("nsfwConfig.json"), PhilConfigJson.class);
         nsfwConfig.getResponses().addAll(kidFriendlyConfig.getResponses());
