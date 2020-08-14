@@ -28,7 +28,8 @@ public class PhraseCountCommand extends Command {
         name = "phraseCount";
         help = "Counts how many times someone has said a given word.\n" +
                 "To see the counts for a given user: `!!phraseCount count @user`\n" +
-                "To start counting the word 'peanut' for a user: `!!phraseCount add peanut @user`";
+                "To start counting the word 'peanut' for a user: `!!phraseCount add peanut @user`\n" +
+                "To stop counting the word 'peanut' for a user: `!!phraseCount remove peanut @user`";
         this.discordUserRepository = discordUserRepository;
         this.phraseRepository = phraseRepository;
     }
