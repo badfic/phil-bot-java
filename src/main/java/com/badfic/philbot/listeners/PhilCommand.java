@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,6 +177,7 @@ public class PhilCommand extends Command {
                     return;
                 }
                 philResponsesConfig.getSfwConfig().getResponses().add(saying);
+                philResponsesConfig.getNsfwConfig().getResponses().add(saying);
                 philResponsesConfigRepository.save(philResponsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved `" + saying + "` to sfw config").queue();
             } else if (msgContent.startsWith("!!phil sfw remove")) {
@@ -185,6 +187,7 @@ public class PhilCommand extends Command {
                     return;
                 }
                 philResponsesConfig.getSfwConfig().getResponses().remove(saying);
+                philResponsesConfig.getNsfwConfig().getResponses().remove(saying);
                 philResponsesConfigRepository.save(philResponsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed `" + saying + "` from sfw config").queue();
             } else if (msgContent.startsWith("!!phil nsfw config")) {
@@ -218,6 +221,11 @@ public class PhilCommand extends Command {
                 responses = philResponsesConfig.getSfwConfig().getResponses();
             } else if (philResponsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
                 responses = philResponsesConfig.getNsfwConfig().getResponses();
+
+                if (StringUtils.containsIgnoreCase(msgContent, "you suck")) {
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", you swallow").queue();
+                    return;
+                }
             } else {
                 return;
             }
