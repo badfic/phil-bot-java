@@ -17,7 +17,7 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class MessageListener extends ListenerAdapter {
 
-    private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer|phellen)\\b", Pattern.CASE_INSENSITIVE);
 
     private final boolean isTestEnvironment;
     private final PhilCommand philCommand;
