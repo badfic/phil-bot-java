@@ -16,6 +16,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<emoji-java.version>5.1.1</emoji-java.version>
 		<jda.version>4.2.0_189</jda.version>
 		<jda-utilities.version>3.0.4</jda-utilities.version>
 	</properties>
@@ -44,6 +45,11 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vdurmont</groupId>
+			<artifactId>emoji-java</artifactId>
+			<version>${emoji-java.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.dv8tion</groupId>

@@ -8,7 +8,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.lang.invoke.MethodHandles;
+import com.vdurmont.emoji.Emoji;
+import com.vdurmont.emoji.EmojiManager;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -16,16 +18,12 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
 public class PhilCommand extends Command {
-
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final boolean isTestEnvironment;
     private final PhilResponsesConfigRepository philResponsesConfigRepository;
@@ -231,12 +229,19 @@ public class PhilCommand extends Command {
             }
         }
 
+        if (EmojiManager.containsEmoji(msgContent)) {
+            Collection<Emoji> allEmoji = EmojiManager.getAll();
+            Emoji emoji = pickRandom(allEmoji);
+            event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", " + emoji.getUnicode()).queue();
+            return;
+        }
+
         event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", " + pickRandom(responses)).queue();
     }
 
-    private static String pickRandom(Set<String> set) {
-        int index = ThreadLocalRandom.current().nextInt(set.size());
-        Iterator<String> iterator = set.iterator();
+    private static <T> T pickRandom(Collection<T> collection) {
+        int index = ThreadLocalRandom.current().nextInt(collection.size());
+        Iterator<T> iterator = collection.iterator();
         for (int i = 0; i < index; i++) {
             iterator.next();
         }
