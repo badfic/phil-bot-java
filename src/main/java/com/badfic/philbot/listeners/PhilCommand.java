@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,19 +202,34 @@ public class PhilCommand extends Command {
                 } catch (JsonProcessingException e) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send sfw config to you").queue();
                 }
+            } else if (msgContent.startsWith("!!phil tts")) {
+                getPhilResponse(event, philResponsesConfig).ifPresent(response -> {
+                    Message outboundMessage = new MessageBuilder(event.getAuthor().getAsMention() + ", " + response)
+                            .setTTS(true)
+                            .build();
+
+                    event.getChannel().sendMessage(outboundMessage).queue();
+                });
             } else {
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", unrecognized phil command").queue();
             }
             return;
         }
 
+        getPhilResponse(event, philResponsesConfig).ifPresent(response -> {
+            event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", " + response).queue();
+        });
+    }
+
+    private Optional<String> getPhilResponse(CommandEvent event, PhilResponsesConfig philResponsesConfig) {
+        String msgContent = event.getMessage().getContentRaw();
         String channelName = event.getChannel().getName();
         Set<String> responses;
         if (isTestEnvironment) {
             if ("test-channel".equalsIgnoreCase(channelName)) {
                 responses = philResponsesConfig.getNsfwConfig().getResponses();
             } else {
-                return;
+                return Optional.empty();
             }
         } else {
             if (philResponsesConfig.getSfwConfig().getChannels().contains(channelName)) {
@@ -221,22 +238,20 @@ public class PhilCommand extends Command {
                 responses = philResponsesConfig.getNsfwConfig().getResponses();
 
                 if (StringUtils.containsIgnoreCase(msgContent, "you suck")) {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", you swallow").queue();
-                    return;
+                    return Optional.of("you swallow");
                 }
             } else {
-                return;
+                return Optional.empty();
             }
         }
 
         if (EmojiManager.containsEmoji(msgContent)) {
             Collection<Emoji> allEmoji = EmojiManager.getAll();
             Emoji emoji = pickRandom(allEmoji);
-            event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", " + emoji.getUnicode()).queue();
-            return;
+            return Optional.of(emoji.getUnicode());
         }
 
-        event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", " + pickRandom(responses)).queue();
+        return Optional.of(pickRandom(responses));
     }
 
     private static <T> T pickRandom(Collection<T> collection) {
