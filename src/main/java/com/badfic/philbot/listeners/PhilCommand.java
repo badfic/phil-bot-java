@@ -36,7 +36,8 @@ public class PhilCommand extends Command {
             throws Exception {
         isTestEnvironment = "test".equalsIgnoreCase(philbotAppConfig.nodeEnvironment);
         name = "phil";
-        help = "Typing any form of `phil` or `klemmer` in a channel will make Phil respond with a random message if that channel is configured for him.\n" +
+        help = "Any message containing `phil|klemmer|phellen` will make Phil respond with a random message if that channel is configured.\n" +
+                "\t`!!phil tts` responds with a random message but spoken via text-to-speech\n" +
                 "\t`!!phil nsfw add channel #channel` adds a channel to the list of channels nsfw phil responds to\n" +
                 "\t`!!phil nsfw remove channel #channel` removes a channel from the list of channels nsfw phil responds to\n" +
                 "\t`!!phil sfw add channel #channel` adds a channel to the list of channels normal phil responds to\n" +
