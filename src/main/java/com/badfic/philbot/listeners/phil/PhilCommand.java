@@ -1,8 +1,9 @@
-package com.badfic.philbot.listeners;
+package com.badfic.philbot.listeners.phil;
 
-import com.badfic.philbot.config.PhilbotAppConfig;
-import com.badfic.philbot.data.PhilResponsesConfig;
-import com.badfic.philbot.model.PhilConfigJson;
+import com.badfic.philbot.config.BaseConfig;
+import com.badfic.philbot.config.PhilMarker;
+import com.badfic.philbot.data.phil.PhilResponsesConfig;
+import com.badfic.philbot.model.GenericBotResponsesConfigJson;
 import com.badfic.philbot.repository.PhilResponsesConfigRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,16 +26,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
-public class PhilCommand extends Command {
+public class PhilCommand extends Command implements PhilMarker {
 
     private final boolean isTestEnvironment;
     private final PhilResponsesConfigRepository philResponsesConfigRepository;
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public PhilCommand(ObjectMapper objectMapper, PhilbotAppConfig philbotAppConfig, PhilResponsesConfigRepository philResponsesConfigRepository)
+    public PhilCommand(ObjectMapper objectMapper, BaseConfig baseConfig, PhilResponsesConfigRepository philResponsesConfigRepository)
             throws Exception {
-        isTestEnvironment = "test".equalsIgnoreCase(philbotAppConfig.nodeEnvironment);
+        isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
         name = "phil";
         help = "Any message containing `phil|klemmer|phellen` will make Phil respond with a random message if that channel is configured.\n" +
                 "\t`!!phil tts` responds with a random message but spoken via text-to-speech\n" +
@@ -54,9 +55,10 @@ public class PhilCommand extends Command {
 
         // seed data if needed
         if (!philResponsesConfigRepository.findById(PhilResponsesConfig.SINGLETON_ID).isPresent()) {
-            PhilConfigJson kidFriendlyConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("kidFriendlyConfig.json"),
-                    PhilConfigJson.class);
-            PhilConfigJson nsfwConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("nsfwConfig.json"), PhilConfigJson.class);
+            GenericBotResponsesConfigJson kidFriendlyConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("phil-kidFriendlyConfig.json"),
+                    GenericBotResponsesConfigJson.class);
+            GenericBotResponsesConfigJson nsfwConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("phil-nsfwConfig.json"),
+                    GenericBotResponsesConfigJson.class);
             nsfwConfig.getResponses().addAll(kidFriendlyConfig.getResponses());
 
             PhilResponsesConfig philResponsesConfig = new PhilResponsesConfig();

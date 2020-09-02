@@ -1,5 +1,6 @@
-package com.badfic.philbot.data;
+package com.badfic.philbot.data.phil;
 
+import com.badfic.philbot.data.DiscordUser;
 import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Column;

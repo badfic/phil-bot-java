@@ -1,13 +1,11 @@
 package com.badfic.philbot.config;
 
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_BANS;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MEMBERS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
@@ -25,17 +23,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class PhilbotAppConfig {
+public class BehradAppConfig {
 
-    @Value("${PHIL_BOT_TOKEN}")
-    public String philBotToken;
+    @Value("${BEHRAD_BOT_TOKEN}")
+    public String behradBotToken;
 
     @Resource
     private BaseConfig baseConfig;
 
-    @Bean(name = "philCommandClient")
-    public CommandClient philCommandClient(List<Command> commands) {
-        List<Command> philCommands = commands.stream().filter(c -> c instanceof PhilMarker).collect(Collectors.toList());
+    @Bean(name = "behradCommandClient")
+    public CommandClient behradCommandClient(List<Command> commands) {
+        List<Command> behradCommands = commands.stream().filter(c -> c instanceof BehradMarker).collect(Collectors.toList());
 
         return new CommandClientBuilder()
                 .setOwnerId(baseConfig.ownerId)
@@ -47,7 +45,7 @@ public class PhilbotAppConfig {
 
                     StringBuilder builder = new StringBuilder("**" + event.getSelfUser().getName() + "** commands:\n");
                     Command.Category category = null;
-                    for (Command command : philCommands) {
+                    for (Command command : behradCommands) {
                         if (!command.isHidden() && (!command.isOwnerCommand() || event.isOwner())) {
                             if (!Objects.equals(category, command.getCategory())) {
                                 category = command.getCategory();
@@ -64,19 +62,19 @@ public class PhilbotAppConfig {
                     }
                     event.replyInDm(builder.toString(), s -> {}, f -> event.replyWarning("Help cannot be sent because you are blocking Direct Messages."));
                 })
-                .addCommands(philCommands.toArray(new Command[0]))
-                .setActivity(Activity.playing("with our feelings"))
+                .addCommands(behradCommands.toArray(new Command[0]))
+                .setActivity(Activity.playing("in Heyworld"))
                 .build();
     }
 
-    @Bean(name = "philJda")
-    public JDA philJda(List<EventListener> eventListeners,
-                       @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
-        return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES))
+    @Bean(name = "behradJda")
+    public JDA behradJda(List<EventListener> eventListeners,
+                         @Qualifier("behradCommandClient") CommandClient behradCommandClient) throws Exception {
+        return JDABuilder.create(behradBotToken, Collections.singletonList(GUILD_MESSAGES))
                 .disableCache(EnumSet.allOf(CacheFlag.class))
-                .addEventListeners(eventListeners.stream().filter(e -> e instanceof PhilMarker).toArray(EventListener[]::new))
-                .addEventListeners(philCommandClient)
-                .setActivity(Activity.playing("with our feelings"))
+                .addEventListeners(eventListeners.stream().filter(e -> e instanceof BehradMarker).toArray(EventListener[]::new))
+                .addEventListeners(behradCommandClient)
+                .setActivity(Activity.playing("in Heyworld"))
                 .build();
     }
 
