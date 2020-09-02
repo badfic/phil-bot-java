@@ -151,7 +151,7 @@ public class BehradCommand extends Command implements BehradMarker {
                         return;
                     }
 
-                    responsesConfig.getSfwConfig().getChannels().remove(mentionedChannels.get(0).getName());
+                    responsesConfig.getNsfwConfig().getChannels().remove(channelName);
                     behradResponsesConfigRepository.save(responsesConfig);
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed " + channelName + " from nsfw config").queue();
                     return;
@@ -195,7 +195,7 @@ public class BehradCommand extends Command implements BehradMarker {
                         return;
                     }
 
-                    responsesConfig.getSfwConfig().getChannels().remove(mentionedChannels.get(0).getName());
+                    responsesConfig.getSfwConfig().getChannels().remove(channelName);
                     behradResponsesConfigRepository.save(responsesConfig);
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed " + channelName + " from sfw config").queue();
                     return;
