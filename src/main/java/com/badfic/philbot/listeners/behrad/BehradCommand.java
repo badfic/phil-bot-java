@@ -12,22 +12,37 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiManager;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Pattern;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 @Component
 public class BehradCommand extends Command implements BehradMarker {
+
+    private static final HashSet<String> SHAYAN_IMGS = new HashSet<>(Arrays.asList(
+            "https://cdn.discordapp.com/attachments/323666308107599872/750575009650573332/unknown-15.png",
+            "https://cdn.discordapp.com/attachments/323666308107599872/750575009885454356/unknown-21.png",
+            "https://cdn.discordapp.com/attachments/323666308107599872/750575010221129889/unknown-17.png",
+            "https://cdn.discordapp.com/attachments/323666308107599872/750575275783487598/MV5BMGEyZDE2YmYtNjRhNi00MzQwLThjNjItM2E5YjVjOTI3MDMwXkEyXkFqcGdeQXVyMTAzMjM0MjE0.png",
+            "https://cdn.discordapp.com/attachments/323666308107599872/750575276026626129/MV5BYTRjOGE2OWUtMjk2MS00MGFkLTg2YjEtYmNjZDRjODAzNWI4XkEyXkFqcGdeQXVyMTAzMjM0MjE0.png"
+    ));
+    private static final Pattern NAME_PATTERN = Pattern.compile("\\b(shayan|sobhian)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern WEED_PATTERN = Pattern.compile("\\b(marijuana|weed|420|stoned|high|stoner|kush)\\b", Pattern.CASE_INSENSITIVE);
 
     private final boolean isTestEnvironment;
     private final BehradResponsesConfigRepository behradResponsesConfigRepository;
@@ -249,6 +264,11 @@ public class BehradCommand extends Command implements BehradMarker {
         Set<String> responses;
         if (isTestEnvironment) {
             if ("test-channel".equalsIgnoreCase(channelName)) {
+                if (NAME_PATTERN.matcher(msgContent).find()) {
+                    event.getChannel().sendMessage(pickRandom(SHAYAN_IMGS)).queue();
+                    return Optional.empty();
+                }
+
                 responses = responsesConfig.getNsfwConfig().getResponses();
             } else {
                 return Optional.empty();
@@ -257,10 +277,26 @@ public class BehradCommand extends Command implements BehradMarker {
             if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
                 responses = responsesConfig.getSfwConfig().getResponses();
             } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
+                if (NAME_PATTERN.matcher(msgContent).find()) {
+                    event.getChannel().sendMessage(pickRandom(SHAYAN_IMGS)).queue();
+                    return Optional.empty();
+                }
+
                 responses = responsesConfig.getNsfwConfig().getResponses();
             } else {
                 return Optional.empty();
             }
+        }
+
+        if (WEED_PATTERN.matcher(msgContent).find()) {
+            MessageEmbed messageEmbed = new EmbedBuilder()
+                    .setImage("https://cdn.discordapp.com/attachments/323666308107599872/750575541266022410/cfff6b4479a51d245d26cd82e16d4f3f.png")
+                    .build();
+            Message message = new MessageBuilder(messageEmbed)
+                    .setContent("420 whatcha smokin?")
+                    .build();
+            event.getChannel().sendMessage(message).queue();
+            return Optional.empty();
         }
 
         if (EmojiManager.containsEmoji(msgContent)) {
