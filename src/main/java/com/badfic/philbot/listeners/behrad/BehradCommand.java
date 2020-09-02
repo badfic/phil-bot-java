@@ -7,16 +7,20 @@ import com.badfic.philbot.data.behrad.BehradResponsesConfig;
 import com.badfic.philbot.model.GenericBotResponsesConfigJson;
 import com.badfic.philbot.repository.BehradResponsesConfigRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiManager;
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,12 +32,25 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BehradCommand extends Command implements BehradMarker {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final HashSet<String> SHAYAN_IMGS = new HashSet<>(Arrays.asList(
             "https://cdn.discordapp.com/attachments/323666308107599872/750575009650573332/unknown-15.png",
             "https://cdn.discordapp.com/attachments/323666308107599872/750575009885454356/unknown-21.png",
@@ -45,12 +62,16 @@ public class BehradCommand extends Command implements BehradMarker {
     private static final Pattern WEED_PATTERN = Pattern.compile("\\b(marijuana|weed|420|stoned|high|stoner|kush)\\b", Pattern.CASE_INSENSITIVE);
 
     private final boolean isTestEnvironment;
+    private final BaseConfig baseConfig;
     private final BehradResponsesConfigRepository behradResponsesConfigRepository;
+    private final CloseableHttpClient gfycatClient;
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public BehradCommand(ObjectMapper objectMapper, BaseConfig baseConfig, BehradResponsesConfigRepository behradResponsesConfigRepository)
+    public BehradCommand(ObjectMapper objectMapper, BaseConfig baseConfig, BehradResponsesConfigRepository behradResponsesConfigRepository,
+                         CloseableHttpClient gfycatClient)
             throws Exception {
+        this.baseConfig = baseConfig;
         isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
         name = "behrad";
         help = "Any message containing `behrad` will make behrad respond with a random message if that channel is configured.\n" +
@@ -68,6 +89,7 @@ public class BehradCommand extends Command implements BehradMarker {
         requiredRole = "Queens of the Castle";
         this.behradResponsesConfigRepository = behradResponsesConfigRepository;
         this.objectMapper = objectMapper;
+        this.gfycatClient = gfycatClient;
 
         // seed data if needed
         if (!behradResponsesConfigRepository.findById(BaseResponsesConfig.SINGLETON_ID).isPresent()) {
@@ -269,6 +291,12 @@ public class BehradCommand extends Command implements BehradMarker {
                     return Optional.empty();
                 }
 
+                Optional<String> maybeGif = maybeGetGif(event);
+                if (maybeGif.isPresent()) {
+                    event.getChannel().sendMessage(maybeGif.get()).queue();
+                    return Optional.empty();
+                }
+
                 responses = responsesConfig.getNsfwConfig().getResponses();
             } else {
                 return Optional.empty();
@@ -279,6 +307,12 @@ public class BehradCommand extends Command implements BehradMarker {
             } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
                 if (NAME_PATTERN.matcher(msgContent).find()) {
                     event.getChannel().sendMessage(pickRandom(SHAYAN_IMGS)).queue();
+                    return Optional.empty();
+                }
+
+                Optional<String> maybeGif = maybeGetGif(event);
+                if (maybeGif.isPresent()) {
+                    event.getChannel().sendMessage(maybeGif.get()).queue();
                     return Optional.empty();
                 }
 
@@ -306,6 +340,74 @@ public class BehradCommand extends Command implements BehradMarker {
         }
 
         return Optional.of(pickRandom(responses));
+    }
+
+    private Optional<String> maybeGetGif(CommandEvent event) {
+        if (StringUtils.isNotBlank(baseConfig.gfycatClientId) && ThreadLocalRandom.current().nextInt(100) < 22) {
+            try {
+                HttpPost credentialsRequest = new HttpPost("https://api.gfycat.com/v1/oauth/token");
+                credentialsRequest.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+
+                Map<String, String> mapBody = new HashMap<>();
+                mapBody.put("grant_type", "client_credentials");
+                mapBody.put("client_id", baseConfig.gfycatClientId);
+                mapBody.put("client_secret", baseConfig.gfycatClientSecret);
+
+                credentialsRequest.setEntity(new StringEntity(objectMapper.writeValueAsString(mapBody)));
+
+                String accessToken = null;
+                try (CloseableHttpResponse response = gfycatClient.execute(credentialsRequest)) {
+                    if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                        HttpEntity entity = response.getEntity();
+                        if (entity != null) {
+                            JsonNode jsonNode = objectMapper.readTree(EntityUtils.toString(entity));
+                            accessToken = jsonNode.get("access_token").asText();
+                        } else {
+                            logger.error("Failed to fetch a behrad gif, token response body was null");
+                        }
+                    } else {
+                        logger.error("Failed to fetch a behrad gif, got back non 200 status code from gfycat token endpoint");
+                    }
+                }
+
+                if (accessToken != null) {
+                    HttpGet searchRequest = new HttpGet("https://api.gfycat.com/v1/gfycats/search?search_text=legends+of+tomorrow");
+                    searchRequest.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+                    searchRequest.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
+                    try (CloseableHttpResponse response = gfycatClient.execute(searchRequest)) {
+                        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                            HttpEntity entity = response.getEntity();
+                            if (entity != null) {
+                                JsonNode jsonNode = objectMapper.readTree(EntityUtils.toString(entity));
+                                jsonNode.get("gfycats").get(0).get("max2mbGif").asText();
+                                JsonNode gfycatsArray = jsonNode.get("gfycats");
+                                if (gfycatsArray.isArray()) {
+                                    JsonNode singleGfy = gfycatsArray.get(ThreadLocalRandom.current().nextInt(gfycatsArray.size()));
+                                    String gifLink = singleGfy.get("max2mbGif").asText();
+
+                                    if (StringUtils.isNotBlank(gifLink)) {
+                                        return Optional.of(gifLink);
+                                    } else {
+                                        logger.error("Failed to extract single gif from gfycat search results");
+                                    }
+                                } else {
+                                    logger.error("gfycat did not return an array of search results");
+                                }
+                            } else {
+                                logger.error("Failed to fetch a behrad gif, search response body was null");
+                            }
+                        } else {
+                            logger.error("Failed to fetch a behrad gif, got back non 200 status code from gfycat search endpoint");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // continue on with a normal response
+                logger.error("Failed to fetch a behrad gif", e);
+            }
+        }
+
+        return Optional.empty();
     }
 
     private static <T> T pickRandom(Collection<T> collection) {

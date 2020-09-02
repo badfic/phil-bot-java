@@ -17,6 +17,8 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -76,6 +78,11 @@ public class BehradAppConfig {
                 .addEventListeners(behradCommandClient)
                 .setActivity(Activity.playing("in Heyworld"))
                 .build();
+    }
+
+    @Bean(name = "gfycatClient", destroyMethod = "close")
+    public CloseableHttpClient gfycatClient() {
+        return HttpClients.createDefault();
     }
 
 }
