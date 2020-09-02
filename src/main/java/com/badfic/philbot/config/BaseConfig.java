@@ -14,6 +14,12 @@ public class BaseConfig {
     @Value("${NODE_ENV:test}")
     public String nodeEnvironment;
 
+    @Value("${GFYCAT_CLIENT_ID:}")
+    public String gfycatClientId;
+
+    @Value("${GFYCAT_CLIENT_SECRET:}")
+    public String gfycatClientSecret;
+
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
