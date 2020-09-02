@@ -1,7 +1,7 @@
 package com.badfic.philbot.repository;
 
 import com.badfic.philbot.data.DiscordUser;
-import com.badfic.philbot.data.Phrase;
+import com.badfic.philbot.data.phil.Phrase;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;

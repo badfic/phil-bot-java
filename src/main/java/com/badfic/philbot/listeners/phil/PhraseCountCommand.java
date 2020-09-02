@@ -1,8 +1,9 @@
-package com.badfic.philbot.listeners;
+package com.badfic.philbot.listeners.phil;
 
-import com.badfic.philbot.config.PhilbotAppConfig;
+import com.badfic.philbot.config.BaseConfig;
+import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
-import com.badfic.philbot.data.Phrase;
+import com.badfic.philbot.data.phil.Phrase;
 import com.badfic.philbot.repository.DiscordUserRepository;
 import com.badfic.philbot.repository.PhraseRepository;
 import com.jagrosh.jdautilities.command.Command;
@@ -16,15 +17,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
-public class PhraseCountCommand extends Command {
+public class PhraseCountCommand extends Command implements PhilMarker {
 
     private final boolean isTestEnvironment;
     private final DiscordUserRepository discordUserRepository;
     private final PhraseRepository phraseRepository;
 
     @Autowired
-    public PhraseCountCommand(DiscordUserRepository discordUserRepository, PhraseRepository phraseRepository, PhilbotAppConfig philbotAppConfig) {
-        isTestEnvironment = "test".equalsIgnoreCase(philbotAppConfig.nodeEnvironment);
+    public PhraseCountCommand(DiscordUserRepository discordUserRepository, PhraseRepository phraseRepository, BaseConfig baseConfig) {
+        isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
         name = "phraseCount";
         help = "Counts how many times someone has said a given word.\n" +
                 "\tTo see the counts for a given user: `!!phraseCount count @user`\n" +

@@ -1,5 +1,6 @@
-package com.badfic.philbot.listeners;
+package com.badfic.philbot.listeners.phil;
 
+import com.badfic.philbot.config.PhilMarker;
 import java.util.Optional;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BanListener extends ListenerAdapter {
+public class PhilBanListener extends ListenerAdapter implements PhilMarker {
 
     @Override
     public void onGuildBan(@NotNull GuildBanEvent event) {

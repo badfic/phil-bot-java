@@ -1,7 +1,8 @@
-package com.badfic.philbot.listeners;
+package com.badfic.philbot.listeners.phil;
 
-import com.badfic.philbot.config.PhilbotAppConfig;
-import com.badfic.philbot.data.Phrase;
+import com.badfic.philbot.config.BaseConfig;
+import com.badfic.philbot.config.PhilMarker;
+import com.badfic.philbot.data.phil.Phrase;
 import com.badfic.philbot.repository.PhraseRepository;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -11,24 +12,28 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
-public class MessageListener extends ListenerAdapter {
+public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer|phellen|cw|willip|schlemmer)\\b", Pattern.CASE_INSENSITIVE);
 
     private final boolean isTestEnvironment;
     private final PhilCommand philCommand;
-    private final CommandClient commandClient;
+    private final CommandClient philCommandClient;
     private final PhraseRepository phraseRepository;
 
     @Autowired
-    public MessageListener(PhilCommand philCommand, CommandClient commandClient, PhraseRepository phraseRepository, PhilbotAppConfig philbotAppConfig) {
-        isTestEnvironment = "test".equalsIgnoreCase(philbotAppConfig.nodeEnvironment);
+    public PhilMessageListener(PhilCommand philCommand,
+                               @Qualifier("philCommandClient") CommandClient philCommandClient,
+                               PhraseRepository phraseRepository,
+                               BaseConfig baseConfig) {
+        isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
         this.philCommand = philCommand;
-        this.commandClient = commandClient;
+        this.philCommandClient = philCommandClient;
         this.phraseRepository = phraseRepository;
     }
 
@@ -41,7 +46,7 @@ public class MessageListener extends ListenerAdapter {
         }
 
         if (PHIL_PATTERN.matcher(msgContent).find()) {
-            philCommand.execute(new CommandEvent(event, null, commandClient));
+            philCommand.execute(new CommandEvent(event, null, philCommandClient));
             return;
         }
 

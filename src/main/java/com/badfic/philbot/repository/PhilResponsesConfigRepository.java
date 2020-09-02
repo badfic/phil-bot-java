@@ -1,6 +1,6 @@
 package com.badfic.philbot.repository;
 
-import com.badfic.philbot.data.PhilResponsesConfig;
+import com.badfic.philbot.data.phil.PhilResponsesConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
