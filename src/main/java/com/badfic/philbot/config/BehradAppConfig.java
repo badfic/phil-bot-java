@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
@@ -26,6 +27,22 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class BehradAppConfig {
+
+    private static final String[] PLAYING_STATUS_LIST = {
+            "Tekken",
+            "in Heyworld",
+            "Street Fighter",
+            "Overwatch",
+            "Super Smash Bros",
+            "Dragon Age Origins",
+            "Ocarina of Time",
+            "Mass Effect",
+            "Mario & Sonic at the Olympic Games",
+            "Sonic the Hedgehog",
+            "Super Mario Bros",
+            "Resident Evil",
+            "Wii Sports"
+    };
 
     @Value("${BEHRAD_BOT_TOKEN}")
     public String behradBotToken;
@@ -65,7 +82,7 @@ public class BehradAppConfig {
                     event.replyInDm(builder.toString(), s -> {}, f -> event.replyWarning("Help cannot be sent because you are blocking Direct Messages."));
                 })
                 .addCommands(behradCommands.toArray(new Command[0]))
-                .setActivity(Activity.playing("in Heyworld"))
+                .setActivity(Activity.playing(PLAYING_STATUS_LIST[ThreadLocalRandom.current().nextInt(PLAYING_STATUS_LIST.length)]))
                 .build();
     }
 
@@ -76,7 +93,7 @@ public class BehradAppConfig {
                 .disableCache(EnumSet.allOf(CacheFlag.class))
                 .addEventListeners(eventListeners.stream().filter(e -> e instanceof BehradMarker).toArray(EventListener[]::new))
                 .addEventListeners(behradCommandClient)
-                .setActivity(Activity.playing("in Heyworld"))
+                .setActivity(Activity.playing(PLAYING_STATUS_LIST[ThreadLocalRandom.current().nextInt(PLAYING_STATUS_LIST.length)]))
                 .build();
     }
 
