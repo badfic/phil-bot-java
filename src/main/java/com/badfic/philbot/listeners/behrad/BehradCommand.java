@@ -58,8 +58,20 @@ public class BehradCommand extends Command implements BehradMarker {
             "https://cdn.discordapp.com/attachments/323666308107599872/750575275783487598/MV5BMGEyZDE2YmYtNjRhNi00MzQwLThjNjItM2E5YjVjOTI3MDMwXkEyXkFqcGdeQXVyMTAzMjM0MjE0.png",
             "https://cdn.discordapp.com/attachments/323666308107599872/750575276026626129/MV5BYTRjOGE2OWUtMjk2MS00MGFkLTg2YjEtYmNjZDRjODAzNWI4XkEyXkFqcGdeQXVyMTAzMjM0MjE0.png"
     ));
+    private static final HashSet<String> SLOTH_GIFS = new HashSet<>(Arrays.asList(
+            "https://gfycat.com/cooperativeglamoroushoneybee-animals-sloth-cute",
+            "https://gfycat.com/ornateplumpicterinewarbler-animals-sloth-baby",
+            "https://gfycat.com/femaleastonishingflies-relax",
+            "https://gfycat.com/focusedsphericalfulmar-animals-sloth",
+            "https://gfycat.com/gaseousfrightenedavocet-animals-sloth-costa-rica-matty-baby",
+            "https://gfycat.com/jollyunpleasantcirriped-animals-sloth",
+            "https://gfycat.com/definitivetangiblefreshwatereel-sloth-animal",
+            "https://gfycat.com/flatgraveharborporpoise-sloth",
+            "https://gfycat.com/accomplishedinstructivefish"
+    ));
     private static final Pattern NAME_PATTERN = Pattern.compile("\\b(shayan|sobhian)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern WEED_PATTERN = Pattern.compile("\\b(marijuana|weed|420|stoned|high|stoner|kush)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SLOTH_PATTERN = Pattern.compile("\\b(sup sloth)\\b", Pattern.CASE_INSENSITIVE);
 
     private final boolean isTestEnvironment;
     private final BaseConfig baseConfig;
@@ -320,6 +332,11 @@ public class BehradCommand extends Command implements BehradMarker {
             } else {
                 return Optional.empty();
             }
+        }
+
+        if (SLOTH_PATTERN.matcher(msgContent).find()) {
+            event.getChannel().sendMessage(pickRandom(SLOTH_GIFS)).queue();
+            return Optional.empty();
         }
 
         if (WEED_PATTERN.matcher(msgContent).find()) {
