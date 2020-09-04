@@ -3,6 +3,7 @@ package com.badfic.philbot.config;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_BANS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MEMBERS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
+import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -72,8 +73,9 @@ public class PhilbotAppConfig {
     @Bean(name = "philJda")
     public JDA philJda(List<EventListener> eventListeners,
                        @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
-        return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES))
+        return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES, GUILD_VOICE_STATES))
                 .disableCache(EnumSet.allOf(CacheFlag.class))
+                .enableCache(CacheFlag.VOICE_STATE)
                 .addEventListeners(eventListeners.stream().filter(e -> e instanceof PhilMarker).toArray(EventListener[]::new))
                 .addEventListeners(philCommandClient)
                 .setActivity(Activity.playing("with our feelings"))
