@@ -8,6 +8,8 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import java.util.regex.Pattern;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -23,16 +25,19 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     private final boolean isTestEnvironment;
     private final PhilCommand philCommand;
+    private final BastardCommand bastardCommand;
     private final CommandClient philCommandClient;
     private final PhraseRepository phraseRepository;
 
     @Autowired
     public PhilMessageListener(PhilCommand philCommand,
+                               BastardCommand bastardCommand,
                                @Qualifier("philCommandClient") CommandClient philCommandClient,
                                PhraseRepository phraseRepository,
                                BaseConfig baseConfig) {
         isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
         this.philCommand = philCommand;
+        this.bastardCommand = bastardCommand;
         this.philCommandClient = philCommandClient;
         this.phraseRepository = phraseRepository;
     }
@@ -43,6 +48,10 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
         if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {
             return;
+        }
+
+        if (event.getMember().getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase("18+"))) {
+            bastardCommand.execute(new CommandEvent(event, null, philCommandClient));
         }
 
         if (PHIL_PATTERN.matcher(msgContent).find()) {
@@ -66,6 +75,16 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
                 }
             }
         }
+    }
+
+    @Override
+    public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
+        bastardCommand.givePointsToMember(250, event.getMember());
+    }
+
+    @Override
+    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
+        bastardCommand.givePointsToMember(250, event.getMember());
     }
 
 }
