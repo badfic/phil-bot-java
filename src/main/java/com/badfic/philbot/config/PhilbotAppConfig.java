@@ -67,7 +67,7 @@ public class PhilbotAppConfig {
                 })
                 .addCommands(philCommands.toArray(new Command[0]))
                 .setActivity(Activity.playing("with our feelings"))
-                .setEmojis("✔️", "⚠️", "❌")
+                .setEmojis("✅", "⚠️", "❌")
                 .build();
     }
 
