@@ -2,6 +2,7 @@ package com.badfic.philbot.listeners.phil;
 
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.PhilMarker;
+import com.badfic.philbot.data.BaseResponsesConfig;
 import com.badfic.philbot.data.phil.PhilResponsesConfig;
 import com.badfic.philbot.model.GenericBotResponsesConfigJson;
 import com.badfic.philbot.repository.PhilResponsesConfigRepository;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Component;
 public class PhilCommand extends Command implements PhilMarker {
 
     private final boolean isTestEnvironment;
-    private final PhilResponsesConfigRepository philResponsesConfigRepository;
+    private final PhilResponsesConfigRepository configRepository;
     private final ObjectMapper objectMapper;
 
     @Autowired
@@ -50,11 +51,11 @@ public class PhilCommand extends Command implements PhilMarker {
                 "\t`!!phil nsfw config` responds with a json file of the nsfw config\n" +
                 "\t`!!phil sfw config` responds with a json file of the normal config\n";
         requiredRole = "Queens of the Castle";
-        this.philResponsesConfigRepository = philResponsesConfigRepository;
+        this.configRepository = philResponsesConfigRepository;
         this.objectMapper = objectMapper;
 
         // seed data if needed
-        if (!philResponsesConfigRepository.findById(PhilResponsesConfig.SINGLETON_ID).isPresent()) {
+        if (!philResponsesConfigRepository.findById(BaseResponsesConfig.SINGLETON_ID).isPresent()) {
             GenericBotResponsesConfigJson kidFriendlyConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("phil-kidFriendlyConfig.json"),
                     GenericBotResponsesConfigJson.class);
             GenericBotResponsesConfigJson nsfwConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("phil-nsfwConfig.json"),
@@ -62,7 +63,7 @@ public class PhilCommand extends Command implements PhilMarker {
             nsfwConfig.getResponses().addAll(kidFriendlyConfig.getResponses());
 
             PhilResponsesConfig philResponsesConfig = new PhilResponsesConfig();
-            philResponsesConfig.setId(PhilResponsesConfig.SINGLETON_ID);
+            philResponsesConfig.setId(BaseResponsesConfig.SINGLETON_ID);
             philResponsesConfig.setSfwConfig(kidFriendlyConfig);
             philResponsesConfig.setNsfwConfig(nsfwConfig);
             philResponsesConfigRepository.save(philResponsesConfig);
@@ -75,7 +76,7 @@ public class PhilCommand extends Command implements PhilMarker {
             return;
         }
 
-        Optional<PhilResponsesConfig> optionalConfig = philResponsesConfigRepository.findById(PhilResponsesConfig.SINGLETON_ID);
+        Optional<PhilResponsesConfig> optionalConfig = configRepository.findById(BaseResponsesConfig.SINGLETON_ID);
         if (!optionalConfig.isPresent()) {
             event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", failed to read phil entries from database :(").queue();
             return;
@@ -99,7 +100,7 @@ public class PhilCommand extends Command implements PhilMarker {
                 }
 
                 responsesConfig.getNsfwConfig().getChannels().add(mentionedChannels.get(0).getName());
-                philResponsesConfigRepository.save(responsesConfig);
+                configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved " + mentionedChannels.get(0).getAsMention() + " to nsfw config")
                         .queue();
             } else if (msgContent.startsWith("!!phil nsfw remove channel")) {
@@ -114,7 +115,7 @@ public class PhilCommand extends Command implements PhilMarker {
                     }
 
                     responsesConfig.getNsfwConfig().getChannels().remove(channelName);
-                    philResponsesConfigRepository.save(responsesConfig);
+                    configRepository.save(responsesConfig);
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed " + channelName + " from nsfw config").queue();
                     return;
                 }
@@ -126,7 +127,7 @@ public class PhilCommand extends Command implements PhilMarker {
                 }
 
                 responsesConfig.getNsfwConfig().getChannels().remove(mentionedChannels.get(0).getName());
-                philResponsesConfigRepository.save(responsesConfig);
+                configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed " + mentionedChannels.get(0).getAsMention() + " from nsfw config")
                         .queue();
             } else if (msgContent.startsWith("!!phil sfw add channel")) {
@@ -143,7 +144,7 @@ public class PhilCommand extends Command implements PhilMarker {
                 }
 
                 responsesConfig.getSfwConfig().getChannels().add(mentionedChannels.get(0).getName());
-                philResponsesConfigRepository.save(responsesConfig);
+                configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved " + mentionedChannels.get(0).getAsMention() + " to sfw config")
                         .queue();
             } else if (msgContent.startsWith("!!phil sfw remove channel")) {
@@ -158,7 +159,7 @@ public class PhilCommand extends Command implements PhilMarker {
                     }
 
                     responsesConfig.getSfwConfig().getChannels().remove(channelName);
-                    philResponsesConfigRepository.save(responsesConfig);
+                    configRepository.save(responsesConfig);
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed " + channelName + " from sfw config").queue();
                     return;
                 }
@@ -170,7 +171,7 @@ public class PhilCommand extends Command implements PhilMarker {
                 }
 
                 responsesConfig.getSfwConfig().getChannels().remove(mentionedChannels.get(0).getName());
-                philResponsesConfigRepository.save(responsesConfig);
+                configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed " + mentionedChannels.get(0).getAsMention() + " from sfw config")
                         .queue();
             } else if (msgContent.startsWith("!!phil nsfw add")) {
@@ -180,7 +181,7 @@ public class PhilCommand extends Command implements PhilMarker {
                     return;
                 }
                 responsesConfig.getNsfwConfig().getResponses().add(saying);
-                philResponsesConfigRepository.save(responsesConfig);
+                configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved `" + saying + "` to nsfw config").queue();
             } else if (msgContent.startsWith("!!phil nsfw remove")) {
                 String saying = msgContent.replace("!!phil nsfw remove", "").trim();
@@ -189,7 +190,7 @@ public class PhilCommand extends Command implements PhilMarker {
                     return;
                 }
                 responsesConfig.getNsfwConfig().getResponses().remove(saying);
-                philResponsesConfigRepository.save(responsesConfig);
+                configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed `" + saying + "` from nsfw config").queue();
             } else if (msgContent.startsWith("!!phil sfw add")) {
                 String saying = msgContent.replace("!!phil sfw add", "").trim();
@@ -199,7 +200,7 @@ public class PhilCommand extends Command implements PhilMarker {
                 }
                 responsesConfig.getSfwConfig().getResponses().add(saying);
                 responsesConfig.getNsfwConfig().getResponses().add(saying);
-                philResponsesConfigRepository.save(responsesConfig);
+                configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved `" + saying + "` to sfw config").queue();
             } else if (msgContent.startsWith("!!phil sfw remove")) {
                 String saying = msgContent.replace("!!phil sfw remove", "").trim();
@@ -209,7 +210,7 @@ public class PhilCommand extends Command implements PhilMarker {
                 }
                 responsesConfig.getSfwConfig().getResponses().remove(saying);
                 responsesConfig.getNsfwConfig().getResponses().remove(saying);
-                philResponsesConfigRepository.save(responsesConfig);
+                configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed `" + saying + "` from sfw config").queue();
             } else if (msgContent.startsWith("!!phil nsfw config")) {
                 try {

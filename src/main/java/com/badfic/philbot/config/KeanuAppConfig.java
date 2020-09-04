@@ -24,33 +24,39 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class BehradAppConfig {
+public class KeanuAppConfig {
 
-    private static final String[] PLAYING_STATUS_LIST = {
-            "Tekken",
-            "in Heyworld",
-            "Street Fighter",
-            "Overwatch",
-            "Super Smash Bros",
-            "Dragon Age Origins",
-            "Ocarina of Time",
-            "Mass Effect",
-            "Mario & Sonic at the Olympic Games",
-            "Sonic the Hedgehog",
-            "Super Mario Bros",
-            "Resident Evil",
-            "Wii Sports"
+    private static final String[] WATCHING_STATUS_LIST = {
+            "Bill & Ted Face the Music",
+            "The SpongeBob Movie: Sponge on the Run",
+            "Toy Story 4",
+            "Always Be My Maybe",
+            "John Wick: Chapter 3 - Parabellum",
+            "Replicas",
+            "Destination Wedding",
+            "Siberia",
+            "John Wick: Chapter 2",
+            "Keanu",
+            "John Wick",
+            "Constantine",
+            "Something's Gotta Give",
+            "The Matrix Revolutions",
+            "The Matrix Reloaded",
+            "The Matrix",
+            "Speed",
+            "Bill & Ted's Bogus Journey",
+            "Bill & Ted's Excellent Adventure"
     };
 
-    @Value("${BEHRAD_BOT_TOKEN}")
-    public String behradBotToken;
+    @Value("${KEANU_BOT_TOKEN}")
+    public String keanuBotToken;
 
     @Resource
     private BaseConfig baseConfig;
 
-    @Bean(name = "behradCommandClient")
-    public CommandClient behradCommandClient(List<Command> commands) {
-        List<Command> behradCommands = commands.stream().filter(c -> c instanceof BehradMarker).collect(Collectors.toList());
+    @Bean(name = "keanuCommandClient")
+    public CommandClient keanuCommandClient(List<Command> commands) {
+        List<Command> keanuCommands = commands.stream().filter(c -> c instanceof KeanuMarker).collect(Collectors.toList());
 
         return new CommandClientBuilder()
                 .setOwnerId(baseConfig.ownerId)
@@ -62,7 +68,7 @@ public class BehradAppConfig {
 
                     StringBuilder builder = new StringBuilder("**" + event.getSelfUser().getName() + "** commands:\n");
                     Command.Category category = null;
-                    for (Command command : behradCommands) {
+                    for (Command command : keanuCommands) {
                         if (!command.isHidden() && (!command.isOwnerCommand() || event.isOwner())) {
                             if (!Objects.equals(category, command.getCategory())) {
                                 category = command.getCategory();
@@ -79,19 +85,19 @@ public class BehradAppConfig {
                     }
                     event.replyInDm(builder.toString(), s -> {}, f -> event.replyWarning("Help cannot be sent because you are blocking Direct Messages."));
                 })
-                .addCommands(behradCommands.toArray(new Command[0]))
-                .setActivity(Activity.playing(PLAYING_STATUS_LIST[ThreadLocalRandom.current().nextInt(PLAYING_STATUS_LIST.length)]))
+                .addCommands(keanuCommands.toArray(new Command[0]))
+                .setActivity(Activity.watching(WATCHING_STATUS_LIST[ThreadLocalRandom.current().nextInt(WATCHING_STATUS_LIST.length)]))
                 .build();
     }
 
-    @Bean(name = "behradJda")
-    public JDA behradJda(List<EventListener> eventListeners,
-                         @Qualifier("behradCommandClient") CommandClient behradCommandClient) throws Exception {
-        return JDABuilder.create(behradBotToken, Collections.singletonList(GUILD_MESSAGES))
+    @Bean(name = "keanuJda")
+    public JDA keanuJda(List<EventListener> eventListeners,
+                        @Qualifier("keanuCommandClient") CommandClient keanuCommandClient) throws Exception {
+        return JDABuilder.create(keanuBotToken, Collections.singletonList(GUILD_MESSAGES))
                 .disableCache(EnumSet.allOf(CacheFlag.class))
-                .addEventListeners(eventListeners.stream().filter(e -> e instanceof BehradMarker).toArray(EventListener[]::new))
-                .addEventListeners(behradCommandClient)
-                .setActivity(Activity.playing(PLAYING_STATUS_LIST[ThreadLocalRandom.current().nextInt(PLAYING_STATUS_LIST.length)]))
+                .addEventListeners(eventListeners.stream().filter(e -> e instanceof KeanuMarker).toArray(EventListener[]::new))
+                .addEventListeners(keanuCommandClient)
+                .setActivity(Activity.watching(WATCHING_STATUS_LIST[ThreadLocalRandom.current().nextInt(WATCHING_STATUS_LIST.length)]))
                 .build();
     }
 
