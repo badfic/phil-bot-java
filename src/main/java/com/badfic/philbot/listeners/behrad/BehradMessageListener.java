@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BehradMessageListener extends ListenerAdapter implements BehradMarker {
 
-    private static final Pattern BEHRAD_PATTERN = Pattern.compile("\\b(behrad|shayan|sobhian|marijuana|weed|420|stoned|stoner|kush|hey b)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern BEHRAD_PATTERN = Pattern.compile("\\b(behrad|shayan|sobhian|marijuana|weed|420|stoned|stoner|kush|hey b|sup sloth)\\b", Pattern.CASE_INSENSITIVE);
 
     private final boolean isTestEnvironment;
     private final BehradCommand behradCommand;
