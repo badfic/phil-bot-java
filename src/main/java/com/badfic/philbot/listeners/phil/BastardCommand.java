@@ -45,7 +45,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (event.getAuthor().isBot()) {
+        if (event.getAuthor().isBot() || !hasRole(event.getMember(), "18+")) {
             return;
         }
 
@@ -105,11 +105,11 @@ public class BastardCommand extends Command implements PhilMarker {
                 takePointsFromMember(4, event.getMember());
                 event.reply(simpleEmbed("Flip", "I don't feel like flipping a coin, I'm taking 4 bastard points from you \uD83D\uDCA9"));
             } else if (randomNumber % 2 == 0) {
-                givePointsToMember(2, event.getMember());
-                event.reply(simpleEmbed("Flip", "I flipped a coin and it landed on heads, here's 2 bastard points \uD83D\uDCB0"));
+                givePointsToMember(20, event.getMember());
+                event.reply(simpleEmbed("Flip", "I flipped a coin and it landed on heads, here's 20 bastard points \uD83D\uDCB0"));
             } else {
-                takePointsFromMember(4, event.getMember());
-                event.reply(simpleEmbed("Flip", "I flipped a coin and it landed on tails, you lost 4 bastard points \uD83D\uDE2C"));
+                takePointsFromMember(10, event.getMember());
+                event.reply(simpleEmbed("Flip", "I flipped a coin and it landed on tails, you lost 10 bastard points \uD83D\uDE2C"));
             }
         } else if (msgContent.startsWith("!!bastard reset")) {
             if (!hasRole(event.getMember(), "queens of the castle")) {
@@ -182,6 +182,11 @@ public class BastardCommand extends Command implements PhilMarker {
             member = event.getMessage().getMentionedMembers().get(0);
         }
 
+        if (!hasRole(member, "18+")) {
+            event.reply(simpleEmbed("Your Rank", "You can't see your rank because it appears you don't have the 18+ role"));
+            return;
+        }
+
         Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(member.getId());
 
         if (!optionalUserEntity.isPresent()) {
@@ -228,7 +233,12 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        givePointsToMember(100, mentionedMembers.get(0));
+        if (!hasRole(mentionedMembers.get(0), "18+")) {
+            event.replyError(mentionedMembers.get(0).getAsMention() + " is not participating in the bastard games");
+            return;
+        }
+
+        givePointsToMember(250, mentionedMembers.get(0));
 
         event.replySuccess("Successfully upvoted " + mentionedMembers.get(0).getAsMention());
     }
@@ -241,7 +251,12 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        takePointsFromMember(20, mentionedMembers.get(0));
+        if (!hasRole(mentionedMembers.get(0), "18+")) {
+            event.replyError(mentionedMembers.get(0).getAsMention() + " is not participating in the bastard games");
+            return;
+        }
+
+        takePointsFromMember(50, mentionedMembers.get(0));
 
         event.replySuccess("Successfully downvoted " + mentionedMembers.get(0).getAsMention());
     }
@@ -282,13 +297,18 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
+        if (!hasRole(mentionedMembers.get(0), "18+")) {
+            event.replyError(mentionedMembers.get(0).getAsMention() + " is not participating in the bastard games");
+            return;
+        }
+
         givePointsToMember(pointsToGive, mentionedMembers.get(0));
 
         event.replyFormatted("Gave %d xp to %s", pointsToGive, mentionedMembers.get(0).getAsMention());
     }
 
     private void take(CommandEvent event) {
-        if (!hasRole(event.getMember(), "queens of the castle")) {
+        if (!hasRole(event.getMember(), "taketh away")) {
             event.replyError("You do not have permission to use this command");
             return;
         }
@@ -323,6 +343,11 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
+        if (!hasRole(mentionedMembers.get(0), "18+")) {
+            event.replyError(mentionedMembers.get(0).getAsMention() + " is not participating in the bastard games");
+            return;
+        }
+
         takePointsFromMember(pointsToTake, mentionedMembers.get(0));
 
         event.replyFormatted("Removed %d xp from %s", pointsToTake, mentionedMembers.get(0).getAsMention());
@@ -344,6 +369,10 @@ public class BastardCommand extends Command implements PhilMarker {
     }
 
     private void assignRolesIfNeeded(Member member, DiscordUser user) {
+        if (!hasRole(member, "18+")) {
+            return;
+        }
+
         Rank newRank = Rank.byXp(user.getXp());
 
         if (!hasRole(member, newRank)) {
