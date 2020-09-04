@@ -6,7 +6,7 @@ import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.repository.DiscordUserRepository;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.util.Comparator;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -209,12 +209,12 @@ public class BastardCommand extends Command implements PhilMarker {
                 .setImage(rank.getRankUpImage())
                 .setTitle("Your Rank")
                 .setDescription("Hey, " + member.getAsMention() + "! You are level " + rank.getLevel() + ": " + rank.getRoleName() + ".\n" +
-                        "You have " + user.getXp() + " total bastard points.\n\n" +
+                        "You have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total bastard points.\n\n" +
                         "The next level is " +
                         (rank == nextRank
                                 ? " LOL NVM YOU'RE THE TOP LEVEL."
                                 : nextRank.getLevel() + ": " + nextRank.getRoleName() + ".") +
-                        "\n You need to reach " + (nextRank.getLevel() * Rank.LVL_MULTIPLIER) + " points to get there." +
+                        "\n You need to reach " + NumberFormat.getIntegerInstance().format(nextRank.getLevel() * Rank.LVL_MULTIPLIER) + " points to get there." +
                         "\n\nBest of Luck in the Bastard Games!")
                 .build();
 
@@ -224,7 +224,7 @@ public class BastardCommand extends Command implements PhilMarker {
     private void leaderboard(CommandEvent event) {
         List<DiscordUser> bastardUsers = discordUserRepository.findAll();
 
-        bastardUsers.sort(Comparator.comparingLong(DiscordUser::getXp));
+        bastardUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
         int place = 1;
         StringBuilder description = new StringBuilder();
@@ -233,7 +233,7 @@ public class BastardCommand extends Command implements PhilMarker {
                     .append(": <@!")
                     .append(bastardUser.getId())
                     .append("> - ")
-                    .append(bastardUser.getXp())
+                    .append(NumberFormat.getIntegerInstance().format(bastardUser.getXp()))
                     .append('\n');
         }
 
