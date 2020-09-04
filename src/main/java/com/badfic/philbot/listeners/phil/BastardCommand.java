@@ -72,19 +72,19 @@ public class BastardCommand extends Command implements PhilMarker {
             Member mentionedMember = mentionedUsers.get(0);
             int randomNumber;
 
-            if ((randomNumber = ThreadLocalRandom.current().nextInt(100)) < 20) {
+            if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < 30) {
                 event.reply(simpleEmbed("Steal", "You attempt to steal points from %s and fail miserably, you pay them %s points to forget this ever happened.", mentionedMember, randomNumber));
                 takePointsFromMember(randomNumber, event.getMember());
                 givePointsToMember(randomNumber, mentionedMember);
-            } else if ((randomNumber = ThreadLocalRandom.current().nextInt(100)) < 20) {
+            } else if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < 30) {
                 event.reply(simpleEmbed("Steal", "You successfully stole %s points from %s", randomNumber, mentionedMember));
                 takePointsFromMember(randomNumber, mentionedMember);
                 givePointsToMember(randomNumber, event.getMember());
-            } else if (ThreadLocalRandom.current().nextInt(100) < 50) {
+            } else if (ThreadLocalRandom.current().nextInt(1, 101) < 80) {
                 event.reply(simpleEmbed("Steal", "You failed to steal from %s but escaped unnoticed. Take 2 points for your troubles.", mentionedMember));
                 givePointsToMember(2, event.getMember());
             } else {
-                randomNumber = ThreadLocalRandom.current().nextInt(20);
+                randomNumber = ThreadLocalRandom.current().nextInt(1, 21);
                 event.reply(simpleEmbed("Steal", "I steal %s points, from both of you! Phil wins!", randomNumber));
                 takePointsFromMember(randomNumber, event.getMember());
                 takePointsFromMember(randomNumber, mentionedMember);
