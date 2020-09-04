@@ -87,6 +87,7 @@ public class KeanuAppConfig {
                 })
                 .addCommands(keanuCommands.toArray(new Command[0]))
                 .setActivity(Activity.watching(WATCHING_STATUS_LIST[ThreadLocalRandom.current().nextInt(WATCHING_STATUS_LIST.length)]))
+                .setEmojis("✔️", "⚠️", "❌")
                 .build();
     }
 
