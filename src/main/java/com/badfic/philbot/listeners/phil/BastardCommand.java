@@ -6,6 +6,7 @@ import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.repository.DiscordUserRepository;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -61,6 +62,8 @@ public class BastardCommand extends Command implements PhilMarker {
             give(event);
         } else if (msgContent.startsWith("!!bastard take")) {
             take(event);
+        } else if (msgContent.startsWith("!!bastard leaderboard")) {
+            leaderboard(event);
         } else if (msgContent.startsWith("!!bastard steal")) {
             List<Member> mentionedUsers = event.getMessage().getMentionedMembers();
 
@@ -135,10 +138,10 @@ public class BastardCommand extends Command implements PhilMarker {
             Message message = event.getMessage();
 
             long pointsToGive = NORMAL_MSG_POINTS;
-            pointsToGive += CollectionUtils.isNotEmpty(message.getAttachments()) ? 10 : 0;
-            pointsToGive += CollectionUtils.isNotEmpty(message.getEmbeds()) ? 10 : 0;
-            pointsToGive += CollectionUtils.isNotEmpty(message.getEmotes()) ? 10 : 0;
-            pointsToGive += message.isTTS() ? 10 : 0;
+            pointsToGive += CollectionUtils.isNotEmpty(message.getAttachments()) ? 200 : 0;
+            pointsToGive += CollectionUtils.isNotEmpty(message.getEmbeds()) ? 200 : 0;
+            pointsToGive += CollectionUtils.isNotEmpty(message.getEmotes()) ? 200 : 0;
+            pointsToGive += message.isTTS() ? 200 : 0;
 
             givePointsToMember(pointsToGive, event.getMember());
         }
@@ -213,6 +216,30 @@ public class BastardCommand extends Command implements PhilMarker {
                                 : nextRank.getLevel() + ": " + nextRank.getRoleName() + ".") +
                         "\n You need to reach " + (nextRank.getLevel() * Rank.LVL_MULTIPLIER) + " points to get there." +
                         "\n\nBest of Luck in the Bastard Games!")
+                .build();
+
+        event.reply(messageEmbed);
+    }
+
+    private void leaderboard(CommandEvent event) {
+        List<DiscordUser> bastardUsers = discordUserRepository.findAll();
+
+        bastardUsers.sort(Comparator.comparingLong(DiscordUser::getXp));
+
+        int place = 1;
+        StringBuilder description = new StringBuilder();
+        for (DiscordUser bastardUser : bastardUsers) {
+            description.append(place++)
+                    .append(": <@!")
+                    .append(bastardUser.getId())
+                    .append("> - ")
+                    .append(bastardUser.getXp())
+                    .append('\n');
+        }
+
+        MessageEmbed messageEmbed = new EmbedBuilder()
+                .setTitle("Leaderboard")
+                .setDescription(description.toString())
                 .build();
 
         event.reply(messageEmbed);
