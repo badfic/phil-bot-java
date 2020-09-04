@@ -81,6 +81,7 @@ public class BehradAppConfig {
                 })
                 .addCommands(behradCommands.toArray(new Command[0]))
                 .setActivity(Activity.playing(PLAYING_STATUS_LIST[ThreadLocalRandom.current().nextInt(PLAYING_STATUS_LIST.length)]))
+                .setEmojis("✔️", "⚠️", "❌")
                 .build();
     }
 
