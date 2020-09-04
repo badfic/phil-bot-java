@@ -8,7 +8,7 @@ import java.util.Set;
 public enum Rank {
     CINNAMON_ROLL("The Most Precious Cinnamon Roll", 0, "https://cdn.discordapp.com/attachments/707453916882665552/751404695980867594/classic-roll_314x256.png"),
     BEHRAD("Behrad Tarazi", 1, "https://cdn.discordapp.com/attachments/707453916882665552/751404804223401984/Legends-of-Tomorrow-Behrad.png"),
-    ANDY("Andy Dwyer", 1, "https://cdn.discordapp.com/attachments/707453916882665552/751404910473510932/iu.png"),
+    ANDY("Andy Dwyer", 2, "https://cdn.discordapp.com/attachments/707453916882665552/751404910473510932/iu.png"),
     WALLY("Wally West", 3, "https://media.discordapp.net/attachments/707453916882665552/751405067126439936/5669e1b5dd0895f8398b4579.png"),
     MONA("Mona Wu", 5, "https://cdn.discordapp.com/attachments/707453916882665552/751405210047348796/tumblr_pjl46tz0p01tyusgdo2_500.png"),
     LESLIE("Leslie Knope", 7, "https://media.discordapp.net/attachments/707453916882665552/751405335440392192/5824aa9046e27a1c008b5eec.png?width=902&height=677"),
