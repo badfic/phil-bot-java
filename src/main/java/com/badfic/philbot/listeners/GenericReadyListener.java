@@ -1,6 +1,7 @@
 package com.badfic.philbot.listeners;
 
 import com.badfic.philbot.config.BehradMarker;
+import com.badfic.philbot.config.KeanuMarker;
 import com.badfic.philbot.config.PhilMarker;
 import java.lang.invoke.MethodHandles;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GenericReadyListener extends ListenerAdapter implements PhilMarker, BehradMarker {
+public class GenericReadyListener extends ListenerAdapter implements PhilMarker, BehradMarker, KeanuMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override

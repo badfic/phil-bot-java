@@ -1,11 +1,11 @@
-package com.badfic.philbot.listeners.behrad;
+package com.badfic.philbot.listeners.keanu;
 
 import com.badfic.philbot.config.BaseConfig;
-import com.badfic.philbot.config.BehradMarker;
+import com.badfic.philbot.config.KeanuMarker;
 import com.badfic.philbot.data.BaseResponsesConfig;
-import com.badfic.philbot.data.behrad.BehradResponsesConfig;
+import com.badfic.philbot.data.keanu.KeanuResponsesConfig;
 import com.badfic.philbot.model.GenericBotResponsesConfigJson;
-import com.badfic.philbot.repository.BehradResponsesConfigRepository;
+import com.badfic.philbot.repository.KeanuResponsesConfigRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,21 +14,16 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiManager;
 import java.lang.invoke.MethodHandles;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Pattern;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,62 +43,54 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BehradCommand extends Command implements BehradMarker {
+public class KeanuCommand extends Command implements KeanuMarker {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final HashSet<String> SHAYAN_IMGS = new HashSet<>(Arrays.asList(
-            "https://cdn.discordapp.com/attachments/323666308107599872/750575009650573332/unknown-15.png",
-            "https://cdn.discordapp.com/attachments/323666308107599872/750575009885454356/unknown-21.png",
-            "https://cdn.discordapp.com/attachments/323666308107599872/750575010221129889/unknown-17.png",
-            "https://cdn.discordapp.com/attachments/323666308107599872/750575275783487598/MV5BMGEyZDE2YmYtNjRhNi00MzQwLThjNjItM2E5YjVjOTI3MDMwXkEyXkFqcGdeQXVyMTAzMjM0MjE0.png",
-            "https://cdn.discordapp.com/attachments/323666308107599872/750575276026626129/MV5BYTRjOGE2OWUtMjk2MS00MGFkLTg2YjEtYmNjZDRjODAzNWI4XkEyXkFqcGdeQXVyMTAzMjM0MjE0.png"
-    ));
-    private static final Pattern NAME_PATTERN = Pattern.compile("\\b(shayan|sobhian)\\b", Pattern.CASE_INSENSITIVE);
-    private static final Pattern WEED_PATTERN = Pattern.compile("\\b(marijuana|weed|420|stoned|high|stoner|kush)\\b", Pattern.CASE_INSENSITIVE);
+    private static final String HELLO_GIF = "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves";
 
     private final boolean isTestEnvironment;
     private final BaseConfig baseConfig;
-    private final BehradResponsesConfigRepository configRepository;
+    private final KeanuResponsesConfigRepository configRepository;
     private final CloseableHttpClient gfycatClient;
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public BehradCommand(ObjectMapper objectMapper, BaseConfig baseConfig, BehradResponsesConfigRepository behradResponsesConfigRepository,
-                         CloseableHttpClient gfycatClient)
+    public KeanuCommand(ObjectMapper objectMapper, BaseConfig baseConfig, KeanuResponsesConfigRepository keanuResponsesConfigRepository,
+                        CloseableHttpClient gfycatClient)
             throws Exception {
         this.baseConfig = baseConfig;
         isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
-        name = "behrad";
-        help = "Any message containing `behrad` will make behrad respond with a random message if that channel is configured.\n" +
-                "\t`!!behrad tts` responds with a random message but spoken via text-to-speech\n" +
-                "\t`!!behrad nsfw add channel #channel` adds a channel to the list of channels nsfw behrad responds to\n" +
-                "\t`!!behrad nsfw remove channel #channel` removes a channel from the list of channels nsfw behrad responds to\n" +
-                "\t`!!behrad sfw add channel #channel` adds a channel to the list of channels normal behrad responds to\n" +
-                "\t`!!behrad sfw remove channel #channel` removes a channel from the list of channels normal behrad responds to\n" +
-                "\t`!!behrad nsfw add something something` adds 'something something' to the list of responses behrad has for nsfw channels\n" +
-                "\t`!!behrad nsfw remove something something` removes 'something something' from the list of responses behrad has for nsfw channels\n" +
-                "\t`!!behrad sfw add something something` adds 'something something' to the list of responses behrad has for normal channels\n" +
-                "\t`!!behrad sfw remove something something` removes 'something something' from the list of responses behrad has for normal channels\n" +
-                "\t`!!behrad nsfw config` responds with a json file of the nsfw config\n" +
-                "\t`!!behrad sfw config` responds with a json file of the normal config\n";
+        name = "keanu";
+        help = "Any message containing `keanu` will make keanu respond with a random message if that channel is configured.\n" +
+                "\t`!!keanu tts` responds with a random message but spoken via text-to-speech\n" +
+                "\t`!!keanu nsfw add channel #channel` adds a channel to the list of channels nsfw keanu responds to\n" +
+                "\t`!!keanu nsfw remove channel #channel` removes a channel from the list of channels nsfw keanu responds to\n" +
+                "\t`!!keanu sfw add channel #channel` adds a channel to the list of channels normal keanu responds to\n" +
+                "\t`!!keanu sfw remove channel #channel` removes a channel from the list of channels normal keanu responds to\n" +
+                "\t`!!keanu nsfw add something something` adds 'something something' to the list of responses keanu has for nsfw channels\n" +
+                "\t`!!keanu nsfw remove something something` removes 'something something' from the list of responses keanu has for nsfw channels\n" +
+                "\t`!!keanu sfw add something something` adds 'something something' to the list of responses keanu has for normal channels\n" +
+                "\t`!!keanu sfw remove something something` removes 'something something' from the list of responses keanu has for normal channels\n" +
+                "\t`!!keanu nsfw config` responds with a json file of the nsfw config\n" +
+                "\t`!!keanu sfw config` responds with a json file of the normal config\n";
         requiredRole = "Queens of the Castle";
-        this.configRepository = behradResponsesConfigRepository;
+        this.configRepository = keanuResponsesConfigRepository;
         this.objectMapper = objectMapper;
         this.gfycatClient = gfycatClient;
 
         // seed data if needed
-        if (!behradResponsesConfigRepository.findById(BaseResponsesConfig.SINGLETON_ID).isPresent()) {
-            GenericBotResponsesConfigJson kidFriendlyConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("behrad-kidFriendlyConfig.json"),
+        if (!configRepository.findById(BaseResponsesConfig.SINGLETON_ID).isPresent()) {
+            GenericBotResponsesConfigJson kidFriendlyConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("keanu-kidFriendlyConfig.json"),
                     GenericBotResponsesConfigJson.class);
-            GenericBotResponsesConfigJson nsfwConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("behrad-nsfwConfig.json"),
+            GenericBotResponsesConfigJson nsfwConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("keanu-nsfwConfig.json"),
                     GenericBotResponsesConfigJson.class);
             nsfwConfig.getResponses().addAll(kidFriendlyConfig.getResponses());
 
-            BehradResponsesConfig responsesConfig = new BehradResponsesConfig();
+            KeanuResponsesConfig responsesConfig = new KeanuResponsesConfig();
             responsesConfig.setId(BaseResponsesConfig.SINGLETON_ID);
             responsesConfig.setSfwConfig(kidFriendlyConfig);
             responsesConfig.setNsfwConfig(nsfwConfig);
-            behradResponsesConfigRepository.save(responsesConfig);
+            configRepository.save(responsesConfig);
         }
     }
 
@@ -113,25 +100,25 @@ public class BehradCommand extends Command implements BehradMarker {
             return;
         }
 
-        Optional<BehradResponsesConfig> optionalConfig = configRepository.findById(BaseResponsesConfig.SINGLETON_ID);
+        Optional<KeanuResponsesConfig> optionalConfig = configRepository.findById(BaseResponsesConfig.SINGLETON_ID);
         if (!optionalConfig.isPresent()) {
-            event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", failed to read behrad entries from database :(").queue();
+            event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", failed to read keanu entries from database :(").queue();
             return;
         }
 
-        BehradResponsesConfig responsesConfig = optionalConfig.get();
+        KeanuResponsesConfig responsesConfig = optionalConfig.get();
         String msgContent = event.getMessage().getContentRaw();
 
-        if (msgContent.startsWith("!!behrad")) {
-            if (msgContent.startsWith("!!behrad nsfw add channel")) {
+        if (msgContent.startsWith("!!keanu")) {
+            if (msgContent.startsWith("!!keanu nsfw add channel")) {
                 List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a channel. `!!behrad nsfw add channel #cursed`").queue();
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a channel. `!!keanu nsfw add channel #cursed`").queue();
                     return;
                 }
 
                 if (mentionedChannels.size() > 1) {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please only specify one channel. `!!behrad nsfw add channel #cursed`")
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please only specify one channel. `!!keanu nsfw add channel #cursed`")
                             .queue();
                     return;
                 }
@@ -140,13 +127,13 @@ public class BehradCommand extends Command implements BehradMarker {
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved " + mentionedChannels.get(0).getAsMention() + " to nsfw config")
                         .queue();
-            } else if (msgContent.startsWith("!!behrad nsfw remove channel")) {
+            } else if (msgContent.startsWith("!!keanu nsfw remove channel")) {
                 List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
-                    String channelName = msgContent.replace("!!behrad nsfw remove channel", "").trim();
+                    String channelName = msgContent.replace("!!keanu nsfw remove channel", "").trim();
 
                     if (StringUtils.isEmpty(channelName)) {
-                        event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a channel. `!!behrad nsfw remove channel #general`")
+                        event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a channel. `!!keanu nsfw remove channel #general`")
                                 .queue();
                         return;
                     }
@@ -158,7 +145,7 @@ public class BehradCommand extends Command implements BehradMarker {
                 }
 
                 if (mentionedChannels.size() > 1) {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please only specify one channel. `!!behrad nsfw remove channel #cursed`")
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please only specify one channel. `!!keanu nsfw remove channel #cursed`")
                             .queue();
                     return;
                 }
@@ -167,15 +154,15 @@ public class BehradCommand extends Command implements BehradMarker {
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed " + mentionedChannels.get(0).getAsMention() + " from nsfw config")
                         .queue();
-            } else if (msgContent.startsWith("!!behrad sfw add channel")) {
+            } else if (msgContent.startsWith("!!keanu sfw add channel")) {
                 List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a channel. `!!behrad sfw add channel #general`").queue();
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a channel. `!!keanu sfw add channel #general`").queue();
                     return;
                 }
 
                 if (mentionedChannels.size() > 1) {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please only specify one channel. `!!behrad sfw add channel #general`")
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please only specify one channel. `!!keanu sfw add channel #general`")
                             .queue();
                     return;
                 }
@@ -184,13 +171,13 @@ public class BehradCommand extends Command implements BehradMarker {
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved " + mentionedChannels.get(0).getAsMention() + " to sfw config")
                         .queue();
-            } else if (msgContent.startsWith("!!behrad sfw remove channel")) {
+            } else if (msgContent.startsWith("!!keanu sfw remove channel")) {
                 List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
-                    String channelName = msgContent.replace("!!behrad sfw remove channel", "").trim();
+                    String channelName = msgContent.replace("!!keanu sfw remove channel", "").trim();
 
                     if (StringUtils.isEmpty(channelName)) {
-                        event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a channel. `!!behrad sfw remove channel #general`")
+                        event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a channel. `!!keanu sfw remove channel #general`")
                                 .queue();
                         return;
                     }
@@ -202,7 +189,7 @@ public class BehradCommand extends Command implements BehradMarker {
                 }
 
                 if (mentionedChannels.size() > 1) {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please only specify one channel. `!!behrad sfw remove channel #general`")
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please only specify one channel. `!!keanu sfw remove channel #general`")
                             .queue();
                     return;
                 }
@@ -211,8 +198,8 @@ public class BehradCommand extends Command implements BehradMarker {
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed " + mentionedChannels.get(0).getAsMention() + " from sfw config")
                         .queue();
-            } else if (msgContent.startsWith("!!behrad nsfw add")) {
-                String saying = msgContent.replace("!!behrad nsfw add", "").trim();
+            } else if (msgContent.startsWith("!!keanu nsfw add")) {
+                String saying = msgContent.replace("!!keanu nsfw add", "").trim();
                 if (saying.isEmpty()) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to add").queue();
                     return;
@@ -220,8 +207,8 @@ public class BehradCommand extends Command implements BehradMarker {
                 responsesConfig.getNsfwConfig().getResponses().add(saying);
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved `" + saying + "` to nsfw config").queue();
-            } else if (msgContent.startsWith("!!behrad nsfw remove")) {
-                String saying = msgContent.replace("!!behrad nsfw remove", "").trim();
+            } else if (msgContent.startsWith("!!keanu nsfw remove")) {
+                String saying = msgContent.replace("!!keanu nsfw remove", "").trim();
                 if (saying.isEmpty()) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to remove").queue();
                     return;
@@ -229,8 +216,8 @@ public class BehradCommand extends Command implements BehradMarker {
                 responsesConfig.getNsfwConfig().getResponses().remove(saying);
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed `" + saying + "` from nsfw config").queue();
-            } else if (msgContent.startsWith("!!behrad sfw add")) {
-                String saying = msgContent.replace("!!behrad sfw add", "").trim();
+            } else if (msgContent.startsWith("!!keanu sfw add")) {
+                String saying = msgContent.replace("!!keanu sfw add", "").trim();
                 if (saying.isEmpty()) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to add").queue();
                     return;
@@ -239,8 +226,8 @@ public class BehradCommand extends Command implements BehradMarker {
                 responsesConfig.getNsfwConfig().getResponses().add(saying);
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved `" + saying + "` to sfw config").queue();
-            } else if (msgContent.startsWith("!!behrad sfw remove")) {
-                String saying = msgContent.replace("!!behrad sfw remove", "").trim();
+            } else if (msgContent.startsWith("!!keanu sfw remove")) {
+                String saying = msgContent.replace("!!keanu sfw remove", "").trim();
                 if (saying.isEmpty()) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to remove").queue();
                     return;
@@ -249,19 +236,19 @@ public class BehradCommand extends Command implements BehradMarker {
                 responsesConfig.getNsfwConfig().getResponses().remove(saying);
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed `" + saying + "` from sfw config").queue();
-            } else if (msgContent.startsWith("!!behrad nsfw config")) {
+            } else if (msgContent.startsWith("!!keanu nsfw config")) {
                 try {
                     event.getChannel().sendFile(objectMapper.writeValueAsBytes(responsesConfig.getNsfwConfig()), "nsfwconfig.json").queue();
                 } catch (JsonProcessingException e) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send nsfw config to you").queue();
                 }
-            } else if (msgContent.startsWith("!!behrad sfw config")) {
+            } else if (msgContent.startsWith("!!keanu sfw config")) {
                 try {
                     event.getChannel().sendFile(objectMapper.writeValueAsBytes(responsesConfig.getSfwConfig()), "sfwconfig.json").queue();
                 } catch (JsonProcessingException e) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send sfw config to you").queue();
                 }
-            } else if (msgContent.startsWith("!!behrad tts")) {
+            } else if (msgContent.startsWith("!!keanu tts")) {
                 getResponse(event, responsesConfig).ifPresent(response -> {
                     Message outboundMessage = new MessageBuilder(event.getAuthor().getAsMention() + ", " + response)
                             .setTTS(true)
@@ -270,7 +257,7 @@ public class BehradCommand extends Command implements BehradMarker {
                     event.getChannel().sendMessage(outboundMessage).queue();
                 });
             } else {
-                event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", unrecognized behrad command").queue();
+                event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", unrecognized keanu command").queue();
             }
             return;
         }
@@ -280,18 +267,13 @@ public class BehradCommand extends Command implements BehradMarker {
         });
     }
 
-    private Optional<String> getResponse(CommandEvent event, BehradResponsesConfig responsesConfig) {
+    private Optional<String> getResponse(CommandEvent event, KeanuResponsesConfig responsesConfig) {
         String msgContent = event.getMessage().getContentRaw();
         String channelName = event.getChannel().getName();
         Set<String> responses;
         if (isTestEnvironment) {
             if ("test-channel".equalsIgnoreCase(channelName)) {
-                if (NAME_PATTERN.matcher(msgContent).find()) {
-                    event.getChannel().sendMessage(pickRandom(SHAYAN_IMGS)).queue();
-                    return Optional.empty();
-                }
-
-                Optional<String> maybeGif = maybeGetGif(event);
+                Optional<String> maybeGif = maybeGetGif();
                 if (maybeGif.isPresent()) {
                     event.getChannel().sendMessage(maybeGif.get()).queue();
                     return Optional.empty();
@@ -305,12 +287,7 @@ public class BehradCommand extends Command implements BehradMarker {
             if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
                 responses = responsesConfig.getSfwConfig().getResponses();
             } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
-                if (NAME_PATTERN.matcher(msgContent).find()) {
-                    event.getChannel().sendMessage(pickRandom(SHAYAN_IMGS)).queue();
-                    return Optional.empty();
-                }
-
-                Optional<String> maybeGif = maybeGetGif(event);
+                Optional<String> maybeGif = maybeGetGif();
                 if (maybeGif.isPresent()) {
                     event.getChannel().sendMessage(maybeGif.get()).queue();
                     return Optional.empty();
@@ -322,14 +299,8 @@ public class BehradCommand extends Command implements BehradMarker {
             }
         }
 
-        if (WEED_PATTERN.matcher(msgContent).find()) {
-            MessageEmbed messageEmbed = new EmbedBuilder()
-                    .setImage("https://cdn.discordapp.com/attachments/323666308107599872/750575541266022410/cfff6b4479a51d245d26cd82e16d4f3f.png")
-                    .build();
-            Message message = new MessageBuilder(messageEmbed)
-                    .setContent("420 whatcha smokin?")
-                    .build();
-            event.getChannel().sendMessage(message).queue();
+        if (StringUtils.containsIgnoreCase(msgContent, "hello")) {
+            event.getChannel().sendMessage(HELLO_GIF).queue();
             return Optional.empty();
         }
 
@@ -342,7 +313,7 @@ public class BehradCommand extends Command implements BehradMarker {
         return Optional.of(pickRandom(responses));
     }
 
-    private Optional<String> maybeGetGif(CommandEvent event) {
+    private Optional<String> maybeGetGif() {
         if (StringUtils.isNotBlank(baseConfig.gfycatClientId) && ThreadLocalRandom.current().nextInt(100) < 22) {
             try {
                 HttpPost credentialsRequest = new HttpPost("https://api.gfycat.com/v1/oauth/token");
@@ -363,15 +334,15 @@ public class BehradCommand extends Command implements BehradMarker {
                             JsonNode jsonNode = objectMapper.readTree(EntityUtils.toString(entity));
                             accessToken = jsonNode.get("access_token").asText();
                         } else {
-                            logger.error("Failed to fetch a behrad gif, token response body was null");
+                            logger.error("Failed to fetch a keanu gif, token response body was null");
                         }
                     } else {
-                        logger.error("Failed to fetch a behrad gif, got back non 200 status code from gfycat token endpoint");
+                        logger.error("Failed to fetch a keanu gif, got back non 200 status code from gfycat token endpoint");
                     }
                 }
 
                 if (accessToken != null) {
-                    HttpGet searchRequest = new HttpGet("https://api.gfycat.com/v1/gfycats/search?search_text=legends+of+tomorrow");
+                    HttpGet searchRequest = new HttpGet("https://api.gfycat.com/v1/gfycats/search?search_text=keanu+reeves");
                     searchRequest.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
                     searchRequest.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
                     try (CloseableHttpResponse response = gfycatClient.execute(searchRequest)) {
@@ -394,16 +365,16 @@ public class BehradCommand extends Command implements BehradMarker {
                                     logger.error("gfycat did not return an array of search results");
                                 }
                             } else {
-                                logger.error("Failed to fetch a behrad gif, search response body was null");
+                                logger.error("Failed to fetch a keanu gif, search response body was null");
                             }
                         } else {
-                            logger.error("Failed to fetch a behrad gif, got back non 200 status code from gfycat search endpoint");
+                            logger.error("Failed to fetch a keanu gif, got back non 200 status code from gfycat search endpoint");
                         }
                     }
                 }
             } catch (Exception e) {
                 // continue on with a normal response
-                logger.error("Failed to fetch a behrad gif", e);
+                logger.error("Failed to fetch a keanu gif", e);
             }
         }
 
