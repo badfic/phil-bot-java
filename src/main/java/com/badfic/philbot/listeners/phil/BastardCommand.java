@@ -34,12 +34,14 @@ public class BastardCommand extends Command implements PhilMarker {
         name = "bastard";
         help = "`!!bastard`\n" +
                 "\t`!!bastard rank` show your bastard rank\n" +
+                "\t`!!bastard leaderboard` show the bastard leaderboard\n" +
                 "\t`!!bastard up @incogmeato` upvote a user for the bastard games\n" +
                 "\t`!!bastard down @incogmeato` downvote a user for the bastard games\n" +
                 "\t`!!bastard flip` Flip a coin. Heads you win, tails you lose\n" +
                 "\t`!!bastard steal @incogmeato` Attempt to steal some points from incogmeato\n" +
                 "\t`!!bastard give 120 @incogmeato` give 120 points to incogmeato (mods only)\n" +
                 "\t`!!bastard take 120 @incogmeato` remove 120 points from incogmeato (mods only)\n" +
+                "\t`!!bastard set 120 @incogmeato` set incogmeato to 120 points (mods only)\n" +
                 "\t`!!bastard reset` reset everyone back to level 0\n (mods only)";
         this.discordUserRepository = discordUserRepository;
     }
@@ -62,6 +64,8 @@ public class BastardCommand extends Command implements PhilMarker {
             give(event);
         } else if (msgContent.startsWith("!!bastard take")) {
             take(event);
+        } else if (msgContent.startsWith("!!bastard set")) {
+            set(event);
         } else if (msgContent.startsWith("!!bastard leaderboard")) {
             leaderboard(event);
         } else if (msgContent.startsWith("!!bastard steal")) {
@@ -175,6 +179,22 @@ public class BastardCommand extends Command implements PhilMarker {
 
         DiscordUser user = optionalUserEntity.get();
         user.setXp(Math.max(0, user.getXp() - pointsToTake));
+        user = discordUserRepository.save(user);
+        assignRolesIfNeeded(member, user);
+    }
+
+    private void setPointsForMember(long points, Member member) {
+        String userId = member.getId();
+        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
+
+        if (!optionalUserEntity.isPresent()) {
+            DiscordUser newUser = new DiscordUser();
+            newUser.setId(userId);
+            optionalUserEntity = Optional.of(discordUserRepository.save(newUser));
+        }
+
+        DiscordUser user = optionalUserEntity.get();
+        user.setXp(points);
         user = discordUserRepository.save(user);
         assignRolesIfNeeded(member, user);
     }
@@ -331,7 +351,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
         givePointsToMember(pointsToGive, mentionedMembers.get(0));
 
-        event.replyFormatted("Gave %d xp to %s", pointsToGive, mentionedMembers.get(0).getAsMention());
+        event.replyFormatted("Added %s xp to %s", NumberFormat.getIntegerInstance().format(pointsToGive), mentionedMembers.get(0).getAsMention());
     }
 
     private void take(CommandEvent event) {
@@ -377,7 +397,53 @@ public class BastardCommand extends Command implements PhilMarker {
 
         takePointsFromMember(pointsToTake, mentionedMembers.get(0));
 
-        event.replyFormatted("Removed %d xp from %s", pointsToTake, mentionedMembers.get(0).getAsMention());
+        event.replyFormatted("Removed %s xp from %s", NumberFormat.getIntegerInstance().format(pointsToTake), mentionedMembers.get(0).getAsMention());
+    }
+
+    private void set(CommandEvent event) {
+        if (!hasRole(event.getMember(), "taketh away")) {
+            event.replyError("You do not have permission to use this command");
+            return;
+        }
+
+        String msgContent = event.getMessage().getContentRaw();
+
+        String stripped = msgContent.replace("!!bastard set", "").trim();
+        String[] split = stripped.split("\\s+");
+
+        if (split.length != 2) {
+            event.replyError("Badly formatted command. Example `!!bastard set 100 @incogmeato`");
+            return;
+        }
+
+        long pointsToSet;
+        try {
+            pointsToSet = Long.parseLong(split[0]);
+        } catch (NumberFormatException e) {
+            event.replyError("Failed to parse the number you provided.");
+            return;
+        }
+
+        if (pointsToSet < 0) {
+            event.replyError("Please provide a positive number");
+            return;
+        }
+
+        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
+
+        if (CollectionUtils.isEmpty(mentionedMembers) || mentionedMembers.size() > 1) {
+            event.replyError("Please specify only one user. Example `!!bastard set 100 @incogmeato`");
+            return;
+        }
+
+        if (!hasRole(mentionedMembers.get(0), "18+")) {
+            event.replyError(mentionedMembers.get(0).getAsMention() + " is not participating in the bastard games");
+            return;
+        }
+
+        setPointsForMember(pointsToSet, mentionedMembers.get(0));
+
+        event.replyFormatted("Set xp to %s for %s", NumberFormat.getIntegerInstance().format(pointsToSet), mentionedMembers.get(0).getAsMention());
     }
 
     private void reset(CommandEvent event) {
