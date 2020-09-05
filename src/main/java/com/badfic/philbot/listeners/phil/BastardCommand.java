@@ -207,8 +207,8 @@ public class BastardCommand extends Command implements PhilMarker {
 
         MessageEmbed messageEmbed = new EmbedBuilder()
                 .setImage(rank.getRankUpImage())
-                .setTitle("Your Rank")
-                .setDescription("Hey, " + member.getAsMention() + "! You are level " + rank.getLevel() + ": " + rank.getRoleName() + ".\n" +
+                .setTitle("Level " + rank.getLevel() + ": " + rank.getRoleName())
+                .setDescription(rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) + '\n' +
                         "You have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total bastard points.\n\n" +
                         "The next level is " +
                         (rank == nextRank
@@ -417,8 +417,8 @@ public class BastardCommand extends Command implements PhilMarker {
 
                 MessageEmbed messageEmbed = new EmbedBuilder()
                         .setImage(newRank.getRankUpImage())
-                        .setTitle("Level Changed!")
-                        .setDescription("Congratulations, " + member.getAsMention() + "! You are now level " + newRank.getLevel() + ": " + newRank.getRoleName())
+                        .setTitle("Level Change!")
+                        .setDescription(newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()))
                         .build();
 
                 announcementsChannel.sendMessage(messageEmbed).queue();
