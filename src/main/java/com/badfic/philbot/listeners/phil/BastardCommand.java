@@ -469,6 +469,7 @@ public class BastardCommand extends Command implements PhilMarker {
         }
 
         Rank newRank = Rank.byXp(user.getXp());
+        Role newRole = member.getGuild().getRolesByName(newRank.getRoleName(), true).get(0);
 
         if (!hasRole(member, newRank)) {
             Set<String> allRoleNames = Rank.getAllRoleNames();
@@ -478,7 +479,6 @@ public class BastardCommand extends Command implements PhilMarker {
                 guild.removeRoleFromMember(member, roleToRemove).complete();
             });
 
-            Role newRole = guild.getRolesByName(newRank.getRoleName(), true).get(0);
             guild.addRoleToMember(member, newRole).complete();
 
             if (newRank != Rank.CINNAMON_ROLL) {
@@ -493,11 +493,9 @@ public class BastardCommand extends Command implements PhilMarker {
 
                 announcementsChannel.sendMessage(messageEmbed).queue();
             }
-
-            return newRole;
         }
 
-        return null;
+        return newRole;
     }
 
     private static boolean hasRole(Member member, Rank rank) {
