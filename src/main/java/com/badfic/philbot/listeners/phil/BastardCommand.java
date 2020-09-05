@@ -70,33 +70,7 @@ public class BastardCommand extends Command implements PhilMarker {
         } else if (msgContent.startsWith("!!bastard leaderboard")) {
             leaderboard(event);
         } else if (msgContent.startsWith("!!bastard steal")) {
-            List<Member> mentionedUsers = event.getMessage().getMentionedMembers();
-
-            if (CollectionUtils.isEmpty(mentionedUsers) || mentionedUsers.size() > 1) {
-                event.replyError("Please only mention one user. Example `!!bastard steal @incogmeato`");
-                return;
-            }
-
-            Member mentionedMember = mentionedUsers.get(0);
-            int randomNumber;
-
-            if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < 30) {
-                event.reply(simpleEmbed("Steal", "You attempt to steal points from %s and fail miserably, you pay them %s points to forget this ever happened.", mentionedMember, randomNumber));
-                takePointsFromMember(randomNumber, event.getMember());
-                givePointsToMember(randomNumber, mentionedMember);
-            } else if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < 30) {
-                event.reply(simpleEmbed("Steal", "You successfully stole %s points from %s", randomNumber, mentionedMember));
-                takePointsFromMember(randomNumber, mentionedMember);
-                givePointsToMember(randomNumber, event.getMember());
-            } else if (ThreadLocalRandom.current().nextInt(1, 101) < 80) {
-                event.reply(simpleEmbed("Steal", "You failed to steal from %s but escaped unnoticed. Take 2 points for your troubles.", mentionedMember));
-                givePointsToMember(2, event.getMember());
-            } else {
-                randomNumber = ThreadLocalRandom.current().nextInt(1, 21);
-                event.reply(simpleEmbed("Steal", "I steal %s points, from both of you! Phil wins!", randomNumber));
-                takePointsFromMember(randomNumber, event.getMember());
-                takePointsFromMember(randomNumber, mentionedMember);
-            }
+            steal(event);
         } else if (msgContent.startsWith("!!bastard fight")) {
             event.reply(simpleEmbed("Fight", "Fights not implemented yet, come back soon. Here's 1 bastard point for your troubles"));
             givePointsToMember(1, event.getMember());
@@ -107,18 +81,7 @@ public class BastardCommand extends Command implements PhilMarker {
             event.reply(simpleEmbed("Roll", "Rolls not implemented yet, come back soon. Here's 1 bastard point for your troubles"));
             givePointsToMember(1, event.getMember());
         } else if (msgContent.startsWith("!!bastard flip")) {
-            int randomNumber = ThreadLocalRandom.current().nextInt(100);
-
-            if (randomNumber < 15) {
-                takePointsFromMember(4, event.getMember());
-                event.reply(simpleEmbed("Flip", "I don't feel like flipping a coin, I'm taking 4 bastard points from you \uD83D\uDCA9"));
-            } else if (randomNumber % 2 == 0) {
-                givePointsToMember(20, event.getMember());
-                event.reply(simpleEmbed("Flip", "I flipped a coin and it landed on heads, here's 20 bastard points \uD83D\uDCB0"));
-            } else {
-                takePointsFromMember(10, event.getMember());
-                event.reply(simpleEmbed("Flip", "I flipped a coin and it landed on tails, you lost 10 bastard points \uD83D\uDE2C"));
-            }
+            flip(event);
         } else if (msgContent.startsWith("!!bastard reset")) {
             if (!hasRole(event.getMember(), "queens of the castle")) {
                 event.replyError("You do not have permission to use this command");
@@ -143,12 +106,68 @@ public class BastardCommand extends Command implements PhilMarker {
             Message message = event.getMessage();
 
             long pointsToGive = NORMAL_MSG_POINTS;
-            pointsToGive += CollectionUtils.isNotEmpty(message.getAttachments()) ? 200 : 0;
-            pointsToGive += CollectionUtils.isNotEmpty(message.getEmbeds()) ? 200 : 0;
-            pointsToGive += CollectionUtils.isNotEmpty(message.getEmotes()) ? 200 : 0;
-            pointsToGive += message.isTTS() ? 200 : 0;
+            pointsToGive += CollectionUtils.isNotEmpty(message.getAttachments()) ? 100 : 0;
+            pointsToGive += CollectionUtils.isNotEmpty(message.getEmbeds()) ? 100 : 0;
+            pointsToGive += CollectionUtils.isNotEmpty(message.getEmotes()) ? 100 : 0;
+            pointsToGive += message.isTTS() ? 100 : 0;
+
+            if (event.getChannel().getName().equalsIgnoreCase("bot-space")) {
+                pointsToGive = 1;
+            } else if (event.getChannel().getName().equalsIgnoreCase("cursed-swamp")) {
+                pointsToGive += NORMAL_MSG_POINTS;
+            }
 
             givePointsToMember(pointsToGive, event.getMember());
+        }
+    }
+
+    private void flip(CommandEvent event) {
+        int randomNumber = ThreadLocalRandom.current().nextInt(100);
+
+        if (randomNumber < 15) {
+            takePointsFromMember(4, event.getMember());
+            event.reply(simpleEmbed("Flip", "I don't feel like flipping a coin, I'm taking 4 bastard points from you \uD83D\uDCA9"));
+        } else if (randomNumber % 2 == 0) {
+            givePointsToMember(20, event.getMember());
+            event.reply(simpleEmbed("Flip", "I flipped a coin and it landed on heads, here's 20 bastard points \uD83D\uDCB0"));
+        } else {
+            takePointsFromMember(10, event.getMember());
+            event.reply(simpleEmbed("Flip", "I flipped a coin and it landed on tails, you lost 10 bastard points \uD83D\uDE2C"));
+        }
+    }
+
+    private void steal(CommandEvent event) {
+        List<Member> mentionedUsers = event.getMessage().getMentionedMembers();
+
+        if (CollectionUtils.isEmpty(mentionedUsers) || mentionedUsers.size() > 1) {
+            event.replyError("Please only mention one user. Example `!!bastard steal @incogmeato`");
+            return;
+        }
+
+        Member mentionedMember = mentionedUsers.get(0);
+        if (event.getMember().getId().equalsIgnoreCase(mentionedMember.getId())) {
+            event.replyError("You can't steal from yourself");
+            return;
+        }
+
+        int randomNumber;
+        if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < 30) {
+            event.reply(simpleEmbed("Steal", "You attempt to steal points from %s and fail miserably, you pay them %s points to forget this ever happened. \uD83D\uDE2C",
+                    mentionedMember, randomNumber));
+            takePointsFromMember(randomNumber, event.getMember());
+            givePointsToMember(randomNumber, mentionedMember);
+        } else if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < 30) {
+            event.reply(simpleEmbed("Steal", "You successfully stole %s points from %s \uD83D\uDCB0", randomNumber, mentionedMember));
+            takePointsFromMember(randomNumber, mentionedMember);
+            givePointsToMember(randomNumber, event.getMember());
+        } else if (ThreadLocalRandom.current().nextInt(1, 101) < 80) {
+            event.reply(simpleEmbed("Steal", "You failed to steal from %s but escaped unnoticed. Take 2 points for your troubles. \uD83D\uDCB0", mentionedMember));
+            givePointsToMember(2, event.getMember());
+        } else {
+            randomNumber = ThreadLocalRandom.current().nextInt(1, 21);
+            event.reply(simpleEmbed("Steal", "I steal %s points, from both of you! Phil wins! \uD83D\uDE2C", randomNumber));
+            takePointsFromMember(randomNumber, event.getMember());
+            takePointsFromMember(randomNumber, mentionedMember);
         }
     }
 
@@ -287,6 +306,11 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
+        if (event.getMember().getId().equalsIgnoreCase(mentionedMembers.get(0).getId())) {
+            event.replyError("You can't upvote yourself");
+            return;
+        }
+
         givePointsToMember(250, mentionedMembers.get(0));
 
         event.replySuccess("Successfully upvoted " + mentionedMembers.get(0).getAsMention());
@@ -302,6 +326,11 @@ public class BastardCommand extends Command implements PhilMarker {
 
         if (!hasRole(mentionedMembers.get(0), "18+")) {
             event.replyError(mentionedMembers.get(0).getAsMention() + " is not participating in the bastard games");
+            return;
+        }
+
+        if (event.getMember().getId().equalsIgnoreCase(mentionedMembers.get(0).getId())) {
+            event.replyError("You can't downvote yourself");
             return;
         }
 
