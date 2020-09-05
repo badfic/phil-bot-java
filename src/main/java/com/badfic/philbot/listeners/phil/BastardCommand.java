@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -219,7 +220,7 @@ public class BastardCommand extends Command implements PhilMarker {
         }
 
         DiscordUser user = optionalUserEntity.get();
-        assignRolesIfNeeded(member, user);
+        Role role = assignRolesIfNeeded(member, user);
 
         Rank[] allRanks = Rank.values();
         Rank rank = Rank.byXp(user.getXp());
@@ -228,6 +229,7 @@ public class BastardCommand extends Command implements PhilMarker {
         MessageEmbed messageEmbed = new EmbedBuilder()
                 .setImage(rank.getRankUpImage())
                 .setTitle("Level " + rank.getLevel() + ": " + rank.getRoleName())
+                .setColor(role.getColor())
                 .setDescription(rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) + '\n' +
                         "You have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total bastard points.\n\n" +
                         "The next level is " +
@@ -461,9 +463,9 @@ public class BastardCommand extends Command implements PhilMarker {
         event.replySuccess("Reset the bastard games");
     }
 
-    private void assignRolesIfNeeded(Member member, DiscordUser user) {
+    private Role assignRolesIfNeeded(Member member, DiscordUser user) {
         if (!hasRole(member, "18+")) {
-            return;
+            return null;
         }
 
         Rank newRank = Rank.byXp(user.getXp());
@@ -476,7 +478,8 @@ public class BastardCommand extends Command implements PhilMarker {
                 guild.removeRoleFromMember(member, roleToRemove).complete();
             });
 
-            guild.addRoleToMember(member, guild.getRolesByName(newRank.getRoleName(), true).get(0)).complete();
+            Role newRole = guild.getRolesByName(newRank.getRoleName(), true).get(0);
+            guild.addRoleToMember(member, newRole).complete();
 
             if (newRank != Rank.CINNAMON_ROLL) {
                 TextChannel announcementsChannel = member.getGuild().getTextChannelsByName("bastard-of-the-week", false).get(0);
@@ -484,12 +487,17 @@ public class BastardCommand extends Command implements PhilMarker {
                 MessageEmbed messageEmbed = new EmbedBuilder()
                         .setImage(newRank.getRankUpImage())
                         .setTitle("Level Change!")
+                        .setColor(newRole.getColor())
                         .setDescription(newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()))
                         .build();
 
                 announcementsChannel.sendMessage(messageEmbed).queue();
             }
+
+            return newRole;
         }
+
+        return null;
     }
 
     private static boolean hasRole(Member member, Rank rank) {
