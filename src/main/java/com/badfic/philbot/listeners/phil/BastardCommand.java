@@ -479,7 +479,7 @@ public class BastardCommand extends Command implements PhilMarker {
             guild.addRoleToMember(member, guild.getRolesByName(newRank.getRoleName(), true).get(0)).complete();
 
             if (newRank != Rank.CINNAMON_ROLL) {
-                TextChannel announcementsChannel = member.getGuild().getTextChannelsByName("bot-space", false).get(0);
+                TextChannel announcementsChannel = member.getGuild().getTextChannelsByName("bastard-of-the-week", false).get(0);
 
                 MessageEmbed messageEmbed = new EmbedBuilder()
                         .setImage(newRank.getRankUpImage())
