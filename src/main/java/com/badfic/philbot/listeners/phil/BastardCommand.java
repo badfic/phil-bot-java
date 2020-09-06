@@ -28,7 +28,10 @@ public class BastardCommand extends Command implements PhilMarker {
 
     private static volatile boolean AWAITING_RESET_CONFIRMATION = false;
     private static final long NORMAL_MSG_POINTS = 7;
-    private static final String[] LEADERBOARD_MEDALS = {"\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49", "4", "5", "6", "7", "8", "9", "10"};
+    private static final String[] LEADERBOARD_MEDALS = {
+            "\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49",
+            "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
+    };
 
     private final DiscordUserRepository discordUserRepository;
 
