@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -26,8 +27,9 @@ import org.springframework.stereotype.Component;
 public class BastardCommand extends Command implements PhilMarker {
 
     private static volatile boolean AWAITING_RESET_CONFIRMATION = false;
-
     private static final long NORMAL_MSG_POINTS = 7;
+    private static final String[] LEADERBOARD_MEDALS = {"\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49", "4", "5", "6", "7", "8", "9", "10"};
+
     private final DiscordUserRepository discordUserRepository;
 
     @Autowired
@@ -267,16 +269,16 @@ public class BastardCommand extends Command implements PhilMarker {
 
         bastardUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
-        int place = 1;
+        AtomicInteger place = new AtomicInteger(0);
         StringBuilder description = new StringBuilder();
-        for (DiscordUser bastardUser : bastardUsers) {
-            description.append(place++)
+        bastardUsers.stream().limit(10).forEachOrdered(bastardUser -> {
+            description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
                     .append(": <@!")
                     .append(bastardUser.getId())
                     .append("> - ")
                     .append(NumberFormat.getIntegerInstance().format(bastardUser.getXp()))
                     .append('\n');
-        }
+        });
 
         MessageEmbed messageEmbed = new EmbedBuilder()
                 .setTitle("Leaderboard")
