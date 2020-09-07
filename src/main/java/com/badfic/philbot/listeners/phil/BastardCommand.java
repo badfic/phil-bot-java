@@ -155,6 +155,11 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
+        if (!hasRole(mentionedMember, "18+")) {
+            event.replyError("You can't steal from non 18+ members");
+            return;
+        }
+
         int randomNumber;
         if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < 30) {
             event.reply(simpleEmbed("Steal", "You attempt to steal points from %s and fail miserably, you pay them %s points to forget this ever happened. \uD83D\uDE2C",
