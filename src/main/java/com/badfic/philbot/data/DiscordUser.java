@@ -1,9 +1,11 @@
 package com.badfic.philbot.data;
 
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "discord_user")
@@ -14,6 +16,10 @@ public class DiscordUser {
 
     @Column
     private long xp;
+
+    @Column(columnDefinition = "TIMESTAMP")
+    @UpdateTimestamp
+    private LocalDateTime updateTime;
 
     public String getId() {
         return id;
@@ -31,4 +37,11 @@ public class DiscordUser {
         this.xp = xp;
     }
 
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
 }

@@ -7,12 +7,18 @@ import com.badfic.philbot.repository.DiscordUserRepository;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.Resource;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -21,6 +27,8 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,6 +42,10 @@ public class BastardCommand extends Command implements PhilMarker {
     };
 
     private final DiscordUserRepository discordUserRepository;
+
+    @Resource(name = "philJda")
+    @Lazy
+    private JDA philJda;
 
     @Autowired
     public BastardCommand(DiscordUserRepository discordUserRepository) {
@@ -50,6 +62,37 @@ public class BastardCommand extends Command implements PhilMarker {
                 "\t`!!bastard set 120 @incogmeato` set incogmeato to 120 points (mods only)\n" +
                 "\t`!!bastard reset` reset everyone back to level 0\n (mods only)";
         this.discordUserRepository = discordUserRepository;
+    }
+
+    @Scheduled(cron = "0 0 1 * * ?", zone = "GMT")
+    public void lottery() {
+        List<DiscordUser> allUsers = discordUserRepository.findAll();
+
+        long startTime = System.currentTimeMillis();
+        Member member = null;
+        while (member == null && System.currentTimeMillis() - startTime < TimeUnit.SECONDS.toMillis(30)) {
+            DiscordUser winningUser = pickRandom(allUsers);
+            Member memberById = philJda.getGuilds().get(0).getMemberById(winningUser.getId());
+
+            if (memberById != null && hasRole(memberById, "18+") && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
+                member = memberById;
+            }
+        }
+
+        if (member == null) {
+            philJda.getTextChannelsByName("bastard-of-the-week", false)
+                    .get(0)
+                    .sendMessage(simpleEmbed("Lottery Results", "Unable to choose a lottery winner, nobody wins"))
+                    .queue();
+            return;
+        }
+
+        givePointsToMember(1000, member);
+
+        philJda.getTextChannelsByName("bastard-of-the-week", false)
+                .get(0)
+                .sendMessage(simpleEmbed("Lottery Results", "Congratulations %s you won today's lottery worth 1000 bastard points!", member.getAsMention()))
+                .queue();
     }
 
     @Override
@@ -157,6 +200,12 @@ public class BastardCommand extends Command implements PhilMarker {
 
         if (!hasRole(mentionedMember, "18+")) {
             event.replyError("You can't steal from non 18+ members");
+            return;
+        }
+
+        Optional<DiscordUser> optionalMentionedUser = discordUserRepository.findById(mentionedMember.getId());
+        if (!optionalMentionedUser.isPresent() || optionalMentionedUser.get().getXp() <= 0) {
+            event.replyError("You can't steal from them, they don't have any points");
             return;
         }
 
@@ -543,6 +592,15 @@ public class BastardCommand extends Command implements PhilMarker {
 
     private static boolean hasRole(Member member, String role) {
         return member.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
+    }
+
+    private static <T> T pickRandom(Collection<T> collection) {
+        int index = ThreadLocalRandom.current().nextInt(collection.size());
+        Iterator<T> iterator = collection.iterator();
+        for (int i = 0; i < index; i++) {
+            iterator.next();
+        }
+        return iterator.next();
     }
 
 }

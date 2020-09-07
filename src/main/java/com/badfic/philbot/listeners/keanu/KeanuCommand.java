@@ -14,14 +14,18 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiManager;
 import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import javax.annotation.Resource;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -40,6 +44,8 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -47,12 +53,42 @@ public class KeanuCommand extends Command implements KeanuMarker {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final String HELLO_GIF = "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves";
+    private static final Set<String> GOOD_MORNING_GIFS = new HashSet<>(Arrays.asList(
+            HELLO_GIF,
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638622099832852/donut.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638643562086432/smilesmile.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638678928457768/puppies.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638684641230908/hecute.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638695999537192/beardrub.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638707026362368/bow.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638709043691580/keanu.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638732288393256/yeah.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638754799353887/eyy.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638757303484526/eyebrows.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638770238586950/kitteneanu.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638772667220049/gay.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638780715958403/imweird_imaweirdo.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638791629668493/keanu_by_firelight.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638807534469141/keanu_smooch.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638810201915392/keanu_stark.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638826379346031/breathtaking.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638835518734446/breath_taking.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638836797997106/winkwonk.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638849771110410/laugh.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638864857890816/keanushark.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638874966163526/keanu_marshmallow.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638879500206171/keanu_confetti.gif"
+    ));
 
     private final boolean isTestEnvironment;
     private final BaseConfig baseConfig;
     private final KeanuResponsesConfigRepository configRepository;
     private final CloseableHttpClient gfycatClient;
     private final ObjectMapper objectMapper;
+
+    @Resource(name = "keanuJda")
+    @Lazy
+    private JDA keanuJda;
 
     @Autowired
     public KeanuCommand(ObjectMapper objectMapper, BaseConfig baseConfig, KeanuResponsesConfigRepository keanuResponsesConfigRepository,
@@ -92,6 +128,12 @@ public class KeanuCommand extends Command implements KeanuMarker {
             responsesConfig.setNsfwConfig(nsfwConfig);
             configRepository.save(responsesConfig);
         }
+    }
+
+    @Scheduled(cron = "0 0 17 * * ?", zone = "GMT")
+    public void goodMorning() {
+        TextChannel general = keanuJda.getTextChannelsByName("general", false).get(0);
+        general.sendMessage(pickRandom(GOOD_MORNING_GIFS)).queue();
     }
 
     @Override
@@ -285,7 +327,11 @@ public class KeanuCommand extends Command implements KeanuMarker {
             }
         } else {
             if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
-                responses = responsesConfig.getSfwConfig().getResponses();
+                if (ThreadLocalRandom.current().nextInt(100) < 22) {
+                    responses = GOOD_MORNING_GIFS;
+                } else {
+                    responses = responsesConfig.getSfwConfig().getResponses();
+                }
             } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
                 Optional<String> maybeGif = maybeGetGif();
                 if (maybeGif.isPresent()) {
