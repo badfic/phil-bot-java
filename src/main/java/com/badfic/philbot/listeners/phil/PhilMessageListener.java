@@ -92,4 +92,5 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
         bastardCommand.givePointsToMember(7, event.getMember());
     }
+
 }

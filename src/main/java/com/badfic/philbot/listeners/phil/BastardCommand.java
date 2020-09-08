@@ -8,6 +8,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -634,11 +635,49 @@ public class BastardCommand extends Command implements PhilMarker {
     }
 
     public void voiceJoined(Member member) {
+        if (!hasRole(member, "18+")) {
+            return;
+        }
 
+        String userId = member.getId();
+        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
+
+        if (!optionalUserEntity.isPresent()) {
+            DiscordUser newUser = new DiscordUser();
+            newUser.setId(userId);
+            optionalUserEntity = Optional.of(discordUserRepository.save(newUser));
+        }
+
+        DiscordUser user = optionalUserEntity.get();
+        user.setVoiceJoined(LocalDateTime.now());
+        discordUserRepository.save(user);
     }
 
     public void voiceLeft(Member member) {
+        if (!hasRole(member, "18+")) {
+            return;
+        }
 
+        String userId = member.getId();
+        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
+
+        if (!optionalUserEntity.isPresent()) {
+            return;
+        }
+
+        DiscordUser user = optionalUserEntity.get();
+        LocalDateTime timeTheyJoinedVoice = user.getVoiceJoined();
+
+        if (timeTheyJoinedVoice == null) {
+            return;
+        }
+
+        long minutes = ChronoUnit.MINUTES.between(timeTheyJoinedVoice, LocalDateTime.now());
+        long points = minutes * 5;
+        user.setVoiceJoined(null);
+        discordUserRepository.save(user);
+
+        givePointsToMember(points, member);
     }
 
 }
