@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,4 +88,8 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
         bastardCommand.givePointsToMember(250, event.getMember());
     }
 
+    @Override
+    public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+        bastardCommand.givePointsToMember(7, event.getMember());
+    }
 }
