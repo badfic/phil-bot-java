@@ -63,6 +63,7 @@ public class BastardCommand extends Command implements PhilMarker {
                 "\t`!!bastard up @incogmeato` upvote a user for the bastard games\n" +
                 "\t`!!bastard down @incogmeato` downvote a user for the bastard games\n" +
                 "\t`!!bastard flip` Flip a coin. Heads you win, tails you lose\n" +
+                "\t`!!bastard slots` Play slots. Winners for 2 out of 3 or 3 out of 3.\n" +
                 "\t`!!bastard steal @incogmeato` Attempt to steal some points from incogmeato\n" +
                 "\t`!!bastard give 120 @incogmeato` give 120 points to incogmeato (mods only)\n" +
                 "\t`!!bastard take 120 @incogmeato` remove 120 points from incogmeato (mods only)\n" +
