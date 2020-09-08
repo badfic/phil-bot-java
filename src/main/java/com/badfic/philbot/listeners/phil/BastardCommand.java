@@ -8,7 +8,9 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +42,11 @@ public class BastardCommand extends Command implements PhilMarker {
             "\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49",
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
     };
+    private static final String SLOT_MACHINE = "\uD83C\uDFB0";
+    private static final Set<String> SLOTS = new HashSet<>(Arrays.asList(
+            "\uD83E\uDD5D", "\uD83C\uDF53", "\uD83C\uDF4B", "\uD83E\uDD6D", "\uD83C\uDF51", "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4D", "\uD83C\uDF50",
+            "\uD83C\uDF47", "\uD83C\uDF49", "\uD83C\uDF4C", "\uD83C\uDF52", "\uD83C\uDF4E"
+    ));
 
     private final DiscordUserRepository discordUserRepository;
 
@@ -122,12 +129,8 @@ public class BastardCommand extends Command implements PhilMarker {
         } else if (msgContent.startsWith("!!bastard fight")) {
             event.reply(simpleEmbed("Fight", "Fights not implemented yet, come back soon. Here's 1 bastard point for your troubles"));
             givePointsToMember(1, event.getMember());
-        } else if (msgContent.startsWith("!!bastard gamble")) {
-            event.reply(simpleEmbed("Bet", "Bets not implemented yet, come back soon. Here's 1 bastard point for your troubles"));
-            givePointsToMember(1, event.getMember());
-        } else if (msgContent.startsWith("!!bastard roll")) {
-            event.reply(simpleEmbed("Roll", "Rolls not implemented yet, come back soon. Here's 1 bastard point for your troubles"));
-            givePointsToMember(1, event.getMember());
+        } else if (msgContent.startsWith("!!bastard slots")) {
+            slots(event);
         } else if (msgContent.startsWith("!!bastard flip")) {
             flip(event);
         } else if (msgContent.startsWith("!!bastard reset")) {
@@ -157,7 +160,6 @@ public class BastardCommand extends Command implements PhilMarker {
             pointsToGive += CollectionUtils.isNotEmpty(message.getAttachments()) ? 100 : 0;
             pointsToGive += CollectionUtils.isNotEmpty(message.getEmbeds()) ? 100 : 0;
             pointsToGive += CollectionUtils.isNotEmpty(message.getEmotes()) ? 100 : 0;
-            pointsToGive += message.isTTS() ? 100 : 0;
 
             if (event.getChannel().getName().equalsIgnoreCase("bot-space")) {
                 pointsToGive = 1;
@@ -172,7 +174,7 @@ public class BastardCommand extends Command implements PhilMarker {
     private void flip(CommandEvent event) {
         int randomNumber = ThreadLocalRandom.current().nextInt(100);
 
-        if (randomNumber < 15) {
+        if (randomNumber < 5) {
             takePointsFromMember(4, event.getMember());
             event.reply(simpleEmbed("Flip", "I don't feel like flipping a coin, I'm taking 4 bastard points from you \uD83D\uDCA9"));
         } else if (randomNumber % 2 == 0) {
@@ -181,6 +183,25 @@ public class BastardCommand extends Command implements PhilMarker {
         } else {
             takePointsFromMember(10, event.getMember());
             event.reply(simpleEmbed("Flip", "I flipped a coin and it landed on tails, you lost 10 bastard points \uD83D\uDE2C"));
+        }
+    }
+
+    private void slots(CommandEvent event) {
+        String one = pickRandom(SLOTS);
+        String two = pickRandom(SLOTS);
+        String three = pickRandom(SLOTS);
+
+        if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
+            givePointsToMember(1000, event.getMember());
+            event.reply(simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, "%s\n%s%s%s \nYou won 1000 bastard points!",
+                    event.getMember().getAsMention(), one, two, three));
+        } else if (one.equalsIgnoreCase(two) || one.equalsIgnoreCase(three) || two.equalsIgnoreCase(three)) {
+            givePointsToMember(10, event.getMember());
+            event.reply(simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, "%s\n%s%s%s \nYou got 2 out of 3! You won 10 bastard points!",
+                    event.getMember().getAsMention(), one, two, three));
+        } else {
+            event.reply(simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, "%s\n%s%s%s",
+                    event.getMember().getAsMention(), one, two, three));
         }
     }
 
