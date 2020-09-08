@@ -253,6 +253,10 @@ public class BastardCommand extends Command implements PhilMarker {
     }
 
     public void givePointsToMember(long pointsToGive, Member member) {
+        if (!hasRole(member, "18+")) {
+            return;
+        }
+
         String userId = member.getId();
         Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
 
@@ -269,6 +273,10 @@ public class BastardCommand extends Command implements PhilMarker {
     }
 
     public void takePointsFromMember(long pointsToTake, Member member) {
+        if (!hasRole(member, "18+")) {
+            return;
+        }
+
         String userId = member.getId();
         Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
 
@@ -623,6 +631,14 @@ public class BastardCommand extends Command implements PhilMarker {
             iterator.next();
         }
         return iterator.next();
+    }
+
+    public void voiceJoined(Member member) {
+
+    }
+
+    public void voiceLeft(Member member) {
+
     }
 
 }

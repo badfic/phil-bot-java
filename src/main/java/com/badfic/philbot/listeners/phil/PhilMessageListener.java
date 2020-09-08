@@ -80,12 +80,12 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     @Override
     public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-        bastardCommand.givePointsToMember(250, event.getMember());
+        bastardCommand.voiceJoined(event.getMember());
     }
 
     @Override
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        bastardCommand.givePointsToMember(250, event.getMember());
+        bastardCommand.voiceLeft(event.getMember());
     }
 
     @Override
