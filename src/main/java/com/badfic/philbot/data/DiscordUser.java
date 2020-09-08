@@ -21,6 +21,9 @@ public class DiscordUser {
     @UpdateTimestamp
     private LocalDateTime updateTime;
 
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime voiceJoined;
+
     public String getId() {
         return id;
     }
@@ -43,5 +46,13 @@ public class DiscordUser {
 
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public LocalDateTime getVoiceJoined() {
+        return voiceJoined;
+    }
+
+    public void setVoiceJoined(LocalDateTime voiceJoined) {
+        this.voiceJoined = voiceJoined;
     }
 }
