@@ -77,7 +77,8 @@ public class KeanuCommand extends Command implements KeanuMarker {
             "https://cdn.discordapp.com/attachments/323666308107599872/752638849771110410/laugh.gif",
             "https://cdn.discordapp.com/attachments/323666308107599872/752638864857890816/keanushark.gif",
             "https://cdn.discordapp.com/attachments/323666308107599872/752638874966163526/keanu_marshmallow.gif",
-            "https://cdn.discordapp.com/attachments/323666308107599872/752638879500206171/keanu_confetti.gif"
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638879500206171/keanu_confetti.gif",
+            "https://cdn.discordapp.com/attachments/741030569307275436/753991114301898762/image0.png"
     ));
 
     private final boolean isTestEnvironment;
@@ -327,7 +328,7 @@ public class KeanuCommand extends Command implements KeanuMarker {
             }
         } else {
             if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
-                if (ThreadLocalRandom.current().nextInt(100) < 22) {
+                if (ThreadLocalRandom.current().nextInt(100) < 28) {
                     responses = GOOD_MORNING_GIFS;
                 } else {
                     responses = responsesConfig.getSfwConfig().getResponses();
