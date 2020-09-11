@@ -22,7 +22,7 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
-    private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer|phellen|cw|willip|schlemmer|pharole|klaskin)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer|phellen|cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam)\\b", Pattern.CASE_INSENSITIVE);
 
     private final boolean isTestEnvironment;
     private final PhilCommand philCommand;
