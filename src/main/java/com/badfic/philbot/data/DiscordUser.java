@@ -19,10 +19,13 @@ public class DiscordUser {
 
     @Column(columnDefinition = "TIMESTAMP")
     @UpdateTimestamp
-    private LocalDateTime updateTime;
+    private LocalDateTime updateTime = LocalDateTime.now();
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime voiceJoined;
+
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime lastSlots = LocalDateTime.now();
 
     public String getId() {
         return id;
@@ -54,5 +57,13 @@ public class DiscordUser {
 
     public void setVoiceJoined(LocalDateTime voiceJoined) {
         this.voiceJoined = voiceJoined;
+    }
+
+    public LocalDateTime getLastSlots() {
+        return lastSlots;
+    }
+
+    public void setLastSlots(LocalDateTime lastSlots) {
+        this.lastSlots = lastSlots;
     }
 }

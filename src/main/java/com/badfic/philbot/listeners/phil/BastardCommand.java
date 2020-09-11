@@ -7,6 +7,7 @@ import com.badfic.philbot.repository.DiscordUserRepository;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -104,6 +105,50 @@ public class BastardCommand extends Command implements PhilMarker {
                 .queue();
     }
 
+    public void givePointsToMember(long pointsToGive, Member member, DiscordUser user) {
+        if (!hasRole(member, "18+")) {
+            return;
+        }
+
+        user.setXp(user.getXp() + pointsToGive);
+        user = discordUserRepository.save(user);
+        assignRolesIfNeeded(member, user);
+    }
+
+    public void givePointsToMember(long pointsToGive, Member member) {
+        givePointsToMember(pointsToGive, member, getDiscordUserByMember(member));
+    }
+
+    public void voiceJoined(Member member) {
+        if (!hasRole(member, "18+")) {
+            return;
+        }
+
+        DiscordUser user = getDiscordUserByMember(member);
+        user.setVoiceJoined(LocalDateTime.now());
+        discordUserRepository.save(user);
+    }
+
+    public void voiceLeft(Member member) {
+        if (!hasRole(member, "18+")) {
+            return;
+        }
+
+        DiscordUser user = getDiscordUserByMember(member);
+        LocalDateTime timeTheyJoinedVoice = user.getVoiceJoined();
+
+        if (timeTheyJoinedVoice == null) {
+            return;
+        }
+
+        long minutes = ChronoUnit.MINUTES.between(timeTheyJoinedVoice, LocalDateTime.now());
+        long points = minutes * 5;
+        user.setVoiceJoined(null);
+        discordUserRepository.save(user);
+
+        givePointsToMember(points, member);
+    }
+
     @Override
     protected void execute(CommandEvent event) {
         if (event.getAuthor().isBot() || !hasRole(event.getMember(), "18+")) {
@@ -173,6 +218,19 @@ public class BastardCommand extends Command implements PhilMarker {
         }
     }
 
+    private DiscordUser getDiscordUserByMember(Member member) {
+        String userId = member.getId();
+        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
+
+        if (!optionalUserEntity.isPresent()) {
+            DiscordUser newUser = new DiscordUser();
+            newUser.setId(userId);
+            optionalUserEntity = Optional.of(discordUserRepository.save(newUser));
+        }
+
+        return optionalUserEntity.get();
+    }
+
     private void flip(CommandEvent event) {
         int randomNumber = ThreadLocalRandom.current().nextInt(100);
 
@@ -189,21 +247,40 @@ public class BastardCommand extends Command implements PhilMarker {
     }
 
     private void slots(CommandEvent event) {
+        Member member = event.getMember();
+        DiscordUser discordUser = getDiscordUserByMember(member);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextSlotsTime = discordUser.getLastSlots().plus(3, ChronoUnit.MINUTES);
+        if (now.isBefore(nextSlotsTime)) {
+            Duration duration = Duration.between(now, nextSlotsTime);
+
+            if (duration.getSeconds() < 60) {
+                event.replyError("You must wait " + (duration.getSeconds() + 1) + " seconds before playing slots again");
+            } else {
+                event.replyError("You must wait " + (duration.toMinutes() + 1) + " minutes before playing slots again");
+            }
+            return;
+        }
+
+        discordUser.setLastSlots(now);
+
         String one = pickRandom(SLOTS);
         String two = pickRandom(SLOTS);
         String three = pickRandom(SLOTS);
 
         if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
-            givePointsToMember(1000, event.getMember());
+            givePointsToMember(1000, member, discordUser);
             event.reply(simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, "%s\n%s%s%s \nYou won 1000 bastard points!",
-                    event.getMember().getAsMention(), one, two, three));
+                    member.getAsMention(), one, two, three));
         } else if (one.equalsIgnoreCase(two) || one.equalsIgnoreCase(three) || two.equalsIgnoreCase(three)) {
-            givePointsToMember(10, event.getMember());
+            givePointsToMember(10, member, discordUser);
             event.reply(simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, "%s\n%s%s%s \nYou got 2 out of 3! You won 10 bastard points!",
-                    event.getMember().getAsMention(), one, two, three));
+                    member.getAsMention(), one, two, three));
         } else {
             event.reply(simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, "%s\n%s%s%s",
-                    event.getMember().getAsMention(), one, two, three));
+                    member.getAsMention(), one, two, three));
+            discordUserRepository.save(discordUser);
         }
     }
 
@@ -226,8 +303,8 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        Optional<DiscordUser> optionalMentionedUser = discordUserRepository.findById(mentionedMember.getId());
-        if (!optionalMentionedUser.isPresent() || optionalMentionedUser.get().getXp() <= 0) {
+        DiscordUser mentionedUser = getDiscordUserByMember(mentionedMember);
+        if (mentionedUser.getXp() <= 0) {
             event.replyError("You can't steal from them, they don't have any points");
             return;
         }
@@ -253,57 +330,19 @@ public class BastardCommand extends Command implements PhilMarker {
         }
     }
 
-    public void givePointsToMember(long pointsToGive, Member member) {
+    private void takePointsFromMember(long pointsToTake, Member member) {
         if (!hasRole(member, "18+")) {
             return;
         }
 
-        String userId = member.getId();
-        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
-
-        if (!optionalUserEntity.isPresent()) {
-            DiscordUser newUser = new DiscordUser();
-            newUser.setId(userId);
-            optionalUserEntity = Optional.of(discordUserRepository.save(newUser));
-        }
-
-        DiscordUser user = optionalUserEntity.get();
-        user.setXp(user.getXp() + pointsToGive);
-        user = discordUserRepository.save(user);
-        assignRolesIfNeeded(member, user);
-    }
-
-    public void takePointsFromMember(long pointsToTake, Member member) {
-        if (!hasRole(member, "18+")) {
-            return;
-        }
-
-        String userId = member.getId();
-        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
-
-        if (!optionalUserEntity.isPresent()) {
-            DiscordUser newUser = new DiscordUser();
-            newUser.setId(userId);
-            optionalUserEntity = Optional.of(discordUserRepository.save(newUser));
-        }
-
-        DiscordUser user = optionalUserEntity.get();
+        DiscordUser user = getDiscordUserByMember(member);
         user.setXp(Math.max(0, user.getXp() - pointsToTake));
         user = discordUserRepository.save(user);
         assignRolesIfNeeded(member, user);
     }
 
     private void setPointsForMember(long points, Member member) {
-        String userId = member.getId();
-        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
-
-        if (!optionalUserEntity.isPresent()) {
-            DiscordUser newUser = new DiscordUser();
-            newUser.setId(userId);
-            optionalUserEntity = Optional.of(discordUserRepository.save(newUser));
-        }
-
-        DiscordUser user = optionalUserEntity.get();
+        DiscordUser user = getDiscordUserByMember(member);
         user.setXp(points);
         user = discordUserRepository.save(user);
         assignRolesIfNeeded(member, user);
@@ -320,15 +359,7 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(member.getId());
-
-        if (!optionalUserEntity.isPresent()) {
-            DiscordUser newUser = new DiscordUser();
-            newUser.setId(member.getId());
-            optionalUserEntity = Optional.of(discordUserRepository.save(newUser));
-        }
-
-        DiscordUser user = optionalUserEntity.get();
+        DiscordUser user = getDiscordUserByMember(member);
         Role role = assignRolesIfNeeded(member, user);
 
         Rank[] allRanks = Rank.values();
@@ -632,52 +663,6 @@ public class BastardCommand extends Command implements PhilMarker {
             iterator.next();
         }
         return iterator.next();
-    }
-
-    public void voiceJoined(Member member) {
-        if (!hasRole(member, "18+")) {
-            return;
-        }
-
-        String userId = member.getId();
-        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
-
-        if (!optionalUserEntity.isPresent()) {
-            DiscordUser newUser = new DiscordUser();
-            newUser.setId(userId);
-            optionalUserEntity = Optional.of(discordUserRepository.save(newUser));
-        }
-
-        DiscordUser user = optionalUserEntity.get();
-        user.setVoiceJoined(LocalDateTime.now());
-        discordUserRepository.save(user);
-    }
-
-    public void voiceLeft(Member member) {
-        if (!hasRole(member, "18+")) {
-            return;
-        }
-
-        String userId = member.getId();
-        Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
-
-        if (!optionalUserEntity.isPresent()) {
-            return;
-        }
-
-        DiscordUser user = optionalUserEntity.get();
-        LocalDateTime timeTheyJoinedVoice = user.getVoiceJoined();
-
-        if (timeTheyJoinedVoice == null) {
-            return;
-        }
-
-        long minutes = ChronoUnit.MINUTES.between(timeTheyJoinedVoice, LocalDateTime.now());
-        long points = minutes * 5;
-        user.setVoiceJoined(null);
-        discordUserRepository.save(user);
-
-        givePointsToMember(points, member);
     }
 
 }
