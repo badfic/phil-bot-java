@@ -27,6 +27,9 @@ public class DiscordUser {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime lastSlots = LocalDateTime.now();
 
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime lastMessageBonus = LocalDateTime.now();
+
     public String getId() {
         return id;
     }
@@ -65,5 +68,13 @@ public class DiscordUser {
 
     public void setLastSlots(LocalDateTime lastSlots) {
         this.lastSlots = lastSlots;
+    }
+
+    public LocalDateTime getLastMessageBonus() {
+        return lastMessageBonus;
+    }
+
+    public void setLastMessageBonus(LocalDateTime lastMessageBonus) {
+        this.lastMessageBonus = lastMessageBonus;
     }
 }
