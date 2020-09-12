@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -79,11 +78,12 @@ public class KeanuAppConfig {
                                     .append(" - ").append(command.getHelp());
                         }
                     }
-                    User owner = event.getJDA().getUserById(baseConfig.ownerId);
-                    if (owner != null) {
-                        builder.append("\n\nFor additional help, contact **").append(owner.getName()).append("**#").append(owner.getDiscriminator());
-                    }
-                    event.replyInDm(builder.toString(), s -> {}, f -> event.replyWarning("Help cannot be sent because you are blocking Direct Messages."));
+                    event.getJDA().retrieveUserById(baseConfig.ownerId).submit().whenComplete((owner, err) -> {
+                        if (owner != null) {
+                            builder.append("\n\nFor additional help, contact **").append(owner.getName()).append("**#").append(owner.getDiscriminator());
+                        }
+                        event.replyInDm(builder.toString(), s -> {}, f -> event.replyWarning("Help cannot be sent because you are blocking Direct Messages."));
+                    });
                 })
                 .addCommands(keanuCommands.toArray(new Command[0]))
                 .setActivity(Activity.watching(WATCHING_STATUS_LIST[ThreadLocalRandom.current().nextInt(WATCHING_STATUS_LIST.length)]))

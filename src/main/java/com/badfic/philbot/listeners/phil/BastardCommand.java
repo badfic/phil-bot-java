@@ -82,11 +82,13 @@ public class BastardCommand extends Command implements PhilMarker {
         Member member = null;
         while (member == null && System.currentTimeMillis() - startTime < TimeUnit.SECONDS.toMillis(30)) {
             DiscordUser winningUser = pickRandom(allUsers);
-            Member memberById = philJda.getGuilds().get(0).getMemberById(winningUser.getId());
 
-            if (memberById != null && hasRole(memberById, "18+") && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
-                member = memberById;
-            }
+            try {
+                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
+                if (memberById != null && hasRole(memberById, "18+") && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
+                    member = memberById;
+                }
+            } catch (Exception ignored) {}
         }
 
         if (member == null) {
@@ -204,17 +206,24 @@ public class BastardCommand extends Command implements PhilMarker {
             Message message = event.getMessage();
 
             long pointsToGive = NORMAL_MSG_POINTS;
-            pointsToGive += CollectionUtils.isNotEmpty(message.getAttachments()) ? 100 : 0;
-            pointsToGive += CollectionUtils.isNotEmpty(message.getEmbeds()) ? 100 : 0;
-            pointsToGive += CollectionUtils.isNotEmpty(message.getEmotes()) ? 100 : 0;
+            DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(1, ChronoUnit.MINUTES);
+            if (now.isAfter(nextMsgBonusTime)) {
+                discordUser.setLastMessageBonus(now);
 
-            if (event.getChannel().getName().equalsIgnoreCase("bot-space")) {
-                pointsToGive = 1;
-            } else if (event.getChannel().getName().equalsIgnoreCase("cursed-swamp")) {
-                pointsToGive += NORMAL_MSG_POINTS;
+                pointsToGive += CollectionUtils.isNotEmpty(message.getAttachments()) ? 100 : 0;
+                pointsToGive += CollectionUtils.isNotEmpty(message.getEmbeds()) ? 100 : 0;
+                pointsToGive += CollectionUtils.isNotEmpty(message.getEmotes()) ? 100 : 0;
+
+                if (event.getChannel().getName().equalsIgnoreCase("bot-space")) {
+                    pointsToGive = 1;
+                } else if (event.getChannel().getName().equalsIgnoreCase("cursed-swamp")) {
+                    pointsToGive += NORMAL_MSG_POINTS;
+                }
             }
 
-            givePointsToMember(pointsToGive, event.getMember());
+            givePointsToMember(pointsToGive, event.getMember(), discordUser);
         }
     }
 
@@ -370,13 +379,13 @@ public class BastardCommand extends Command implements PhilMarker {
                 .setImage(rank.getRankUpImage())
                 .setTitle("Level " + rank.getLevel() + ": " + rank.getRoleName())
                 .setColor(role.getColor())
-                .setDescription(rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) + '\n' +
-                        "You have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total bastard points.\n\n" +
-                        "The next level is " +
+                .setDescription(rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
+                        "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total bastard points.\n\n" +
+                        "The next level is level " +
                         (rank == nextRank
                                 ? " LOL NVM YOU'RE THE TOP LEVEL."
                                 : nextRank.getLevel() + ": " + nextRank.getRoleName() + ".") +
-                        "\n You need to reach " + NumberFormat.getIntegerInstance().format(nextRank.getLevel() * Rank.LVL_MULTIPLIER) + " points to get there." +
+                        "\n You have " + NumberFormat.getIntegerInstance().format((nextRank.getLevel() * Rank.LVL_MULTIPLIER) - user.getXp()) + " points to go." +
                         "\n\nBest of Luck in the Bastard Games!")
                 .build();
 
@@ -607,7 +616,19 @@ public class BastardCommand extends Command implements PhilMarker {
         for (DiscordUser discordUser : discordUserRepository.findAll()) {
             discordUser.setXp(0);
             discordUser = discordUserRepository.save(discordUser);
-            assignRolesIfNeeded(event.getGuild().getMemberById(discordUser.getId()), discordUser);
+
+            try {
+                final DiscordUser finalDiscordUser = discordUser;
+                event.getGuild().retrieveMemberById(discordUser.getId()).submit().whenComplete((member, err) -> {
+                    if (member != null) {
+                        assignRolesIfNeeded(member, finalDiscordUser);
+                    } else {
+                        event.replyError("Failed to reset roles for user with discord id: " + finalDiscordUser.getId());
+                    }
+                });
+            } catch (Exception e) {
+                event.replyError("Failed to reset roles for user with discord id: " + discordUser.getId());
+            }
         }
 
         event.replySuccess("Reset the bastard games");
