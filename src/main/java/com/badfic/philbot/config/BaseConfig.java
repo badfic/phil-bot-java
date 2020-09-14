@@ -21,9 +21,6 @@ public class BaseConfig {
     @Value("${OWNER_ID}")
     public String ownerId;
 
-    @Value("${NODE_ENV:test}")
-    public String nodeEnvironment;
-
     @Value("${GFYCAT_CLIENT_ID:}")
     public String gfycatClientId;
 

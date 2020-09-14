@@ -1,6 +1,5 @@
 package com.badfic.philbot.listeners.behrad;
 
-import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.BehradMarker;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -18,15 +17,12 @@ public class BehradMessageListener extends ListenerAdapter implements BehradMark
 
     private static final Pattern BEHRAD_PATTERN = Pattern.compile("\\b(behrad|shayan|sobhian|marijuana|weed|420|stoned|stoner|kush|hey b|sup sloth)\\b", Pattern.CASE_INSENSITIVE);
 
-    private final boolean isTestEnvironment;
     private final BehradCommand behradCommand;
     private final CommandClient behradCommandClient;
 
     @Autowired
-    public BehradMessageListener(BaseConfig baseConfig,
-                                 BehradCommand behradCommand,
+    public BehradMessageListener(BehradCommand behradCommand,
                                  @Qualifier("behradCommandClient") CommandClient behradCommandClient) {
-        isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
         this.behradCommand = behradCommand;
         this.behradCommandClient = behradCommandClient;
     }
@@ -41,10 +37,6 @@ public class BehradMessageListener extends ListenerAdapter implements BehradMark
 
         if (BEHRAD_PATTERN.matcher(msgContent).find()) {
             behradCommand.execute(new CommandEvent(event, null, behradCommandClient));
-            return;
-        }
-
-        if (isTestEnvironment && !"test-channel".equalsIgnoreCase(event.getChannel().getName())) {
             return;
         }
 

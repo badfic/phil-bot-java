@@ -1,6 +1,5 @@
 package com.badfic.philbot.listeners.keanu;
 
-import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.KeanuMarker;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -17,15 +16,12 @@ public class KeanuMessageListener extends ListenerAdapter implements KeanuMarker
 
     private static final Pattern KEANU_PATTERN = Pattern.compile("\\b(keanu|reeves|neo|john wick|puppy|puppies|pupper|doggo|doge)\\b", Pattern.CASE_INSENSITIVE);
 
-    private final boolean isTestEnvironment;
     private final KeanuCommand keanuCommand;
     private final CommandClient keanuCommandClient;
 
     @Autowired
-    public KeanuMessageListener(BaseConfig baseConfig,
-                                KeanuCommand keanuCommand,
+    public KeanuMessageListener(KeanuCommand keanuCommand,
                                 @Qualifier("keanuCommandClient") CommandClient keanuCommandClient) {
-        isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
         this.keanuCommand = keanuCommand;
         this.keanuCommandClient = keanuCommandClient;
     }
@@ -34,7 +30,7 @@ public class KeanuMessageListener extends ListenerAdapter implements KeanuMarker
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw();
 
-        if (msgContent.startsWith("!!") || event.getAuthor().isBot() || (isTestEnvironment && !"test-channel".equalsIgnoreCase(event.getChannel().getName()))) {
+        if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {
             return;
         }
 

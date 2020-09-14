@@ -1,6 +1,5 @@
 package com.badfic.philbot.listeners.phil;
 
-import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.Phrase;
 import com.badfic.philbot.repository.PhraseRepository;
@@ -24,7 +23,6 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer|phellen|cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam)\\b", Pattern.CASE_INSENSITIVE);
 
-    private final boolean isTestEnvironment;
     private final PhilCommand philCommand;
     private final BastardCommand bastardCommand;
     private final CommandClient philCommandClient;
@@ -34,9 +32,7 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     public PhilMessageListener(PhilCommand philCommand,
                                BastardCommand bastardCommand,
                                @Qualifier("philCommandClient") CommandClient philCommandClient,
-                               PhraseRepository phraseRepository,
-                               BaseConfig baseConfig) {
-        isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
+                               PhraseRepository phraseRepository) {
         this.philCommand = philCommand;
         this.bastardCommand = bastardCommand;
         this.philCommandClient = philCommandClient;
@@ -57,10 +53,6 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
         if (PHIL_PATTERN.matcher(msgContent).find()) {
             philCommand.execute(new CommandEvent(event, null, philCommandClient));
-            return;
-        }
-
-        if (isTestEnvironment && !"test-channel".equalsIgnoreCase(event.getChannel().getName())) {
             return;
         }
 

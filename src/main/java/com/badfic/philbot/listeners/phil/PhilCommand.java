@@ -1,6 +1,5 @@
 package com.badfic.philbot.listeners.phil;
 
-import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.BaseResponsesConfig;
 import com.badfic.philbot.data.phil.PhilResponsesConfig;
@@ -29,14 +28,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class PhilCommand extends Command implements PhilMarker {
 
-    private final boolean isTestEnvironment;
     private final PhilResponsesConfigRepository configRepository;
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public PhilCommand(ObjectMapper objectMapper, BaseConfig baseConfig, PhilResponsesConfigRepository philResponsesConfigRepository)
+    public PhilCommand(ObjectMapper objectMapper, PhilResponsesConfigRepository philResponsesConfigRepository)
             throws Exception {
-        isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
         name = "phil";
         help = "Any message containing `phil|klemmer|phellen` will make Phil respond with a random message if that channel is configured.\n" +
                 "\t`!!phil tts` responds with a random message but spoken via text-to-speech\n" +
@@ -247,24 +244,16 @@ public class PhilCommand extends Command implements PhilMarker {
         String msgContent = event.getMessage().getContentRaw();
         String channelName = event.getChannel().getName();
         Set<String> responses;
-        if (isTestEnvironment) {
-            if ("test-channel".equalsIgnoreCase(channelName)) {
-                responses = philResponsesConfig.getNsfwConfig().getResponses();
-            } else {
-                return Optional.empty();
+        if (philResponsesConfig.getSfwConfig().getChannels().contains(channelName)) {
+            responses = philResponsesConfig.getSfwConfig().getResponses();
+        } else if (philResponsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
+            responses = philResponsesConfig.getNsfwConfig().getResponses();
+
+            if (StringUtils.containsIgnoreCase(msgContent, "you suck")) {
+                return Optional.of("you swallow");
             }
         } else {
-            if (philResponsesConfig.getSfwConfig().getChannels().contains(channelName)) {
-                responses = philResponsesConfig.getSfwConfig().getResponses();
-            } else if (philResponsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
-                responses = philResponsesConfig.getNsfwConfig().getResponses();
-
-                if (StringUtils.containsIgnoreCase(msgContent, "you suck")) {
-                    return Optional.of("you swallow");
-                }
-            } else {
-                return Optional.empty();
-            }
+            return Optional.empty();
         }
 
         if (EmojiManager.containsEmoji(msgContent)) {
