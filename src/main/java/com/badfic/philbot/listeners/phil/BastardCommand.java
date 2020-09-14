@@ -39,7 +39,7 @@ import org.springframework.stereotype.Component;
 public class BastardCommand extends Command implements PhilMarker {
 
     private static volatile boolean AWAITING_RESET_CONFIRMATION = false;
-    private static final long NORMAL_MSG_POINTS = 7;
+    public static final long NORMAL_MSG_POINTS = 7;
     private static final String[] LEADERBOARD_MEDALS = {
             "\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49",
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
@@ -208,7 +208,7 @@ public class BastardCommand extends Command implements PhilMarker {
             long pointsToGive = NORMAL_MSG_POINTS;
             DiscordUser discordUser = getDiscordUserByMember(event.getMember());
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(1, ChronoUnit.MINUTES);
+            LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(3, ChronoUnit.MINUTES);
             if (now.isAfter(nextMsgBonusTime)) {
                 discordUser.setLastMessageBonus(now);
 
@@ -441,6 +441,22 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
+        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(3, ChronoUnit.MINUTES);
+        if (now.isBefore(nextVoteTime)) {
+            Duration duration = Duration.between(now, nextVoteTime);
+
+            if (duration.getSeconds() < 60) {
+                event.replyError("You must wait " + (duration.getSeconds() + 1) + " seconds before up/down-voting again");
+            } else {
+                event.replyError("You must wait " + (duration.toMinutes() + 1) + " minutes before up/down-voting again");
+            }
+            return;
+        }
+        discordUser.setLastVote(now);
+        discordUserRepository.save(discordUser);
+
         givePointsToMember(250, mentionedMembers.get(0));
 
         event.replySuccess("Successfully upvoted " + mentionedMembers.get(0).getAsMention());
@@ -463,6 +479,22 @@ public class BastardCommand extends Command implements PhilMarker {
             event.replyError("You can't downvote yourself");
             return;
         }
+
+        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(3, ChronoUnit.MINUTES);
+        if (now.isBefore(nextVoteTime)) {
+            Duration duration = Duration.between(now, nextVoteTime);
+
+            if (duration.getSeconds() < 60) {
+                event.replyError("You must wait " + (duration.getSeconds() + 1) + " seconds before up/down-voting again");
+            } else {
+                event.replyError("You must wait " + (duration.toMinutes() + 1) + " minutes before up/down-voting again");
+            }
+            return;
+        }
+        discordUser.setLastVote(now);
+        discordUserRepository.save(discordUser);
 
         takePointsFromMember(50, mentionedMembers.get(0));
 

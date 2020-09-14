@@ -90,9 +90,9 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
-        long points = 7;
+        long points = 1;
         if (event.getReactionEmote().isEmote()) {
-            points += 93;
+            points += BastardCommand.NORMAL_MSG_POINTS;
         }
         bastardCommand.givePointsToMember(points, event.getMember());
     }
