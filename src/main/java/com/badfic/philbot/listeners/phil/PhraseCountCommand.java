@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners.phil;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.Phrase;
@@ -10,6 +11,8 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,10 +28,10 @@ public class PhraseCountCommand extends Command implements PhilMarker {
     public PhraseCountCommand(DiscordUserRepository discordUserRepository, PhraseRepository phraseRepository) {
         name = "phraseCount";
         help = "Counts how many times someone has said a given word.\n" +
-                "\tTo see the counts for a given user: `!!phraseCount count @user`\n" +
-                "\tTo start counting the word 'peanut' for a user: `!!phraseCount add peanut @user`\n" +
-                "\tTo stop counting the word 'peanut' for a user: `!!phraseCount remove peanut @user`\n";
-        requiredRole = "Queens of the Castle";
+                "To see the counts for a given user: `!!phraseCount count @user`\n" +
+                "To start counting the word 'peanut' for a user: `!!phraseCount add peanut @user`\n" +
+                "To stop counting the word 'peanut' for a user: `!!phraseCount remove peanut @user`\n";
+        requiredRole = Constants.ADMIN_ROLE;
         this.discordUserRepository = discordUserRepository;
         this.phraseRepository = phraseRepository;
     }
@@ -36,6 +39,12 @@ public class PhraseCountCommand extends Command implements PhilMarker {
     @Override
     protected void execute(CommandEvent event) {
         if (event.getAuthor().isBot()) {
+            return;
+        }
+
+        String msgContent = event.getMessage().getContentRaw();
+        if (msgContent.startsWith("!!phraseCount help")) {
+            event.replyInDm(simpleEmbed("Phrase Count Help", help));
             return;
         }
 
@@ -51,7 +60,6 @@ public class PhraseCountCommand extends Command implements PhilMarker {
             return;
         }
 
-        String msgContent = event.getMessage().getContentRaw();
         if (msgContent.startsWith("!!phraseCount count")) {
             countPhrase(event);
         } else if (msgContent.startsWith("!!phraseCount add")) {
@@ -163,6 +171,13 @@ public class PhraseCountCommand extends Command implements PhilMarker {
 
         phraseRepository.delete(foundPhraseEntity.get());
         event.getChannel().sendMessageFormat("%s, removed [phrase=%s] for user %s", eventAuthorMention, phraseToRemove, user.getAsMention()).queue();
+    }
+
+    private MessageEmbed simpleEmbed(String title, String format, Object... args) {
+        return new EmbedBuilder()
+                .setTitle(title)
+                .setDescription(String.format(format, args))
+                .build();
     }
 
 }

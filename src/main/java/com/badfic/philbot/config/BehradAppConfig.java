@@ -8,9 +8,7 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -49,37 +47,11 @@ public class BehradAppConfig {
 
     @Bean(name = "behradCommandClient")
     public CommandClient behradCommandClient(List<Command> commands) {
-        List<Command> behradCommands = commands.stream().filter(c -> c instanceof BehradMarker).collect(Collectors.toList());
-
         return new CommandClientBuilder()
                 .setOwnerId(baseConfig.ownerId)
                 .setPrefix("!!")
-                .setHelpConsumer((event) -> {
-                    if (event.getMember().getRoles().stream().noneMatch(r -> r.getName().equalsIgnoreCase("queens of the castle"))) {
-                        return;
-                    }
-
-                    StringBuilder builder = new StringBuilder("**" + event.getSelfUser().getName() + "** commands:\n");
-                    Command.Category category = null;
-                    for (Command command : behradCommands) {
-                        if (!command.isHidden() && (!command.isOwnerCommand() || event.isOwner())) {
-                            if (!Objects.equals(category, command.getCategory())) {
-                                category = command.getCategory();
-                                builder.append("\n\n  __").append(category == null ? "No Category" : category.getName()).append("__:\n");
-                            }
-                            builder.append("\n`").append("!!").append(command.getName())
-                                    .append(command.getArguments() == null ? "`" : " " + command.getArguments() + "`")
-                                    .append(" - ").append(command.getHelp());
-                        }
-                    }
-                    event.getJDA().retrieveUserById(baseConfig.ownerId).submit().whenComplete((owner, err) -> {
-                        if (owner != null) {
-                            builder.append("\n\nFor additional help, contact **").append(owner.getName()).append("**#").append(owner.getDiscriminator());
-                        }
-                        event.replyInDm(builder.toString(), s -> {}, f -> event.replyWarning("Help cannot be sent because you are blocking Direct Messages."));
-                    });
-                })
-                .addCommands(behradCommands.toArray(new Command[0]))
+                .useHelpBuilder(false)
+                .addCommands(commands.stream().filter(c -> c instanceof BehradMarker).toArray(Command[]::new))
                 .setActivity(Activity.playing(PLAYING_STATUS_LIST[ThreadLocalRandom.current().nextInt(PLAYING_STATUS_LIST.length)]))
                 .setEmojis("✅", "⚠️", "❌")
                 .build();
