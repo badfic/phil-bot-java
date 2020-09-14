@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeanuMessageListener extends ListenerAdapter implements KeanuMarker {
 
-    private static final Pattern KEANU_PATTERN = Pattern.compile("\\b(keanu|reeves|neo|john wick)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern KEANU_PATTERN = Pattern.compile("\\b(keanu|reeves|neo|john wick|puppy|puppies|pupper|doggo|doge)\\b", Pattern.CASE_INSENSITIVE);
 
     private final boolean isTestEnvironment;
     private final KeanuCommand keanuCommand;
