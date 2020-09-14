@@ -516,7 +516,7 @@ public class BastardCommand extends Command implements PhilMarker {
     }
 
     private void take(CommandEvent event) {
-        if (!hasRole(event.getMember(), "taketh away")) {
+        if (!hasRole(event.getMember(), "queens of the castle")) {
             event.replyError("You do not have permission to use this command");
             return;
         }
@@ -562,7 +562,7 @@ public class BastardCommand extends Command implements PhilMarker {
     }
 
     private void set(CommandEvent event) {
-        if (!hasRole(event.getMember(), "taketh away")) {
+        if (!hasRole(event.getMember(), "queens of the castle")) {
             event.replyError("You do not have permission to use this command");
             return;
         }
