@@ -16,6 +16,7 @@ import com.vdurmont.emoji.EmojiManager;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -84,7 +85,6 @@ public class KeanuCommand extends Command implements KeanuMarker {
             "https://cdn.discordapp.com/attachments/741030569307275436/753991114301898762/image0.png"
     ));
 
-    private final boolean isTestEnvironment;
     private final BaseConfig baseConfig;
     private final KeanuResponsesConfigRepository configRepository;
     private final CloseableHttpClient gfycatClient;
@@ -99,7 +99,6 @@ public class KeanuCommand extends Command implements KeanuMarker {
                         CloseableHttpClient gfycatClient)
             throws Exception {
         this.baseConfig = baseConfig;
-        isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
         name = "keanu";
         help = "Any message containing `keanu` will make keanu respond with a random message if that channel is configured.\n" +
                 "\t`!!keanu tts` responds with a random message but spoken via text-to-speech\n" +
@@ -317,36 +316,21 @@ public class KeanuCommand extends Command implements KeanuMarker {
         String msgContent = event.getMessage().getContentRaw();
         String channelName = event.getChannel().getName();
         Set<String> responses;
-        if (isTestEnvironment) {
-            if ("test-channel".equalsIgnoreCase(channelName)) {
-                Optional<String> maybeGif = maybeGetGif();
-                if (maybeGif.isPresent()) {
-                    event.getChannel().sendMessage(maybeGif.get()).queue();
-                    return Optional.empty();
-                }
-
-                responses = responsesConfig.getNsfwConfig().getResponses();
+        if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
+            if (ThreadLocalRandom.current().nextInt(100) < 28) {
+                responses = GOOD_MORNING_GIFS;
             } else {
-                return Optional.empty();
+                responses = responsesConfig.getSfwConfig().getResponses();
+            }
+        } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
+            Optional<String> maybeGif = maybeGetGif();
+            if (maybeGif.isPresent()) {
+                responses = Collections.singleton(maybeGif.get());
+            } else {
+                responses = responsesConfig.getNsfwConfig().getResponses();
             }
         } else {
-            if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
-                if (ThreadLocalRandom.current().nextInt(100) < 28) {
-                    responses = GOOD_MORNING_GIFS;
-                } else {
-                    responses = responsesConfig.getSfwConfig().getResponses();
-                }
-            } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
-                Optional<String> maybeGif = maybeGetGif();
-                if (maybeGif.isPresent()) {
-                    event.getChannel().sendMessage(maybeGif.get()).queue();
-                    return Optional.empty();
-                }
-
-                responses = responsesConfig.getNsfwConfig().getResponses();
-            } else {
-                return Optional.empty();
-            }
+            return Optional.empty();
         }
 
         if (StringUtils.containsIgnoreCase(msgContent, "hello")) {
@@ -369,7 +353,7 @@ public class KeanuCommand extends Command implements KeanuMarker {
     }
 
     private Optional<String> maybeGetGif() {
-        if (StringUtils.isNotBlank(baseConfig.gfycatClientId) && ThreadLocalRandom.current().nextInt(100) < 22) {
+        if (StringUtils.isNotBlank(baseConfig.gfycatClientId) && ThreadLocalRandom.current().nextInt(100) < 25) {
             try {
                 HttpPost credentialsRequest = new HttpPost("https://api.gfycat.com/v1/oauth/token");
                 credentialsRequest.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());

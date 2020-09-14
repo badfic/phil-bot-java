@@ -16,6 +16,7 @@ import com.vdurmont.emoji.EmojiManager;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -73,7 +74,6 @@ public class BehradCommand extends Command implements BehradMarker {
     private static final Pattern WEED_PATTERN = Pattern.compile("\\b(marijuana|weed|420|stoned|high|stoner|kush)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern SLOTH_PATTERN = Pattern.compile("\\b(sup sloth)\\b", Pattern.CASE_INSENSITIVE);
 
-    private final boolean isTestEnvironment;
     private final BaseConfig baseConfig;
     private final BehradResponsesConfigRepository configRepository;
     private final CloseableHttpClient gfycatClient;
@@ -84,7 +84,6 @@ public class BehradCommand extends Command implements BehradMarker {
                          CloseableHttpClient gfycatClient)
             throws Exception {
         this.baseConfig = baseConfig;
-        isTestEnvironment = "test".equalsIgnoreCase(baseConfig.nodeEnvironment);
         name = "behrad";
         help = "Any message containing `behrad` will make behrad respond with a random message if that channel is configured.\n" +
                 "\t`!!behrad tts` responds with a random message but spoken via text-to-speech\n" +
@@ -296,42 +295,22 @@ public class BehradCommand extends Command implements BehradMarker {
         String msgContent = event.getMessage().getContentRaw();
         String channelName = event.getChannel().getName();
         Set<String> responses;
-        if (isTestEnvironment) {
-            if ("test-channel".equalsIgnoreCase(channelName)) {
-                if (NAME_PATTERN.matcher(msgContent).find()) {
-                    event.getChannel().sendMessage(pickRandom(SHAYAN_IMGS)).queue();
-                    return Optional.empty();
-                }
-
-                Optional<String> maybeGif = maybeGetGif(event);
-                if (maybeGif.isPresent()) {
-                    event.getChannel().sendMessage(maybeGif.get()).queue();
-                    return Optional.empty();
-                }
-
-                responses = responsesConfig.getNsfwConfig().getResponses();
-            } else {
+        if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
+            responses = responsesConfig.getSfwConfig().getResponses();
+        } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
+            if (NAME_PATTERN.matcher(msgContent).find()) {
+                event.getChannel().sendMessage(pickRandom(SHAYAN_IMGS)).queue();
                 return Optional.empty();
+            }
+
+            Optional<String> maybeGif = maybeGetGif();
+            if (maybeGif.isPresent()) {
+                responses = Collections.singleton(maybeGif.get());
+            } else {
+                responses = responsesConfig.getNsfwConfig().getResponses();
             }
         } else {
-            if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
-                responses = responsesConfig.getSfwConfig().getResponses();
-            } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
-                if (NAME_PATTERN.matcher(msgContent).find()) {
-                    event.getChannel().sendMessage(pickRandom(SHAYAN_IMGS)).queue();
-                    return Optional.empty();
-                }
-
-                Optional<String> maybeGif = maybeGetGif(event);
-                if (maybeGif.isPresent()) {
-                    event.getChannel().sendMessage(maybeGif.get()).queue();
-                    return Optional.empty();
-                }
-
-                responses = responsesConfig.getNsfwConfig().getResponses();
-            } else {
-                return Optional.empty();
-            }
+            return Optional.empty();
         }
 
         if (SLOTH_PATTERN.matcher(msgContent).find()) {
@@ -359,8 +338,8 @@ public class BehradCommand extends Command implements BehradMarker {
         return Optional.of(pickRandom(responses));
     }
 
-    private Optional<String> maybeGetGif(CommandEvent event) {
-        if (StringUtils.isNotBlank(baseConfig.gfycatClientId) && ThreadLocalRandom.current().nextInt(100) < 22) {
+    private Optional<String> maybeGetGif() {
+        if (StringUtils.isNotBlank(baseConfig.gfycatClientId) && ThreadLocalRandom.current().nextInt(100) < 25) {
             try {
                 HttpPost credentialsRequest = new HttpPost("https://api.gfycat.com/v1/oauth/token");
                 credentialsRequest.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
