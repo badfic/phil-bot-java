@@ -36,6 +36,9 @@ public class DiscordUser {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime lastSteal = LocalDateTime.now();
 
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime lastFlip = LocalDateTime.now();
+
     public String getId() {
         return id;
     }
@@ -98,5 +101,13 @@ public class DiscordUser {
 
     public void setLastSteal(LocalDateTime lastSteal) {
         this.lastSteal = lastSteal;
+    }
+
+    public LocalDateTime getLastFlip() {
+        return lastFlip;
+    }
+
+    public void setLastFlip(LocalDateTime lastFlip) {
+        this.lastFlip = lastFlip;
     }
 }
