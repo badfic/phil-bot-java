@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -52,12 +53,14 @@ import org.springframework.stereotype.Component;
 public class KeanuCommand extends Command implements KeanuMarker {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Pattern PUPPY_PATTERN = Pattern.compile("\\b(puppy|puppies|pupper|doggo|doge)\\b", Pattern.CASE_INSENSITIVE);
     private static final String HELLO_GIF = "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves";
+    private static final String PUPPIES_GIF = "https://media.giphy.com/media/8rFNes6jllJQRnHTsF/giphy.gif";
     private static final Set<String> GOOD_MORNING_GIFS = new HashSet<>(Arrays.asList(
             HELLO_GIF,
+            PUPPIES_GIF,
             "https://cdn.discordapp.com/attachments/323666308107599872/752638622099832852/donut.gif",
             "https://cdn.discordapp.com/attachments/323666308107599872/752638643562086432/smilesmile.gif",
-            "https://cdn.discordapp.com/attachments/323666308107599872/752638678928457768/puppies.gif",
             "https://cdn.discordapp.com/attachments/323666308107599872/752638684641230908/hecute.gif",
             "https://cdn.discordapp.com/attachments/323666308107599872/752638695999537192/beardrub.gif",
             "https://cdn.discordapp.com/attachments/323666308107599872/752638707026362368/bow.gif",
@@ -348,6 +351,11 @@ public class KeanuCommand extends Command implements KeanuMarker {
 
         if (StringUtils.containsIgnoreCase(msgContent, "hello")) {
             event.getChannel().sendMessage(HELLO_GIF).queue();
+            return Optional.empty();
+        }
+
+        if (PUPPY_PATTERN.matcher(msgContent).find()) {
+            event.getChannel().sendMessage(PUPPIES_GIF).queue();
             return Optional.empty();
         }
 
