@@ -33,6 +33,9 @@ public class DiscordUser {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime lastVote = LocalDateTime.now();
 
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime lastSteal = LocalDateTime.now();
+
     public String getId() {
         return id;
     }
@@ -87,5 +90,13 @@ public class DiscordUser {
 
     public void setLastVote(LocalDateTime lastVote) {
         this.lastVote = lastVote;
+    }
+
+    public LocalDateTime getLastSteal() {
+        return lastSteal;
+    }
+
+    public void setLastSteal(LocalDateTime lastSteal) {
+        this.lastSteal = lastSteal;
     }
 }
