@@ -318,6 +318,22 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
+        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextStealTime = discordUser.getLastSteal().plus(3, ChronoUnit.MINUTES);
+        if (now.isBefore(nextStealTime)) {
+            Duration duration = Duration.between(now, nextStealTime);
+
+            if (duration.getSeconds() < 60) {
+                event.replyError("You must wait " + (duration.getSeconds() + 1) + " seconds before stealing again");
+            } else {
+                event.replyError("You must wait " + (duration.toMinutes() + 1) + " minutes before stealing again");
+            }
+            return;
+        }
+        discordUser.setLastSteal(now);
+        discordUserRepository.save(discordUser);
+
         int randomNumber;
         if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < 30) {
             event.reply(simpleEmbed("Steal", "You attempt to steal points from %s and fail miserably, you pay them %s points to forget this ever happened. \uD83D\uDE2C",
@@ -655,11 +671,11 @@ public class BastardCommand extends Command implements PhilMarker {
                     if (member != null) {
                         assignRolesIfNeeded(member, finalDiscordUser);
                     } else {
-                        event.replyError("Failed to reset roles for user with discord id: " + finalDiscordUser.getId());
+                        event.replyError("Failed to reset roles for user with discord id: <@!" + finalDiscordUser.getId() + '>');
                     }
                 });
             } catch (Exception e) {
-                event.replyError("Failed to reset roles for user with discord id: " + discordUser.getId());
+                event.replyError("Failed to reset roles for user with discord id: <@!" + discordUser.getId() + '>');
             }
         }
 
