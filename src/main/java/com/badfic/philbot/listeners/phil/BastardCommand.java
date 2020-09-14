@@ -175,9 +175,6 @@ public class BastardCommand extends Command implements PhilMarker {
             leaderboard(event);
         } else if (msgContent.startsWith("!!bastard steal")) {
             steal(event);
-        } else if (msgContent.startsWith("!!bastard fight")) {
-            event.reply(simpleEmbed("Fight", "Fights not implemented yet, come back soon. Here's 1 bastard point for your troubles"));
-            givePointsToMember(1, event.getMember());
         } else if (msgContent.startsWith("!!bastard slots")) {
             slots(event);
         } else if (msgContent.startsWith("!!bastard flip")) {
@@ -241,6 +238,22 @@ public class BastardCommand extends Command implements PhilMarker {
     }
 
     private void flip(CommandEvent event) {
+        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextFlipTime = discordUser.getLastFlip().plus(3, ChronoUnit.MINUTES);
+        if (now.isBefore(nextFlipTime)) {
+            Duration duration = Duration.between(now, nextFlipTime);
+
+            if (duration.getSeconds() < 60) {
+                event.replyError("You must wait " + (duration.getSeconds() + 1) + " seconds before flipping again");
+            } else {
+                event.replyError("You must wait " + (duration.toMinutes() + 1) + " minutes before flipping again");
+            }
+            return;
+        }
+        discordUser.setLastFlip(now);
+        discordUserRepository.save(discordUser);
+
         int randomNumber = ThreadLocalRandom.current().nextInt(100);
 
         if (randomNumber < 5) {
