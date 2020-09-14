@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners.phil;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.Phrase;
 import com.badfic.philbot.repository.PhraseRepository;
@@ -47,7 +48,7 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
             return;
         }
 
-        if (event.getMember().getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase("18+"))) {
+        if (event.getMember().getRoles().stream().anyMatch(r -> r.getName().equals(Constants.EIGHTEEN_PLUS))) {
             bastardCommand.execute(new CommandEvent(event, null, philCommandClient));
         }
 
