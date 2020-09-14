@@ -30,6 +30,9 @@ public class DiscordUser {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime lastMessageBonus = LocalDateTime.now();
 
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime lastVote = LocalDateTime.now();
+
     public String getId() {
         return id;
     }
@@ -76,5 +79,13 @@ public class DiscordUser {
 
     public void setLastMessageBonus(LocalDateTime lastMessageBonus) {
         this.lastMessageBonus = lastMessageBonus;
+    }
+
+    public LocalDateTime getLastVote() {
+        return lastVote;
+    }
+
+    public void setLastVote(LocalDateTime lastVote) {
+        this.lastVote = lastVote;
     }
 }
