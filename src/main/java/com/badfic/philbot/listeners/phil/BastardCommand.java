@@ -213,26 +213,20 @@ public class BastardCommand extends Command implements PhilMarker {
         } else {
             Message message = event.getMessage();
 
-            long pointsToGive = NORMAL_MSG_POINTS;
             DiscordUser discordUser = getDiscordUserByMember(event.getMember());
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(3, ChronoUnit.MINUTES);
-            if (now.isAfter(nextMsgBonusTime)) {
-                discordUser.setLastMessageBonus(now);
 
-                pointsToGive += CollectionUtils.isNotEmpty(message.getAttachments()) ? 100 : 0;
-                pointsToGive += CollectionUtils.isNotEmpty(message.getEmbeds()) ? 100 : 0;
-                pointsToGive += CollectionUtils.isNotEmpty(message.getEmotes()) ? 100 : 0;
+            boolean bonus = CollectionUtils.isNotEmpty(message.getAttachments())
+                    || CollectionUtils.isNotEmpty(message.getEmbeds())
+                    || CollectionUtils.isNotEmpty(message.getEmotes());
 
-                if (event.getChannel().getName().equalsIgnoreCase("bot-space")) {
-                    pointsToGive = 1;
-                } else if (event.getChannel().getName().equalsIgnoreCase("cursed-swamp")) {
-                    pointsToGive += NORMAL_MSG_POINTS;
-                }
-            }
-
-            if (event.getChannel().getName().equalsIgnoreCase("bot-space")) {
+            long pointsToGive = NORMAL_MSG_POINTS;
+            if ("bot-space".equals(event.getChannel().getName())) {
                 pointsToGive = 1;
+            } else if (bonus && now.isAfter(nextMsgBonusTime)) {
+                pointsToGive = 100;
+                discordUser.setLastMessageBonus(now);
             }
 
             givePointsToMember(pointsToGive, event.getMember(), discordUser);
