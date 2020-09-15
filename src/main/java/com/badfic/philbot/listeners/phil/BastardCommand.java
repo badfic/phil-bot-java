@@ -231,6 +231,10 @@ public class BastardCommand extends Command implements PhilMarker {
                 }
             }
 
+            if (event.getChannel().getName().equalsIgnoreCase("bot-space")) {
+                pointsToGive = 1;
+            }
+
             givePointsToMember(pointsToGive, event.getMember(), discordUser);
         }
     }
