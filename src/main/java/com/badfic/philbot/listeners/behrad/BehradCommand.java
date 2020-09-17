@@ -16,12 +16,17 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
+import javax.annotation.Resource;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -49,11 +54,21 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
     private static final Pattern WEED_PATTERN = Pattern.compile("\\b(marijuana|weed|420|stoned|high|stoner|kush)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern SLOTH_PATTERN = Pattern.compile("\\b(sup sloth)\\b", Pattern.CASE_INSENSITIVE);
 
+    @Resource(name = "behradJda")
+    @Lazy
+    private JDA behradJda;
+
     @Autowired
     public BehradCommand(ObjectMapper objectMapper, BaseConfig baseConfig, BehradResponsesConfigRepository behradResponsesConfigRepository,
                          CloseableHttpClient gfycatClient) throws Exception {
         super(baseConfig, behradResponsesConfigRepository, gfycatClient, objectMapper, "behrad",
                 "behrad-kidFriendlyConfig.json", "behrad-nsfwConfig.json", BehradResponsesConfig::new);
+    }
+
+    @Scheduled(cron = "0 2 17 * * WED", zone = "GMT")
+    public void goodMorning() {
+        TextChannel general = behradJda.getTextChannelsByName("general", false).get(0);
+        general.sendMessage("https://tenor.com/view/itis-wednesdaymy-dudes-wednesday-viralyoutube-gif-18012295").queue();
     }
 
     @Override
