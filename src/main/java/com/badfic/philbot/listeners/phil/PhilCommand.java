@@ -12,19 +12,34 @@ import com.vdurmont.emoji.EmojiManager;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Resource;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> implements PhilMarker {
+
+    @Resource(name = "philJda")
+    @Lazy
+    private JDA philJda;
 
     @Autowired
     public PhilCommand(ObjectMapper objectMapper, PhilResponsesConfigRepository philResponsesConfigRepository, BaseConfig baseConfig,
                        CloseableHttpClient gfycatClient) throws Exception {
         super(baseConfig, philResponsesConfigRepository, gfycatClient, objectMapper, "phil",
                 "phil-kidFriendlyConfig.json", "phil-nsfwConfig.json", PhilResponsesConfig::new);
+    }
+
+    @Scheduled(cron = "0 1 17 * * WED", zone = "GMT")
+    public void goodMorning() {
+        TextChannel general = philJda.getTextChannelsByName("general", false).get(0);
+        general.sendMessage("https://cdn.discordapp.com/attachments/741792267609702461/755988086399434793/unknown.png").queue();
     }
 
     @Override
