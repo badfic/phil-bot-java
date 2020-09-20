@@ -99,7 +99,7 @@ public class BastardCommand extends Command implements PhilMarker {
         if (member == null) {
             philJda.getTextChannelsByName("bastard-of-the-week", false)
                     .get(0)
-                    .sendMessage(simpleEmbed("Lottery Results", "Unable to choose a lottery winner, nobody wins"))
+                    .sendMessage(simpleEmbed("Sweepstakes Results", "Unable to choose a winner, nobody wins"))
                     .queue();
             return;
         }
@@ -108,7 +108,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
         philJda.getTextChannelsByName("bastard-of-the-week", false)
                 .get(0)
-                .sendMessage(simpleEmbed("Lottery Results", "Congratulations %s you won today's lottery worth 1000 bastard points!", member.getAsMention()))
+                .sendMessage(simpleEmbed("Sweepstakes Results", "Congratulations %s you won today's sweepstakes worth 1000 bastard points!", member.getAsMention()))
                 .queue();
     }
 
@@ -470,7 +470,7 @@ public class BastardCommand extends Command implements PhilMarker {
         }
 
         if (!hasRole(mentionedMembers.get(0), Constants.EIGHTEEN_PLUS)) {
-            event.replyError(mentionedMembers.get(0).getAsMention() + " is not participating in the bastard games");
+            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the bastard games");
             return;
         }
 
@@ -497,7 +497,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
         givePointsToMember(250, mentionedMembers.get(0));
 
-        event.replySuccess("Successfully upvoted " + mentionedMembers.get(0).getAsMention());
+        event.replySuccess("Successfully upvoted " + mentionedMembers.get(0).getEffectiveName());
     }
 
     private void downvote(CommandEvent event) {
@@ -509,7 +509,7 @@ public class BastardCommand extends Command implements PhilMarker {
         }
 
         if (!hasRole(mentionedMembers.get(0), Constants.EIGHTEEN_PLUS)) {
-            event.replyError(mentionedMembers.get(0).getAsMention() + " is not participating in the bastard games");
+            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the bastard games");
             return;
         }
 
@@ -536,7 +536,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
         takePointsFromMember(50, mentionedMembers.get(0));
 
-        event.replySuccess("Successfully downvoted " + mentionedMembers.get(0).getAsMention());
+        event.replySuccess("Successfully downvoted " + mentionedMembers.get(0).getEffectiveName());
     }
 
     private void give(CommandEvent event) {
@@ -576,13 +576,13 @@ public class BastardCommand extends Command implements PhilMarker {
         }
 
         if (!hasRole(mentionedMembers.get(0), Constants.EIGHTEEN_PLUS)) {
-            event.replyError(mentionedMembers.get(0).getAsMention() + " is not participating in the bastard games");
+            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the bastard games");
             return;
         }
 
         givePointsToMember(pointsToGive, mentionedMembers.get(0));
 
-        event.replyFormatted("Added %s xp to %s", NumberFormat.getIntegerInstance().format(pointsToGive), mentionedMembers.get(0).getAsMention());
+        event.replyFormatted("Added %s xp to %s", NumberFormat.getIntegerInstance().format(pointsToGive), mentionedMembers.get(0).getEffectiveName());
     }
 
     private void take(CommandEvent event) {
@@ -622,13 +622,13 @@ public class BastardCommand extends Command implements PhilMarker {
         }
 
         if (!hasRole(mentionedMembers.get(0), Constants.EIGHTEEN_PLUS)) {
-            event.replyError(mentionedMembers.get(0).getAsMention() + " is not participating in the bastard games");
+            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the bastard games");
             return;
         }
 
         takePointsFromMember(pointsToTake, mentionedMembers.get(0));
 
-        event.replyFormatted("Removed %s xp from %s", NumberFormat.getIntegerInstance().format(pointsToTake), mentionedMembers.get(0).getAsMention());
+        event.replyFormatted("Removed %s xp from %s", NumberFormat.getIntegerInstance().format(pointsToTake), mentionedMembers.get(0).getEffectiveName());
     }
 
     private void set(CommandEvent event) {
@@ -668,13 +668,13 @@ public class BastardCommand extends Command implements PhilMarker {
         }
 
         if (!hasRole(mentionedMembers.get(0), Constants.EIGHTEEN_PLUS)) {
-            event.replyError(mentionedMembers.get(0).getAsMention() + " is not participating in the bastard games");
+            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the bastard games");
             return;
         }
 
         setPointsForMember(pointsToSet, mentionedMembers.get(0));
 
-        event.replyFormatted("Set xp to %s for %s", NumberFormat.getIntegerInstance().format(pointsToSet), mentionedMembers.get(0).getAsMention());
+        event.replyFormatted("Set xp to %s for %s", NumberFormat.getIntegerInstance().format(pointsToSet), mentionedMembers.get(0).getEffectiveName());
     }
 
     private void reset(CommandEvent event) {
