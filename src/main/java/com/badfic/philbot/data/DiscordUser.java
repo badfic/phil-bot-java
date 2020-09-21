@@ -39,6 +39,9 @@ public class DiscordUser {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime lastFlip = LocalDateTime.now();
 
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime acceptedBoost = LocalDateTime.now();
+
     public String getId() {
         return id;
     }
@@ -109,5 +112,13 @@ public class DiscordUser {
 
     public void setLastFlip(LocalDateTime lastFlip) {
         this.lastFlip = lastFlip;
+    }
+
+    public LocalDateTime getAcceptedBoost() {
+        return acceptedBoost;
+    }
+
+    public void setAcceptedBoost(LocalDateTime acceptedBoost) {
+        this.acceptedBoost = acceptedBoost;
     }
 }

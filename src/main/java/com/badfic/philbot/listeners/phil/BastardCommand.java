@@ -7,6 +7,8 @@ import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.repository.DiscordUserRepository;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.awt.Color;
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -39,8 +42,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class BastardCommand extends Command implements PhilMarker {
 
+    private static volatile boolean BOOST_AWAITING = false;
     private static volatile boolean AWAITING_RESET_CONFIRMATION = false;
     public static final long NORMAL_MSG_POINTS = 14;
+    private static final String BENEVOLENT_GOD = "https://cdn.discordapp.com/attachments/686127721688203305/757429302705913876/when-i-level-up-someone-amp-039-s-account_o_2942005.png";
     private static final String[] LEADERBOARD_MEDALS = {
             "\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49",
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
@@ -80,7 +85,7 @@ public class BastardCommand extends Command implements PhilMarker {
     }
 
     @Scheduled(cron = "0 0 1 * * ?", zone = "GMT")
-    public void lottery() {
+    public void sweepstakes() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
 
         long startTime = System.currentTimeMillis();
@@ -110,6 +115,108 @@ public class BastardCommand extends Command implements PhilMarker {
                 .get(0)
                 .sendMessage(simpleEmbed("Sweepstakes Results", "Congratulations %s you won today's sweepstakes worth 4000 bastard points!", member.getAsMention()))
                 .queue();
+    }
+
+    @Scheduled(cron = "0 5 1 * * ?", zone = "GMT")
+    public void taxes() {
+        List<DiscordUser> allUsers = discordUserRepository.findAll();
+        allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
+
+        long totalTaxes = 0;
+        StringBuilder description = new StringBuilder();
+        for (DiscordUser user : allUsers) {
+            try {
+                long taxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.05")).longValue();
+                totalTaxes += taxes;
+                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
+                if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS)) {
+                    takePointsFromMember(taxes, memberById);
+
+                    description
+                            .append("Took ")
+                            .append(NumberFormat.getIntegerInstance().format(taxes))
+                            .append(" points from <@!")
+                            .append(user.getId())
+                            .append(">\n");
+                }
+            } catch (Exception ignored) {}
+        }
+
+        long startTime = System.currentTimeMillis();
+        int index = allUsers.size() - 1;
+        Member member = null;
+        while (index >= 0 && member == null && System.currentTimeMillis() - startTime < TimeUnit.SECONDS.toMillis(30)) {
+            DiscordUser winningUser = allUsers.get(index);
+
+            try {
+                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
+                if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS) && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
+                    member = memberById;
+                }
+            } catch (Exception ignored) {}
+        }
+
+        String title = "Tax time! The following taxes have been paid to Phil";
+        if (member != null) {
+            title = "Tax time! The following taxes have been paid to " + member.getEffectiveName();
+        } else {
+            member = philJda.getGuilds().get(0).getSelfMember();
+        }
+
+        givePointsToMember(totalTaxes, member);
+
+        philJda.getTextChannelsByName("bastard-of-the-week", false)
+                .get(0)
+                .sendMessage(simpleEmbed(title, description.toString()))
+                .queue();
+    }
+
+    @Scheduled(cron = "0 0 * * * ?", zone = "GMT")
+    public void boost() {
+        TextChannel bastardOfTheWeekChannel = philJda.getTextChannelsByName("bastard-of-the-week", false)
+                .get(0);
+
+        if (BOOST_AWAITING) {
+            BOOST_AWAITING = false;
+
+            LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+            StringBuilder description = new StringBuilder();
+            discordUserRepository.findAll()
+                    .stream()
+                    .filter(u -> u.getAcceptedBoost().isAfter(oneHourAgo))
+                    .forEach(u -> {
+                        try {
+                            Member memberLookedUp = philJda.getGuilds().get(0).retrieveMemberById(u.getId()).complete();
+                            if (memberLookedUp == null) {
+                                throw new RuntimeException("member not found");
+                            }
+
+                            givePointsToMember(4000, memberLookedUp);
+                            description.append("Gave 4000 points to <@!")
+                                    .append(u.getId())
+                                    .append(">\n");
+                        } catch (Exception ignored) {
+                            description.append("OOPS: Unable to give points to <@!")
+                                    .append(u.getId())
+                                    .append(">\n");
+                        }
+                    });
+
+            MessageEmbed messageEmbed = new EmbedBuilder()
+                    .setImage(BENEVOLENT_GOD)
+                    .setTitle("Boost Blitz Complete")
+                    .setDescription(description.toString())
+                    .setColor(Color.GREEN)
+                    .build();
+            bastardOfTheWeekChannel.sendMessage(messageEmbed).queue();
+        }
+
+        if (ThreadLocalRandom.current().nextInt(100) < 4) {
+            BOOST_AWAITING = true;
+            bastardOfTheWeekChannel
+                    .sendMessage("BOOST BLITZ!!! Type `boost` in this channel within the next hour to be boosted by 4,000 points")
+                    .queue();
+        }
     }
 
     public void givePointsToMember(long pointsToGive, Member member, DiscordUser user) {
@@ -154,6 +261,12 @@ public class BastardCommand extends Command implements PhilMarker {
         discordUserRepository.save(user);
 
         givePointsToMember(points, member);
+    }
+
+    public void acceptedBoost(Member member) {
+        DiscordUser discordUser = getDiscordUserByMember(member);
+        discordUser.setAcceptedBoost(LocalDateTime.now());
+        discordUserRepository.save(discordUser);
     }
 
     @Override
@@ -211,6 +324,11 @@ public class BastardCommand extends Command implements PhilMarker {
         } else if (msgContent.startsWith("!!bastard")){
             event.replyError("Unrecognized bastard command");
         } else {
+            if (BOOST_AWAITING && StringUtils.containsIgnoreCase(msgContent, "boost") && "bastard-of-the-week".equalsIgnoreCase(event.getChannel().getName())) {
+                acceptedBoost(event.getMember());
+                return;
+            }
+
             Message message = event.getMessage();
 
             DiscordUser discordUser = getDiscordUserByMember(event.getMember());
