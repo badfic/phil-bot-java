@@ -44,8 +44,10 @@ public class BastardCommand extends Command implements PhilMarker {
 
     private static volatile boolean BOOST_AWAITING = false;
     private static volatile boolean AWAITING_RESET_CONFIRMATION = false;
-    public static final long NORMAL_MSG_POINTS = 14;
+    public static final long NORMAL_MSG_POINTS = 10;
     private static final String BENEVOLENT_GOD = "https://cdn.discordapp.com/attachments/686127721688203305/757429302705913876/when-i-level-up-someone-amp-039-s-account_o_2942005.png";
+    private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/707453916882665552/757686616826314802/iu.png";
+    private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/707453916882665552/757687192524161035/iu.png";
     private static final String[] LEADERBOARD_MEDALS = {
             "\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49",
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
@@ -111,9 +113,16 @@ public class BastardCommand extends Command implements PhilMarker {
 
         givePointsToMember(4000, member);
 
+        MessageEmbed message = new EmbedBuilder()
+                .setTitle("Sweepstakes Results")
+                .setImage(SWEEPSTAKES)
+                .setColor(Color.GREEN)
+                .setDescription(String.format("Congratulations %s you won today's sweepstakes worth 4000 bastard points!", member.getAsMention()))
+                .build();
+
         philJda.getTextChannelsByName("bastard-of-the-week", false)
                 .get(0)
-                .sendMessage(simpleEmbed("Sweepstakes Results", "Congratulations %s you won today's sweepstakes worth 4000 bastard points!", member.getAsMention()))
+                .sendMessage(message)
                 .queue();
     }
 
@@ -126,16 +135,19 @@ public class BastardCommand extends Command implements PhilMarker {
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
             try {
-                long taxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.05")).longValue();
+                long taxRate = ThreadLocalRandom.current().nextInt(1, 6);
+                long taxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRate)).longValue();
                 totalTaxes += taxes;
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
                 if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS)) {
                     takePointsFromMember(taxes, memberById);
 
                     description
-                            .append("Took ")
+                            .append("Collected ")
                             .append(NumberFormat.getIntegerInstance().format(taxes))
-                            .append(" points from <@!")
+                            .append(" points (")
+                            .append(taxRate)
+                            .append("%) from <@!")
                             .append(user.getId())
                             .append(">\n");
                 }
@@ -171,6 +183,52 @@ public class BastardCommand extends Command implements PhilMarker {
                 .queue();
     }
 
+    @Scheduled(cron = "0 5 2 * * ?", zone = "GMT")
+    public void robinhood() {
+        List<DiscordUser> allUsers = discordUserRepository.findAll();
+        allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
+
+        long totalRecovered = 0;
+        StringBuilder description = new StringBuilder();
+        for (DiscordUser user : allUsers) {
+            try {
+                long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current().nextInt(1, 6);
+                long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRateRecoveryAmountPercentage)).longValue();
+                totalRecovered += recoveredTaxes;
+                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
+                if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS)) {
+                    givePointsToMember(recoveredTaxes, memberById);
+
+                    description
+                            .append("Recovered ")
+                            .append(NumberFormat.getIntegerInstance().format(recoveredTaxes))
+                            .append(" points (")
+                            .append(taxRateRecoveryAmountPercentage)
+                            .append("%) to <@!")
+                            .append(user.getId())
+                            .append(">\n");
+                }
+            } catch (Exception ignored) {}
+        }
+
+        description.append("\nI recovered a total of ")
+                .append(NumberFormat.getIntegerInstance().format(totalRecovered))
+                .append(" points and gave them back to the bastards!");
+
+        String title = "Robinhood! The following taxes have been returned";
+        MessageEmbed message = new EmbedBuilder()
+                .setTitle(title)
+                .setDescription(description.toString())
+                .setImage(ROBINHOOD)
+                .setColor(Color.ORANGE)
+                .build();
+
+        philJda.getTextChannelsByName("bastard-of-the-week", false)
+                .get(0)
+                .sendMessage(message)
+                .queue();
+    }
+
     @Scheduled(cron = "0 0 * * * ?", zone = "GMT")
     public void boost() {
         TextChannel bastardOfTheWeekChannel = philJda.getTextChannelsByName("bastard-of-the-week", false)
@@ -191,8 +249,8 @@ public class BastardCommand extends Command implements PhilMarker {
                                 throw new RuntimeException("member not found");
                             }
 
-                            givePointsToMember(4000, memberLookedUp);
-                            description.append("Gave 4000 points to <@!")
+                            givePointsToMember(1000, memberLookedUp);
+                            description.append("Gave 1000 points to <@!")
                                     .append(u.getId())
                                     .append(">\n");
                         } catch (Exception ignored) {
@@ -211,7 +269,7 @@ public class BastardCommand extends Command implements PhilMarker {
             bastardOfTheWeekChannel.sendMessage(messageEmbed).queue();
         }
 
-        if (ThreadLocalRandom.current().nextInt(100) < 4) {
+        if (ThreadLocalRandom.current().nextInt(100) < 10) {
             BOOST_AWAITING = true;
             bastardOfTheWeekChannel
                     .sendMessage("BOOST BLITZ!!! Type `boost` in this channel within the next hour to be boosted by 4,000 points")
@@ -343,7 +401,7 @@ public class BastardCommand extends Command implements PhilMarker {
             if ("bot-space".equals(event.getChannel().getName())) {
                 pointsToGive = 1;
             } else if (bonus && now.isAfter(nextMsgBonusTime)) {
-                pointsToGive = 300;
+                pointsToGive = 150;
                 discordUser.setLastMessageBonus(now);
             }
 
