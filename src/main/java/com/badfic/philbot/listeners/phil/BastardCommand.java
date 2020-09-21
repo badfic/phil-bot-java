@@ -272,7 +272,7 @@ public class BastardCommand extends Command implements PhilMarker {
         if (ThreadLocalRandom.current().nextInt(100) < 10) {
             BOOST_AWAITING = true;
             bastardOfTheWeekChannel
-                    .sendMessage("BOOST BLITZ!!! Type `boost` in this channel within the next hour to be boosted by 4,000 points")
+                    .sendMessage("BOOST BLITZ!!! Type `boost` in this channel within the next hour to be boosted by 1,000 points")
                     .queue();
         }
     }
