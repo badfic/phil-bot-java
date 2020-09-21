@@ -53,7 +53,7 @@ public class BastardCommand extends Command implements PhilMarker {
     private static final String SLOT_MACHINE = "\uD83C\uDFB0";
     private static final Set<String> SLOTS = new HashSet<>(Arrays.asList(
             "\uD83E\uDD5D", "\uD83C\uDF53", "\uD83C\uDF4B", "\uD83E\uDD6D", "\uD83C\uDF51", "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4D", "\uD83C\uDF50",
-            "\uD83C\uDF47", "\uD83C\uDF49", "\uD83C\uDF4C", "\uD83C\uDF52", "\uD83C\uDF4E"
+            "\uD83C\uDF47"
     ));
 
     private final DiscordUserRepository discordUserRepository;
@@ -419,12 +419,12 @@ public class BastardCommand extends Command implements PhilMarker {
         String three = pickRandom(SLOTS);
 
         if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
-            givePointsToMember(1000, member, discordUser);
-            event.reply(simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, "%s\n%s%s%s \nYou won 1000 bastard points!",
+            givePointsToMember(10000, member, discordUser);
+            event.reply(simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, "%s\n%s%s%s \nYou won 10,000 bastard points!",
                     member.getAsMention(), one, two, three));
         } else if (one.equalsIgnoreCase(two) || one.equalsIgnoreCase(three) || two.equalsIgnoreCase(three)) {
-            givePointsToMember(10, member, discordUser);
-            event.reply(simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, "%s\n%s%s%s \nYou got 2 out of 3! You won 10 bastard points!",
+            givePointsToMember(50, member, discordUser);
+            event.reply(simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, "%s\n%s%s%s \nYou got 2 out of 3! You won 50 bastard points!",
                     member.getAsMention(), one, two, three));
         } else {
             event.reply(simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, "%s\n%s%s%s",
