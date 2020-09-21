@@ -40,7 +40,7 @@ import org.springframework.stereotype.Component;
 public class BastardCommand extends Command implements PhilMarker {
 
     private static volatile boolean AWAITING_RESET_CONFIRMATION = false;
-    public static final long NORMAL_MSG_POINTS = 7;
+    public static final long NORMAL_MSG_POINTS = 14;
     private static final String[] LEADERBOARD_MEDALS = {
             "\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49",
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
@@ -104,11 +104,11 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        givePointsToMember(1000, member);
+        givePointsToMember(4000, member);
 
         philJda.getTextChannelsByName("bastard-of-the-week", false)
                 .get(0)
-                .sendMessage(simpleEmbed("Sweepstakes Results", "Congratulations %s you won today's sweepstakes worth 1000 bastard points!", member.getAsMention()))
+                .sendMessage(simpleEmbed("Sweepstakes Results", "Congratulations %s you won today's sweepstakes worth 4000 bastard points!", member.getAsMention()))
                 .queue();
     }
 
@@ -149,7 +149,7 @@ public class BastardCommand extends Command implements PhilMarker {
         }
 
         long minutes = ChronoUnit.MINUTES.between(timeTheyJoinedVoice, LocalDateTime.now());
-        long points = minutes * 5;
+        long points = minutes * NORMAL_MSG_POINTS;
         user.setVoiceJoined(null);
         discordUserRepository.save(user);
 
@@ -225,7 +225,7 @@ public class BastardCommand extends Command implements PhilMarker {
             if ("bot-space".equals(event.getChannel().getName())) {
                 pointsToGive = 1;
             } else if (bonus && now.isAfter(nextMsgBonusTime)) {
-                pointsToGive = 100;
+                pointsToGive = 300;
                 discordUser.setLastMessageBonus(now);
             }
 
@@ -495,7 +495,7 @@ public class BastardCommand extends Command implements PhilMarker {
         discordUser.setLastVote(now);
         discordUserRepository.save(discordUser);
 
-        givePointsToMember(250, mentionedMembers.get(0));
+        givePointsToMember(500, mentionedMembers.get(0));
 
         event.replySuccess("Successfully upvoted " + mentionedMembers.get(0).getEffectiveName());
     }
@@ -534,7 +534,7 @@ public class BastardCommand extends Command implements PhilMarker {
         discordUser.setLastVote(now);
         discordUserRepository.save(discordUser);
 
-        takePointsFromMember(50, mentionedMembers.get(0));
+        takePointsFromMember(100, mentionedMembers.get(0));
 
         event.replySuccess("Successfully downvoted " + mentionedMembers.get(0).getEffectiveName());
     }
