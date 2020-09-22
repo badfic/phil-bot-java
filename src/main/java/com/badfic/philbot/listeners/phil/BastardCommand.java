@@ -46,6 +46,7 @@ public class BastardCommand extends Command implements PhilMarker {
     private static volatile boolean AWAITING_RESET_CONFIRMATION = false;
     public static final long NORMAL_MSG_POINTS = 10;
     private static final String BENEVOLENT_GOD = "https://cdn.discordapp.com/attachments/686127721688203305/757429302705913876/when-i-level-up-someone-amp-039-s-account_o_2942005.png";
+    private static final String TAXES = "https://cdn.discordapp.com/attachments/707453916882665552/757770782737825933/iu.png";
     private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/707453916882665552/757686616826314802/iu.png";
     private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/707453916882665552/757687192524161035/iu.png";
     private static final String[] LEADERBOARD_MEDALS = {
@@ -177,9 +178,16 @@ public class BastardCommand extends Command implements PhilMarker {
 
         givePointsToMember(totalTaxes, member);
 
+        MessageEmbed message = new EmbedBuilder()
+                .setTitle(title)
+                .setDescription(description.toString())
+                .setImage(TAXES)
+                .setColor(Color.RED)
+                .build();
+
         philJda.getTextChannelsByName("bastard-of-the-week", false)
                 .get(0)
-                .sendMessage(simpleEmbed(title, description.toString()))
+                .sendMessage(message)
                 .queue();
     }
 
