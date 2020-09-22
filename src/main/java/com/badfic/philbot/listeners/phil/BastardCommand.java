@@ -136,7 +136,7 @@ public class BastardCommand extends Command implements PhilMarker {
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
             try {
-                long taxRate = ThreadLocalRandom.current().nextInt(1, 6);
+                long taxRate = ThreadLocalRandom.current().nextInt(5, 16);
                 long taxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRate)).longValue();
                 totalTaxes += taxes;
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
@@ -200,7 +200,7 @@ public class BastardCommand extends Command implements PhilMarker {
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
             try {
-                long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current().nextInt(1, 6);
+                long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current().nextInt(5, 16);
                 long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRateRecoveryAmountPercentage)).longValue();
                 totalRecovered += recoveredTaxes;
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
@@ -277,7 +277,7 @@ public class BastardCommand extends Command implements PhilMarker {
             bastardOfTheWeekChannel.sendMessage(messageEmbed).queue();
         }
 
-        if (ThreadLocalRandom.current().nextInt(100) < 10) {
+        if (ThreadLocalRandom.current().nextInt(100) < 15) {
             BOOST_AWAITING = true;
             bastardOfTheWeekChannel
                     .sendMessage("BOOST BLITZ!!! Type `boost` in this channel within the next hour to be boosted by 1,000 points")
