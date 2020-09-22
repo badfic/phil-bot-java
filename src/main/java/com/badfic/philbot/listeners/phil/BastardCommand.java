@@ -107,7 +107,10 @@ public class BastardCommand extends Command implements PhilMarker {
 
             try {
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
-                if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS) && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
+                if (memberById != null
+                        && hasRole(memberById, Constants.EIGHTEEN_PLUS)
+                        && winningUser.getXp() > 0
+                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                     member = memberById;
                 }
             } catch (Exception ignored) {}
@@ -176,7 +179,10 @@ public class BastardCommand extends Command implements PhilMarker {
 
             try {
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
-                if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS) && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
+                if (memberById != null
+                        && hasRole(memberById, Constants.EIGHTEEN_PLUS)
+                        && winningUser.getXp() > 0
+                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                     member = memberById;
                 }
             } catch (Exception ignored) {}
@@ -313,7 +319,10 @@ public class BastardCommand extends Command implements PhilMarker {
 
             try {
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
-                if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS) && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
+                if (memberById != null
+                        && hasRole(memberById, Constants.EIGHTEEN_PLUS)
+                        && winningUser.getXp() > 0
+                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                     member = memberById;
                 }
             } catch (Exception ignored) {}
