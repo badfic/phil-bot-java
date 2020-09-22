@@ -8,6 +8,7 @@ import com.badfic.philbot.repository.DiscordUserRepository;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.Color;
+import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.Duration;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +36,8 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -42,9 +46,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class BastardCommand extends Command implements PhilMarker {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static volatile boolean BOOST_AWAITING = false;
+    private static volatile String SWIPER_AWAITING = null;
+    private static volatile boolean DID_SOMEONE_SAVE_FROM_SWIPER = false;
     private static volatile boolean AWAITING_RESET_CONFIRMATION = false;
     public static final long NORMAL_MSG_POINTS = 10;
+    private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/707453916882665552/757776008639283321/unknown.png";
+    private static final String SWIPER_WON = "https://cdn.discordapp.com/attachments/707453916882665552/757774007314677872/iu.png";
     private static final String BENEVOLENT_GOD = "https://cdn.discordapp.com/attachments/686127721688203305/757429302705913876/when-i-level-up-someone-amp-039-s-account_o_2942005.png";
     private static final String TAXES = "https://cdn.discordapp.com/attachments/707453916882665552/757770782737825933/iu.png";
     private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/707453916882665552/757686616826314802/iu.png";
@@ -135,24 +144,28 @@ public class BastardCommand extends Command implements PhilMarker {
         long totalTaxes = 0;
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
-            try {
-                long taxRate = ThreadLocalRandom.current().nextInt(5, 16);
-                long taxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRate)).longValue();
-                totalTaxes += taxes;
-                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
-                if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS)) {
-                    takePointsFromMember(taxes, memberById);
+            if (user.getXp() > 0) {
+                try {
+                    long taxRate = ThreadLocalRandom.current().nextInt(5, 16);
+                    long taxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRate)).longValue();
+                    totalTaxes += taxes;
+                    Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
+                    if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS)) {
+                        takePointsFromMember(taxes, memberById);
 
-                    description
-                            .append("Collected ")
-                            .append(NumberFormat.getIntegerInstance().format(taxes))
-                            .append(" points (")
-                            .append(taxRate)
-                            .append("%) from <@!")
-                            .append(user.getId())
-                            .append(">\n");
+                        description
+                                .append("Collected ")
+                                .append(NumberFormat.getIntegerInstance().format(taxes))
+                                .append(" points (")
+                                .append(taxRate)
+                                .append("%) from <@!")
+                                .append(user.getId())
+                                .append(">\n");
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed to tax user [id={}]", user.getId(), e);
                 }
-            } catch (Exception ignored) {}
+            }
         }
 
         long startTime = System.currentTimeMillis();
@@ -199,24 +212,28 @@ public class BastardCommand extends Command implements PhilMarker {
         long totalRecovered = 0;
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
-            try {
-                long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current().nextInt(5, 16);
-                long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRateRecoveryAmountPercentage)).longValue();
-                totalRecovered += recoveredTaxes;
-                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
-                if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS)) {
-                    givePointsToMember(recoveredTaxes, memberById);
+            if (user.getXp() > 0) {
+                try {
+                    long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current().nextInt(5, 16);
+                    long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRateRecoveryAmountPercentage)).longValue();
+                    totalRecovered += recoveredTaxes;
+                    Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
+                    if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS)) {
+                        givePointsToMember(recoveredTaxes, memberById);
 
-                    description
-                            .append("Recovered ")
-                            .append(NumberFormat.getIntegerInstance().format(recoveredTaxes))
-                            .append(" points (")
-                            .append(taxRateRecoveryAmountPercentage)
-                            .append("%) to <@!")
-                            .append(user.getId())
-                            .append(">\n");
+                        description
+                                .append("Recovered ")
+                                .append(NumberFormat.getIntegerInstance().format(recoveredTaxes))
+                                .append(" points (")
+                                .append(taxRateRecoveryAmountPercentage)
+                                .append("%) to <@!")
+                                .append(user.getId())
+                                .append(">\n");
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed to robinhood user [id={}]", user.getId(), e);
                 }
-            } catch (Exception ignored) {}
+            }
         }
 
         description.append("\nI recovered a total of ")
@@ -229,6 +246,101 @@ public class BastardCommand extends Command implements PhilMarker {
                 .setDescription(description.toString())
                 .setImage(ROBINHOOD)
                 .setColor(Color.ORANGE)
+                .build();
+
+        philJda.getTextChannelsByName("bastard-of-the-week", false)
+                .get(0)
+                .sendMessage(message)
+                .queue();
+    }
+
+    @Scheduled(cron = "0 20 * * * ?", zone = "GMT")
+    public void swiper() {
+        if (SWIPER_AWAITING != null) {
+            Optional<DiscordUser> discordUser = discordUserRepository.findById(SWIPER_AWAITING);
+            SWIPER_AWAITING = null;
+
+            MessageEmbed message = new EmbedBuilder()
+                    .setTitle("Swiper No Swiping")
+                    .setDescription("Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points")
+                    .setColor(Color.GREEN)
+                    .setImage(NO_SWIPING)
+                    .build();
+
+            if (discordUser.isPresent()) {
+                if (DID_SOMEONE_SAVE_FROM_SWIPER) {
+                    DID_SOMEONE_SAVE_FROM_SWIPER = false;
+
+                    message = new EmbedBuilder()
+                            .setTitle("Swiper No Swiping")
+                            .setDescription("Congratulations, you scared swiper away from <@!" + discordUser.get().getId() + ">")
+                            .setColor(Color.GREEN)
+                            .setImage(NO_SWIPING)
+                            .build();
+                } else {
+                    try {
+                        Member memberById = philJda.getGuilds().get(0).retrieveMemberById(discordUser.get().getId()).complete();
+
+                        if (memberById != null) {
+                            takePointsFromMember(1000, memberById);
+                            message = new EmbedBuilder()
+                                    .setTitle("Swiper Escaped!")
+                                    .setDescription("You didn't save <@!" + discordUser.get().getId() + "> in time, they lost 1000 points")
+                                    .setColor(Color.RED)
+                                    .setImage(SWIPER_WON)
+                                    .build();
+                        }
+                    } catch (Exception e) {
+                        logger.error("Exception looking up swiper victim [id={}] after they were not saved", discordUser.get().getId(), e);
+                    }
+                }
+            }
+
+            philJda.getTextChannelsByName("bastard-of-the-week", false)
+                    .get(0)
+                    .sendMessage(message)
+                    .queue();
+            return;
+        }
+
+        List<DiscordUser> allUsers = discordUserRepository.findAll();
+        Collections.shuffle(allUsers);
+
+        long startTime = System.currentTimeMillis();
+        Member member = null;
+        while (member == null && System.currentTimeMillis() - startTime < TimeUnit.SECONDS.toMillis(30)) {
+            DiscordUser winningUser = pickRandom(allUsers);
+
+            try {
+                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
+                if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS) && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
+                    member = memberById;
+                }
+            } catch (Exception ignored) {}
+        }
+
+        if (member == null) {
+            MessageEmbed message = new EmbedBuilder()
+                    .setTitle("Swiper Was Spotted Nearby")
+                    .setDescription("Swiper was spotted nearby, be on the lookout for him")
+                    .setColor(Color.GREEN)
+                    .setImage(NO_SWIPING)
+                    .build();
+
+            philJda.getTextChannelsByName("bastard-of-the-week", false)
+                    .get(0)
+                    .sendMessage(message)
+                    .queue();
+            return;
+        }
+
+        SWIPER_AWAITING = member.getId();
+
+        MessageEmbed message = new EmbedBuilder()
+                .setTitle("Swiper Was Spotted Nearby")
+                .setDescription("Swiper is trying to steal from <@!" + member.getId() + ">\nType 'SWIPER NO SWIPING' in this channel to stop him!")
+                .setColor(Color.YELLOW)
+                .setImage(SWIPER_WON)
                 .build();
 
         philJda.getTextChannelsByName("bastard-of-the-week", false)
@@ -261,7 +373,8 @@ public class BastardCommand extends Command implements PhilMarker {
                             description.append("Gave 1000 points to <@!")
                                     .append(u.getId())
                                     .append(">\n");
-                        } catch (Exception ignored) {
+                        } catch (Exception e) {
+                            logger.error("Failed to give boost points to user [id={}]", u.getId(), e);
                             description.append("OOPS: Unable to give points to <@!")
                                     .append(u.getId())
                                     .append(">\n");
@@ -277,7 +390,7 @@ public class BastardCommand extends Command implements PhilMarker {
             bastardOfTheWeekChannel.sendMessage(messageEmbed).queue();
         }
 
-        if (ThreadLocalRandom.current().nextInt(100) < 15) {
+        if (ThreadLocalRandom.current().nextInt(100) < 25) {
             BOOST_AWAITING = true;
             bastardOfTheWeekChannel
                     .sendMessage("BOOST BLITZ!!! Type `boost` in this channel within the next hour to be boosted by 1,000 points")
@@ -392,6 +505,12 @@ public class BastardCommand extends Command implements PhilMarker {
         } else {
             if (BOOST_AWAITING && StringUtils.containsIgnoreCase(msgContent, "boost") && "bastard-of-the-week".equalsIgnoreCase(event.getChannel().getName())) {
                 acceptedBoost(event.getMember());
+                return;
+            }
+
+            if (SWIPER_AWAITING != null && StringUtils.containsIgnoreCase(msgContent, "no swiping")
+                    && "bastard-of-the-week".equalsIgnoreCase(event.getChannel().getName())) {
+                DID_SOMEONE_SAVE_FROM_SWIPER = true;
                 return;
             }
 
@@ -881,6 +1000,7 @@ public class BastardCommand extends Command implements PhilMarker {
                     }
                 });
             } catch (Exception e) {
+                logger.error("Failed to reset roles for user with [id={}]", discordUser.getId(), e);
                 event.replyError("Failed to reset roles for user with discord id: <@!" + discordUser.getId() + '>');
             }
         }
