@@ -59,7 +59,6 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
         this.name = name;
         this.fullCmdPrefix = "!!" + name;
-        this.requiredRole = Constants.ADMIN_ROLE;
         String rawHelp = "Any message containing `<name>` will make <name> respond with a random message if that channel is configured.\n\n" +
                 "`!!<name> tts` responds with a random message but spoken via text-to-speech\n" +
                 "`!!<name> nsfw add channel #channel` adds a channel to the list of channels nsfw <name> responds to\n" +
@@ -106,6 +105,14 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         String msgContent = event.getMessage().getContentRaw();
 
         if (msgContent.startsWith(fullCmdPrefix)) {
+            if (event.getMember()
+                    .getRoles()
+                    .stream()
+                    .noneMatch(r -> r.getName().equalsIgnoreCase(Constants.ADMIN_ROLE) || r.getName().equalsIgnoreCase(Constants.MOD_ROLE))) {
+                event.replyError("You do not have the correct role to use the " + name + " command");
+                return;
+            }
+
             if (msgContent.startsWith(fullCmdPrefix + " help")) {
                 event.replyInDm(simpleEmbed(name + " Help", help));
                 return;
