@@ -2,11 +2,8 @@ package com.badfic.philbot.listeners.phil;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
-import com.badfic.philbot.data.phil.Phrase;
-import com.badfic.philbot.repository.PhraseRepository;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.util.List;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
@@ -17,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 @Component
 public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
@@ -27,17 +23,14 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     private final PhilCommand philCommand;
     private final BastardCommand bastardCommand;
     private final CommandClient philCommandClient;
-    private final PhraseRepository phraseRepository;
 
     @Autowired
     public PhilMessageListener(PhilCommand philCommand,
                                BastardCommand bastardCommand,
-                               @Qualifier("philCommandClient") CommandClient philCommandClient,
-                               PhraseRepository phraseRepository) {
+                               @Qualifier("philCommandClient") CommandClient philCommandClient) {
         this.philCommand = philCommand;
         this.bastardCommand = bastardCommand;
         this.philCommandClient = philCommandClient;
-        this.phraseRepository = phraseRepository;
     }
 
     @Override
@@ -55,19 +48,6 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
         if (PHIL_PATTERN.matcher(msgContent).find()) {
             philCommand.execute(new CommandEvent(event, null, philCommandClient));
             return;
-        }
-
-        List<Phrase> phrases = phraseRepository.findAllByDiscordUser_id(event.getAuthor().getId());
-
-        if (!CollectionUtils.isEmpty(phrases)) {
-            for (Phrase phrase : phrases) {
-                Pattern phrasePattern = Pattern.compile("\\b(" + Pattern.quote(phrase.getPhrase()) + ")\\b", Pattern.CASE_INSENSITIVE);
-
-                if (phrasePattern.matcher(msgContent).find()) {
-                    phrase.setCounter(phrase.getCounter() + 1);
-                    phraseRepository.save(phrase);
-                }
-            }
         }
     }
 
