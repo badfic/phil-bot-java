@@ -186,6 +186,8 @@ public class BastardCommand extends Command implements PhilMarker {
                     member = memberById;
                 }
             } catch (Exception ignored) {}
+
+            index--;
         }
 
         String title = "Tax time! The following taxes have been paid to Phil";
