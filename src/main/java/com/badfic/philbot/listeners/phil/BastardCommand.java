@@ -36,6 +36,8 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,18 +47,58 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BastardCommand extends Command implements PhilMarker {
-
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    // Timeouts
+    public static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 3;
+    public static final long BASTARD_SLOTS_TIMEOUT_MINUTES = 3;
+    public static final long BASTARD_STEAL_TIMEOUT_MINUTES = 3;
+
+    // message/vc/emote points
+    public static final long NORMAL_MSG_POINTS = 10;
+    public static final long PICTURE_MSG_POINTS = 150;
+    public static final long NORMAL_REACTION_POINTS = 1;
+    public static final long EMOTE_REACTION_POINTS = 5;
+    public static final long VOICE_CHAT_POINTS_PER_MINUTE = 5;
+
+    // upvote/downvote points
+    public static final long UPVOTE_POINTS_TO_UPVOTEE = 500;
+    public static final long UPVOTE_POINTS_TO_UPVOTER = 250;
+    public static final long DOWNVOTE_POINTS_FROM_DOWNVOTEE = 100;
+    public static final long DOWNVOTE_POINTS_FROM_DOWNVOTER = 100;
+
+    // taxes and robinhood
+    public static final long TAX_THRESHOLD = 100;
+    public static final long ORGANIC_POINT_THRESHOLD = 1000;
+    public static final long SWEEPSTAKES_WIN_POINTS = 4000;
+    public static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
+    public static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
+    public static final int PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
+
+    // swiper and boost
+    public static final long SWIPER_POINTS_TO_STEAL = 1000;
+    public static final long BOOST_POINTS_TO_GIVE = 1000;
+    public static final int PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR = 15;
+
+    // slots
+    public static final long BASTARD_SLOTS_WIN_POINTS = 10_000;
+    public static final long BASTARD_SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
+
+    // steal (needs to be reworked, it has been disabled for a week while I rethink it)
+    public static final int STEAL_FULL_LOSS_PERCENTAGE = 30;
+    public static final int STEAL_FULL_SUCCESS_PERCENTAGE = 30;
+    public static final int STEAL_SOFT_LOSS_PERCENTAGE = 80;
+
     private static volatile boolean BOOST_AWAITING = false;
     private static volatile String SWIPER_AWAITING = null;
     private static volatile boolean DID_SOMEONE_SAVE_FROM_SWIPER = false;
     private static volatile boolean AWAITING_RESET_CONFIRMATION = false;
-    public static final long NORMAL_MSG_POINTS = 10;
     private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/707453916882665552/757776008639283321/unknown.png";
     private static final String SWIPER_WON = "https://cdn.discordapp.com/attachments/707453916882665552/757774007314677872/iu.png";
     private static final String BENEVOLENT_GOD = "https://cdn.discordapp.com/attachments/686127721688203305/757429302705913876/when-i-level-up-someone-amp-039-s-account_o_2942005.png";
     private static final String TAXES = "https://cdn.discordapp.com/attachments/707453916882665552/757770782737825933/iu.png";
     private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/707453916882665552/757686616826314802/iu.png";
+    private static final String ELMER_FUDD = "https://cdn.discordapp.com/attachments/707453916882665552/759886407329775676/iu.png";
     private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/707453916882665552/757687192524161035/iu.png";
     private static final String[] LEADERBOARD_MEDALS = {
             "\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49",
@@ -85,9 +127,7 @@ public class BastardCommand extends Command implements PhilMarker {
                 "`!!bastard leaderboard` show the bastard leaderboard\n" +
                 "`!!bastard up @incogmeato` upvote a user for the bastard games\n" +
                 "`!!bastard down @incogmeato` downvote a user for the bastard games\n" +
-                "`!!bastard flip` Flip a coin. Heads you win, tails you lose\n" +
-                "`!!bastard slots` Play slots. Winners for 2 out of 3 matches or 3 out of 3 matches.\n" +
-                "`!!bastard steal @incogmeato` Attempt to steal some points from incogmeato";
+                "`!!bastard slots` Play slots. Winners for 2 out of 3 matches or 3 out of 3 matches.";
         adminHelp = userHelp + "\n\nMODS ONLY COMMANDS:\n" +
                 "`!!bastard give 120 @incogmeato` give 120 points to incogmeato\n" +
                 "`!!bastard take 120 @incogmeato` remove 120 points from incogmeato\n" +
@@ -109,7 +149,7 @@ public class BastardCommand extends Command implements PhilMarker {
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
                 if (memberById != null
                         && hasRole(memberById, Constants.EIGHTEEN_PLUS)
-                        && winningUser.getXp() > 0
+                        && winningUser.getXp() > ORGANIC_POINT_THRESHOLD
                         && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                     member = memberById;
                 }
@@ -124,7 +164,7 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        givePointsToMember(4000, member);
+        givePointsToMember(SWEEPSTAKES_WIN_POINTS, member);
 
         MessageEmbed message = new EmbedBuilder()
                 .setTitle("Sweepstakes Results")
@@ -147,9 +187,9 @@ public class BastardCommand extends Command implements PhilMarker {
         long totalTaxes = 0;
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
-            if (user.getXp() > 0) {
+            if (user.getXp() > TAX_THRESHOLD) {
                 try {
-                    long taxRate = ThreadLocalRandom.current().nextInt(5, 16);
+                    long taxRate = ThreadLocalRandom.current().nextInt(TAX_PERCENTAGE_MIN_MAX.getLeft(), TAX_PERCENTAGE_MIN_MAX.getRight());
                     long taxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRate)).longValue();
                     totalTaxes += taxes;
                     Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
@@ -181,7 +221,7 @@ public class BastardCommand extends Command implements PhilMarker {
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
                 if (memberById != null
                         && hasRole(memberById, Constants.EIGHTEEN_PLUS)
-                        && winningUser.getXp() > 0
+                        && winningUser.getXp() > ORGANIC_POINT_THRESHOLD
                         && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                     member = memberById;
                 }
@@ -190,14 +230,11 @@ public class BastardCommand extends Command implements PhilMarker {
             index--;
         }
 
-        String title = "Tax time! The following taxes have been paid to Phil";
+        String title = "Tax time! The following taxes have been paid to the luminiferous aether";
         if (member != null) {
             title = "Tax time! The following taxes have been paid to " + member.getEffectiveName();
-        } else {
-            member = philJda.getGuilds().get(0).getSelfMember();
+            givePointsToMember(totalTaxes, member);
         }
-
-        givePointsToMember(totalTaxes, member);
 
         MessageEmbed message = new EmbedBuilder()
                 .setTitle(title)
@@ -214,15 +251,30 @@ public class BastardCommand extends Command implements PhilMarker {
 
     @Scheduled(cron = "0 5 2 * * ?", zone = "GMT")
     public void robinhood() {
+        if (ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN) {
+            MessageEmbed message = new EmbedBuilder()
+                    .setTitle("Robinhood was caught!")
+                    .setDescription("Elmer Fudd caught Robinhood while he was trying to return taxes to the bastards.")
+                    .setImage(ELMER_FUDD)
+                    .setColor(Color.RED)
+                    .build();
+
+            philJda.getTextChannelsByName("bastard-of-the-week", false)
+                    .get(0)
+                    .sendMessage(message)
+                    .queue();
+            return;
+        }
+
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
         long totalRecovered = 0;
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
-            if (user.getXp() > 0) {
+            if (user.getXp() > TAX_THRESHOLD) {
                 try {
-                    long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current().nextInt(5, 16);
+                    long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current().nextInt(ROBINHOOD_PERCENTAGE_MIN_MAX.getLeft(), ROBINHOOD_PERCENTAGE_MIN_MAX.getRight());
                     long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRateRecoveryAmountPercentage)).longValue();
                     totalRecovered += recoveredTaxes;
                     Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
@@ -290,10 +342,10 @@ public class BastardCommand extends Command implements PhilMarker {
                         Member memberById = philJda.getGuilds().get(0).retrieveMemberById(discordUser.get().getId()).complete();
 
                         if (memberById != null) {
-                            takePointsFromMember(1000, memberById);
+                            takePointsFromMember(SWIPER_POINTS_TO_STEAL, memberById);
                             message = new EmbedBuilder()
                                     .setTitle("Swiper Escaped!")
-                                    .setDescription("You didn't save <@!" + discordUser.get().getId() + "> in time, they lost 1000 points")
+                                    .setDescription("You didn't save <@!" + discordUser.get().getId() + "> in time, they lost" +  SWIPER_POINTS_TO_STEAL + " points")
                                     .setColor(Color.RED)
                                     .setImage(SWIPER_WON)
                                     .build();
@@ -323,7 +375,7 @@ public class BastardCommand extends Command implements PhilMarker {
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
                 if (memberById != null
                         && hasRole(memberById, Constants.EIGHTEEN_PLUS)
-                        && winningUser.getXp() > 0
+                        && winningUser.getXp() > SWIPER_POINTS_TO_STEAL
                         && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                     member = memberById;
                 }
@@ -381,7 +433,7 @@ public class BastardCommand extends Command implements PhilMarker {
                             }
 
                             givePointsToMember(1000, memberLookedUp);
-                            description.append("Gave 1000 points to <@!")
+                            description.append("Gave " + BOOST_POINTS_TO_GIVE + " points to <@!")
                                     .append(u.getId())
                                     .append(">\n");
                         } catch (Exception e) {
@@ -402,10 +454,10 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        if (ThreadLocalRandom.current().nextInt(100) < 15) {
+        if (ThreadLocalRandom.current().nextInt(100) < PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR) {
             BOOST_AWAITING = true;
             bastardOfTheWeekChannel
-                    .sendMessage("BOOST BLITZ!!! Type `boost` in this channel within the next hour to be boosted by 1,000 points")
+                    .sendMessage("BOOST BLITZ!!! Type `boost` in this channel within the next hour to be boosted by " + BOOST_POINTS_TO_GIVE + " points")
                     .queue();
         }
     }
@@ -447,7 +499,7 @@ public class BastardCommand extends Command implements PhilMarker {
         }
 
         long minutes = ChronoUnit.MINUTES.between(timeTheyJoinedVoice, LocalDateTime.now());
-        long points = minutes * NORMAL_MSG_POINTS;
+        long points = minutes * VOICE_CHAT_POINTS_PER_MINUTE;
         user.setVoiceJoined(null);
         discordUserRepository.save(user);
 
@@ -488,12 +540,10 @@ public class BastardCommand extends Command implements PhilMarker {
             set(event);
         } else if (msgContent.startsWith("!!bastard leaderboard")) {
             leaderboard(event);
-        } else if (msgContent.startsWith("!!bastard steal")) {
-            steal(event);
+        } else if (msgContent.startsWith("!!bastard steal") || msgContent.startsWith("!!bastard flip")) {
+            event.replyError("Both flip and steal are disabled for now, they'll be back soon.");
         } else if (msgContent.startsWith("!!bastard slots")) {
             slots(event);
-        } else if (msgContent.startsWith("!!bastard flip")) {
-            flip(event);
         } else if (msgContent.startsWith("!!bastard reset")) {
             if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
                 event.replyError("You do not have permission to use this command");
@@ -530,7 +580,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
             DiscordUser discordUser = getDiscordUserByMember(event.getMember());
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(3, ChronoUnit.MINUTES);
+            LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(PICTURE_MSG_BONUS_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
 
             boolean bonus = CollectionUtils.isNotEmpty(message.getAttachments())
                     || CollectionUtils.isNotEmpty(message.getEmbeds())
@@ -540,7 +590,7 @@ public class BastardCommand extends Command implements PhilMarker {
             if ("bot-space".equals(event.getChannel().getName())) {
                 pointsToGive = 1;
             } else if (bonus && now.isAfter(nextMsgBonusTime)) {
-                pointsToGive = 150;
+                pointsToGive = PICTURE_MSG_POINTS;
                 discordUser.setLastMessageBonus(now);
             }
 
@@ -561,43 +611,12 @@ public class BastardCommand extends Command implements PhilMarker {
         return optionalUserEntity.get();
     }
 
-    private void flip(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextFlipTime = discordUser.getLastFlip().plus(3, ChronoUnit.MINUTES);
-        if (now.isBefore(nextFlipTime)) {
-            Duration duration = Duration.between(now, nextFlipTime);
-
-            if (duration.getSeconds() < 60) {
-                event.replyError("You must wait " + (duration.getSeconds() + 1) + " seconds before flipping again");
-            } else {
-                event.replyError("You must wait " + (duration.toMinutes() + 1) + " minutes before flipping again");
-            }
-            return;
-        }
-        discordUser.setLastFlip(now);
-        discordUserRepository.save(discordUser);
-
-        int randomNumber = ThreadLocalRandom.current().nextInt(100);
-
-        if (randomNumber < 5) {
-            takePointsFromMember(4, event.getMember());
-            event.reply(simpleEmbed("Flip", "I don't feel like flipping a coin, I'm taking 4 bastard points from you \uD83D\uDCA9"));
-        } else if (randomNumber % 2 == 0) {
-            givePointsToMember(20, event.getMember());
-            event.reply(simpleEmbed("Flip", "I flipped a coin and it landed on heads, here's 20 bastard points \uD83D\uDCB0"));
-        } else {
-            takePointsFromMember(10, event.getMember());
-            event.reply(simpleEmbed("Flip", "I flipped a coin and it landed on tails, you lost 10 bastard points \uD83D\uDE2C"));
-        }
-    }
-
     private void slots(CommandEvent event) {
         Member member = event.getMember();
         DiscordUser discordUser = getDiscordUserByMember(member);
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextSlotsTime = discordUser.getLastSlots().plus(3, ChronoUnit.MINUTES);
+        LocalDateTime nextSlotsTime = discordUser.getLastSlots().plus(BASTARD_SLOTS_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
         if (now.isBefore(nextSlotsTime)) {
             Duration duration = Duration.between(now, nextSlotsTime);
 
@@ -616,11 +635,11 @@ public class BastardCommand extends Command implements PhilMarker {
         String three = pickRandom(SLOTS);
 
         if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
-            givePointsToMember(10000, member, discordUser);
+            givePointsToMember(BASTARD_SLOTS_WIN_POINTS, member, discordUser);
             event.reply(simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, "%s\n%s%s%s \nYou won 10,000 bastard points!",
                     member.getAsMention(), one, two, three));
         } else if (one.equalsIgnoreCase(two) || one.equalsIgnoreCase(three) || two.equalsIgnoreCase(three)) {
-            givePointsToMember(50, member, discordUser);
+            givePointsToMember(BASTARD_SLOTS_TWO_OUT_OF_THREE_POINTS, member, discordUser);
             event.reply(simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, "%s\n%s%s%s \nYou got 2 out of 3! You won 50 bastard points!",
                     member.getAsMention(), one, two, three));
         } else {
@@ -657,7 +676,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
         DiscordUser discordUser = getDiscordUserByMember(event.getMember());
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextStealTime = discordUser.getLastSteal().plus(3, ChronoUnit.MINUTES);
+        LocalDateTime nextStealTime = discordUser.getLastSteal().plus(BASTARD_STEAL_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
         if (now.isBefore(nextStealTime)) {
             Duration duration = Duration.between(now, nextStealTime);
 
@@ -672,16 +691,16 @@ public class BastardCommand extends Command implements PhilMarker {
         discordUserRepository.save(discordUser);
 
         int randomNumber;
-        if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < 30) {
+        if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < STEAL_FULL_LOSS_PERCENTAGE) {
             event.reply(simpleEmbed("Steal", "You attempt to steal points from %s and fail miserably, you pay them %s points to forget this ever happened. \uD83D\uDE2C",
                     mentionedMember, randomNumber));
             takePointsFromMember(randomNumber, event.getMember());
             givePointsToMember(randomNumber, mentionedMember);
-        } else if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < 30) {
+        } else if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < STEAL_FULL_SUCCESS_PERCENTAGE) {
             event.reply(simpleEmbed("Steal", "You successfully stole %s points from %s \uD83D\uDCB0", randomNumber, mentionedMember));
             takePointsFromMember(randomNumber, mentionedMember);
             givePointsToMember(randomNumber, event.getMember());
-        } else if (ThreadLocalRandom.current().nextInt(1, 101) < 80) {
+        } else if (ThreadLocalRandom.current().nextInt(1, 101) < STEAL_SOFT_LOSS_PERCENTAGE) {
             event.reply(simpleEmbed("Steal", "You failed to steal from %s but escaped unnoticed. Take 2 points for your troubles. \uD83D\uDCB0", mentionedMember));
             givePointsToMember(2, event.getMember());
         } else {
@@ -810,7 +829,8 @@ public class BastardCommand extends Command implements PhilMarker {
         discordUser.setLastVote(now);
         discordUserRepository.save(discordUser);
 
-        givePointsToMember(500, mentionedMembers.get(0));
+        givePointsToMember(UPVOTE_POINTS_TO_UPVOTEE, mentionedMembers.get(0));
+        givePointsToMember(UPVOTE_POINTS_TO_UPVOTER, event.getMember());
 
         event.replySuccess("Successfully upvoted " + mentionedMembers.get(0).getEffectiveName());
     }
@@ -849,7 +869,8 @@ public class BastardCommand extends Command implements PhilMarker {
         discordUser.setLastVote(now);
         discordUserRepository.save(discordUser);
 
-        takePointsFromMember(100, mentionedMembers.get(0));
+        takePointsFromMember(DOWNVOTE_POINTS_FROM_DOWNVOTEE, mentionedMembers.get(0));
+        takePointsFromMember(DOWNVOTE_POINTS_FROM_DOWNVOTER, event.getMember());
 
         event.replySuccess("Successfully downvoted " + mentionedMembers.get(0).getEffectiveName());
     }
