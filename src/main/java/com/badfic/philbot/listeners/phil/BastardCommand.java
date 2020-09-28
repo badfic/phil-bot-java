@@ -128,6 +128,7 @@ public class BastardCommand extends Command implements PhilMarker {
     private volatile boolean didSomeoneSaveFromSwiper = false;
     private volatile String noSwipingPhrase = "Swiper No Swiping";
     private volatile boolean boostAwaiting = false;
+    private volatile String boostPhrase = "boost";
     private volatile boolean awaitingResetConfirmation = false;
 
     // non volatile state
@@ -435,7 +436,7 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        long delay = pickRandom(Arrays.asList(15L, 30L, 45L, 60L));
+        long delay = pickRandom(Arrays.asList(15L, 30L, 45L));
         boolean swiper = ThreadLocalRandom.current().nextInt() % 2 == 0;
         swiperAwaiting = member.getId();
         noSwipingPhrase = swiper ? "Swiper No Swiping" : "Snarter No Snarting";
@@ -498,8 +499,18 @@ public class BastardCommand extends Command implements PhilMarker {
 
         if (ThreadLocalRandom.current().nextInt(100) < PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR) {
             boostAwaiting = true;
+            boostPhrase = pickRandom(Arrays.asList("boost", "yeet", "simp", "swamp", "awesome", "thanks", "spooner", "shift", "toll", "grimace", "vision",
+                    "notorious", "predict", "microphone", "carrot", "watermelon", "grapefruit", "land", "thicc", "season", "session", "bargain",
+                    "survival", "gasp", "apple", "diplomatic", "immunity", "director", "torch", "hidden", "valley", "ranch", "difficult", "bounce",
+                    "tribute", "gap", "relinquish", "reliance", "reliant", "arrogant", "salon", "direction", "forget", "disclose", "pie", "support",
+                    "observer", "guide", "bear", "bare", "access", "easy", "hard", "firm", "loose", "evening", "morning", "afternoon", "daytime",
+                    "attire", "tire", "tired", "assessment", "imagine", "imagination", "lace", "volume", "architecture", "rub",
+                    "moist", "wet", "damp", "cavern", "tavern", "new", "old", "choose", "chose", "stake", "steak", "stakes", "wax", "flax", "pitch", "throw",
+                    "gesture", "cause", "effect", "affect", "mixture", "mix", "desk", "describe", "drive", "drove", "wrestle", "hustle", "sharp", "dull",
+                    "point", "staff", "exchange", "limit", "limits", "friend", "friends"));
             bastardOfTheWeekChannel
-                    .sendMessage("BOOST BLITZ!!! Type `boost` in this channel within the next hour to be boosted by " + BOOST_POINTS_TO_GIVE + " points")
+                    .sendMessage("BOOST BLITZ!!! Type `" + boostPhrase + "` in this channel within the next hour to be boosted by "
+                            + BOOST_POINTS_TO_GIVE + " points")
                     .queue();
         }
     }
@@ -607,7 +618,7 @@ public class BastardCommand extends Command implements PhilMarker {
         } else if (msgContent.startsWith("!!bastard")){
             event.replyError("Unrecognized bastard command");
         } else {
-            if (boostAwaiting && StringUtils.containsIgnoreCase(msgContent, "boost") && "bastard-of-the-week".equalsIgnoreCase(event.getChannel().getName())) {
+            if (boostAwaiting && StringUtils.containsIgnoreCase(msgContent, boostPhrase) && "bastard-of-the-week".equalsIgnoreCase(event.getChannel().getName())) {
                 acceptedBoost(event.getMember());
                 return;
             }
