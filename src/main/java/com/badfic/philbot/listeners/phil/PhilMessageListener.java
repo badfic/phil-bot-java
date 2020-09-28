@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,6 +40,14 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
         if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {
             return;
+        }
+
+        if (event.getAuthor().getId().equalsIgnoreCase("486427102854381568") && StringUtils.containsIgnoreCase(msgContent, "I'm out")) {
+            bastardCommand.takePointsFromMember(1000, event.getMember());
+        }
+
+        if (StringUtils.containsIgnoreCase(msgContent, "my wife")) {
+            bastardCommand.takePointsFromMember(100, event.getMember());
         }
 
         if (event.getMember().getRoles().stream().anyMatch(r -> r.getName().equals(Constants.EIGHTEEN_PLUS))) {

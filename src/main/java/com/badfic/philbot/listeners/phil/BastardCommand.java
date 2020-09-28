@@ -50,24 +50,34 @@ public class BastardCommand extends Command implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // Timeouts
-    public static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 3;
+    public static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 1;
     public static final long BASTARD_SLOTS_TIMEOUT_MINUTES = 3;
-    public static final long BASTARD_STEAL_TIMEOUT_MINUTES = 3;
+    public static final long BASTARD_STEAL_TIMEOUT_MINUTES = 2;
 
     // message/vc/emote points
-    public static final long NORMAL_MSG_POINTS = 10;
+    public static final long NORMAL_MSG_POINTS = 5;
+    public static final long CURSED_MSG_POINTS = 15;
+    public static final Set<String> CURSED_MSG_CHANNELS = new HashSet<>(Arrays.asList(
+            "cursed-swamp",
+            "nate-heywoods-simp-hour",
+            "thirsty-legends",
+            "gay-receipts"
+    ));
     public static final long PICTURE_MSG_POINTS = 150;
-    public static final long NORMAL_REACTION_POINTS = 1;
-    public static final long EMOTE_REACTION_POINTS = 5;
+    public static final long CURSED_PICTURE_MSG_POINTS = 250;
+    public static final long NORMAL_REACTION_POINTS = 2;
+    public static final long EMOTE_REACTION_POINTS = 7;
     public static final long VOICE_CHAT_POINTS_PER_MINUTE = 5;
 
     // upvote/downvote points
+    public static final int UPVOTE_TIMEOUT_MINUTES = 1;
+    public static final int DOWNVOTE_TIMEOUT_MINUTES = 1;
     public static final long UPVOTE_POINTS_TO_UPVOTEE = 500;
     public static final long UPVOTE_POINTS_TO_UPVOTER = 250;
     public static final long DOWNVOTE_POINTS_FROM_DOWNVOTEE = 100;
-    public static final long DOWNVOTE_POINTS_FROM_DOWNVOTER = 100;
+    public static final long DOWNVOTE_POINTS_TO_DOWNVOTER = 50;
 
-    // taxes and robinhood
+    // sweepstakes, taxes, robinhood
     public static final long TAX_THRESHOLD = 100;
     public static final long ORGANIC_POINT_THRESHOLD = 1000;
     public static final long SWEEPSTAKES_WIN_POINTS = 4000;
@@ -589,6 +599,17 @@ public class BastardCommand extends Command implements PhilMarker {
             long pointsToGive = NORMAL_MSG_POINTS;
             if ("bot-space".equals(event.getChannel().getName())) {
                 pointsToGive = 1;
+            } else if (CURSED_MSG_CHANNELS.contains(event.getChannel().getName())) {
+                pointsToGive = CURSED_MSG_POINTS;
+
+                if (bonus && now.isAfter(nextMsgBonusTime)) {
+                    if ("cursed-swamp".equalsIgnoreCase(event.getChannel().getName()) || "gay-receipts".equalsIgnoreCase(event.getChannel().getName())) {
+                        pointsToGive = CURSED_PICTURE_MSG_POINTS;
+                    } else {
+                        pointsToGive = PICTURE_MSG_POINTS;
+                    }
+                    discordUser.setLastMessageBonus(now);
+                }
             } else if (bonus && now.isAfter(nextMsgBonusTime)) {
                 pointsToGive = PICTURE_MSG_POINTS;
                 discordUser.setLastMessageBonus(now);
@@ -711,7 +732,7 @@ public class BastardCommand extends Command implements PhilMarker {
         }
     }
 
-    private void takePointsFromMember(long pointsToTake, Member member) {
+    public void takePointsFromMember(long pointsToTake, Member member) {
         if (!hasRole(member, Constants.EIGHTEEN_PLUS)) {
             return;
         }
@@ -815,7 +836,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
         DiscordUser discordUser = getDiscordUserByMember(event.getMember());
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(3, ChronoUnit.MINUTES);
+        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(UPVOTE_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
         if (now.isBefore(nextVoteTime)) {
             Duration duration = Duration.between(now, nextVoteTime);
 
@@ -855,7 +876,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
         DiscordUser discordUser = getDiscordUserByMember(event.getMember());
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(3, ChronoUnit.MINUTES);
+        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(DOWNVOTE_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
         if (now.isBefore(nextVoteTime)) {
             Duration duration = Duration.between(now, nextVoteTime);
 
@@ -870,7 +891,7 @@ public class BastardCommand extends Command implements PhilMarker {
         discordUserRepository.save(discordUser);
 
         takePointsFromMember(DOWNVOTE_POINTS_FROM_DOWNVOTEE, mentionedMembers.get(0));
-        takePointsFromMember(DOWNVOTE_POINTS_FROM_DOWNVOTER, event.getMember());
+        givePointsToMember(DOWNVOTE_POINTS_TO_DOWNVOTER, event.getMember());
 
         event.replySuccess("Successfully downvoted " + mentionedMembers.get(0).getEffectiveName());
     }
