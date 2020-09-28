@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -83,6 +85,7 @@ public class BastardCommand extends Command implements PhilMarker {
     public static final long SWEEPSTAKES_WIN_POINTS = 4000;
     public static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
     public static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
+    public static final int PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
     public static final int PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
 
     // swiper and boost
@@ -99,17 +102,17 @@ public class BastardCommand extends Command implements PhilMarker {
     public static final int STEAL_FULL_SUCCESS_PERCENTAGE = 30;
     public static final int STEAL_SOFT_LOSS_PERCENTAGE = 80;
 
-    private static volatile boolean BOOST_AWAITING = false;
-    private static volatile String SWIPER_AWAITING = null;
-    private static volatile boolean DID_SOMEONE_SAVE_FROM_SWIPER = false;
-    private static volatile boolean AWAITING_RESET_CONFIRMATION = false;
     private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/707453916882665552/757776008639283321/unknown.png";
     private static final String SWIPER_WON = "https://cdn.discordapp.com/attachments/707453916882665552/757774007314677872/iu.png";
     private static final String BENEVOLENT_GOD = "https://cdn.discordapp.com/attachments/686127721688203305/757429302705913876/when-i-level-up-someone-amp-039-s-account_o_2942005.png";
     private static final String TAXES = "https://cdn.discordapp.com/attachments/707453916882665552/757770782737825933/iu.png";
     private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/707453916882665552/757686616826314802/iu.png";
     private static final String ELMER_FUDD = "https://cdn.discordapp.com/attachments/707453916882665552/759886407329775676/iu.png";
+    private static final String GOOFY = "https://cdn.discordapp.com/attachments/707453916882665552/759980595257933864/iu.png";
     private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/707453916882665552/757687192524161035/iu.png";
+    private static final String SNART_SPOTTED = "https://cdn.discordapp.com/attachments/323666308107599872/758910821950029824/snart_rory.png";
+    private static final String SNART_WON = "https://cdn.discordapp.com/attachments/323666308107599872/758911981176094801/snart_rory_mischief_managed.png";
+    private static final String NO_SNART = "https://cdn.discordapp.com/attachments/323666308107599872/758911984925802516/snart_rory_you_cant_steal_here.png";
     private static final String[] LEADERBOARD_MEDALS = {
             "\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49",
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
@@ -120,9 +123,18 @@ public class BastardCommand extends Command implements PhilMarker {
             "\uD83C\uDF47"
     ));
 
+    // volatile state
+    private volatile String swiperAwaiting = null;
+    private volatile boolean didSomeoneSaveFromSwiper = false;
+    private volatile String noSwipingPhrase = "Swiper No Swiping";
+    private volatile boolean boostAwaiting = false;
+    private volatile boolean awaitingResetConfirmation = false;
+
+    // non volatile state
     private final DiscordUserRepository discordUserRepository;
     private final String userHelp;
     private final String adminHelp;
+    private final ScheduledExecutorService scheduler;
 
     @Resource(name = "philJda")
     @Lazy
@@ -144,9 +156,10 @@ public class BastardCommand extends Command implements PhilMarker {
                 "`!!bastard set 120 @incogmeato` set incogmeato to 120 points\n" +
                 "`!!bastard reset` reset everyone back to level 0";
         this.discordUserRepository = discordUserRepository;
+        scheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
-    @Scheduled(cron = "0 0 1 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 0 2 * * ?", zone = "GMT")
     public void sweepstakes() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
 
@@ -189,8 +202,23 @@ public class BastardCommand extends Command implements PhilMarker {
                 .queue();
     }
 
-    @Scheduled(cron = "0 5 1 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 5 2 * * ?", zone = "GMT")
     public void taxes() {
+        if (ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_TAXES_DOESNT_HAPPEN) {
+            MessageEmbed message = new EmbedBuilder()
+                    .setTitle("No taxes today!")
+                    .setDescription("Goofy caught the tax person before they could take taxes from the bastards.")
+                    .setImage(GOOFY)
+                    .setColor(Color.RED)
+                    .build();
+
+            philJda.getTextChannelsByName("bastard-of-the-week", false)
+                    .get(0)
+                    .sendMessage(message)
+                    .queue();
+            return;
+        }
+
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
@@ -259,7 +287,7 @@ public class BastardCommand extends Command implements PhilMarker {
                 .queue();
     }
 
-    @Scheduled(cron = "0 5 2 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 15 2 * * ?", zone = "GMT")
     public void robinhood() {
         if (ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN) {
             MessageEmbed message = new EmbedBuilder()
@@ -324,28 +352,28 @@ public class BastardCommand extends Command implements PhilMarker {
                 .queue();
     }
 
-    @Scheduled(cron = "0 20 * * * ?", zone = "GMT")
+    @Scheduled(cron = "0 20 0,2,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
     public void swiper() {
-        if (SWIPER_AWAITING != null) {
-            Optional<DiscordUser> discordUser = discordUserRepository.findById(SWIPER_AWAITING);
-            SWIPER_AWAITING = null;
+        if (swiperAwaiting != null) {
+            Optional<DiscordUser> discordUser = discordUserRepository.findById(swiperAwaiting);
+            swiperAwaiting = null;
 
             MessageEmbed message = new EmbedBuilder()
-                    .setTitle("Swiper No Swiping")
+                    .setTitle(noSwipingPhrase)
                     .setDescription("Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points")
                     .setColor(Color.GREEN)
                     .setImage(NO_SWIPING)
                     .build();
 
             if (discordUser.isPresent()) {
-                if (DID_SOMEONE_SAVE_FROM_SWIPER) {
-                    DID_SOMEONE_SAVE_FROM_SWIPER = false;
+                if (didSomeoneSaveFromSwiper) {
+                    didSomeoneSaveFromSwiper = false;
 
                     message = new EmbedBuilder()
-                            .setTitle("Swiper No Swiping")
-                            .setDescription("Congratulations, you scared swiper away from <@!" + discordUser.get().getId() + ">")
+                            .setTitle(noSwipingPhrase)
+                            .setDescription("Congratulations, you scared them away from <@!" + discordUser.get().getId() + ">")
                             .setColor(Color.GREEN)
-                            .setImage(NO_SWIPING)
+                            .setImage(noSwipingPhrase.contains("swiper") ? NO_SWIPING : NO_SNART)
                             .build();
                 } else {
                     try {
@@ -354,10 +382,10 @@ public class BastardCommand extends Command implements PhilMarker {
                         if (memberById != null) {
                             takePointsFromMember(SWIPER_POINTS_TO_STEAL, memberById);
                             message = new EmbedBuilder()
-                                    .setTitle("Swiper Escaped!")
+                                    .setTitle(noSwipingPhrase.contains("swiper") ? "Swiper Escaped!" : "Rory and Snart Escaped!")
                                     .setDescription("You didn't save <@!" + discordUser.get().getId() + "> in time, they lost" +  SWIPER_POINTS_TO_STEAL + " points")
                                     .setColor(Color.RED)
-                                    .setImage(SWIPER_WON)
+                                    .setImage(noSwipingPhrase.contains("swiper") ? SWIPER_WON : SNART_WON)
                                     .build();
                         }
                     } catch (Exception e) {
@@ -407,13 +435,17 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        SWIPER_AWAITING = member.getId();
+        long delay = pickRandom(Arrays.asList(15L, 30L, 45L, 60L));
+        boolean swiper = ThreadLocalRandom.current().nextInt() % 2 == 0;
+        swiperAwaiting = member.getId();
+        noSwipingPhrase = swiper ? "Swiper No Swiping" : "Snarter No Snarting";
+        scheduler.schedule(this::swiper, delay, TimeUnit.MINUTES);
 
         MessageEmbed message = new EmbedBuilder()
-                .setTitle("Swiper Was Spotted Nearby")
-                .setDescription("Swiper is trying to steal from <@!" + member.getId() + ">\nType 'SWIPER NO SWIPING' in this channel to stop him!")
+                .setTitle(swiper ? "Swiper Was Spotted Nearby" : "Rory and Snart Were Spotted Nearby")
+                .setDescription("They're trying to steal from <@!" + member.getId() + ">\nType '" + noSwipingPhrase + "' in this channel to stop them!")
                 .setColor(Color.YELLOW)
-                .setImage(SWIPER_WON)
+                .setImage(swiper ? SWIPER_WON : SNART_SPOTTED)
                 .build();
 
         philJda.getTextChannelsByName("bastard-of-the-week", false)
@@ -427,8 +459,8 @@ public class BastardCommand extends Command implements PhilMarker {
         TextChannel bastardOfTheWeekChannel = philJda.getTextChannelsByName("bastard-of-the-week", false)
                 .get(0);
 
-        if (BOOST_AWAITING) {
-            BOOST_AWAITING = false;
+        if (boostAwaiting) {
+            boostAwaiting = false;
 
             LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
             StringBuilder description = new StringBuilder();
@@ -465,7 +497,7 @@ public class BastardCommand extends Command implements PhilMarker {
         }
 
         if (ThreadLocalRandom.current().nextInt(100) < PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR) {
-            BOOST_AWAITING = true;
+            boostAwaiting = true;
             bastardOfTheWeekChannel
                     .sendMessage("BOOST BLITZ!!! Type `boost` in this channel within the next hour to be boosted by " + BOOST_POINTS_TO_GIVE + " points")
                     .queue();
@@ -560,29 +592,29 @@ public class BastardCommand extends Command implements PhilMarker {
                 return;
             }
 
-            if (!AWAITING_RESET_CONFIRMATION) {
+            if (!awaitingResetConfirmation) {
                 event.reply(simpleEmbed("Reset The Games", "Are you sure you want to reset the bastard games? This will reset everyone's points. If you are sure, type `!!bastard reset confirm`"));
-                AWAITING_RESET_CONFIRMATION = true;
+                awaitingResetConfirmation = true;
             } else {
                 if (!msgContent.startsWith("!!bastard reset confirm")) {
                     event.reply(simpleEmbed("Abort Reset", "Bastard reset aborted. You must type `!!bastard reset` and then confirm it with `!!bastard reset confirm`."));
-                    AWAITING_RESET_CONFIRMATION = false;
+                    awaitingResetConfirmation = false;
                     return;
                 }
                 reset(event);
-                AWAITING_RESET_CONFIRMATION = false;
+                awaitingResetConfirmation = false;
             }
         } else if (msgContent.startsWith("!!bastard")){
             event.replyError("Unrecognized bastard command");
         } else {
-            if (BOOST_AWAITING && StringUtils.containsIgnoreCase(msgContent, "boost") && "bastard-of-the-week".equalsIgnoreCase(event.getChannel().getName())) {
+            if (boostAwaiting && StringUtils.containsIgnoreCase(msgContent, "boost") && "bastard-of-the-week".equalsIgnoreCase(event.getChannel().getName())) {
                 acceptedBoost(event.getMember());
                 return;
             }
 
-            if (SWIPER_AWAITING != null && StringUtils.containsIgnoreCase(msgContent, "no swiping")
+            if (swiperAwaiting != null && StringUtils.containsIgnoreCase(msgContent, noSwipingPhrase)
                     && "bastard-of-the-week".equalsIgnoreCase(event.getChannel().getName())) {
-                DID_SOMEONE_SAVE_FROM_SWIPER = true;
+                didSomeoneSaveFromSwiper = true;
                 return;
             }
 
