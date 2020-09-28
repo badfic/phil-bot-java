@@ -72,8 +72,8 @@ public class BastardCommand extends Command implements PhilMarker {
     public static final long VOICE_CHAT_POINTS_PER_MINUTE = 5;
 
     // upvote/downvote points
-    public static final int UPVOTE_TIMEOUT_MINUTES = 1;
-    public static final int DOWNVOTE_TIMEOUT_MINUTES = 1;
+    public static final long UPVOTE_TIMEOUT_MINUTES = 1;
+    public static final long DOWNVOTE_TIMEOUT_MINUTES = 1;
     public static final long UPVOTE_POINTS_TO_UPVOTEE = 500;
     public static final long UPVOTE_POINTS_TO_UPVOTER = 250;
     public static final long DOWNVOTE_POINTS_FROM_DOWNVOTEE = 100;
@@ -81,27 +81,28 @@ public class BastardCommand extends Command implements PhilMarker {
 
     // sweepstakes, taxes, robinhood
     public static final long TAX_THRESHOLD = 100;
-    public static final long ORGANIC_POINT_THRESHOLD = 1000;
-    public static final long SWEEPSTAKES_WIN_POINTS = 4000;
+    public static final long ORGANIC_POINT_THRESHOLD = 1_000;
+    public static final long SWEEPSTAKES_WIN_POINTS = 4_000;
     public static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
     public static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
-    public static final int PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
-    public static final int PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
+    public static final long PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
+    public static final long PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
 
     // swiper and boost
-    public static final long SWIPER_POINTS_TO_STEAL = 1000;
-    public static final long BOOST_POINTS_TO_GIVE = 1000;
-    public static final int PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR = 15;
+    public static final long SWIPER_POINTS_TO_STEAL = 1_000;
+    public static final long BOOST_POINTS_TO_GIVE = 1_000;
+    public static final long PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR = 15;
 
     // slots
     public static final long BASTARD_SLOTS_WIN_POINTS = 10_000;
     public static final long BASTARD_SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
 
     // steal (needs to be reworked, it has been disabled for a week while I rethink it)
-    public static final int STEAL_FULL_LOSS_PERCENTAGE = 30;
-    public static final int STEAL_FULL_SUCCESS_PERCENTAGE = 30;
-    public static final int STEAL_SOFT_LOSS_PERCENTAGE = 80;
+    public static final long STEAL_FULL_LOSS_PERCENTAGE = 30;
+    public static final long STEAL_FULL_SUCCESS_PERCENTAGE = 30;
+    public static final long STEAL_SOFT_LOSS_PERCENTAGE = 80;
 
+    private static final String BOOST = "https://cdn.discordapp.com/attachments/707453916882665552/759992042020929557/experian-boost-stampede-featuring-john-cena-large-5.png";
     private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/707453916882665552/757776008639283321/unknown.png";
     private static final String SWIPER_WON = "https://cdn.discordapp.com/attachments/707453916882665552/757774007314677872/iu.png";
     private static final String BENEVOLENT_GOD = "https://cdn.discordapp.com/attachments/686127721688203305/757429302705913876/when-i-level-up-someone-amp-039-s-account_o_2942005.png";
@@ -508,10 +509,16 @@ public class BastardCommand extends Command implements PhilMarker {
                     "moist", "wet", "damp", "cavern", "tavern", "new", "old", "choose", "chose", "stake", "steak", "stakes", "wax", "flax", "pitch", "throw",
                     "gesture", "cause", "effect", "affect", "mixture", "mix", "desk", "describe", "drive", "drove", "wrestle", "hustle", "sharp", "dull",
                     "point", "staff", "exchange", "limit", "limits", "friend", "friends"));
-            bastardOfTheWeekChannel
-                    .sendMessage("BOOST BLITZ!!! Type `" + boostPhrase + "` in this channel within the next hour to be boosted by "
+
+            MessageEmbed message = new EmbedBuilder()
+                    .setTitle("BOOST BLITZ")
+                    .setDescription("Type `" + boostPhrase + "` in this channel within the next hour to be boosted by "
                             + BOOST_POINTS_TO_GIVE + " points")
-                    .queue();
+                    .setImage(BOOST)
+                    .setColor(Color.GREEN)
+                    .build();
+
+            bastardOfTheWeekChannel.sendMessage(message).queue();
         }
     }
 
