@@ -375,7 +375,7 @@ public class BastardCommand extends Command implements PhilMarker {
                             .setTitle(noSwipingPhrase)
                             .setDescription("Congratulations, you scared them away from <@!" + discordUser.get().getId() + ">")
                             .setColor(Color.GREEN)
-                            .setImage(noSwipingPhrase.contains("swiper") ? NO_SWIPING : NO_SNART)
+                            .setImage(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? NO_SWIPING : NO_SNART)
                             .build();
                 } else {
                     try {
@@ -384,10 +384,10 @@ public class BastardCommand extends Command implements PhilMarker {
                         if (memberById != null) {
                             takePointsFromMember(SWIPER_POINTS_TO_STEAL, memberById);
                             message = new EmbedBuilder()
-                                    .setTitle(noSwipingPhrase.contains("swiper") ? "Swiper Escaped!" : "Rory and Snart Escaped!")
-                                    .setDescription("You didn't save <@!" + discordUser.get().getId() + "> in time, they lost" +  SWIPER_POINTS_TO_STEAL + " points")
+                                    .setTitle(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? "Swiper Escaped!" : "Rory and Snart Escaped!")
+                                    .setDescription("You didn't save <@!" + discordUser.get().getId() + "> in time, they lost" + SWIPER_POINTS_TO_STEAL + " points")
                                     .setColor(Color.RED)
-                                    .setImage(noSwipingPhrase.contains("swiper") ? SWIPER_WON : SNART_WON)
+                                    .setImage(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? SWIPER_WON : SNART_WON)
                                     .build();
                         }
                     } catch (Exception e) {
