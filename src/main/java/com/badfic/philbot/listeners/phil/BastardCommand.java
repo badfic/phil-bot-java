@@ -83,8 +83,8 @@ public class BastardCommand extends Command implements PhilMarker {
     public static final long TAX_THRESHOLD = 100;
     public static final long ORGANIC_POINT_THRESHOLD = 1_000;
     public static final long SWEEPSTAKES_WIN_POINTS = 4_000;
-    public static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
-    public static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
+    public static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(1, 10);
+    public static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(1, 10);
     public static final long PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
     public static final long PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
 
