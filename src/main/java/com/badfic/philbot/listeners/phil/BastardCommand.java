@@ -80,11 +80,12 @@ public class BastardCommand extends Command implements PhilMarker {
     public static final long DOWNVOTE_POINTS_TO_DOWNVOTER = 50;
 
     // sweepstakes, taxes, robinhood
+    public static final BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");
     public static final long TAX_THRESHOLD = 100;
     public static final long ORGANIC_POINT_THRESHOLD = 1_000;
     public static final long SWEEPSTAKES_WIN_POINTS = 4_000;
-    public static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(1, 10);
-    public static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(1, 10);
+    public static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
+    public static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
     public static final long PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
     public static final long PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
 
@@ -230,7 +231,7 @@ public class BastardCommand extends Command implements PhilMarker {
             if (user.getXp() > TAX_THRESHOLD) {
                 try {
                     long taxRate = ThreadLocalRandom.current().nextInt(TAX_PERCENTAGE_MIN_MAX.getLeft(), TAX_PERCENTAGE_MIN_MAX.getRight());
-                    long taxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRate)).longValue();
+                    long taxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRate)).longValue();
                     totalTaxes += taxes;
                     Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
                     if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS)) {
@@ -315,7 +316,7 @@ public class BastardCommand extends Command implements PhilMarker {
             if (user.getXp() > TAX_THRESHOLD) {
                 try {
                     long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current().nextInt(ROBINHOOD_PERCENTAGE_MIN_MAX.getLeft(), ROBINHOOD_PERCENTAGE_MIN_MAX.getRight());
-                    long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(new BigDecimal("0.0" + taxRateRecoveryAmountPercentage)).longValue();
+                    long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRateRecoveryAmountPercentage)).longValue();
                     totalRecovered += recoveredTaxes;
                     Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
                     if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS)) {
