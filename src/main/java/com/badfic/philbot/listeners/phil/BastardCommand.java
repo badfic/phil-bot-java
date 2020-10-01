@@ -386,7 +386,7 @@ public class BastardCommand extends Command implements PhilMarker {
                             takePointsFromMember(SWIPER_POINTS_TO_STEAL, memberById);
                             message = new EmbedBuilder()
                                     .setTitle(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? "Swiper Escaped!" : "Rory and Snart Escaped!")
-                                    .setDescription("You didn't save <@!" + discordUser.get().getId() + "> in time, they lost" + SWIPER_POINTS_TO_STEAL + " points")
+                                    .setDescription("You didn't save <@!" + discordUser.get().getId() + "> in time, they lost " + SWIPER_POINTS_TO_STEAL + " points")
                                     .setColor(Color.RED)
                                     .setImage(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? SWIPER_WON : SNART_WON)
                                     .build();
