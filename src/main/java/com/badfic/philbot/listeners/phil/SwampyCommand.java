@@ -99,15 +99,15 @@ public class SwampyCommand extends Command implements PhilMarker {
     public static final long SLOTS_WIN_POINTS = 10_000;
     public static final long SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
 
-    private static final String BOOST = "https://cdn.discordapp.com/attachments/707453916882665552/759992042020929557/experian-boost-stampede-featuring-john-cena-large-5.png";
+    private static final String BOOST = "https://cdn.discordapp.com/attachments/323666308107599872/761492230379798538/BOOST.png";
     private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/707453916882665552/757776008639283321/unknown.png";
     private static final String SWIPER_WON = "https://cdn.discordapp.com/attachments/707453916882665552/757774007314677872/iu.png";
     private static final String BENEVOLENT_GOD = "https://cdn.discordapp.com/attachments/686127721688203305/757429302705913876/when-i-level-up-someone-amp-039-s-account_o_2942005.png";
-    private static final String TAXES = "https://cdn.discordapp.com/attachments/707453916882665552/757770782737825933/iu.png";
-    private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/707453916882665552/757686616826314802/iu.png";
-    private static final String ELMER_FUDD = "https://cdn.discordapp.com/attachments/707453916882665552/759886407329775676/iu.png";
-    private static final String GOOFY = "https://cdn.discordapp.com/attachments/707453916882665552/759980595257933864/iu.png";
-    private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/707453916882665552/757687192524161035/iu.png";
+    private static final String TAXES = "https://cdn.discordapp.com/attachments/323666308107599872/761472008734244864/martha_taxes.png";
+    private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761475204702535680/oprah_refund_robinhood.png";
+    private static final String PERSON_WHO_STOPS_TAXES = "https://cdn.discordapp.com/attachments/323666308107599872/761473370604568606/snoop_no_taxes.png";
+    private static final String PERSON_WHO_STOPS_ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761477965586366484/george_lopez_stop_oprah.png";
+    private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/323666308107599872/761467155333644298/sweepstakes_cats.png";
     private static final String SNART_SPOTTED = "https://cdn.discordapp.com/attachments/323666308107599872/758910821950029824/snart_rory.png";
     private static final String SNART_WON = "https://cdn.discordapp.com/attachments/323666308107599872/758911981176094801/snart_rory_mischief_managed.png";
     private static final String NO_SNART = "https://cdn.discordapp.com/attachments/323666308107599872/758911984925802516/snart_rory_you_cant_steal_here.png";
@@ -211,8 +211,8 @@ public class SwampyCommand extends Command implements PhilMarker {
         if (ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_TAXES_DOESNT_HAPPEN) {
             MessageEmbed message = new EmbedBuilder()
                     .setTitle("No taxes today!")
-                    .setDescription("Goofy caught the tax person before they could take taxes from the swamp.")
-                    .setImage(GOOFY)
+                    .setDescription("Snoop Dogg caught Martha Stewart before she could take taxes from the swamp.")
+                    .setImage(PERSON_WHO_STOPS_TAXES)
                     .setColor(Color.RED)
                     .build();
 
@@ -295,9 +295,9 @@ public class SwampyCommand extends Command implements PhilMarker {
     public void robinhood() {
         if (ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN) {
             MessageEmbed message = new EmbedBuilder()
-                    .setTitle("Robinhood was caught!")
-                    .setDescription("Elmer Fudd caught Robinhood while he was trying to return taxes to the swamp.")
-                    .setImage(ELMER_FUDD)
+                    .setTitle("Wapa!!!")
+                    .setDescription("George Lopez caught Oprah while she was trying to return taxes to the swamp.")
+                    .setImage(PERSON_WHO_STOPS_ROBINHOOD)
                     .setColor(Color.RED)
                     .build();
 
@@ -825,13 +825,20 @@ public class SwampyCommand extends Command implements PhilMarker {
     }
 
     private void leaderboard(CommandEvent event) {
-        List<DiscordUser> swampyUsers = discordUserRepository.findAll();
+        String[] split = event.getArgs().split("\\s+");
+        if (split.length != 2) {
+            event.replyError("Badly formatted command. Example `!!swampy leaderboard bastard` or `!!swampy leaderboard chaos`");
+            return;
+        }
 
-        swampyUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
+        List<DiscordUser> swampyUsers = discordUserRepository.findAll();
 
         AtomicInteger place = new AtomicInteger(0);
         StringBuilder description = new StringBuilder();
-        swampyUsers.stream().limit(10).forEachOrdered(swampyUser -> {
+        swampyUsers.stream().filter(u ->
+            hasRole(event.getGuild().retrieveMemberById(u.getId()).complete(),
+                    StringUtils.containsIgnoreCase(split[1], "bastard") ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE)
+        ).sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())).limit(10).forEachOrdered(swampyUser -> {
             description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
                     .append(": <@!")
                     .append(swampyUser.getId())
@@ -841,7 +848,7 @@ public class SwampyCommand extends Command implements PhilMarker {
         });
 
         MessageEmbed messageEmbed = new EmbedBuilder()
-                .setTitle("Leaderboard")
+                .setTitle(StringUtils.containsIgnoreCase(split[1], "bastard") ? "Bastard Leaderboard" : "Chaos Leaderboard")
                 .setDescription(description.toString())
                 .build();
 
