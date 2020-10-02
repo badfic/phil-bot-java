@@ -173,7 +173,7 @@ public class SwampyCommand extends Command implements PhilMarker {
         scheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
-    @Scheduled(cron = "0 0 2 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 2 2 * * ?", zone = "GMT")
     public void sweepstakes() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
 
@@ -366,7 +366,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                 .queue();
     }
 
-    @Scheduled(cron = "0 0 19 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 3 19 * * ?", zone = "GMT")
     public void trickOrTreat() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
