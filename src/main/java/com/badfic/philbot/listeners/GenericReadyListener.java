@@ -2,6 +2,7 @@ package com.badfic.philbot.listeners;
 
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.BehradMarker;
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.KeanuMarker;
 import com.badfic.philbot.config.PhilMarker;
 import java.lang.invoke.MethodHandles;
@@ -34,6 +35,7 @@ public class GenericReadyListener extends ListenerAdapter implements PhilMarker,
         MessageEmbed messageEmbed = new EmbedBuilder()
                 .setTitle("Restarted")
                 .setDescription(String.format("I just restarted\ngit sha: %s\ncommit msg: %s", commitSha, commitMessage))
+                .setColor(Constants.SWAMP_GREEN)
                 .build();
         event.getJDA().getTextChannelsByName("test-channel", false).get(0).sendMessage(messageEmbed).queue();
     }

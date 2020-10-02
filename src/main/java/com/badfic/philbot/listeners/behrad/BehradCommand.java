@@ -2,6 +2,7 @@ package com.badfic.philbot.listeners.behrad;
 
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.BehradMarker;
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.behrad.BehradResponsesConfig;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.badfic.philbot.repository.BehradResponsesConfigRepository;
@@ -97,6 +98,7 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
         if (WEED_PATTERN.matcher(msgContent).find()) {
             MessageEmbed messageEmbed = new EmbedBuilder()
                     .setImage("https://cdn.discordapp.com/attachments/323666308107599872/750575541266022410/cfff6b4479a51d245d26cd82e16d4f3f.png")
+                    .setColor(Constants.SWAMP_GREEN)
                     .build();
             Message message = new MessageBuilder(messageEmbed)
                     .setContent("420 whatcha smokin?")
