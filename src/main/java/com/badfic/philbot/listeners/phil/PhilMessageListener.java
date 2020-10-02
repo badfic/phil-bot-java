@@ -1,9 +1,11 @@
 package com.badfic.philbot.listeners.phil;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.regex.Pattern;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -74,6 +76,17 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
             points = SwampyCommand.EMOTE_REACTION_POINTS;
         }
         swampyCommand.givePointsToMember(points, event.getMember());
+    }
+
+    @Override
+    public void onGuildMemberRoleAdd(@NotNull GuildMemberRoleAddEvent event) {
+        if (event.getRoles().stream().anyMatch(r -> r.getName().equals(Constants.CHAOS_CHILDREN_ROLE) || r.getName().equals(Constants.EIGHTEEN_PLUS_ROLE))) {
+            String mention = event.getMember().getAsMention();
+            event.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0).sendMessage(mention + " Congratulations on not being a newbie " +
+                    "anymore my chaotic friend! Now you're entered into The Swampys, our server wide chaos games. " +
+                    "You don't have to actively participate, but if you'd like to join the chaos with us, take a peek at what The Swampys has to offer.\n\n" +
+                    "https://discordapp.com/channels/740999022340341791/761398315119280158/761411776561807410").queue();
+        }
     }
 
 }
