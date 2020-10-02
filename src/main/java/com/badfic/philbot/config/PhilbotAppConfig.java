@@ -40,7 +40,7 @@ public class PhilbotAppConfig {
                 .useHelpBuilder(false)
                 .addCommands(commands.stream().filter(c -> c instanceof PhilMarker).toArray(Command[]::new))
                 .setActivity(Activity.playing("with our feelings"))
-                .setEmojis("✅", "⚠️", "❌")
+                .setEmojis("\uD83C\uDF83", "⚠️", "\uD83D\uDC80")
                 .build();
     }
 
