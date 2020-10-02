@@ -880,7 +880,7 @@ public class SwampyCommand extends Command implements PhilMarker {
         MessageEmbed messageEmbed = new EmbedBuilder()
                 .setImage(rank.getRankUpImage())
                 .setTitle("Level " + rank.getLevel() + ": " + rank.getRoleName())
-                .setColor(Constants.HALOWEEN_ORANGE)
+                .setColor(role.getColor())
                 .setDescription(rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
                         "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total points.\n\n" +
                         "The next level is level " +
@@ -1190,7 +1190,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                 MessageEmbed messageEmbed = new EmbedBuilder()
                         .setImage(newRank.getRankUpImage())
                         .setTitle("Level Change!")
-                        .setColor(Constants.HALOWEEN_ORANGE)
+                        .setColor(newRole.getColor())
                         .setDescription(newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()))
                         .build();
 
