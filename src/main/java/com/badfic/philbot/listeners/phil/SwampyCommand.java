@@ -48,13 +48,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BastardCommand extends Command implements PhilMarker {
+public class SwampyCommand extends Command implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // Timeouts
     public static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 1;
-    public static final long BASTARD_SLOTS_TIMEOUT_MINUTES = 3;
-    public static final long BASTARD_STEAL_TIMEOUT_MINUTES = 2;
+    public static final long SLOTS_TIMEOUT_MINUTES = 3;
+    public static final long STEAL_TIMEOUT_MINUTES = 60;
+    public static final long STEAL_REACTION_TIME_MINUTES = 5;
 
     // message/vc/emote points
     public static final long NORMAL_MSG_POINTS = 5;
@@ -95,13 +96,8 @@ public class BastardCommand extends Command implements PhilMarker {
     public static final long PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR = 15;
 
     // slots
-    public static final long BASTARD_SLOTS_WIN_POINTS = 10_000;
-    public static final long BASTARD_SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
-
-    // steal (needs to be reworked, it has been disabled for a week while I rethink it)
-    public static final long STEAL_FULL_LOSS_PERCENTAGE = 30;
-    public static final long STEAL_FULL_SUCCESS_PERCENTAGE = 30;
-    public static final long STEAL_SOFT_LOSS_PERCENTAGE = 80;
+    public static final long SLOTS_WIN_POINTS = 10_000;
+    public static final long SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
 
     private static final String BOOST = "https://cdn.discordapp.com/attachments/707453916882665552/759992042020929557/experian-boost-stampede-featuring-john-cena-large-5.png";
     private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/707453916882665552/757776008639283321/unknown.png";
@@ -120,9 +116,13 @@ public class BastardCommand extends Command implements PhilMarker {
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
     };
     private static final String SLOT_MACHINE = "\uD83C\uDFB0";
+    private static final Set<String> SPOOKY_SLOTS = new HashSet<>(Arrays.asList(
+            "\uD83C\uDF83", "\uD83D\uDC7B", "\uD83D\uDC80", "\uD83C\uDF42", "\uD83C\uDF15",
+            "\uD83E\uDDDB", "\uD83E\uDDDF", "\uD83D\uDD77️", "\uD83E\uDD87", "\uD83C\uDF6C"
+    ));
     private static final Set<String> SLOTS = new HashSet<>(Arrays.asList(
-            "\uD83E\uDD5D", "\uD83C\uDF53", "\uD83C\uDF4B", "\uD83E\uDD6D", "\uD83C\uDF51", "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4D", "\uD83C\uDF50",
-            "\uD83C\uDF47"
+            "\uD83E\uDD5D", "\uD83C\uDF53", "\uD83C\uDF4B", "\uD83E\uDD6D", "\uD83C\uDF51",
+            "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4D", "\uD83C\uDF50", "\uD83C\uDF47"
     ));
 
     // volatile state
@@ -144,20 +144,21 @@ public class BastardCommand extends Command implements PhilMarker {
     private JDA philJda;
 
     @Autowired
-    public BastardCommand(DiscordUserRepository discordUserRepository) {
-        name = "bastard";
-        requiredRole = Constants.EIGHTEEN_PLUS;
+    public SwampyCommand(DiscordUserRepository discordUserRepository) {
+        name = "swampy";
+        aliases = new String[] {"bastard", "spooky"};
         userHelp =
-                "`!!bastard rank` show your bastard rank\n" +
-                "`!!bastard leaderboard` show the bastard leaderboard\n" +
-                "`!!bastard up @incogmeato` upvote a user for the bastard games\n" +
-                "`!!bastard down @incogmeato` downvote a user for the bastard games\n" +
-                "`!!bastard slots` Play slots. Winners for 2 out of 3 matches or 3 out of 3 matches.";
+                "`!!swampy` aka `!!bastard` aka `!!spooky` HELP:\n" +
+                "`!!swampy rank` show your swampy rank\n" +
+                "`!!swampy leaderboard` show the swampy leaderboard\n" +
+                "`!!swampy up @incogmeato` upvote a user for the swampys\n" +
+                "`!!swampy down @incogmeato` downvote a user for the swampys\n" +
+                "`!!swampy slots` Play slots. Winners for 2 out of 3 matches or 3 out of 3 matches.";
         adminHelp = userHelp + "\n\nMODS ONLY COMMANDS:\n" +
-                "`!!bastard give 120 @incogmeato` give 120 points to incogmeato\n" +
-                "`!!bastard take 120 @incogmeato` remove 120 points from incogmeato\n" +
-                "`!!bastard set 120 @incogmeato` set incogmeato to 120 points\n" +
-                "`!!bastard reset` reset everyone back to level 0";
+                "`!!swampy give 120 @incogmeato` give 120 points to incogmeato\n" +
+                "`!!swampy take 120 @incogmeato` remove 120 points from incogmeato\n" +
+                "`!!swampy set 120 @incogmeato` set incogmeato to 120 points\n" +
+                "`!!swampy reset` reset everyone back to level 0";
         this.discordUserRepository = discordUserRepository;
         scheduler = Executors.newSingleThreadScheduledExecutor();
     }
@@ -174,7 +175,7 @@ public class BastardCommand extends Command implements PhilMarker {
             try {
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
                 if (memberById != null
-                        && hasRole(memberById, Constants.EIGHTEEN_PLUS)
+                        && !memberById.getUser().isBot()
                         && winningUser.getXp() > ORGANIC_POINT_THRESHOLD
                         && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                     member = memberById;
@@ -183,7 +184,7 @@ public class BastardCommand extends Command implements PhilMarker {
         }
 
         if (member == null) {
-            philJda.getTextChannelsByName("bastard-of-the-week", false)
+            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
                     .sendMessage(simpleEmbed("Sweepstakes Results", "Unable to choose a winner, nobody wins"))
                     .queue();
@@ -196,10 +197,10 @@ public class BastardCommand extends Command implements PhilMarker {
                 .setTitle("Sweepstakes Results")
                 .setImage(SWEEPSTAKES)
                 .setColor(Color.GREEN)
-                .setDescription(String.format("Congratulations %s you won today's sweepstakes worth 4000 bastard points!", member.getAsMention()))
+                .setDescription(String.format("Congratulations %s you won today's sweepstakes worth 4000 points!", member.getAsMention()))
                 .build();
 
-        philJda.getTextChannelsByName("bastard-of-the-week", false)
+        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0)
                 .sendMessage(message)
                 .queue();
@@ -210,12 +211,12 @@ public class BastardCommand extends Command implements PhilMarker {
         if (ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_TAXES_DOESNT_HAPPEN) {
             MessageEmbed message = new EmbedBuilder()
                     .setTitle("No taxes today!")
-                    .setDescription("Goofy caught the tax person before they could take taxes from the bastards.")
+                    .setDescription("Goofy caught the tax person before they could take taxes from the swamp.")
                     .setImage(GOOFY)
                     .setColor(Color.RED)
                     .build();
 
-            philJda.getTextChannelsByName("bastard-of-the-week", false)
+            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
                     .sendMessage(message)
                     .queue();
@@ -234,7 +235,7 @@ public class BastardCommand extends Command implements PhilMarker {
                     long taxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRate)).longValue();
                     totalTaxes += taxes;
                     Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
-                    if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS)) {
+                    if (memberById != null && !memberById.getUser().isBot()) {
                         takePointsFromMember(taxes, memberById);
 
                         description
@@ -261,7 +262,7 @@ public class BastardCommand extends Command implements PhilMarker {
             try {
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
                 if (memberById != null
-                        && hasRole(memberById, Constants.EIGHTEEN_PLUS)
+                        && !memberById.getUser().isBot()
                         && winningUser.getXp() > ORGANIC_POINT_THRESHOLD
                         && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                     member = memberById;
@@ -284,7 +285,7 @@ public class BastardCommand extends Command implements PhilMarker {
                 .setColor(Color.RED)
                 .build();
 
-        philJda.getTextChannelsByName("bastard-of-the-week", false)
+        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0)
                 .sendMessage(message)
                 .queue();
@@ -295,12 +296,12 @@ public class BastardCommand extends Command implements PhilMarker {
         if (ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN) {
             MessageEmbed message = new EmbedBuilder()
                     .setTitle("Robinhood was caught!")
-                    .setDescription("Elmer Fudd caught Robinhood while he was trying to return taxes to the bastards.")
+                    .setDescription("Elmer Fudd caught Robinhood while he was trying to return taxes to the swamp.")
                     .setImage(ELMER_FUDD)
                     .setColor(Color.RED)
                     .build();
 
-            philJda.getTextChannelsByName("bastard-of-the-week", false)
+            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
                     .sendMessage(message)
                     .queue();
@@ -319,7 +320,7 @@ public class BastardCommand extends Command implements PhilMarker {
                     long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRateRecoveryAmountPercentage)).longValue();
                     totalRecovered += recoveredTaxes;
                     Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
-                    if (memberById != null && hasRole(memberById, Constants.EIGHTEEN_PLUS)) {
+                    if (memberById != null && !memberById.getUser().isBot()) {
                         givePointsToMember(recoveredTaxes, memberById);
 
                         description
@@ -339,7 +340,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
         description.append("\nI recovered a total of ")
                 .append(NumberFormat.getIntegerInstance().format(totalRecovered))
-                .append(" points and gave them back to the bastards!");
+                .append(" points and gave them back to the swamp!");
 
         String title = "Robinhood! The following taxes have been returned";
         MessageEmbed message = new EmbedBuilder()
@@ -349,7 +350,7 @@ public class BastardCommand extends Command implements PhilMarker {
                 .setColor(Color.ORANGE)
                 .build();
 
-        philJda.getTextChannelsByName("bastard-of-the-week", false)
+        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0)
                 .sendMessage(message)
                 .queue();
@@ -397,7 +398,7 @@ public class BastardCommand extends Command implements PhilMarker {
                 }
             }
 
-            philJda.getTextChannelsByName("bastard-of-the-week", false)
+            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
                     .sendMessage(message)
                     .queue();
@@ -415,7 +416,7 @@ public class BastardCommand extends Command implements PhilMarker {
             try {
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
                 if (memberById != null
-                        && hasRole(memberById, Constants.EIGHTEEN_PLUS)
+                        && !memberById.getUser().isBot()
                         && winningUser.getXp() > SWIPER_POINTS_TO_STEAL
                         && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                     member = memberById;
@@ -431,7 +432,7 @@ public class BastardCommand extends Command implements PhilMarker {
                     .setImage(NO_SWIPING)
                     .build();
 
-            philJda.getTextChannelsByName("bastard-of-the-week", false)
+            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
                     .sendMessage(message)
                     .queue();
@@ -451,7 +452,7 @@ public class BastardCommand extends Command implements PhilMarker {
                 .setImage(swiper ? SWIPER_WON : SNART_SPOTTED)
                 .build();
 
-        philJda.getTextChannelsByName("bastard-of-the-week", false)
+        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0)
                 .sendMessage(message)
                 .queue();
@@ -459,7 +460,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
     @Scheduled(cron = "0 0 * * * ?", zone = "GMT")
     public void boost() {
-        TextChannel bastardOfTheWeekChannel = philJda.getTextChannelsByName("bastard-of-the-week", false)
+        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0);
 
         if (boostAwaiting) {
@@ -495,7 +496,7 @@ public class BastardCommand extends Command implements PhilMarker {
                     .setDescription(description.toString())
                     .setColor(Color.GREEN)
                     .build();
-            bastardOfTheWeekChannel.sendMessage(messageEmbed).queue();
+            swampysChannel.sendMessage(messageEmbed).queue();
             return;
         }
 
@@ -519,12 +520,12 @@ public class BastardCommand extends Command implements PhilMarker {
                     .setColor(Color.GREEN)
                     .build();
 
-            bastardOfTheWeekChannel.sendMessage(message).queue();
+            swampysChannel.sendMessage(message).queue();
         }
     }
 
     public void givePointsToMember(long pointsToGive, Member member, DiscordUser user) {
-        if (!hasRole(member, Constants.EIGHTEEN_PLUS)) {
+        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
             return;
         }
 
@@ -534,11 +535,26 @@ public class BastardCommand extends Command implements PhilMarker {
     }
 
     public void givePointsToMember(long pointsToGive, Member member) {
+        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
+            return;
+        }
+
         givePointsToMember(pointsToGive, member, getDiscordUserByMember(member));
     }
 
+    public void takePointsFromMember(long pointsToTake, Member member) {
+        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
+            return;
+        }
+
+        DiscordUser user = getDiscordUserByMember(member);
+        user.setXp(Math.max(0, user.getXp() - pointsToTake));
+        user = discordUserRepository.save(user);
+        assignRolesIfNeeded(member, user);
+    }
+
     public void voiceJoined(Member member) {
-        if (!hasRole(member, Constants.EIGHTEEN_PLUS)) {
+        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
             return;
         }
 
@@ -548,7 +564,7 @@ public class BastardCommand extends Command implements PhilMarker {
     }
 
     public void voiceLeft(Member member) {
-        if (!hasRole(member, Constants.EIGHTEEN_PLUS)) {
+        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
             return;
         }
 
@@ -575,64 +591,65 @@ public class BastardCommand extends Command implements PhilMarker {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (event.getAuthor().isBot() || !hasRole(event.getMember(), Constants.EIGHTEEN_PLUS)) {
+        if (event.getAuthor().isBot() || hasRole(event.getMember(), Constants.NEWBIE_ROLE)) {
             return;
         }
 
+        String args = event.getArgs();
         String msgContent = event.getMessage().getContentRaw();
 
-        if (msgContent.startsWith("!!bastard help")) {
+        if (args.startsWith("help")) {
             if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
-                event.replyInDm(simpleEmbed("Bastard Games Help", adminHelp));
+                event.replyInDm(simpleEmbed("Help", adminHelp));
             } else {
-                event.replyInDm(simpleEmbed("Bastard Games Help", userHelp));
+                event.replyInDm(simpleEmbed("Help", userHelp));
             }
-        } else if (msgContent.startsWith("!!bastard rank")) {
+        } else if (args.startsWith("rank")) {
             showRank(event);
-        } else if (msgContent.startsWith("!!bastard up")) {
+        } else if (args.startsWith("up")) {
             upvote(event);
-        } else if (msgContent.startsWith("!!bastard down")) {
+        } else if (args.startsWith("down")) {
             downvote(event);
-        } else if (msgContent.startsWith("!!bastard give")) {
+        } else if (args.startsWith("give")) {
             give(event);
-        } else if (msgContent.startsWith("!!bastard take")) {
+        } else if (args.startsWith("take")) {
             take(event);
-        } else if (msgContent.startsWith("!!bastard set")) {
+        } else if (args.startsWith("set")) {
             set(event);
-        } else if (msgContent.startsWith("!!bastard leaderboard")) {
+        } else if (args.startsWith("leaderboard")) {
             leaderboard(event);
-        } else if (msgContent.startsWith("!!bastard steal") || msgContent.startsWith("!!bastard flip")) {
-            event.replyError("Both flip and steal are disabled for now, they'll be back soon.");
-        } else if (msgContent.startsWith("!!bastard slots")) {
+        } else if (args.startsWith("steal") || args.startsWith("flip")) {
+            event.replyError("Both flip and steal are disabled for now, they'll be back soon-ish.");
+        } else if (args.startsWith("slots")) {
             slots(event);
-        } else if (msgContent.startsWith("!!bastard reset")) {
+        } else if (args.startsWith("reset")) {
             if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
                 event.replyError("You do not have permission to use this command");
                 return;
             }
 
             if (!awaitingResetConfirmation) {
-                event.reply(simpleEmbed("Reset The Games", "Are you sure you want to reset the bastard games? This will reset everyone's points. If you are sure, type `!!bastard reset confirm`"));
+                event.reply(simpleEmbed("Reset The Games", "Are you sure you want to reset the Swampys? This will reset everyone's points. If you are sure, type `!!swampy reset confirm`"));
                 awaitingResetConfirmation = true;
             } else {
-                if (!msgContent.startsWith("!!bastard reset confirm")) {
-                    event.reply(simpleEmbed("Abort Reset", "Bastard reset aborted. You must type `!!bastard reset` and then confirm it with `!!bastard reset confirm`."));
+                if (!args.startsWith("reset confirm")) {
+                    event.reply(simpleEmbed("Abort Reset", "Swampy reset aborted. You must type `!!swampy reset` and then confirm it with `!!swampy reset confirm`."));
                     awaitingResetConfirmation = false;
                     return;
                 }
                 reset(event);
                 awaitingResetConfirmation = false;
             }
-        } else if (msgContent.startsWith("!!bastard")){
-            event.replyError("Unrecognized bastard command");
+        } else if (msgContent.startsWith("!!")) {
+            event.replyError("Unrecognized command");
         } else {
-            if (boostAwaiting && StringUtils.containsIgnoreCase(msgContent, boostPhrase) && "bastard-of-the-week".equalsIgnoreCase(event.getChannel().getName())) {
+            if (boostAwaiting && StringUtils.containsIgnoreCase(msgContent, boostPhrase) && Constants.SWAMPYS_CHANNEL.equals(event.getChannel().getName())) {
                 acceptedBoost(event.getMember());
                 return;
             }
 
             if (swiperAwaiting != null && StringUtils.containsIgnoreCase(msgContent, noSwipingPhrase)
-                    && "bastard-of-the-week".equalsIgnoreCase(event.getChannel().getName())) {
+                    && Constants.SWAMPYS_CHANNEL.equals(event.getChannel().getName())) {
                 didSomeoneSaveFromSwiper = true;
                 return;
             }
@@ -688,7 +705,7 @@ public class BastardCommand extends Command implements PhilMarker {
         DiscordUser discordUser = getDiscordUserByMember(member);
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextSlotsTime = discordUser.getLastSlots().plus(BASTARD_SLOTS_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
+        LocalDateTime nextSlotsTime = discordUser.getLastSlots().plus(SLOTS_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
         if (now.isBefore(nextSlotsTime)) {
             Duration duration = Duration.between(now, nextSlotsTime);
 
@@ -702,17 +719,17 @@ public class BastardCommand extends Command implements PhilMarker {
 
         discordUser.setLastSlots(now);
 
-        String one = pickRandom(SLOTS);
-        String two = pickRandom(SLOTS);
-        String three = pickRandom(SLOTS);
+        String one = pickRandom(SPOOKY_SLOTS);
+        String two = pickRandom(SPOOKY_SLOTS);
+        String three = pickRandom(SPOOKY_SLOTS);
 
         if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
-            givePointsToMember(BASTARD_SLOTS_WIN_POINTS, member, discordUser);
-            event.reply(simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, "%s\n%s%s%s \nYou won 10,000 bastard points!",
+            givePointsToMember(SLOTS_WIN_POINTS, member, discordUser);
+            event.reply(simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, "%s\n%s%s%s \nYou won " + SLOTS_WIN_POINTS + " points!",
                     member.getAsMention(), one, two, three));
         } else if (one.equalsIgnoreCase(two) || one.equalsIgnoreCase(three) || two.equalsIgnoreCase(three)) {
-            givePointsToMember(BASTARD_SLOTS_TWO_OUT_OF_THREE_POINTS, member, discordUser);
-            event.reply(simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, "%s\n%s%s%s \nYou got 2 out of 3! You won 50 bastard points!",
+            givePointsToMember(SLOTS_TWO_OUT_OF_THREE_POINTS, member, discordUser);
+            event.reply(simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, "%s\n%s%s%s \nYou got 2 out of 3! You won " + SLOTS_TWO_OUT_OF_THREE_POINTS + " points!",
                     member.getAsMention(), one, two, three));
         } else {
             event.reply(simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, "%s\n%s%s%s",
@@ -725,7 +742,7 @@ public class BastardCommand extends Command implements PhilMarker {
         List<Member> mentionedUsers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.isEmpty(mentionedUsers) || mentionedUsers.size() > 1) {
-            event.replyError("Please only mention one user. Example `!!bastard steal @incogmeato`");
+            event.replyError("Please only mention one user. Example `!!swampy steal @incogmeato`");
             return;
         }
 
@@ -735,8 +752,8 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        if (!hasRole(mentionedMember, Constants.EIGHTEEN_PLUS)) {
-            event.replyError("You can't steal from non 18+ members");
+        if (mentionedMember.getUser().isBot()) {
+            event.replyError("You can't steal from bots");
             return;
         }
 
@@ -748,7 +765,7 @@ public class BastardCommand extends Command implements PhilMarker {
 
         DiscordUser discordUser = getDiscordUserByMember(event.getMember());
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextStealTime = discordUser.getLastSteal().plus(BASTARD_STEAL_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
+        LocalDateTime nextStealTime = discordUser.getLastSteal().plus(STEAL_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
         if (now.isBefore(nextStealTime)) {
             Duration duration = Duration.between(now, nextStealTime);
 
@@ -762,36 +779,8 @@ public class BastardCommand extends Command implements PhilMarker {
         discordUser.setLastSteal(now);
         discordUserRepository.save(discordUser);
 
-        int randomNumber;
-        if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < STEAL_FULL_LOSS_PERCENTAGE) {
-            event.reply(simpleEmbed("Steal", "You attempt to steal points from %s and fail miserably, you pay them %s points to forget this ever happened. \uD83D\uDE2C",
-                    mentionedMember, randomNumber));
-            takePointsFromMember(randomNumber, event.getMember());
-            givePointsToMember(randomNumber, mentionedMember);
-        } else if ((randomNumber = ThreadLocalRandom.current().nextInt(1, 101)) < STEAL_FULL_SUCCESS_PERCENTAGE) {
-            event.reply(simpleEmbed("Steal", "You successfully stole %s points from %s \uD83D\uDCB0", randomNumber, mentionedMember));
-            takePointsFromMember(randomNumber, mentionedMember);
-            givePointsToMember(randomNumber, event.getMember());
-        } else if (ThreadLocalRandom.current().nextInt(1, 101) < STEAL_SOFT_LOSS_PERCENTAGE) {
-            event.reply(simpleEmbed("Steal", "You failed to steal from %s but escaped unnoticed. Take 2 points for your troubles. \uD83D\uDCB0", mentionedMember));
-            givePointsToMember(2, event.getMember());
-        } else {
-            randomNumber = ThreadLocalRandom.current().nextInt(1, 21);
-            event.reply(simpleEmbed("Steal", "I steal %s points, from both of you! Phil wins! \uD83D\uDE2C", randomNumber));
-            takePointsFromMember(randomNumber, event.getMember());
-            takePointsFromMember(randomNumber, mentionedMember);
-        }
-    }
-
-    public void takePointsFromMember(long pointsToTake, Member member) {
-        if (!hasRole(member, Constants.EIGHTEEN_PLUS)) {
-            return;
-        }
-
-        DiscordUser user = getDiscordUserByMember(member);
-        user.setXp(Math.max(0, user.getXp() - pointsToTake));
-        user = discordUserRepository.save(user);
-        assignRolesIfNeeded(member, user);
+        // TODO: Reply with a message, then the person getting stole from has to react to that message in x minutes. if they don't, they lose the points.
+        // but if they do, then the stealer, loses the points.
     }
 
     private void setPointsForMember(long points, Member member) {
@@ -807,8 +796,8 @@ public class BastardCommand extends Command implements PhilMarker {
             member = event.getMessage().getMentionedMembers().get(0);
         }
 
-        if (!hasRole(member, Constants.EIGHTEEN_PLUS)) {
-            event.reply(simpleEmbed("Your Rank", "You can't see your rank because it appears you don't have the 18+ role"));
+        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
+            event.reply(simpleEmbed("Your Rank", "You can't see rank because it appears you are a newbie or a bot"));
             return;
         }
 
@@ -824,31 +813,31 @@ public class BastardCommand extends Command implements PhilMarker {
                 .setTitle("Level " + rank.getLevel() + ": " + rank.getRoleName())
                 .setColor(role.getColor())
                 .setDescription(rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
-                        "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total bastard points.\n\n" +
+                        "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total points.\n\n" +
                         "The next level is level " +
                         (rank == nextRank
                                 ? " LOL NVM YOU'RE THE TOP LEVEL."
                                 : nextRank.getLevel() + ": " + nextRank.getRoleName() + ".") +
                         "\n You have " + NumberFormat.getIntegerInstance().format((nextRank.getLevel() * Rank.LVL_MULTIPLIER) - user.getXp()) + " points to go." +
-                        "\n\nBest of Luck in the Bastard Games!")
+                        "\n\nBest of Luck in the Swampys!")
                 .build();
 
         event.reply(messageEmbed);
     }
 
     private void leaderboard(CommandEvent event) {
-        List<DiscordUser> bastardUsers = discordUserRepository.findAll();
+        List<DiscordUser> swampyUsers = discordUserRepository.findAll();
 
-        bastardUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
+        swampyUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
         AtomicInteger place = new AtomicInteger(0);
         StringBuilder description = new StringBuilder();
-        bastardUsers.stream().limit(10).forEachOrdered(bastardUser -> {
+        swampyUsers.stream().limit(10).forEachOrdered(swampyUser -> {
             description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
                     .append(": <@!")
-                    .append(bastardUser.getId())
+                    .append(swampyUser.getId())
                     .append("> - ")
-                    .append(NumberFormat.getIntegerInstance().format(bastardUser.getXp()))
+                    .append(NumberFormat.getIntegerInstance().format(swampyUser.getXp()))
                     .append('\n');
         });
 
@@ -871,12 +860,12 @@ public class BastardCommand extends Command implements PhilMarker {
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.isEmpty(mentionedMembers) || mentionedMembers.size() > 1) {
-            event.replyError("Please mention one user to upvote. Example `!!bastard up @incogmeato`");
+            event.replyError("Please mention one user to upvote. Example `!!swampy up @incogmeato`");
             return;
         }
 
-        if (!hasRole(mentionedMembers.get(0), Constants.EIGHTEEN_PLUS)) {
-            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the bastard games");
+        if (mentionedMembers.get(0).getUser().isBot() || hasRole(mentionedMembers.get(0), Constants.NEWBIE_ROLE)) {
+            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the swampys");
             return;
         }
 
@@ -911,12 +900,12 @@ public class BastardCommand extends Command implements PhilMarker {
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.isEmpty(mentionedMembers) || mentionedMembers.size() > 1) {
-            event.replyError("Please mention one user to downvote. Example `!!bastard down @incogmeato`");
+            event.replyError("Please mention one user to downvote. Example `!!swampy down @incogmeato`");
             return;
         }
 
-        if (!hasRole(mentionedMembers.get(0), Constants.EIGHTEEN_PLUS)) {
-            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the bastard games");
+        if (mentionedMembers.get(0).getUser().isBot() || hasRole(mentionedMembers.get(0), Constants.NEWBIE_ROLE)) {
+            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the swampys");
             return;
         }
 
@@ -953,19 +942,15 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        String msgContent = event.getMessage().getContentRaw();
-
-        String stripped = msgContent.replace("!!bastard give", "").trim();
-        String[] split = stripped.split("\\s+");
-
-        if (split.length != 2) {
-            event.replyError("Badly formatted command. Example `!!bastard give 100 @incogmeato`");
+        String[] split = event.getArgs().split("\\s+");
+        if (split.length != 3) {
+            event.replyError("Badly formatted command. Example `!!swampy give 100 @incogmeato`");
             return;
         }
 
         long pointsToGive;
         try {
-            pointsToGive = Long.parseLong(split[0]);
+            pointsToGive = Long.parseLong(split[1]);
         } catch (NumberFormatException e) {
             event.replyError("Failed to parse the number you provided.");
             return;
@@ -979,12 +964,12 @@ public class BastardCommand extends Command implements PhilMarker {
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.isEmpty(mentionedMembers) || mentionedMembers.size() > 1) {
-            event.replyError("Please specify only one user. Example `!!bastard give 100 @incogmeato`");
+            event.replyError("Please specify only one user. Example `!!swampy give 100 @incogmeato`");
             return;
         }
 
-        if (!hasRole(mentionedMembers.get(0), Constants.EIGHTEEN_PLUS)) {
-            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the bastard games");
+        if (mentionedMembers.get(0).getUser().isBot() || hasRole(mentionedMembers.get(0), Constants.NEWBIE_ROLE)) {
+            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the swampys");
             return;
         }
 
@@ -999,19 +984,15 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        String msgContent = event.getMessage().getContentRaw();
-
-        String stripped = msgContent.replace("!!bastard take", "").trim();
-        String[] split = stripped.split("\\s+");
-
-        if (split.length != 2) {
-            event.replyError("Badly formatted command. Example `!!bastard take 100 @incogmeato`");
+        String[] split = event.getArgs().split("\\s+");
+        if (split.length != 3) {
+            event.replyError("Badly formatted command. Example `!!swampy take 100 @incogmeato`");
             return;
         }
 
         long pointsToTake;
         try {
-            pointsToTake = Long.parseLong(split[0]);
+            pointsToTake = Long.parseLong(split[1]);
         } catch (NumberFormatException e) {
             event.replyError("Failed to parse the number you provided.");
             return;
@@ -1025,12 +1006,12 @@ public class BastardCommand extends Command implements PhilMarker {
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.isEmpty(mentionedMembers) || mentionedMembers.size() > 1) {
-            event.replyError("Please specify only one user. Example `!!bastard take 100 @incogmeato`");
+            event.replyError("Please specify only one user. Example `!!swampy take 100 @incogmeato`");
             return;
         }
 
-        if (!hasRole(mentionedMembers.get(0), Constants.EIGHTEEN_PLUS)) {
-            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the bastard games");
+        if (mentionedMembers.get(0).getUser().isBot() || hasRole(mentionedMembers.get(0), Constants.NEWBIE_ROLE)) {
+            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the swampy games");
             return;
         }
 
@@ -1045,19 +1026,15 @@ public class BastardCommand extends Command implements PhilMarker {
             return;
         }
 
-        String msgContent = event.getMessage().getContentRaw();
-
-        String stripped = msgContent.replace("!!bastard set", "").trim();
-        String[] split = stripped.split("\\s+");
-
-        if (split.length != 2) {
-            event.replyError("Badly formatted command. Example `!!bastard set 100 @incogmeato`");
+        String[] split = event.getArgs().split("\\s+");
+        if (split.length != 3) {
+            event.replyError("Badly formatted command. Example `!!swampy set 100 @incogmeato`");
             return;
         }
 
         long pointsToSet;
         try {
-            pointsToSet = Long.parseLong(split[0]);
+            pointsToSet = Long.parseLong(split[1]);
         } catch (NumberFormatException e) {
             event.replyError("Failed to parse the number you provided.");
             return;
@@ -1071,12 +1048,12 @@ public class BastardCommand extends Command implements PhilMarker {
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.isEmpty(mentionedMembers) || mentionedMembers.size() > 1) {
-            event.replyError("Please specify only one user. Example `!!bastard set 100 @incogmeato`");
+            event.replyError("Please specify only one user. Example `!!swampy set 100 @incogmeato`");
             return;
         }
 
-        if (!hasRole(mentionedMembers.get(0), Constants.EIGHTEEN_PLUS)) {
-            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the bastard games");
+        if (mentionedMembers.get(0).getUser().isBot() || hasRole(mentionedMembers.get(0), Constants.NEWBIE_ROLE)) {
+            event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the swampys");
             return;
         }
 
@@ -1110,11 +1087,11 @@ public class BastardCommand extends Command implements PhilMarker {
             }
         }
 
-        event.replySuccess("Reset the bastard games");
+        event.replySuccess("Reset the Swampys");
     }
 
     private Role assignRolesIfNeeded(Member member, DiscordUser user) {
-        if (!hasRole(member, Constants.EIGHTEEN_PLUS)) {
+        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
             return null;
         }
 
@@ -1132,7 +1109,7 @@ public class BastardCommand extends Command implements PhilMarker {
             guild.addRoleToMember(member, newRole).complete();
 
             if (newRank != Rank.CINNAMON_ROLL) {
-                TextChannel announcementsChannel = member.getGuild().getTextChannelsByName("bastard-of-the-week", false).get(0);
+                TextChannel announcementsChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
                 MessageEmbed messageEmbed = new EmbedBuilder()
                         .setImage(newRank.getRankUpImage())

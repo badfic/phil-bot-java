@@ -1,6 +1,5 @@
 package com.badfic.philbot.listeners.phil;
 
-import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -22,15 +21,15 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer|phellen|cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam)\\b", Pattern.CASE_INSENSITIVE);
 
     private final PhilCommand philCommand;
-    private final BastardCommand bastardCommand;
+    private final SwampyCommand swampyCommand;
     private final CommandClient philCommandClient;
 
     @Autowired
     public PhilMessageListener(PhilCommand philCommand,
-                               BastardCommand bastardCommand,
+                               SwampyCommand swampyCommand,
                                @Qualifier("philCommandClient") CommandClient philCommandClient) {
         this.philCommand = philCommand;
-        this.bastardCommand = bastardCommand;
+        this.swampyCommand = swampyCommand;
         this.philCommandClient = philCommandClient;
     }
 
@@ -43,16 +42,14 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
         }
 
         if (event.getAuthor().getId().equalsIgnoreCase("486427102854381568") && StringUtils.containsIgnoreCase(msgContent, "I'm out")) {
-            bastardCommand.takePointsFromMember(1000, event.getMember());
+            swampyCommand.takePointsFromMember(1000, event.getMember());
         }
 
         if (StringUtils.containsIgnoreCase(msgContent, "my wife")) {
-            bastardCommand.takePointsFromMember(100, event.getMember());
+            swampyCommand.takePointsFromMember(100, event.getMember());
         }
 
-        if (event.getMember().getRoles().stream().anyMatch(r -> r.getName().equals(Constants.EIGHTEEN_PLUS))) {
-            bastardCommand.execute(new CommandEvent(event, null, philCommandClient));
-        }
+        swampyCommand.execute(new CommandEvent(event, "", philCommandClient));
 
         if (PHIL_PATTERN.matcher(msgContent).find()) {
             philCommand.execute(new CommandEvent(event, null, philCommandClient));
@@ -62,21 +59,21 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     @Override
     public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-        bastardCommand.voiceJoined(event.getMember());
+        swampyCommand.voiceJoined(event.getMember());
     }
 
     @Override
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        bastardCommand.voiceLeft(event.getMember());
+        swampyCommand.voiceLeft(event.getMember());
     }
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
-        long points = BastardCommand.NORMAL_REACTION_POINTS;
+        long points = SwampyCommand.NORMAL_REACTION_POINTS;
         if (event.getReactionEmote().isEmote()) {
-            points = BastardCommand.EMOTE_REACTION_POINTS;
+            points = SwampyCommand.EMOTE_REACTION_POINTS;
         }
-        bastardCommand.givePointsToMember(points, event.getMember());
+        swampyCommand.givePointsToMember(points, event.getMember());
     }
 
 }
