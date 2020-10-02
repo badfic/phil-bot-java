@@ -7,7 +7,6 @@ import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.repository.DiscordUserRepository;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.awt.Color;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -80,7 +79,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     public static final long DOWNVOTE_POINTS_FROM_DOWNVOTEE = 100;
     public static final long DOWNVOTE_POINTS_TO_DOWNVOTER = 50;
 
-    // sweepstakes, taxes, robinhood
+    // sweepstakes, taxes, robinhood, trick or treat
     public static final BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");
     public static final long TAX_THRESHOLD = 100;
     public static final long ORGANIC_POINT_THRESHOLD = 1_000;
@@ -89,6 +88,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     public static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
     public static final long PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
     public static final long PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
+    public static final int TRICK_OR_TREAT_POINTS = 1_000;
 
     // swiper and boost
     public static final long SWIPER_POINTS_TO_STEAL = 1_500;
@@ -108,6 +108,8 @@ public class SwampyCommand extends Command implements PhilMarker {
 
     private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761475204702535680/oprah_refund_robinhood.png";
     private static final String PERSON_WHO_STOPS_ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761477965586366484/george_lopez_stop_oprah.png";
+
+    private static final String TRICK_OR_TREAT = "https://cdn.discordapp.com/attachments/323666308107599872/761499236940251136/trick_or_treat.png";
 
     private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/323666308107599872/761467155333644298/sweepstakes_cats.png";
 
@@ -204,7 +206,7 @@ public class SwampyCommand extends Command implements PhilMarker {
         MessageEmbed message = new EmbedBuilder()
                 .setTitle("Sweepstakes Results")
                 .setImage(SWEEPSTAKES)
-                .setColor(Color.GREEN)
+                .setColor(Constants.HALOWEEN_ORANGE)
                 .setDescription(String.format("Congratulations %s you won today's sweepstakes worth 4000 points!", member.getAsMention()))
                 .build();
 
@@ -221,7 +223,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                     .setTitle("No taxes today!")
                     .setDescription("Snoop Dogg caught Martha Stewart before she could take taxes from the swamp.")
                     .setImage(PERSON_WHO_STOPS_TAXES)
-                    .setColor(Color.RED)
+                    .setColor(Constants.HALOWEEN_ORANGE)
                     .build();
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
@@ -290,7 +292,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                 .setTitle(title)
                 .setDescription(description.toString())
                 .setImage(TAXES)
-                .setColor(Color.RED)
+                .setColor(Constants.HALOWEEN_ORANGE)
                 .build();
 
         philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
@@ -306,7 +308,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                     .setTitle("Wapa!!!")
                     .setDescription("George Lopez caught Oprah while she was trying to return taxes to the swamp.")
                     .setImage(PERSON_WHO_STOPS_ROBINHOOD)
-                    .setColor(Color.RED)
+                    .setColor(Constants.HALOWEEN_ORANGE)
                     .build();
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
@@ -355,7 +357,67 @@ public class SwampyCommand extends Command implements PhilMarker {
                 .setTitle(title)
                 .setDescription(description.toString())
                 .setImage(ROBINHOOD)
-                .setColor(Color.ORANGE)
+                .setColor(Constants.HALOWEEN_ORANGE)
+                .build();
+
+        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
+                .get(0)
+                .sendMessage(message)
+                .queue();
+    }
+
+    @Scheduled(cron = "0 0 19 * * ?", zone = "GMT")
+    public void trickOrTreat() {
+        List<DiscordUser> allUsers = discordUserRepository.findAll();
+        allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
+
+        long totalGiven = 0;
+        long totalTaken = 0;
+        StringBuilder description = new StringBuilder();
+        for (DiscordUser user : allUsers) {
+            if (user.getXp() > TRICK_OR_TREAT_POINTS) {
+                try {
+                    Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
+                    if (memberById != null && !memberById.getUser().isBot()) {
+                        if (ThreadLocalRandom.current().nextInt() % 2 == 0) {
+                            givePointsToMember(TRICK_OR_TREAT_POINTS, memberById);
+                            totalGiven += TRICK_OR_TREAT_POINTS;
+
+                            description
+                                    .append("\uD83C\uDF6C gave ")
+                                    .append(NumberFormat.getIntegerInstance().format(TRICK_OR_TREAT_POINTS))
+                                    .append(" points to <@!")
+                                    .append(user.getId())
+                                    .append(">\n");
+                        } else {
+                            takePointsFromMember(TRICK_OR_TREAT_POINTS, memberById);
+                            totalTaken += TRICK_OR_TREAT_POINTS;
+
+                            description
+                                    .append("\uD83D\uDC80 took ")
+                                    .append(NumberFormat.getIntegerInstance().format(TRICK_OR_TREAT_POINTS))
+                                    .append(" points from <@!")
+                                    .append(user.getId())
+                                    .append(">\n");
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed to trick or treat user [id={}]", user.getId(), e);
+                }
+            }
+        }
+
+        description.append("\n\nI gave ")
+                .append(NumberFormat.getIntegerInstance().format(totalGiven))
+                .append(" points and took ")
+                .append(NumberFormat.getIntegerInstance().format(totalTaken));
+
+        String title = "\uD83C\uDF6C Trick Or Treat! \uD83C\uDF6C";
+        MessageEmbed message = new EmbedBuilder()
+                .setTitle(title)
+                .setDescription(description.toString())
+                .setImage(TRICK_OR_TREAT)
+                .setColor(Constants.HALOWEEN_ORANGE)
                 .build();
 
         philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
@@ -373,7 +435,7 @@ public class SwampyCommand extends Command implements PhilMarker {
             MessageEmbed message = new EmbedBuilder()
                     .setTitle(noSwipingPhrase)
                     .setDescription("Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points")
-                    .setColor(Color.GREEN)
+                    .setColor(Constants.HALOWEEN_ORANGE)
                     .setImage(NO_SWIPING)
                     .build();
 
@@ -384,7 +446,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                     message = new EmbedBuilder()
                             .setTitle(noSwipingPhrase)
                             .setDescription("Congratulations, you scared them away from <@!" + discordUser.get().getId() + ">")
-                            .setColor(Color.GREEN)
+                            .setColor(Constants.HALOWEEN_ORANGE)
                             .setImage(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? NO_SWIPING : NO_SNART)
                             .build();
                 } else {
@@ -396,7 +458,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                             message = new EmbedBuilder()
                                     .setTitle(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? "Swiper Escaped!" : "Rory and Snart Escaped!")
                                     .setDescription("You didn't save <@!" + discordUser.get().getId() + "> in time, they lost " + SWIPER_POINTS_TO_STEAL + " points")
-                                    .setColor(Color.RED)
+                                    .setColor(Constants.HALOWEEN_ORANGE)
                                     .setImage(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? SWIPER_WON : SNART_WON)
                                     .build();
                         }
@@ -436,7 +498,7 @@ public class SwampyCommand extends Command implements PhilMarker {
             MessageEmbed message = new EmbedBuilder()
                     .setTitle("Swiper Was Spotted Nearby")
                     .setDescription("Swiper was spotted nearby, be on the lookout for him")
-                    .setColor(Color.GREEN)
+                    .setColor(Constants.HALOWEEN_ORANGE)
                     .setImage(NO_SWIPING)
                     .build();
 
@@ -456,7 +518,7 @@ public class SwampyCommand extends Command implements PhilMarker {
         MessageEmbed message = new EmbedBuilder()
                 .setTitle(swiper ? "Swiper Was Spotted Nearby" : "Rory and Snart Were Spotted Nearby")
                 .setDescription("They're trying to steal from <@!" + member.getId() + ">\nType '" + noSwipingPhrase + "' in this channel to stop them!")
-                .setColor(Color.YELLOW)
+                .setColor(Constants.HALOWEEN_ORANGE)
                 .setImage(swiper ? SWIPER_SPOTTED : SNART_SPOTTED)
                 .build();
 
@@ -502,7 +564,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                     .setImage(BOOST_END)
                     .setTitle("Boost Blitz Complete")
                     .setDescription(description.toString())
-                    .setColor(Color.GREEN)
+                    .setColor(Constants.HALOWEEN_ORANGE)
                     .build();
             swampysChannel.sendMessage(messageEmbed).queue();
             return;
@@ -524,7 +586,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                     .setDescription("Type `" + boostPhrase + "` in this channel within the next hour to be boosted by "
                             + BOOST_POINTS_TO_GIVE + " points")
                     .setImage(BOOST_START)
-                    .setColor(Color.GREEN)
+                    .setColor(Constants.HALOWEEN_ORANGE)
                     .build();
 
             swampysChannel.sendMessage(message).queue();
@@ -818,7 +880,7 @@ public class SwampyCommand extends Command implements PhilMarker {
         MessageEmbed messageEmbed = new EmbedBuilder()
                 .setImage(rank.getRankUpImage())
                 .setTitle("Level " + rank.getLevel() + ": " + rank.getRoleName())
-                .setColor(role.getColor())
+                .setColor(Constants.HALOWEEN_ORANGE)
                 .setDescription(rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
                         "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total points.\n\n" +
                         "The next level is level " +
@@ -1128,7 +1190,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                 MessageEmbed messageEmbed = new EmbedBuilder()
                         .setImage(newRank.getRankUpImage())
                         .setTitle("Level Change!")
-                        .setColor(newRole.getColor())
+                        .setColor(Constants.HALOWEEN_ORANGE)
                         .setDescription(newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()))
                         .build();
 
