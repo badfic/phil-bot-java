@@ -99,18 +99,26 @@ public class SwampyCommand extends Command implements PhilMarker {
     public static final long SLOTS_WIN_POINTS = 10_000;
     public static final long SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
 
-    private static final String BOOST = "https://cdn.discordapp.com/attachments/323666308107599872/761492230379798538/BOOST.png";
-    private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/707453916882665552/757776008639283321/unknown.png";
-    private static final String SWIPER_WON = "https://cdn.discordapp.com/attachments/707453916882665552/757774007314677872/iu.png";
-    private static final String BENEVOLENT_GOD = "https://cdn.discordapp.com/attachments/686127721688203305/757429302705913876/when-i-level-up-someone-amp-039-s-account_o_2942005.png";
+    // images
+    private static final String BOOST_START = "https://cdn.discordapp.com/attachments/323666308107599872/761492230379798538/BOOST.png";
+    private static final String BOOST_END = "https://cdn.discordapp.com/attachments/323666308107599872/761494374445219850/stan_loona_goddess.png";
+
     private static final String TAXES = "https://cdn.discordapp.com/attachments/323666308107599872/761472008734244864/martha_taxes.png";
-    private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761475204702535680/oprah_refund_robinhood.png";
     private static final String PERSON_WHO_STOPS_TAXES = "https://cdn.discordapp.com/attachments/323666308107599872/761473370604568606/snoop_no_taxes.png";
+
+    private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761475204702535680/oprah_refund_robinhood.png";
     private static final String PERSON_WHO_STOPS_ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761477965586366484/george_lopez_stop_oprah.png";
+
     private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/323666308107599872/761467155333644298/sweepstakes_cats.png";
+
+    private static final String SWIPER_SPOTTED = "https://cdn.discordapp.com/attachments/323666308107599872/761495531498373120/swiper-spotted.jpg";
+    private static final String SWIPER_WON = "https://cdn.discordapp.com/attachments/323666308107599872/761495329496498176/stephen-molyneaux-dora-swiper-1001.png";
+    private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/707453916882665552/757776008639283321/unknown.png";
     private static final String SNART_SPOTTED = "https://cdn.discordapp.com/attachments/323666308107599872/758910821950029824/snart_rory.png";
     private static final String SNART_WON = "https://cdn.discordapp.com/attachments/323666308107599872/758911981176094801/snart_rory_mischief_managed.png";
     private static final String NO_SNART = "https://cdn.discordapp.com/attachments/323666308107599872/758911984925802516/snart_rory_you_cant_steal_here.png";
+
+    // emoji
     private static final String[] LEADERBOARD_MEDALS = {
             "\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49",
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
@@ -449,7 +457,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                 .setTitle(swiper ? "Swiper Was Spotted Nearby" : "Rory and Snart Were Spotted Nearby")
                 .setDescription("They're trying to steal from <@!" + member.getId() + ">\nType '" + noSwipingPhrase + "' in this channel to stop them!")
                 .setColor(Color.YELLOW)
-                .setImage(swiper ? SWIPER_WON : SNART_SPOTTED)
+                .setImage(swiper ? SWIPER_SPOTTED : SNART_SPOTTED)
                 .build();
 
         philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
@@ -491,7 +499,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                     });
 
             MessageEmbed messageEmbed = new EmbedBuilder()
-                    .setImage(BENEVOLENT_GOD)
+                    .setImage(BOOST_END)
                     .setTitle("Boost Blitz Complete")
                     .setDescription(description.toString())
                     .setColor(Color.GREEN)
@@ -515,7 +523,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                     .setTitle("BOOST BLITZ")
                     .setDescription("Type `" + boostPhrase + "` in this channel within the next hour to be boosted by "
                             + BOOST_POINTS_TO_GIVE + " points")
-                    .setImage(BOOST)
+                    .setImage(BOOST_START)
                     .setColor(Color.GREEN)
                     .build();
 
