@@ -506,9 +506,10 @@ public class SwampyCommand extends Command implements PhilMarker {
                     "loose", "rub", "moist", "wet", "damp", "spooky", "season", "pumpkin", "skeleton", "vampire", "bat", "coffin", "trick", "treat", "harvest",
                     "ghost", "skull", "spirit", "halloween", "costume", "afraid", "cat", "witch", "magic", "boo", "broomstick", "boogeyman", "corpse", "casket",
                     "cloak", "creepy", "devil", "dark", "demon", "prank", "darkness", "evil", "death", "goblin", "zombie", "spider", "fog", "karl", "gruesome",
-                    "grave", "goodies", "goblin", "haunted", "howl", "horror", "spoopy", "horrifying", "macabre", "masquerade", "mist", "moon", "morbid",
+                    "grave", "goodies", "haunted", "howl", "horror", "spoopy", "horrifying", "macabre", "masquerade", "mist", "moon", "morbid",
                     "midnight", "mummy", "nightmare", "night", "ogre", "october", "petrify", "phantom", "rip", "scarecrow", "scare", "fright", "scary",
-                    "scream", "shadow", "startled", "web", "sweets", "supernatural", "tomb", "vampire", "wand", "wicked", "witch", "wizard", "wraith"));
+                    "scream", "shadow", "startled", "web", "sweets", "supernatural", "tomb", "wand", "wicked", "witch", "wizard", "wraith", "warlock",
+                    "sorcerer"));
 
             MessageEmbed message = new EmbedBuilder()
                     .setTitle("BOOST BLITZ")
