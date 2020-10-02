@@ -502,15 +502,13 @@ public class SwampyCommand extends Command implements PhilMarker {
 
         if (ThreadLocalRandom.current().nextInt(100) < PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR) {
             boostAwaiting = true;
-            boostPhrase = pickRandom(Arrays.asList("boost", "yeet", "simp", "swamp", "awesome", "thanks", "spooner", "shift", "toll", "grimace", "vision",
-                    "notorious", "predict", "microphone", "carrot", "watermelon", "grapefruit", "land", "thicc", "season", "session", "bargain",
-                    "survival", "gasp", "apple", "diplomatic", "immunity", "director", "torch", "hidden", "valley", "ranch", "difficult", "bounce",
-                    "tribute", "gap", "relinquish", "reliance", "reliant", "arrogant", "salon", "direction", "forget", "disclose", "pie", "support",
-                    "observer", "guide", "bear", "bare", "access", "easy", "hard", "firm", "loose", "evening", "morning", "afternoon", "daytime",
-                    "attire", "tire", "tired", "assessment", "imagine", "imagination", "lace", "volume", "architecture", "rub",
-                    "moist", "wet", "damp", "cavern", "tavern", "new", "old", "choose", "chose", "stake", "steak", "stakes", "wax", "flax", "pitch", "throw",
-                    "gesture", "cause", "effect", "affect", "mixture", "mix", "desk", "describe", "drive", "drove", "wrestle", "hustle", "sharp", "dull",
-                    "point", "staff", "exchange", "limit", "limits", "friend", "friends"));
+            boostPhrase = pickRandom(Arrays.asList("boost", "yeet", "simp", "swamp", "spooner", "grapefruit", "thicc", "ranch", "bounce", "hard", "firm",
+                    "loose", "rub", "moist", "wet", "damp", "spooky", "season", "pumpkin", "skeleton", "vampire", "bat", "coffin", "trick", "treat", "harvest",
+                    "ghost", "skull", "spirit", "halloween", "costume", "afraid", "cat", "witch", "magic", "boo", "broomstick", "boogeyman", "corpse", "casket",
+                    "cloak", "creepy", "devil", "dark", "demon", "prank", "darkness", "evil", "death", "goblin", "zombie", "spider", "fog", "karl", "gruesome",
+                    "grave", "goodies", "goblin", "haunted", "howl", "horror", "spoopy", "horrifying", "macabre", "masquerade", "mist", "moon", "morbid",
+                    "midnight", "mummy", "nightmare", "night", "ogre", "october", "petrify", "phantom", "rip", "scarecrow", "scare", "fright", "scary",
+                    "scream", "shadow", "startled", "web", "sweets", "supernatural", "tomb", "vampire", "wand", "wicked", "witch", "wizard", "wraith"));
 
             MessageEmbed message = new EmbedBuilder()
                     .setTitle("BOOST BLITZ")
