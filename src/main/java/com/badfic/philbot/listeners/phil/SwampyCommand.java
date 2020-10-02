@@ -52,14 +52,14 @@ public class SwampyCommand extends Command implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // Timeouts
-    public static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 1;
+    public static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 3;
     public static final long SLOTS_TIMEOUT_MINUTES = 3;
     public static final long STEAL_TIMEOUT_MINUTES = 60;
     public static final long STEAL_REACTION_TIME_MINUTES = 5;
 
     // message/vc/emote points
     public static final long NORMAL_MSG_POINTS = 5;
-    public static final long CURSED_MSG_POINTS = 15;
+    public static final long CURSED_MSG_POINTS = 10;
     public static final Set<String> CURSED_MSG_CHANNELS = new HashSet<>(Arrays.asList(
             "cursed-swamp",
             "nate-heywoods-simp-hour",
@@ -84,14 +84,14 @@ public class SwampyCommand extends Command implements PhilMarker {
     public static final BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");
     public static final long TAX_THRESHOLD = 100;
     public static final long ORGANIC_POINT_THRESHOLD = 1_000;
-    public static final long SWEEPSTAKES_WIN_POINTS = 4_000;
+    public static final long SWEEPSTAKES_WIN_POINTS = 3_000;
     public static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
     public static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
     public static final long PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
     public static final long PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
 
     // swiper and boost
-    public static final long SWIPER_POINTS_TO_STEAL = 1_000;
+    public static final long SWIPER_POINTS_TO_STEAL = 1_500;
     public static final long BOOST_POINTS_TO_GIVE = 1_000;
     public static final long PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR = 15;
 
