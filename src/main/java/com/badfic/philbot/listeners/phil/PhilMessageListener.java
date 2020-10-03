@@ -4,7 +4,13 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.util.Optional;
 import java.util.regex.Pattern;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
+import net.dv8tion.jda.api.events.guild.GuildBanEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
@@ -87,6 +93,21 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
                     "You don't have to actively participate, but if you'd like to join the chaos with us, take a peek at what The Swampys has to offer.\n\n" +
                     "https://discordapp.com/channels/740999022340341791/761398315119280158/761411776561807410").queue();
         }
+    }
+
+    @Override
+    public void onGuildBan(@NotNull GuildBanEvent event) {
+        begone(event.getUser(), event);
+    }
+
+    @Override
+    public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+        begone(event.getUser(), event);
+    }
+
+    private void begone(User user, GenericGuildEvent event) {
+        Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("announcements", false).stream().findFirst();
+        announcementsChannel.ifPresent(channel -> channel.sendMessage("Begone Bot " + user.getAsMention()).queue());
     }
 
 }

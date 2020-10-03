@@ -3,8 +3,9 @@ package com.badfic.philbot.listeners.phil;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
+import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.phil.Rank;
-import com.badfic.philbot.repository.DiscordUserRepository;
+import com.badfic.philbot.data.swampygames.SwampyGamesConfigRepository;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
@@ -88,7 +89,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     public static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
     public static final long PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
     public static final long PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
-    public static final int TRICK_OR_TREAT_POINTS = 1_000;
+    public static final int TRICK_OR_TREAT_POINTS = 500;
 
     // swiper and boost
     public static final long SWIPER_POINTS_TO_STEAL = 1_500;
@@ -145,6 +146,7 @@ public class SwampyCommand extends Command implements PhilMarker {
 
     // non volatile state
     private final DiscordUserRepository discordUserRepository;
+    private final SwampyGamesConfigRepository swampyConfigRepository;
     private final String userHelp;
     private final String adminHelp;
     private final ScheduledExecutorService scheduler;
@@ -154,7 +156,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     private JDA philJda;
 
     @Autowired
-    public SwampyCommand(DiscordUserRepository discordUserRepository) {
+    public SwampyCommand(DiscordUserRepository discordUserRepository, SwampyGamesConfigRepository swampyGamesConfigRepository) {
         name = "swampy";
         aliases = new String[] {"bastard", "spooky"};
         userHelp =
@@ -170,6 +172,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                 "`!!swampy set 120 @incogmeato` set incogmeato to 120 points\n" +
                 "`!!swampy reset` reset everyone back to level 0";
         this.discordUserRepository = discordUserRepository;
+        this.swampyConfigRepository = swampyGamesConfigRepository;
         scheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
@@ -594,7 +597,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     }
 
     public void givePointsToMember(long pointsToGive, Member member, DiscordUser user) {
-        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(member)) {
             return;
         }
 
@@ -604,7 +607,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     }
 
     public void givePointsToMember(long pointsToGive, Member member) {
-        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(member)) {
             return;
         }
 
@@ -612,7 +615,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     }
 
     public void takePointsFromMember(long pointsToTake, Member member) {
-        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(member)) {
             return;
         }
 
@@ -623,7 +626,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     }
 
     public void voiceJoined(Member member) {
-        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(member)) {
             return;
         }
 
@@ -633,7 +636,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     }
 
     public void voiceLeft(Member member) {
-        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(member)) {
             return;
         }
 
@@ -660,7 +663,7 @@ public class SwampyCommand extends Command implements PhilMarker {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (event.getAuthor().isBot() || hasRole(event.getMember(), Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(event.getMember())) {
             return;
         }
 
@@ -865,7 +868,7 @@ public class SwampyCommand extends Command implements PhilMarker {
             member = event.getMessage().getMentionedMembers().get(0);
         }
 
-        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(member)) {
             event.reply(simpleEmbed("Your Rank", "You can't see rank because it appears you are a newbie or a bot"));
             return;
         }
@@ -940,7 +943,7 @@ public class SwampyCommand extends Command implements PhilMarker {
             return;
         }
 
-        if (mentionedMembers.get(0).getUser().isBot() || hasRole(mentionedMembers.get(0), Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(mentionedMembers.get(0))) {
             event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the swampys");
             return;
         }
@@ -980,7 +983,7 @@ public class SwampyCommand extends Command implements PhilMarker {
             return;
         }
 
-        if (mentionedMembers.get(0).getUser().isBot() || hasRole(mentionedMembers.get(0), Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(mentionedMembers.get(0))) {
             event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the swampys");
             return;
         }
@@ -1044,7 +1047,7 @@ public class SwampyCommand extends Command implements PhilMarker {
             return;
         }
 
-        if (mentionedMembers.get(0).getUser().isBot() || hasRole(mentionedMembers.get(0), Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(mentionedMembers.get(0))) {
             event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the swampys");
             return;
         }
@@ -1086,7 +1089,7 @@ public class SwampyCommand extends Command implements PhilMarker {
             return;
         }
 
-        if (mentionedMembers.get(0).getUser().isBot() || hasRole(mentionedMembers.get(0), Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(mentionedMembers.get(0))) {
             event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the swampy games");
             return;
         }
@@ -1128,7 +1131,7 @@ public class SwampyCommand extends Command implements PhilMarker {
             return;
         }
 
-        if (mentionedMembers.get(0).getUser().isBot() || hasRole(mentionedMembers.get(0), Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(mentionedMembers.get(0))) {
             event.replyError(mentionedMembers.get(0).getEffectiveName() + " is not participating in the swampys");
             return;
         }
@@ -1167,7 +1170,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     }
 
     private Role assignRolesIfNeeded(Member member, DiscordUser user) {
-        if (member.getUser().isBot() || hasRole(member, Constants.NEWBIE_ROLE)) {
+        if (isNotParticipating(member)) {
             return null;
         }
 
@@ -1199,6 +1202,10 @@ public class SwampyCommand extends Command implements PhilMarker {
         }
 
         return newRole;
+    }
+
+    private static boolean isNotParticipating(Member member) {
+        return member.getUser().isBot() || !(hasRole(member, Constants.CHAOS_CHILDREN_ROLE) || hasRole(member, Constants.EIGHTEEN_PLUS_ROLE));
     }
 
     private static boolean hasRole(Member member, Rank rank) {
