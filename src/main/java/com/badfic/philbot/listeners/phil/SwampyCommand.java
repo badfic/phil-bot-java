@@ -661,6 +661,10 @@ public class SwampyCommand extends Command implements PhilMarker {
         discordUserRepository.save(discordUser);
     }
 
+    public void removeFromGames(String id) {
+        discordUserRepository.deleteById(id);
+    }
+
     @Override
     protected void execute(CommandEvent event) {
         if (isNotParticipating(event.getMember())) {
@@ -908,10 +912,15 @@ public class SwampyCommand extends Command implements PhilMarker {
 
         AtomicInteger place = new AtomicInteger(0);
         StringBuilder description = new StringBuilder();
-        swampyUsers.stream().filter(u ->
-            hasRole(event.getGuild().retrieveMemberById(u.getId()).complete(),
-                    StringUtils.containsIgnoreCase(split[1], "bastard") ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE)
-        ).sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())).limit(10).forEachOrdered(swampyUser -> {
+        swampyUsers.stream().filter(u -> {
+            try {
+                Member member = event.getGuild().retrieveMemberById(u.getId()).complete();
+                return hasRole(member, StringUtils.containsIgnoreCase(split[1], "bastard") ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE);
+            } catch (Exception e) {
+                logger.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);
+                return false;
+            }
+        }).sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())).limit(10).forEachOrdered(swampyUser -> {
             description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
                     .append(": <@!")
                     .append(swampyUser.getId())
@@ -1182,10 +1191,18 @@ public class SwampyCommand extends Command implements PhilMarker {
             Guild guild = member.getGuild();
 
             member.getRoles().stream().filter(r -> allRoleNames.contains(r.getName())).forEach(roleToRemove -> {
-                guild.removeRoleFromMember(member, roleToRemove).complete();
+                try {
+                    guild.removeRoleFromMember(member, roleToRemove).complete();
+                } catch (Exception e) {
+                    logger.error("Failed to remove role {} from member {}", roleToRemove.getName(), member.getEffectiveName(), e);
+                }
             });
 
-            guild.addRoleToMember(member, newRole).complete();
+            try {
+                guild.addRoleToMember(member, newRole).complete();
+            } catch (Exception e) {
+                logger.error("Failed to add new role {} to member {}", newRole.getName(), member.getEffectiveName(), e);
+            }
 
             if (newRank != Rank.CINNAMON_ROLL) {
                 TextChannel announcementsChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
