@@ -1,4 +1,4 @@
-package com.badfic.philbot.data.swampygames;
+package com.badfic.philbot.data.phil;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
