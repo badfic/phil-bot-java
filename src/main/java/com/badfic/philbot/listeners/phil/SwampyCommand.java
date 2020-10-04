@@ -3,8 +3,10 @@ package com.badfic.philbot.listeners.phil;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
+import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.phil.Rank;
-import com.badfic.philbot.repository.DiscordUserRepository;
+import com.badfic.philbot.data.phil.SwampyGamesConfig;
+import com.badfic.philbot.data.phil.SwampyGamesConfigRepository;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
@@ -136,15 +138,11 @@ public class SwampyCommand extends Command implements PhilMarker {
     ));
 
     // volatile state
-    private volatile String swiperAwaiting = null;
-    private volatile boolean didSomeoneSaveFromSwiper = false;
-    private volatile String noSwipingPhrase = "Swiper No Swiping";
-    private volatile boolean boostAwaiting = false;
-    private volatile String boostPhrase = "boost";
     private volatile boolean awaitingResetConfirmation = false;
 
     // non volatile state
     private final DiscordUserRepository discordUserRepository;
+    private final SwampyGamesConfigRepository swampyGamesConfigRepository;
     private final String userHelp;
     private final String adminHelp;
     private final ScheduledExecutorService scheduler;
@@ -154,7 +152,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     private JDA philJda;
 
     @Autowired
-    public SwampyCommand(DiscordUserRepository discordUserRepository) {
+    public SwampyCommand(DiscordUserRepository discordUserRepository, SwampyGamesConfigRepository swampyGamesConfigRepository) {
         name = "swampy";
         aliases = new String[] {"bastard", "spooky"};
         userHelp =
@@ -170,7 +168,122 @@ public class SwampyCommand extends Command implements PhilMarker {
                 "`!!swampy set 120 @incogmeato` set incogmeato to 120 points\n" +
                 "`!!swampy reset` reset everyone back to level 0";
         this.discordUserRepository = discordUserRepository;
+        this.swampyGamesConfigRepository = swampyGamesConfigRepository;
         scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        // seed swampy games config data
+        Optional<SwampyGamesConfig> optionalConfig = this.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
+        if (!optionalConfig.isPresent()) {
+            SwampyGamesConfig singleton = new SwampyGamesConfig();
+            singleton.setId(SwampyGamesConfig.SINGLETON_ID);
+            this.swampyGamesConfigRepository.save(singleton);
+        }
+    }
+
+    @Override
+    protected void execute(CommandEvent event) {
+        if (isNotParticipating(event.getMember())) {
+            return;
+        }
+
+        String args = event.getArgs();
+        String msgContent = event.getMessage().getContentRaw();
+
+        if (args.startsWith("help")) {
+            if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
+                event.replyInDm(simpleEmbed("Help", adminHelp));
+            } else {
+                event.replyInDm(simpleEmbed("Help", userHelp));
+            }
+        } else if (args.startsWith("rank")) {
+            showRank(event);
+        } else if (args.startsWith("up")) {
+            upvote(event);
+        } else if (args.startsWith("down")) {
+            downvote(event);
+        } else if (args.startsWith("give")) {
+            give(event);
+        } else if (args.startsWith("take")) {
+            take(event);
+        } else if (args.startsWith("set")) {
+            set(event);
+        } else if (args.startsWith("leaderboard")) {
+            leaderboard(event);
+        } else if (args.startsWith("steal") || args.startsWith("flip")) {
+            event.replyError("Both flip and steal are disabled for now, they'll be back soon-ish.");
+        } else if (args.startsWith("slots")) {
+            slots(event);
+        } else if (args.startsWith("reset")) {
+            if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
+                event.replyError("You do not have permission to use this command");
+                return;
+            }
+
+            if (!awaitingResetConfirmation) {
+                event.reply(simpleEmbed("Reset The Games", "Are you sure you want to reset the Swampys? This will reset everyone's points. If you are sure, type `!!swampy reset confirm`"));
+                awaitingResetConfirmation = true;
+            } else {
+                if (!args.startsWith("reset confirm")) {
+                    event.reply(simpleEmbed("Abort Reset", "Swampy reset aborted. You must type `!!swampy reset` and then confirm it with `!!swampy reset confirm`."));
+                    awaitingResetConfirmation = false;
+                    return;
+                }
+                reset(event);
+                awaitingResetConfirmation = false;
+            }
+        } else if (msgContent.startsWith("!!")) {
+            event.replyError("Unrecognized command");
+        } else {
+            if (Constants.SWAMPYS_CHANNEL.equals(event.getChannel().getName())) {
+                Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
+                if (!optionalConfig.isPresent()) {
+                    return;
+                }
+                SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
+
+                if (swampyGamesConfig.getBoostPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getBoostPhrase())) {
+                    acceptedBoost(event.getMember());
+                    return;
+                }
+
+                if (swampyGamesConfig.getSwiperAwaiting() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getNoSwipingPhrase())) {
+                    swampyGamesConfig.setSwiperSavior(event.getMember().getId());
+                    swampyGamesConfigRepository.save(swampyGamesConfig);
+                    return;
+                }
+            }
+
+            Message message = event.getMessage();
+
+            DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(PICTURE_MSG_BONUS_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
+
+            boolean bonus = CollectionUtils.isNotEmpty(message.getAttachments())
+                    || CollectionUtils.isNotEmpty(message.getEmbeds())
+                    || CollectionUtils.isNotEmpty(message.getEmotes());
+
+            long pointsToGive = NORMAL_MSG_POINTS;
+            if ("bot-space".equals(event.getChannel().getName())) {
+                pointsToGive = 1;
+            } else if (CURSED_MSG_CHANNELS.contains(event.getChannel().getName())) {
+                pointsToGive = CURSED_MSG_POINTS;
+
+                if (bonus && now.isAfter(nextMsgBonusTime)) {
+                    if ("cursed-swamp".equalsIgnoreCase(event.getChannel().getName()) || "gay-receipts".equalsIgnoreCase(event.getChannel().getName())) {
+                        pointsToGive = CURSED_PICTURE_MSG_POINTS;
+                    } else {
+                        pointsToGive = PICTURE_MSG_POINTS;
+                    }
+                    discordUser.setLastMessageBonus(now);
+                }
+            } else if (bonus && now.isAfter(nextMsgBonusTime)) {
+                pointsToGive = PICTURE_MSG_POINTS;
+                discordUser.setLastMessageBonus(now);
+            }
+
+            givePointsToMember(pointsToGive, event.getMember(), discordUser);
+        }
     }
 
     @Scheduled(cron = "0 2 2 * * ?", zone = "GMT")
@@ -428,9 +541,18 @@ public class SwampyCommand extends Command implements PhilMarker {
 
     @Scheduled(cron = "0 20 0,2,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
     public void swiper() {
-        if (swiperAwaiting != null) {
-            Optional<DiscordUser> discordUser = discordUserRepository.findById(swiperAwaiting);
-            swiperAwaiting = null;
+        Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
+        if (!optionalConfig.isPresent()) {
+            return;
+        }
+        SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
+
+        if (swampyGamesConfig.getSwiperAwaiting() != null) {
+            String noSwipingPhrase = swampyGamesConfig.getNoSwipingPhrase();
+            swampyGamesConfig.setNoSwipingPhrase(null);
+
+            Optional<DiscordUser> victim = discordUserRepository.findById(swampyGamesConfig.getSwiperAwaiting());
+            swampyGamesConfig.setSwiperAwaiting(null);
 
             MessageEmbed message = new EmbedBuilder()
                     .setTitle(noSwipingPhrase)
@@ -439,35 +561,37 @@ public class SwampyCommand extends Command implements PhilMarker {
                     .setImage(NO_SWIPING)
                     .build();
 
-            if (discordUser.isPresent()) {
-                if (didSomeoneSaveFromSwiper) {
-                    didSomeoneSaveFromSwiper = false;
+            if (victim.isPresent()) {
+                if (swampyGamesConfig.getSwiperSavior() != null) {
+                    Optional<DiscordUser> savior = discordUserRepository.findById(swampyGamesConfig.getSwiperSavior());
+                    swampyGamesConfig.setSwiperSavior(null);
 
                     message = new EmbedBuilder()
                             .setTitle(noSwipingPhrase)
-                            .setDescription("Congratulations, you scared them away from <@!" + discordUser.get().getId() + ">")
+                            .setDescription("Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody") + "> scared them away from <@!" + victim.get().getId() + ">")
                             .setColor(Constants.HALOWEEN_ORANGE)
                             .setImage(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? NO_SWIPING : NO_SNART)
                             .build();
                 } else {
                     try {
-                        Member memberById = philJda.getGuilds().get(0).retrieveMemberById(discordUser.get().getId()).complete();
+                        Member memberById = philJda.getGuilds().get(0).retrieveMemberById(victim.get().getId()).complete();
 
                         if (memberById != null) {
                             takePointsFromMember(SWIPER_POINTS_TO_STEAL, memberById);
                             message = new EmbedBuilder()
                                     .setTitle(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? "Swiper Escaped!" : "Rory and Snart Escaped!")
-                                    .setDescription("You didn't save <@!" + discordUser.get().getId() + "> in time, they lost " + SWIPER_POINTS_TO_STEAL + " points")
+                                    .setDescription("You didn't save <@!" + victim.get().getId() + "> in time, they lost " + SWIPER_POINTS_TO_STEAL + " points")
                                     .setColor(Constants.HALOWEEN_ORANGE)
                                     .setImage(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? SWIPER_WON : SNART_WON)
                                     .build();
                         }
                     } catch (Exception e) {
-                        logger.error("Exception looking up swiper victim [id={}] after they were not saved", discordUser.get().getId(), e);
+                        logger.error("Exception looking up swiper victim [id={}] after they were not saved", victim.get().getId(), e);
                     }
                 }
             }
 
+            swampyGamesConfigRepository.save(swampyGamesConfig);
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
                     .sendMessage(message)
@@ -511,13 +635,14 @@ public class SwampyCommand extends Command implements PhilMarker {
 
         long delay = pickRandom(Arrays.asList(15L, 30L, 45L));
         boolean swiper = ThreadLocalRandom.current().nextInt() % 2 == 0;
-        swiperAwaiting = member.getId();
-        noSwipingPhrase = swiper ? "Swiper No Swiping" : "Snarter No Snarting";
+        swampyGamesConfig.setSwiperAwaiting(member.getId());
+        swampyGamesConfig.setNoSwipingPhrase(swiper ? "Swiper No Swiping" : "Snarter No Snarting");
+        swampyGamesConfig = swampyGamesConfigRepository.save(swampyGamesConfig);
         scheduler.schedule(this::swiper, delay, TimeUnit.MINUTES);
 
         MessageEmbed message = new EmbedBuilder()
                 .setTitle(swiper ? "Swiper Was Spotted Nearby" : "Rory and Snart Were Spotted Nearby")
-                .setDescription("They're trying to steal from <@!" + member.getId() + ">\nType '" + noSwipingPhrase + "' in this channel to stop them!")
+                .setDescription("They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase() + "' in this channel to stop them!")
                 .setColor(Constants.HALOWEEN_ORANGE)
                 .setImage(swiper ? SWIPER_SPOTTED : SNART_SPOTTED)
                 .build();
@@ -530,11 +655,18 @@ public class SwampyCommand extends Command implements PhilMarker {
 
     @Scheduled(cron = "0 0 * * * ?", zone = "GMT")
     public void boost() {
+        Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
+        if (!optionalConfig.isPresent()) {
+            return;
+        }
+        SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
+
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0);
 
-        if (boostAwaiting) {
-            boostAwaiting = false;
+        if (swampyGamesConfig.getBoostPhrase() != null) {
+            swampyGamesConfig.setBoostPhrase(null);
+            swampyGamesConfigRepository.save(swampyGamesConfig);
 
             LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
             StringBuilder description = new StringBuilder();
@@ -571,8 +703,7 @@ public class SwampyCommand extends Command implements PhilMarker {
         }
 
         if (ThreadLocalRandom.current().nextInt(100) < PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR) {
-            boostAwaiting = true;
-            boostPhrase = pickRandom(Arrays.asList("boost", "yeet", "simp", "swamp", "spooner", "grapefruit", "thicc", "ranch", "bounce", "hard", "firm",
+            String boostPhrase = pickRandom(Arrays.asList("boost", "yeet", "simp", "swamp", "spooner", "grapefruit", "thicc", "ranch", "bounce", "hard", "firm",
                     "loose", "rub", "moist", "wet", "damp", "spooky", "season", "pumpkin", "skeleton", "vampire", "bat", "coffin", "trick", "treat", "harvest",
                     "ghost", "skull", "spirit", "halloween", "costume", "afraid", "cat", "witch", "magic", "boo", "broomstick", "boogeyman", "corpse", "casket",
                     "cloak", "creepy", "devil", "dark", "demon", "prank", "darkness", "evil", "death", "goblin", "zombie", "spider", "fog", "karl", "gruesome",
@@ -580,6 +711,8 @@ public class SwampyCommand extends Command implements PhilMarker {
                     "midnight", "mummy", "nightmare", "night", "ogre", "october", "petrify", "phantom", "rip", "scarecrow", "scare", "fright", "scary",
                     "scream", "shadow", "startled", "web", "sweets", "supernatural", "tomb", "wand", "wicked", "witch", "wizard", "wraith", "warlock",
                     "sorcerer"));
+            swampyGamesConfig.setBoostPhrase(boostPhrase);
+            swampyGamesConfigRepository.save(swampyGamesConfig);
 
             MessageEmbed message = new EmbedBuilder()
                     .setTitle("BOOST BLITZ")
@@ -660,104 +793,6 @@ public class SwampyCommand extends Command implements PhilMarker {
 
     public void removeFromGames(String id) {
         discordUserRepository.deleteById(id);
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        if (isNotParticipating(event.getMember())) {
-            return;
-        }
-
-        String args = event.getArgs();
-        String msgContent = event.getMessage().getContentRaw();
-
-        if (args.startsWith("help")) {
-            if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
-                event.replyInDm(simpleEmbed("Help", adminHelp));
-            } else {
-                event.replyInDm(simpleEmbed("Help", userHelp));
-            }
-        } else if (args.startsWith("rank")) {
-            showRank(event);
-        } else if (args.startsWith("up")) {
-            upvote(event);
-        } else if (args.startsWith("down")) {
-            downvote(event);
-        } else if (args.startsWith("give")) {
-            give(event);
-        } else if (args.startsWith("take")) {
-            take(event);
-        } else if (args.startsWith("set")) {
-            set(event);
-        } else if (args.startsWith("leaderboard")) {
-            leaderboard(event);
-        } else if (args.startsWith("steal") || args.startsWith("flip")) {
-            event.replyError("Both flip and steal are disabled for now, they'll be back soon-ish.");
-        } else if (args.startsWith("slots")) {
-            slots(event);
-        } else if (args.startsWith("reset")) {
-            if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
-                event.replyError("You do not have permission to use this command");
-                return;
-            }
-
-            if (!awaitingResetConfirmation) {
-                event.reply(simpleEmbed("Reset The Games", "Are you sure you want to reset the Swampys? This will reset everyone's points. If you are sure, type `!!swampy reset confirm`"));
-                awaitingResetConfirmation = true;
-            } else {
-                if (!args.startsWith("reset confirm")) {
-                    event.reply(simpleEmbed("Abort Reset", "Swampy reset aborted. You must type `!!swampy reset` and then confirm it with `!!swampy reset confirm`."));
-                    awaitingResetConfirmation = false;
-                    return;
-                }
-                reset(event);
-                awaitingResetConfirmation = false;
-            }
-        } else if (msgContent.startsWith("!!")) {
-            event.replyError("Unrecognized command");
-        } else {
-            if (boostAwaiting && StringUtils.containsIgnoreCase(msgContent, boostPhrase) && Constants.SWAMPYS_CHANNEL.equals(event.getChannel().getName())) {
-                acceptedBoost(event.getMember());
-                return;
-            }
-
-            if (swiperAwaiting != null && StringUtils.containsIgnoreCase(msgContent, noSwipingPhrase)
-                    && Constants.SWAMPYS_CHANNEL.equals(event.getChannel().getName())) {
-                didSomeoneSaveFromSwiper = true;
-                return;
-            }
-
-            Message message = event.getMessage();
-
-            DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(PICTURE_MSG_BONUS_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
-
-            boolean bonus = CollectionUtils.isNotEmpty(message.getAttachments())
-                    || CollectionUtils.isNotEmpty(message.getEmbeds())
-                    || CollectionUtils.isNotEmpty(message.getEmotes());
-
-            long pointsToGive = NORMAL_MSG_POINTS;
-            if ("bot-space".equals(event.getChannel().getName())) {
-                pointsToGive = 1;
-            } else if (CURSED_MSG_CHANNELS.contains(event.getChannel().getName())) {
-                pointsToGive = CURSED_MSG_POINTS;
-
-                if (bonus && now.isAfter(nextMsgBonusTime)) {
-                    if ("cursed-swamp".equalsIgnoreCase(event.getChannel().getName()) || "gay-receipts".equalsIgnoreCase(event.getChannel().getName())) {
-                        pointsToGive = CURSED_PICTURE_MSG_POINTS;
-                    } else {
-                        pointsToGive = PICTURE_MSG_POINTS;
-                    }
-                    discordUser.setLastMessageBonus(now);
-                }
-            } else if (bonus && now.isAfter(nextMsgBonusTime)) {
-                pointsToGive = PICTURE_MSG_POINTS;
-                discordUser.setLastMessageBonus(now);
-            }
-
-            givePointsToMember(pointsToGive, event.getMember(), discordUser);
-        }
     }
 
     private DiscordUser getDiscordUserByMember(Member member) {

@@ -1,7 +1,8 @@
-package com.badfic.philbot.repository;
+package com.badfic.philbot.data.phil;
 
 import com.badfic.philbot.data.BaseResponsesConfigRepository;
-import com.badfic.philbot.data.phil.PhilResponsesConfig;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface PhilResponsesConfigRepository extends BaseResponsesConfigRepository<PhilResponsesConfig> {
 }
