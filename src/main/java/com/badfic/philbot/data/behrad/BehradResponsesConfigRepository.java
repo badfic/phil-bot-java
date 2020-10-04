@@ -1,7 +1,8 @@
-package com.badfic.philbot.repository;
+package com.badfic.philbot.data.behrad;
 
 import com.badfic.philbot.data.BaseResponsesConfigRepository;
-import com.badfic.philbot.data.behrad.BehradResponsesConfig;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface BehradResponsesConfigRepository extends BaseResponsesConfigRepository<BehradResponsesConfig> {
 }
