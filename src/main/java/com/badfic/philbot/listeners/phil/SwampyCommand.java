@@ -18,9 +18,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -38,6 +40,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -55,8 +58,8 @@ public class SwampyCommand extends Command implements PhilMarker {
     // Timeouts
     public static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 3;
     public static final long SLOTS_TIMEOUT_MINUTES = 3;
-    public static final long STEAL_TIMEOUT_MINUTES = 60;
-    public static final long STEAL_REACTION_TIME_MINUTES = 5;
+    public static final long STEAL_TIMEOUT_MINUTES = 20;
+    public static final long STEAL_REACTION_TIME_MINUTES = 15;
 
     // message/vc/emote points
     public static final long NORMAL_MSG_POINTS = 5;
@@ -101,6 +104,9 @@ public class SwampyCommand extends Command implements PhilMarker {
     public static final long SLOTS_WIN_POINTS = 10_000;
     public static final long SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
 
+    // steal
+    public static final long STEAL_POINTS = 177;
+
     // images
     private static final String BOOST_START = "https://cdn.discordapp.com/attachments/323666308107599872/761492230379798538/BOOST.png";
     private static final String BOOST_END = "https://cdn.discordapp.com/attachments/323666308107599872/761494374445219850/stan_loona_goddess.png";
@@ -136,6 +142,14 @@ public class SwampyCommand extends Command implements PhilMarker {
             "\uD83E\uDD5D", "\uD83C\uDF53", "\uD83C\uDF4B", "\uD83E\uDD6D", "\uD83C\uDF51",
             "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4D", "\uD83C\uDF50", "\uD83C\uDF47"
     ));
+
+    // soft bans
+    private static final Set<String> MSG_POINTS_SOFT_BAN_SET = new HashSet<>(Arrays.asList(
+            "470236745787506728"
+    ));
+    private static final Map<String, String> USER_WORD_BAN_SET = MapUtils.putAll(new HashMap<>(), new String[] {
+            "486427102854381568", "I'm out"
+    });
 
     // volatile state
     private volatile boolean awaitingResetConfirmation = false;
@@ -209,8 +223,10 @@ public class SwampyCommand extends Command implements PhilMarker {
             set(event);
         } else if (args.startsWith("leaderboard")) {
             leaderboard(event);
-        } else if (args.startsWith("steal") || args.startsWith("flip")) {
-            event.replyError("Both flip and steal are disabled for now, they'll be back soon-ish.");
+        } else if (args.startsWith("steal")) {
+            steal(event);
+        } else if (args.startsWith("flip")) {
+            event.replyError("flip is disabled for now, it'll be back soon-ish.");
         } else if (args.startsWith("slots")) {
             slots(event);
         } else if (args.startsWith("reset")) {
@@ -280,6 +296,21 @@ public class SwampyCommand extends Command implements PhilMarker {
             } else if (bonus && now.isAfter(nextMsgBonusTime)) {
                 pointsToGive = PICTURE_MSG_POINTS;
                 discordUser.setLastMessageBonus(now);
+            }
+
+            // soft bans
+            if (MSG_POINTS_SOFT_BAN_SET.contains(discordUser.getId())) {
+                return;
+            }
+
+            if (StringUtils.containsIgnoreCase(msgContent, USER_WORD_BAN_SET.get(discordUser.getId()))) {
+                takePointsFromMember(1000, event.getMember());
+                return;
+            }
+
+            if (StringUtils.containsIgnoreCase(msgContent, "simp")) {
+                takePointsFromMember(100, event.getMember());
+                return;
             }
 
             givePointsToMember(pointsToGive, event.getMember(), discordUser);
@@ -847,6 +878,12 @@ public class SwampyCommand extends Command implements PhilMarker {
     }
 
     private void steal(CommandEvent event) {
+        if (!event.getChannel().getName().equalsIgnoreCase(Constants.SWAMPYS_CHANNEL)) {
+            TextChannel swampysChannel = event.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+            event.replyError("You can only initiate a steal in " + swampysChannel.getAsMention());
+            return;
+        }
+
         List<Member> mentionedUsers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.isEmpty(mentionedUsers) || mentionedUsers.size() > 1) {
@@ -854,24 +891,26 @@ public class SwampyCommand extends Command implements PhilMarker {
             return;
         }
 
-        Member mentionedMember = mentionedUsers.get(0);
-        if (event.getMember().getId().equalsIgnoreCase(mentionedMember.getId())) {
+        Member thief = event.getMember();
+        Member victim = mentionedUsers.get(0);
+
+        if (thief.getId().equalsIgnoreCase(victim.getId())) {
             event.replyError("You can't steal from yourself");
             return;
         }
 
-        if (mentionedMember.getUser().isBot()) {
+        if (victim.getUser().isBot()) {
             event.replyError("You can't steal from bots");
             return;
         }
 
-        DiscordUser mentionedUser = getDiscordUserByMember(mentionedMember);
+        DiscordUser mentionedUser = getDiscordUserByMember(victim);
         if (mentionedUser.getXp() <= 0) {
             event.replyError("You can't steal from them, they don't have any points");
             return;
         }
 
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+        DiscordUser discordUser = getDiscordUserByMember(thief);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nextStealTime = discordUser.getLastSteal().plus(STEAL_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
         if (now.isBefore(nextStealTime)) {
@@ -887,8 +926,27 @@ public class SwampyCommand extends Command implements PhilMarker {
         discordUser.setLastSteal(now);
         discordUserRepository.save(discordUser);
 
-        // TODO: Reply with a message, then the person getting stole from has to react to that message in x minutes. if they don't, they lose the points.
-        // but if they do, then the stealer, loses the points.
+        MessageEmbed message = new EmbedBuilder()
+                .setTitle("Thief Alert!")
+                .setDescription(thief.getAsMention() + " is trying to steal " + STEAL_POINTS + " points from " + victim.getAsMention() + "\nThe victim has "
+                        + STEAL_REACTION_TIME_MINUTES + " minutes to spot the thief by reacting to this message with the :eyes: emoji!")
+                .setColor(Constants.HALOWEEN_ORANGE)
+                .build();
+
+        event.getChannel().sendMessage(message).queue(msg -> {
+            msg.addReaction("\uD83D\uDC40").queue();
+            scheduler.schedule(() -> {
+                if (msg.retrieveReactionUsers("\uD83D\uDC40").stream().anyMatch(u -> u.getId().equalsIgnoreCase(victim.getId()))) {
+                    event.getChannel()
+                            .sendMessage(simpleEmbed("Failed Thievery", "%s failed to steal from %s", thief.getEffectiveName(), victim.getEffectiveName()))
+                            .queue();
+                } else {
+                    event.getChannel()
+                            .sendMessage(simpleEmbed("Successful Thievery", "%s stole from %s", thief.getEffectiveName(), victim.getEffectiveName()))
+                            .queue();
+                }
+            }, STEAL_REACTION_TIME_MINUTES, TimeUnit.MINUTES);
+        });
     }
 
     private void setPointsForMember(long points, Member member) {
@@ -973,6 +1031,7 @@ public class SwampyCommand extends Command implements PhilMarker {
         return new EmbedBuilder()
                 .setTitle(title)
                 .setDescription(String.format(format, args))
+                .setColor(Constants.HALOWEEN_ORANGE)
                 .build();
     }
 
