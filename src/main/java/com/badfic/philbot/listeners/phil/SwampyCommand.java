@@ -105,6 +105,7 @@ public class SwampyCommand extends Command implements PhilMarker {
     public static final long SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
 
     // steal
+    public static final long FAILED_STEAL_POINTS = 120;
     public static final long STEAL_POINTS = 177;
 
     // images
@@ -929,7 +930,7 @@ public class SwampyCommand extends Command implements PhilMarker {
         MessageEmbed message = new EmbedBuilder()
                 .setTitle("Thief Alert!")
                 .setDescription(thief.getAsMention() + " is trying to steal " + STEAL_POINTS + " points from " + victim.getAsMention() + "\nThe victim has "
-                        + STEAL_REACTION_TIME_MINUTES + " minutes to spot the thief by reacting to this message with the :eyes: emoji!")
+                        + STEAL_REACTION_TIME_MINUTES + " minutes to spot the thief by reacting to this message with the :eyes: emoji")
                 .setColor(Constants.HALOWEEN_ORANGE)
                 .build();
 
@@ -937,12 +938,18 @@ public class SwampyCommand extends Command implements PhilMarker {
             msg.addReaction("\uD83D\uDC40").queue();
             scheduler.schedule(() -> {
                 if (msg.retrieveReactionUsers("\uD83D\uDC40").stream().anyMatch(u -> u.getId().equalsIgnoreCase(victim.getId()))) {
+                    takePointsFromMember(FAILED_STEAL_POINTS, thief);
+                    givePointsToMember(FAILED_STEAL_POINTS, victim);
                     event.getChannel()
-                            .sendMessage(simpleEmbed("Failed Thievery", "%s failed to steal from %s", thief.getEffectiveName(), victim.getEffectiveName()))
+                            .sendMessage(simpleEmbed("Failed Thievery!",
+                                    "%s gave %s %d points because they got caught", thief.getEffectiveName(), victim.getEffectiveName(), FAILED_STEAL_POINTS))
                             .queue();
                 } else {
+                    takePointsFromMember(STEAL_POINTS, victim);
+                    givePointsToMember(STEAL_POINTS, thief);
                     event.getChannel()
-                            .sendMessage(simpleEmbed("Successful Thievery", "%s stole from %s", thief.getEffectiveName(), victim.getEffectiveName()))
+                            .sendMessage(simpleEmbed("Successful Thievery!",
+                                    "%s stole %d points from %s", thief.getEffectiveName(), STEAL_POINTS, victim.getEffectiveName()))
                             .queue();
                 }
             }, STEAL_REACTION_TIME_MINUTES, TimeUnit.MINUTES);
