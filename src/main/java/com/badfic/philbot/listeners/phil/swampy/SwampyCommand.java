@@ -53,6 +53,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     public static final long NORMAL_REACTION_POINTS = 2;
     public static final long EMOTE_REACTION_POINTS = 7;
     public static final long VOICE_CHAT_POINTS_PER_MINUTE = 5;
+    public static final int NO_NO_WORDS_TAKE_POINTS = 100;
 
     // upvote/downvote points
     public static final long UPVOTE_TIMEOUT_MINUTES = 1;
@@ -69,11 +70,10 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     public static final long STEAL_REACTION_TIME_MINUTES = 15;
 
     // soft bans
-    public static final Set<String> MSG_POINTS_SOFT_BAN_SET = new HashSet<>(Arrays.asList(
-            "470236745787506728"
-    ));
     public static final Map<String, String> USER_WORD_BAN_SET = MapUtils.putAll(new HashMap<>(), new String[] {
-            "486427102854381568", "I'm out"
+            "486427102854381568", "I'm out",
+            "307663738151108610", "oof",
+            "307611036134146080", "nelly"
     });
 
     // volatile state
@@ -214,18 +214,13 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 discordUser.setLastMessageBonus(now);
             }
 
-            // soft bans
-            if (MSG_POINTS_SOFT_BAN_SET.contains(discordUser.getId())) {
-                return;
-            }
-
             if (StringUtils.containsIgnoreCase(msgContent, USER_WORD_BAN_SET.get(discordUser.getId()))) {
-                takePointsFromMember(1000, event.getMember());
+                takePointsFromMember(NO_NO_WORDS_TAKE_POINTS, event.getMember());
                 return;
             }
 
             if (StringUtils.containsIgnoreCase(msgContent, "simp")) {
-                takePointsFromMember(100, event.getMember());
+                takePointsFromMember(NO_NO_WORDS_TAKE_POINTS, event.getMember());
                 return;
             }
 
@@ -395,13 +390,6 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 }
             }, STEAL_REACTION_TIME_MINUTES, TimeUnit.MINUTES);
         });
-    }
-
-    private void setPointsForMember(long points, Member member) {
-        DiscordUser user = getDiscordUserByMember(member);
-        user.setXp(points);
-        user = discordUserRepository.save(user);
-        assignRolesIfNeeded(member, user);
     }
 
     private void showRank(CommandEvent event) {
@@ -681,7 +669,10 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        setPointsForMember(pointsToSet, mentionedMember);
+        DiscordUser user = getDiscordUserByMember(mentionedMember);
+        user.setXp(pointsToSet);
+        user = discordUserRepository.save(user);
+        assignRolesIfNeeded(mentionedMember, user);
 
         event.replyFormatted("Set xp to %s for %s", NumberFormat.getIntegerInstance().format(pointsToSet), mentionedMember.getEffectiveName());
     }
