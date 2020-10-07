@@ -7,10 +7,8 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -90,34 +88,8 @@ public class Taxes extends BaseSwampy implements PhilMarker {
             }
         }
 
-        long startTime = System.currentTimeMillis();
-        int index = allUsers.size() - 1;
-        Member member = null;
-        while (index >= 0 && member == null && System.currentTimeMillis() - startTime < TimeUnit.SECONDS.toMillis(30)) {
-            DiscordUser winningUser = allUsers.get(index);
-
-            try {
-                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
-                if (memberById != null
-                        && !memberById.getUser().isBot()
-                        && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)
-                        && winningUser.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD
-                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
-                    member = memberById;
-                }
-            } catch (Exception ignored) {}
-
-            index--;
-        }
-
-        String title = "Tax time! The following taxes have been paid to the luminiferous aether";
-        if (member != null) {
-            title = "Tax time! The following taxes have been paid to " + member.getEffectiveName();
-            givePointsToMember(totalTaxes, member);
-        }
-
         MessageEmbed message = new EmbedBuilder()
-                .setTitle(title)
+                .setTitle("Tax time! " + NumberFormat.getIntegerInstance().format(totalTaxes) + " points in taxes have been paid to Martha Stewart")
                 .setDescription(description.toString())
                 .setImage(TAXES)
                 .setColor(Constants.HALOWEEN_ORANGE)
@@ -128,6 +100,5 @@ public class Taxes extends BaseSwampy implements PhilMarker {
                 .sendMessage(message)
                 .queue();
     }
-
 
 }
