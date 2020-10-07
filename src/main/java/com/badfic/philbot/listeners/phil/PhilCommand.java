@@ -65,7 +65,11 @@ public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> implemen
             return Optional.of(emoji.getUnicode());
         }
 
-        if (StringUtils.isAllUpperCase(event.getMessage().getContentRaw())) {
+        boolean isAllUppercase = true;
+        for (String s : msgContent.split("\\s+")) {
+            isAllUppercase &= StringUtils.isAllUpperCase(s);
+        }
+        if (isAllUppercase) {
             return Optional.of(StringUtils.upperCase(pickRandom(responses)));
         }
 
