@@ -318,50 +318,17 @@ public class SwampyCommand extends Command implements PhilMarker {
         }
     }
 
-    @Scheduled(cron = "0 2 2 * * ?", zone = "GMT")
-    public void sweepstakes() {
-        List<DiscordUser> allUsers = discordUserRepository.findAll();
-
-        long startTime = System.currentTimeMillis();
-        Member member = null;
-        while (member == null && System.currentTimeMillis() - startTime < TimeUnit.SECONDS.toMillis(30)) {
-            DiscordUser winningUser = pickRandom(allUsers);
-
-            try {
-                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
-                if (memberById != null
-                        && !memberById.getUser().isBot()
-                        && winningUser.getXp() > ORGANIC_POINT_THRESHOLD
-                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
-                    member = memberById;
-                }
-            } catch (Exception ignored) {}
-        }
-
-        if (member == null) {
-            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
-                    .get(0)
-                    .sendMessage(simpleEmbed("Sweepstakes Results", "Unable to choose a winner, nobody wins"))
-                    .queue();
-            return;
-        }
-
-        givePointsToMember(SWEEPSTAKES_WIN_POINTS, member);
-
-        MessageEmbed message = new EmbedBuilder()
-                .setTitle("Sweepstakes Results")
-                .setImage(SWEEPSTAKES)
-                .setColor(Constants.HALOWEEN_ORANGE)
-                .setDescription(String.format("Congratulations %s you won today's sweepstakes worth 4000 points!", member.getAsMention()))
-                .build();
-
-        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
-                .get(0)
-                .sendMessage(message)
-                .queue();
+    @Scheduled(cron = "0 3 2 * * ?", zone = "GMT")
+    public void sweepstakes18() {
+        doSweepstakes(Constants.EIGHTEEN_PLUS_ROLE);
     }
 
-    @Scheduled(cron = "0 5 2 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 7 2 * * ?", zone = "GMT")
+    public void sweepstakesChaos() {
+        doSweepstakes(Constants.CHAOS_CHILDREN_ROLE);
+    }
+
+    @Scheduled(cron = "0 9 2 * * ?", zone = "GMT")
     public void taxes() {
         if (ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_TAXES_DOESNT_HAPPEN) {
             MessageEmbed message = new EmbedBuilder()
@@ -390,7 +357,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                     long taxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRate)).longValue();
                     totalTaxes += taxes;
                     Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
-                    if (memberById != null && !memberById.getUser().isBot()) {
+                    if (memberById != null && !memberById.getUser().isBot() && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
                         takePointsFromMember(taxes, memberById);
 
                         description
@@ -418,6 +385,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                 Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
                 if (memberById != null
                         && !memberById.getUser().isBot()
+                        && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)
                         && winningUser.getXp() > ORGANIC_POINT_THRESHOLD
                         && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                     member = memberById;
@@ -475,7 +443,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                     long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRateRecoveryAmountPercentage)).longValue();
                     totalRecovered += recoveredTaxes;
                     Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
-                    if (memberById != null && !memberById.getUser().isBot()) {
+                    if (memberById != null && !memberById.getUser().isBot() && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
                         givePointsToMember(recoveredTaxes, memberById);
 
                         description
@@ -524,7 +492,7 @@ public class SwampyCommand extends Command implements PhilMarker {
                 try {
                     Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
                     if (memberById != null && !memberById.getUser().isBot()) {
-                        if (ThreadLocalRandom.current().nextInt() % 2 == 0) {
+                        if (ThreadLocalRandom.current().nextInt() % 2 == 0 || hasRole(memberById, Constants.CHAOS_CHILDREN_ROLE)) {
                             givePointsToMember(TRICK_OR_TREAT_POINTS, memberById);
                             totalGiven += TRICK_OR_TREAT_POINTS;
 
@@ -838,6 +806,49 @@ public class SwampyCommand extends Command implements PhilMarker {
         }
 
         return optionalUserEntity.get();
+    }
+
+    private void doSweepstakes(String role) {
+        List<DiscordUser> allUsers = discordUserRepository.findAll();
+
+        long startTime = System.currentTimeMillis();
+        Member member = null;
+        while (member == null && System.currentTimeMillis() - startTime < TimeUnit.SECONDS.toMillis(30)) {
+            DiscordUser winningUser = pickRandom(allUsers);
+
+            try {
+                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
+                if (memberById != null
+                        && !memberById.getUser().isBot()
+                        && hasRole(memberById, role)
+                        && winningUser.getXp() > ORGANIC_POINT_THRESHOLD
+                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
+                    member = memberById;
+                }
+            } catch (Exception ignored) {}
+        }
+
+        if (member == null) {
+            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
+                    .get(0)
+                    .sendMessage(simpleEmbed(role + " Sweepstakes Results", "Unable to choose a winner, nobody wins"))
+                    .queue();
+            return;
+        }
+
+        givePointsToMember(SWEEPSTAKES_WIN_POINTS, member);
+
+        MessageEmbed message = new EmbedBuilder()
+                .setTitle(role + " Sweepstakes Results")
+                .setImage(SWEEPSTAKES)
+                .setColor(Constants.HALOWEEN_ORANGE)
+                .setDescription(String.format("Congratulations %s you won today's sweepstakes worth 4000 points!", member.getAsMention()))
+                .build();
+
+        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
+                .get(0)
+                .sendMessage(message)
+                .queue();
     }
 
     private void slots(CommandEvent event) {
