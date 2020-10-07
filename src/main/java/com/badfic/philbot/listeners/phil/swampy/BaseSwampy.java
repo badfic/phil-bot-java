@@ -33,8 +33,8 @@ public abstract class BaseSwampy extends Command {
 
     // sweepstakes, taxes, robinhood
     public static final BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");
-    public static final long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 100;
-    public static final long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 1_000;
+    public static final long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 99;
+    public static final long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 999;
 
     // slots
     public static final long SLOTS_WIN_POINTS = 10_000;
