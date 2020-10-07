@@ -2,6 +2,7 @@ package com.badfic.philbot.listeners.phil;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
+import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Optional;
@@ -68,11 +69,7 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
-        long points = SwampyCommand.NORMAL_REACTION_POINTS;
-        if (event.getReactionEmote().isEmote()) {
-            points = SwampyCommand.EMOTE_REACTION_POINTS;
-        }
-        swampyCommand.givePointsToMember(points, event.getMember());
+        swampyCommand.emote(event);
     }
 
     @Override
