@@ -25,6 +25,9 @@ public class SwampyGamesConfig {
     @Column
     private String boostPhrase;
 
+    @Column
+    private int storyTimeCounter;
+
     public Short getId() {
         return id;
     }
@@ -64,4 +67,13 @@ public class SwampyGamesConfig {
     public void setBoostPhrase(String boostPhrase) {
         this.boostPhrase = boostPhrase;
     }
+
+    public int getStoryTimeCounter() {
+        return storyTimeCounter;
+    }
+
+    public void setStoryTimeCounter(int storyTimeCounter) {
+        this.storyTimeCounter = storyTimeCounter;
+    }
+
 }
