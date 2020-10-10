@@ -89,9 +89,10 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 "`!!swampy` aka `!!bastard` aka `!!spooky` HELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
                 "`!!swampy leaderboard bastard` show the 18+ leaderboard\n" +
-                "`!!swampy leaderboard bhaos` show the chaos children leaderboard\n" +
+                "`!!swampy leaderboard chaos` show the chaos children leaderboard\n" +
                 "`!!swampy up @incogmeato` upvote a user for the swampys\n" +
                 "`!!swampy down @incogmeato` downvote a user for the swampys\n" +
+                "`!!swampy steal @incogmeato` attempt to steal swampy points from user\n" +
                 "`!!swampy slots` Play slots. Winners for 2 out of 3 matches or 3 out of 3 matches.";
         adminHelp = userHelp + "\n\nMODS ONLY COMMANDS:\n" +
                 "`!!swampy give 120 @incogmeato` give 120 points to incogmeato\n" +
