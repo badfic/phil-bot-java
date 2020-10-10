@@ -88,7 +88,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         userHelp =
                 "`!!swampy` aka `!!bastard` aka `!!spooky` HELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
-                "`!!swampy leaderboard` show the swampy leaderboard\n" +
+                "`!!swampy leaderboard bastard` show the 18+ leaderboard\n" +
+                "`!!swampy leaderboard bhaos` show the chaos children leaderboard\n" +
                 "`!!swampy up @incogmeato` upvote a user for the swampys\n" +
                 "`!!swampy down @incogmeato` downvote a user for the swampys\n" +
                 "`!!swampy slots` Play slots. Winners for 2 out of 3 matches or 3 out of 3 matches.";
@@ -267,7 +268,9 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     }
 
     public void removeFromGames(String id) {
-        discordUserRepository.deleteById(id);
+        if (discordUserRepository.existsById(id)) {
+            discordUserRepository.deleteById(id);
+        }
     }
 
     private void acceptedBoost(Member member) {
@@ -430,11 +433,34 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     private void leaderboard(CommandEvent event) {
         String[] split = event.getArgs().split("\\s+");
         if (split.length != 2) {
-            event.replyError("Badly formatted command. Example `!!swampy leaderboard bastard` or `!!swampy leaderboard chaos`");
+            event.replyError("Badly formatted command. Example `!!swampy leaderboard bastard`, `!!swampy leaderboard chaos`, or `!!swampy leaderboard full`");
             return;
         }
 
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
+
+        if ("full".equalsIgnoreCase(split[1])) {
+            AtomicInteger place = new AtomicInteger(1);
+            StringBuilder description = new StringBuilder();
+            swampyUsers.stream()
+                    .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
+                    .forEachOrdered(swampyUser -> {
+                        description.append(place.getAndIncrement())
+                                .append(": <@!")
+                                .append(swampyUser.getId())
+                                .append("> - ")
+                                .append(NumberFormat.getIntegerInstance().format(swampyUser.getXp()))
+                                .append('\n');
+                    });
+
+            MessageEmbed messageEmbed = new EmbedBuilder()
+                    .setTitle("Full Leaderboard")
+                    .setDescription(description.toString())
+                    .build();
+
+            event.reply(messageEmbed);
+            return;
+        }
 
         AtomicInteger place = new AtomicInteger(0);
         StringBuilder description = new StringBuilder();
