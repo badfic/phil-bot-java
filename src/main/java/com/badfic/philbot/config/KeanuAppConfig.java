@@ -1,11 +1,12 @@
 package com.badfic.philbot.config;
 
+import static net.dv8tion.jda.api.requests.GatewayIntent.DIRECT_MESSAGES;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -66,7 +67,7 @@ public class KeanuAppConfig {
     @Bean(name = "keanuJda")
     public JDA keanuJda(List<EventListener> eventListeners,
                         @Qualifier("keanuCommandClient") CommandClient keanuCommandClient) throws Exception {
-        return JDABuilder.create(keanuBotToken, Collections.singletonList(GUILD_MESSAGES))
+        return JDABuilder.create(keanuBotToken, Arrays.asList(GUILD_MESSAGES, DIRECT_MESSAGES))
                 .disableCache(EnumSet.allOf(CacheFlag.class))
                 .addEventListeners(eventListeners.stream().filter(e -> e instanceof KeanuMarker).toArray(EventListener[]::new))
                 .addEventListeners(keanuCommandClient)

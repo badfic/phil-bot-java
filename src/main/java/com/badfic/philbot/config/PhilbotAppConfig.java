@@ -1,5 +1,6 @@
 package com.badfic.philbot.config;
 
+import static net.dv8tion.jda.api.requests.GatewayIntent.DIRECT_MESSAGES;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_BANS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MEMBERS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
@@ -49,7 +50,7 @@ public class PhilbotAppConfig {
     @Bean(name = "philJda")
     public JDA philJda(List<EventListener> eventListeners,
                        @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
-        return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS))
+        return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES))
                 .disableCache(EnumSet.allOf(CacheFlag.class))
                 .enableCache(CacheFlag.VOICE_STATE)
                 .addEventListeners(eventListeners.stream().filter(e -> e instanceof PhilMarker).toArray(EventListener[]::new))

@@ -1,11 +1,12 @@
 package com.badfic.philbot.config;
 
+import static net.dv8tion.jda.api.requests.GatewayIntent.DIRECT_MESSAGES;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -60,7 +61,7 @@ public class BehradAppConfig {
     @Bean(name = "behradJda")
     public JDA behradJda(List<EventListener> eventListeners,
                          @Qualifier("behradCommandClient") CommandClient behradCommandClient) throws Exception {
-        return JDABuilder.create(behradBotToken, Collections.singletonList(GUILD_MESSAGES))
+        return JDABuilder.create(behradBotToken, Arrays.asList(GUILD_MESSAGES, DIRECT_MESSAGES))
                 .disableCache(EnumSet.allOf(CacheFlag.class))
                 .addEventListeners(eventListeners.stream().filter(e -> e instanceof BehradMarker).toArray(EventListener[]::new))
                 .addEventListeners(behradCommandClient)
