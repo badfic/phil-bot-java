@@ -11,7 +11,6 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,7 +19,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.EventListener;
-import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -51,8 +49,6 @@ public class PhilbotAppConfig {
     public JDA philJda(List<EventListener> eventListeners,
                        @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
         return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES))
-                .disableCache(EnumSet.allOf(CacheFlag.class))
-                .enableCache(CacheFlag.VOICE_STATE)
                 .addEventListeners(eventListeners.stream().filter(e -> e instanceof PhilMarker).toArray(EventListener[]::new))
                 .addEventListeners(philCommandClient)
                 .setActivity(Activity.playing("with our feelings"))

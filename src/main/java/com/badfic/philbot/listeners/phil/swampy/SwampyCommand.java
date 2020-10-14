@@ -446,20 +446,31 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             swampyUsers.stream()
                     .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
                     .forEachOrdered(swampyUser -> {
-                        description.append(place.getAndIncrement())
-                                .append(": <@!")
-                                .append(swampyUser.getId())
-                                .append("> - ")
-                                .append(NumberFormat.getIntegerInstance().format(swampyUser.getXp()))
-                                .append('\n');
+                        Member memberById = event.getGuild().getMemberById(swampyUser.getId());
+
+                        description.append(place.getAndIncrement());
+                        if (memberById != null) {
+                            description
+                                    .append(": <@!")
+                                    .append(swampyUser.getId())
+                                    .append(">, name: \"")
+                                    .append(memberById.getEffectiveName())
+                                    .append("\", role: \"")
+                                    .append(hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE) ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE)
+                                    .append("\", xp: ")
+                                    .append(NumberFormat.getIntegerInstance().format(swampyUser.getXp()))
+                                    .append('\n');
+                        } else {
+                            description
+                                    .append(": <@!")
+                                    .append(swampyUser.getId())
+                                    .append(">, could not find user in member cache!, xp: ")
+                                    .append(NumberFormat.getIntegerInstance().format(swampyUser.getXp()))
+                                    .append('\n');
+                        }
                     });
 
-            MessageEmbed messageEmbed = new EmbedBuilder()
-                    .setTitle("Full Leaderboard")
-                    .setDescription(description.toString())
-                    .build();
-
-            event.reply(messageEmbed);
+            event.getChannel().sendFile(description.toString().getBytes(), "leaderboard.txt").queue();
             return;
         }
 
