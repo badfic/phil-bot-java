@@ -169,7 +169,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
 
     private void disownGrandchild(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown grandchild", discordUser, "getGrandchildren()", false);
+        addOrRemoveFamily(event, "disown grandchild", discordUser, "getGrandchildren", false);
     }
 
     private void adoptChild(CommandEvent event) {
