@@ -3,11 +3,12 @@ package com.badfic.philbot.listeners.phil;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -30,7 +31,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
-    private static final ConcurrentMap<String, Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = new ConcurrentHashMap<>();
+    private static final Cache<String, Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = CacheBuilder.newBuilder()
+            .maximumSize(200)
+            .expireAfterWrite(15, TimeUnit.MINUTES)
+            .build();
     private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer|phellen|cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam)\\b", Pattern.CASE_INSENSITIVE);
 
     private final PhilCommand philCommand;
@@ -68,7 +72,7 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
-        OUTSTANDING_REACTION_TASKS.computeIfPresent(event.getMessageId(), (key, function) -> {
+        OUTSTANDING_REACTION_TASKS.asMap().computeIfPresent(event.getMessageId(), (key, function) -> {
             boolean taskIsComplete = function.apply(event);
 
             if (taskIsComplete) {

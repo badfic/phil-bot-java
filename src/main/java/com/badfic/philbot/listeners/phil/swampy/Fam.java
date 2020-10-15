@@ -208,10 +208,22 @@ public class Fam extends BaseSwampy implements PhilMarker {
                 return;
             }
 
+            if (mentionedMember.getUser().isBot()) {
+                if (add) {
+                    set.add(mentionedMember.getId());
+                } else {
+                    set.remove(mentionedMember.getId());
+                }
+
+                discordUserRepository.save(discordUser);
+                event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + mentionedMember.getEffectiveName());
+                return;
+            }
+
             if (!add) {
                 set.remove(mentionedMember.getId());
                 discordUserRepository.save(discordUser);
-                event.replySuccess(event.getMember().getAsMention() + ", Successfully " + argName + "`'d " + mentionedMember.getEffectiveName());
+                event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + mentionedMember.getEffectiveName());
                 return;
             }
 
@@ -222,8 +234,8 @@ public class Fam extends BaseSwampy implements PhilMarker {
 
             MessageEmbed message = new EmbedBuilder()
                     .setTitle(argName)
-                    .setDescription("Hello, " + mentionedMember.getAsMention() + "\n" + event.getMember().getAsMention() + " would like to `" + argName
-                            + "` you.\nDo you accept?")
+                    .setDescription("Hello, " + mentionedMember.getAsMention() + "\n\n" + event.getMember().getAsMention() + " would like to `" + argName
+                            + "` you.\nDo you accept?\n\n(You have 15 minutes to respond or else it defaults to reject)")
                     .setColor(Constants.SWAMP_GREEN)
                     .build();
 
