@@ -6,6 +6,9 @@ import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -17,6 +20,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
+    private static final ConcurrentMap<String, Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = new ConcurrentHashMap<>();
     private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer|phellen|cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam)\\b", Pattern.CASE_INSENSITIVE);
 
     private final PhilCommand philCommand;
@@ -39,6 +44,10 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
         this.philCommand = philCommand;
         this.swampyCommand = swampyCommand;
         this.philCommandClient = philCommandClient;
+    }
+
+    public static void addReactionTask(String messageId, Function<MessageReactionAddEvent, Boolean> function) {
+        OUTSTANDING_REACTION_TASKS.put(messageId, function);
     }
 
     @Override
@@ -55,6 +64,18 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
             philCommand.execute(new CommandEvent(event, null, philCommandClient));
             return;
         }
+    }
+
+    @Override
+    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
+        OUTSTANDING_REACTION_TASKS.computeIfPresent(event.getMessageId(), (key, function) -> {
+            boolean taskIsComplete = function.apply(event);
+
+            if (taskIsComplete) {
+                return null;
+            }
+            return function;
+        });
     }
 
     @Override
