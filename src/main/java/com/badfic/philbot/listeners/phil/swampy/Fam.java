@@ -4,15 +4,20 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.Family;
+import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ReflectionUtils;
 
 @Component
 public class Fam extends BaseSwampy implements PhilMarker {
@@ -119,87 +124,152 @@ public class Fam extends BaseSwampy implements PhilMarker {
 
     private void adoptGrandparent(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt grandparent", discordUser, discordUser.getFamily().getGrandparents(), true);
+        addOrRemoveFamily(event, "adopt grandparent", discordUser, "getGrandparents", true);
     }
 
     private void disownGrandparent(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown grandparent", discordUser, discordUser.getFamily().getGrandparents(), false);
+        addOrRemoveFamily(event, "disown grandparent", discordUser, "getGrandparents", false);
     }
 
     private void addEx(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "add ex", discordUser, discordUser.getFamily().getExes(), true);
+        addOrRemoveFamily(event, "add ex", discordUser, "getExes", true);
     }
 
     private void removeEx(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "remove ex", discordUser, discordUser.getFamily().getExes(), false);
+        addOrRemoveFamily(event, "remove ex", discordUser, "getExes", false);
     }
 
     private void adoptParent(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt parent", discordUser, discordUser.getFamily().getParents(), true);
+        addOrRemoveFamily(event, "adopt parent", discordUser, "getParents", true);
     }
 
     private void disownParent(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown parent", discordUser, discordUser.getFamily().getParents(), false);
+        addOrRemoveFamily(event, "disown parent", discordUser, "getParents", false);
     }
 
     private void adoptSibling(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt sibling", discordUser, discordUser.getFamily().getSiblings(), true);
+        addOrRemoveFamily(event, "adopt sibling", discordUser, "getSiblings", true);
     }
 
     private void disownSibling(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown sibling", discordUser, discordUser.getFamily().getSiblings(), false);
+        addOrRemoveFamily(event, "disown sibling", discordUser, "getSiblings", false);
     }
 
     private void adoptGrandchild(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt grandchild", discordUser, discordUser.getFamily().getGrandchildren(), true);
+        addOrRemoveFamily(event, "adopt grandchild", discordUser, "getGrandchildren", true);
     }
 
     private void disownGrandchild(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown grandchild", discordUser, discordUser.getFamily().getGrandchildren(), false);
+        addOrRemoveFamily(event, "disown grandchild", discordUser, "getGrandchildren()", false);
     }
 
     private void adoptChild(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt child", discordUser, discordUser.getFamily().getChildren(), true);
+        addOrRemoveFamily(event, "adopt child", discordUser, "getChildren", true);
     }
 
     private void disownChild(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown child", discordUser, discordUser.getFamily().getChildren(), false);
+        addOrRemoveFamily(event, "disown child", discordUser, "getChildren", false);
     }
 
     private void propose(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "propose", discordUser, discordUser.getFamily().getSpouses(), true);
+        addOrRemoveFamily(event, "propose", discordUser, "getSpouses", true);
     }
 
     private void divorce(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "divorce", discordUser, discordUser.getFamily().getSpouses(), false);
+        addOrRemoveFamily(event, "divorce", discordUser, "getSpouses", false);
     }
 
-    private void addOrRemoveFamily(CommandEvent event, String argName, DiscordUser discordUser, Set<String> set, boolean add) {
+    private void addOrRemoveFamily(CommandEvent event, String argName, DiscordUser discordUser, String methodNameForSet, boolean add) {
         String args = event.getArgs();
-        String right = args.replace(argName, "").trim();
-        boolean rightIsMember = false;
+        Method method = ReflectionUtils.findMethod(Family.class, methodNameForSet);
+        Set<String> set = (Set<String>) ReflectionUtils.invokeMethod(method, discordUser.getFamily());
+
+        if (set == null) {
+            event.replyError("Something went terrible wrong. Try again later");
+            return;
+        }
+
         if (CollectionUtils.size(event.getMessage().getMentionedMembers()) == 1) {
             Member mentionedMember = event.getMessage().getMentionedMembers().get(0);
             if (isNotEligible(mentionedMember, event)) {
                 return;
             }
-            rightIsMember = true;
-            right = mentionedMember.getId();
+
+            if (!add) {
+                set.remove(mentionedMember.getId());
+                discordUserRepository.save(discordUser);
+                event.replySuccess(event.getMember().getAsMention() + ", Successfully " + argName + "`'d " + mentionedMember.getEffectiveName());
+                return;
+            }
+
+            if (set.contains(mentionedMember.getId())) {
+                event.replySuccess(event.getMember().getAsMention() + ", " + mentionedMember.getEffectiveName() + " is already `" + argName + "`'d");
+                return;
+            }
+
+            MessageEmbed message = new EmbedBuilder()
+                    .setTitle(argName)
+                    .setDescription("Hello, " + mentionedMember.getAsMention() + "\n" + event.getMember().getAsMention() + " would like to `" + argName
+                            + "` you.\nDo you accept?")
+                    .setColor(Constants.SWAMP_GREEN)
+                    .build();
+
+            event.getChannel().sendMessage(message).queue(msg -> {
+                msg.addReaction("✅").queue();
+                msg.addReaction("❌").queue();
+
+                PhilMessageListener.addReactionTask(msg.getId(), messageReactionAddEvent -> {
+                    if (messageReactionAddEvent.getUserId().equalsIgnoreCase(mentionedMember.getId())) {
+                        if ("✅".equalsIgnoreCase(messageReactionAddEvent.getReactionEmote().getName())) {
+                            DiscordUser relookupUser = discordUserRepository.findById(discordUser.getId()).orElse(null);
+
+                            if (relookupUser == null) {
+                                msg.editMessage("Something went horribly wrong. Oops, try again later.").queue();
+                                return true;
+                            }
+
+                            ((Set<String>) ReflectionUtils.invokeMethod(method, relookupUser.getFamily())).add(mentionedMember.getId());
+                            discordUserRepository.save(relookupUser);
+
+                            MessageEmbed messageSuccess = new EmbedBuilder()
+                                    .setTitle(argName)
+                                    .setDescription(mentionedMember.getAsMention() + " accepted " + event.getMember().getAsMention() + "'s `" + argName + '`')
+                                    .setColor(Constants.SWAMP_GREEN)
+                                    .build();
+
+                            msg.editMessage(messageSuccess).queue();
+                            return true;
+                        } else if ("❌".equalsIgnoreCase(messageReactionAddEvent.getReactionEmote().getName())) {
+                            MessageEmbed messageFail = new EmbedBuilder()
+                                    .setTitle(argName)
+                                    .setDescription(mentionedMember.getAsMention() + " rejected " + event.getMember().getAsMention() + "'s `" + argName + '`')
+                                    .setColor(Constants.SWAMP_GREEN)
+                                    .build();
+
+                            msg.editMessage(messageFail).queue();
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            });
+            return;
         }
 
+        String right = args.replace(argName, "").trim();
         if (StringUtils.isBlank(right)) {
             event.replyError("Please either mention a user or put a name. Example `!!fam " + argName + " Somebody`");
             return;
@@ -212,7 +282,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
         }
 
         discordUserRepository.save(discordUser);
-        event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + (rightIsMember ? ("<@!" + right + '>') : right));
+        event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + right);
     }
 
     private void show(CommandEvent event) {
