@@ -141,11 +141,13 @@ public class Fam extends BaseSwampy implements PhilMarker {
     private void addOrRemoveFamily(CommandEvent event, String argName, DiscordUser discordUser, Set<String> set, boolean add) {
         String args = event.getArgs();
         String right = args.replace(argName, "").trim();
+        boolean rightIsMember = false;
         if (CollectionUtils.size(event.getMessage().getMentionedMembers()) == 1) {
             Member mentionedMember = event.getMessage().getMentionedMembers().get(0);
             if (isNotEligible(mentionedMember, event)) {
                 return;
             }
+            rightIsMember = true;
             right = mentionedMember.getId();
         }
 
@@ -165,7 +167,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
         }
 
         discordUserRepository.save(discordUser);
-        event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + right);
+        event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + (rightIsMember ? ("<@!" + right + '>') : right));
     }
 
     private void show(CommandEvent event) {
