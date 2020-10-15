@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PostConstruct;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -26,7 +25,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -66,8 +64,6 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     // Timeouts
     public static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 3;
     public static final long SLOTS_TIMEOUT_MINUTES = 3;
-    public static final long STEAL_TIMEOUT_MINUTES = 20;
-    public static final long STEAL_REACTION_TIME_MINUTES = 15;
 
     // soft bans
     public static final Map<String, String> USER_WORD_BAN_SET = MapUtils.putAll(new HashMap<>(), new String[] {
@@ -141,10 +137,6 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             set(event);
         } else if (args.startsWith("leaderboard")) {
             leaderboard(event);
-        } else if (args.startsWith("steal")) {
-            steal(event);
-        } else if (args.startsWith("flip")) {
-            event.replyError("flip is disabled for now, it'll be back soon-ish.");
         } else if (args.startsWith("slots")) {
             slots(event);
         } else if (args.startsWith("reset")) {
@@ -316,84 +308,6 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                     member.getAsMention(), one, two, three));
             discordUserRepository.save(discordUser);
         }
-    }
-
-    private void steal(CommandEvent event) {
-        if (!event.getChannel().getName().equalsIgnoreCase(Constants.SWAMPYS_CHANNEL)) {
-            TextChannel swampysChannel = event.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
-            event.replyError("You can only initiate a steal in " + swampysChannel.getAsMention());
-            return;
-        }
-
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
-
-        if (CollectionUtils.size(mentionedMembers) != 1) {
-            event.replyError("Please only mention one user. Example `!!swampy steal @incogmeato`");
-            return;
-        }
-
-        Member thief = event.getMember();
-        Member victim = mentionedMembers.get(0);
-
-        if (thief.getId().equalsIgnoreCase(victim.getId())) {
-            event.replyError("You can't steal from yourself");
-            return;
-        }
-
-        if (victim.getUser().isBot()) {
-            event.replyError("You can't steal from bots");
-            return;
-        }
-
-        DiscordUser mentionedUser = getDiscordUserByMember(victim);
-        if (mentionedUser.getXp() <= 0) {
-            event.replyError("You can't steal from them, they don't have any points");
-            return;
-        }
-
-        DiscordUser discordUser = getDiscordUserByMember(thief);
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextStealTime = discordUser.getLastSteal().plus(STEAL_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
-        if (now.isBefore(nextStealTime)) {
-            Duration duration = Duration.between(now, nextStealTime);
-
-            if (duration.getSeconds() < 60) {
-                event.replyError("You must wait " + (duration.getSeconds() + 1) + " seconds before stealing again");
-            } else {
-                event.replyError("You must wait " + (duration.toMinutes() + 1) + " minutes before stealing again");
-            }
-            return;
-        }
-        discordUser.setLastSteal(now);
-        discordUserRepository.save(discordUser);
-
-        MessageEmbed message = new EmbedBuilder()
-                .setTitle("Thief Alert!")
-                .setDescription(thief.getAsMention() + " is trying to steal " + STEAL_POINTS + " points from " + victim.getAsMention() + "\nThe victim has "
-                        + STEAL_REACTION_TIME_MINUTES + " minutes to spot the thief by reacting to this message with the :eyes: emoji")
-                .setColor(Constants.HALOWEEN_ORANGE)
-                .build();
-
-        event.getChannel().sendMessage(message).queue(msg -> {
-            msg.addReaction("\uD83D\uDC40").queue();
-            swampyScheduler.schedule(() -> {
-                if (msg.retrieveReactionUsers("\uD83D\uDC40").stream().anyMatch(u -> u.getId().equalsIgnoreCase(victim.getId()))) {
-                    takePointsFromMember(FAILED_STEAL_POINTS, thief);
-                    givePointsToMember(FAILED_STEAL_POINTS, victim);
-                    event.getChannel()
-                            .sendMessage(simpleEmbed("Failed Thievery!",
-                                    "%s gave %s %d points because they got caught", thief.getEffectiveName(), victim.getEffectiveName(), FAILED_STEAL_POINTS))
-                            .queue();
-                } else {
-                    takePointsFromMember(STEAL_POINTS, victim);
-                    givePointsToMember(STEAL_POINTS, thief);
-                    event.getChannel()
-                            .sendMessage(simpleEmbed("Successful Thievery!",
-                                    "%s stole %d points from %s", thief.getEffectiveName(), STEAL_POINTS, victim.getEffectiveName()))
-                            .queue();
-                }
-            }, STEAL_REACTION_TIME_MINUTES, TimeUnit.MINUTES);
-        });
     }
 
     private void showRank(CommandEvent event) {

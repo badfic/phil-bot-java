@@ -1,7 +1,5 @@
 package com.badfic.philbot.data;
 
-import com.badfic.philbot.model.GenericBotResponsesConfigJson;
-import com.badfic.philbot.model.GenericBotResponsesConfigJsonConverter;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Id;

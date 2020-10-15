@@ -1,4 +1,4 @@
-package com.badfic.philbot.model;
+package com.badfic.philbot.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,28 +8,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GenericBotResponsesConfigJsonConverter implements AttributeConverter<GenericBotResponsesConfigJson, String> {
+public class FamilyJsonConverter implements AttributeConverter<Family, String> {
 
     private static ObjectMapper OBJECT_MAPPER;
 
     @Autowired
-    public GenericBotResponsesConfigJsonConverter(ObjectMapper objectMapper) {
+    public FamilyJsonConverter(ObjectMapper objectMapper) {
         OBJECT_MAPPER = objectMapper;
     }
 
     @Override
-    public String convertToDatabaseColumn(GenericBotResponsesConfigJson genericBotResponsesConfigJson) {
+    public String convertToDatabaseColumn(Family family) {
+        if (family == null) {
+            return null;
+        }
         try {
-            return OBJECT_MAPPER.writeValueAsString(genericBotResponsesConfigJson);
+            return OBJECT_MAPPER.writeValueAsString(family);
         } catch (JsonProcessingException e) {
             throw new PersistenceException(e);
         }
     }
 
     @Override
-    public GenericBotResponsesConfigJson convertToEntityAttribute(String s) {
+    public Family convertToEntityAttribute(String s) {
+        if (s == null) {
+            return null;
+        }
         try {
-            return OBJECT_MAPPER.readValue(s, GenericBotResponsesConfigJson.class);
+            return OBJECT_MAPPER.readValue(s, Family.class);
         } catch (JsonProcessingException e) {
             throw new PersistenceException(e);
         }

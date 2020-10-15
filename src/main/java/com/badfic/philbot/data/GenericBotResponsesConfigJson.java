@@ -1,8 +1,10 @@
-package com.badfic.philbot.model;
+package com.badfic.philbot.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Objects;
 import java.util.Set;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GenericBotResponsesConfigJson {
 
     private Set<String> channels;
