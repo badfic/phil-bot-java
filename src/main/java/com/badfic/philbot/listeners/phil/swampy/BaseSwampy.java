@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -24,6 +23,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -39,10 +39,6 @@ public abstract class BaseSwampy extends Command {
     // slots
     public static final long SLOTS_WIN_POINTS = 10_000;
     public static final long SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
-
-    // steal
-    public static final long FAILED_STEAL_POINTS = 120;
-    public static final long STEAL_POINTS = 177;
 
     // emoji
     public static final String[] LEADERBOARD_MEDALS = {
@@ -68,9 +64,6 @@ public abstract class BaseSwampy extends Command {
 
     @Resource
     protected SwampyGamesConfigRepository swampyGamesConfigRepository;
-
-    @Resource(name = "swampyScheduler")
-    protected ScheduledExecutorService swampyScheduler;
 
     protected DiscordUser getDiscordUserByMember(Member member) {
         String userId = member.getId();
@@ -160,7 +153,7 @@ public abstract class BaseSwampy extends Command {
     protected MessageEmbed simpleEmbed(String title, String format, Object... args) {
         return new EmbedBuilder()
                 .setTitle(title)
-                .setDescription(String.format(format, args))
+                .setDescription(ArrayUtils.isNotEmpty(args) ? String.format(format, args) : format)
                 .setColor(Constants.HALOWEEN_ORANGE)
                 .build();
     }

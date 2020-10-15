@@ -2,6 +2,7 @@ package com.badfic.philbot.data;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -16,6 +17,10 @@ public class DiscordUser {
 
     @Column
     private long xp;
+
+    @Column
+    @Convert(converter = FamilyJsonConverter.class)
+    private Family family;
 
     @Column(columnDefinition = "TIMESTAMP")
     @UpdateTimestamp
@@ -34,12 +39,6 @@ public class DiscordUser {
     private LocalDateTime lastVote = LocalDateTime.now();
 
     @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime lastSteal = LocalDateTime.now();
-
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime lastFlip = LocalDateTime.now();
-
-    @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime acceptedBoost = LocalDateTime.now();
 
     public String getId() {
@@ -56,6 +55,14 @@ public class DiscordUser {
 
     public void setXp(long xp) {
         this.xp = xp;
+    }
+
+    public Family getFamily() {
+        return family;
+    }
+
+    public void setFamily(Family family) {
+        this.family = family;
     }
 
     public LocalDateTime getUpdateTime() {
@@ -96,22 +103,6 @@ public class DiscordUser {
 
     public void setLastVote(LocalDateTime lastVote) {
         this.lastVote = lastVote;
-    }
-
-    public LocalDateTime getLastSteal() {
-        return lastSteal;
-    }
-
-    public void setLastSteal(LocalDateTime lastSteal) {
-        this.lastSteal = lastSteal;
-    }
-
-    public LocalDateTime getLastFlip() {
-        return lastFlip;
-    }
-
-    public void setLastFlip(LocalDateTime lastFlip) {
-        this.lastFlip = lastFlip;
     }
 
     public LocalDateTime getAcceptedBoost() {

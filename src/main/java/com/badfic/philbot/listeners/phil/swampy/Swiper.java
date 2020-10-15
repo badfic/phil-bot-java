@@ -7,7 +7,6 @@ import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +52,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         doSwiper(mentionedMembers.get(0).getId());
     }
 
-    @Scheduled(cron = "0 20 0,2,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 20,40 * * * ?", zone = "GMT")
     public void swiper() {
         doSwiper(null);
     }
@@ -161,16 +160,17 @@ public class Swiper extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        long delay = pickRandom(Arrays.asList(15L, 30L, 45L));
         boolean swiper = ThreadLocalRandom.current().nextInt() % 2 == 0;
         swampyGamesConfig.setSwiperAwaiting(member.getId());
         swampyGamesConfig.setNoSwipingPhrase(swiper ? "Swiper No Swiping" : "Snarter No Snarting");
         swampyGamesConfig = swampyGamesConfigRepository.save(swampyGamesConfig);
-        swampyScheduler.schedule(this::swiper, delay, TimeUnit.MINUTES);
+
+        String description = "They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
+                + "' in this channel to stop them!";
 
         MessageEmbed message = new EmbedBuilder()
                 .setTitle(swiper ? "Swiper Was Spotted Nearby" : "Rory and Snart Were Spotted Nearby")
-                .setDescription("They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase() + "' in this channel to stop them!")
+                .setDescription(description)
                 .setColor(Constants.HALOWEEN_ORANGE)
                 .setImage(swiper ? SWIPER_SPOTTED : SNART_SPOTTED)
                 .build();
