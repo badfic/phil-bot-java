@@ -79,66 +79,66 @@ public class Fam extends BaseSwampy implements PhilMarker {
     }
 
     private void adoptGrandparent(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "adopt grandparent", discordUser, discordUser.getFamily().getGrandparents(), true);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "adopt grandparent", discordUser, discordUser.getFamily().getGrandparents(), true);
     }
 
     private void disownGrandparent(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "disown grandparent", discordUser, discordUser.getFamily().getGrandparents(), false);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "disown grandparent", discordUser, discordUser.getFamily().getGrandparents(), false);
     }
 
     private void adoptParent(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "adopt parent", discordUser, discordUser.getFamily().getParents(), true);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "adopt parent", discordUser, discordUser.getFamily().getParents(), true);
     }
 
     private void disownParent(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "disown parent", discordUser, discordUser.getFamily().getParents(), false);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "disown parent", discordUser, discordUser.getFamily().getParents(), false);
     }
 
     private void adoptSibling(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "adopt sibling", discordUser, discordUser.getFamily().getSiblings(), true);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "adopt sibling", discordUser, discordUser.getFamily().getSiblings(), true);
     }
 
     private void disownSibling(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "disown sibling", discordUser, discordUser.getFamily().getSiblings(), false);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "disown sibling", discordUser, discordUser.getFamily().getSiblings(), false);
     }
 
     private void adoptGrandchild(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "adopt grandchild", discordUser, discordUser.getFamily().getGrandchildren(), true);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "adopt grandchild", discordUser, discordUser.getFamily().getGrandchildren(), true);
     }
 
     private void disownGrandchild(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "disown grandchild", discordUser, discordUser.getFamily().getGrandchildren(), false);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "disown grandchild", discordUser, discordUser.getFamily().getGrandchildren(), false);
     }
 
     private void adoptChild(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "adopt child", discordUser, discordUser.getFamily().getChildren(), true);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "adopt child", discordUser, discordUser.getFamily().getChildren(), true);
     }
 
     private void disownChild(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "disown child", discordUser, discordUser.getFamily().getChildren(), false);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "disown child", discordUser, discordUser.getFamily().getChildren(), false);
     }
 
     private void propose(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "propose", discordUser, discordUser.getFamily().getSpouses(), true);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "propose", discordUser, discordUser.getFamily().getSpouses(), true);
     }
 
     private void divorce(CommandEvent event) {
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-        addOrRemove(event, "divorce", discordUser, discordUser.getFamily().getSpouses(), false);
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "divorce", discordUser, discordUser.getFamily().getSpouses(), false);
     }
 
-    private void addOrRemove(CommandEvent event, String argName, DiscordUser discordUser, Set<String> set, boolean add) {
+    private void addOrRemoveFamily(CommandEvent event, String argName, DiscordUser discordUser, Set<String> set, boolean add) {
         String args = event.getArgs();
         String right = args.replace(argName, "").trim();
         if (CollectionUtils.size(event.getMessage().getMentionedMembers()) == 1) {
@@ -168,14 +168,6 @@ public class Fam extends BaseSwampy implements PhilMarker {
         event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + right);
     }
 
-    private boolean isNotEligible(Member member, CommandEvent event) {
-        boolean result = !(hasRole(member, Constants.CHAOS_CHILDREN_ROLE) || hasRole(member, Constants.EIGHTEEN_PLUS_ROLE));
-        if (result) {
-            event.replyError(member.getEffectiveName() + " is not 18+ or a chaos child, they cannot have a family.");
-        }
-        return result;
-    }
-
     private void show(CommandEvent event) {
         Member member = event.getMember();
         if (CollectionUtils.size(event.getMessage().getMentionedMembers()) == 1) {
@@ -186,13 +178,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        DiscordUser discordUser = getDiscordUserByMember(member);
-
-        if (discordUser.getFamily() == null) {
-            discordUser.setFamily(new Family());
-            discordUserRepository.save(discordUser);
-        }
-
+        DiscordUser discordUser = getUserAndFamily(member);
         Family family = discordUser.getFamily();
 
         StringBuilder description = new StringBuilder();
@@ -222,4 +208,22 @@ public class Fam extends BaseSwampy implements PhilMarker {
                     .append("\n");
         }
     }
+
+    private boolean isNotEligible(Member member, CommandEvent event) {
+        boolean result = !(hasRole(member, Constants.CHAOS_CHILDREN_ROLE) || hasRole(member, Constants.EIGHTEEN_PLUS_ROLE));
+        if (result) {
+            event.replyError(member.getEffectiveName() + " is not 18+ or a chaos child, they cannot have a family.");
+        }
+        return result;
+    }
+
+    private DiscordUser getUserAndFamily(Member member) {
+        DiscordUser discordUser = getDiscordUserByMember(member);
+        if (discordUser.getFamily() == null) {
+            discordUser.setFamily(new Family());
+            discordUser = discordUserRepository.save(discordUser);
+        }
+        return discordUser;
+    }
+
 }
