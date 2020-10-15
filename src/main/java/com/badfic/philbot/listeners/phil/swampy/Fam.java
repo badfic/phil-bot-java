@@ -79,7 +79,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
             adoptSibling(event);
         } else if (args.startsWith("disown sibling")) {
             disownSibling(event);
-        } else if (args.isEmpty()) {
+        } else if (args.isEmpty() || args.startsWith("<@!")) {
             show(event);
         } else {
             event.replyError("unrecognized fam command");
