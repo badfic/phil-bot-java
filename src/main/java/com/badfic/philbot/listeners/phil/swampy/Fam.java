@@ -25,12 +25,16 @@ public class Fam extends BaseSwampy implements PhilMarker {
                 "`!!fam show`: Show your fam\n" +
                 "`!!fam propose Somebody`: Add a spouse\n" +
                 "`!!fam divorce Somebody`: Remove a spouse\n" +
+                "`!!fam add ex Somebody`: Add an ex\n" +
+                "`!!fam remove ex Somebody`: Remove an ex\n" +
                 "`!!fam adopt child Somebody`: Add a child\n" +
                 "`!!fam disown child Somebody`: Remove a child\n" +
                 "`!!fam adopt grandchild Somebody`: Add a grandchild\n" +
                 "`!!fam disown grandchild Somebody`: Remove a grandchild\n" +
                 "`!!fam adopt parent Somebody`: Add a parent\n" +
                 "`!!fam disown parent Somebody`: Remove a parent\n" +
+                "`!!fam adopt grandparent Somebody`: Add a grandparent\n" +
+                "`!!fam disown grandparent Somebody`: Remove a grandparent\n" +
                 "`!!fam adopt sibling Somebody`: Add a sibling\n" +
                 "`!!fam disown sibling Somebody`: Remove a sibling\n";
     }
@@ -51,6 +55,10 @@ public class Fam extends BaseSwampy implements PhilMarker {
             propose(event);
         } else if (args.startsWith("divorce")) {
             divorce(event);
+        } else if (args.startsWith("add ex")) {
+            addEx(event);
+        } else if (args.startsWith("remove ex")) {
+            removeEx(event);
         } else if (args.startsWith("adopt child")) {
             adoptChild(event);
         } else if (args.startsWith("disown child")) {
@@ -86,6 +94,16 @@ public class Fam extends BaseSwampy implements PhilMarker {
     private void disownGrandparent(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "disown grandparent", discordUser, discordUser.getFamily().getGrandparents(), false);
+    }
+
+    private void addEx(CommandEvent event) {
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "add ex", discordUser, discordUser.getFamily().getExes(), true);
+    }
+
+    private void removeEx(CommandEvent event) {
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "remove ex", discordUser, discordUser.getFamily().getExes(), false);
     }
 
     private void adoptParent(CommandEvent event) {
@@ -156,10 +174,6 @@ public class Fam extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        if (discordUser.getFamily() == null) {
-            discordUser.setFamily(new Family());
-        }
-
         if (add) {
             set.add(right);
         } else {
@@ -186,6 +200,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
         StringBuilder description = new StringBuilder();
 
         append(family::getSpouses, "**Spouses**", description);
+        append(family::getExes, "**Exes**", description);
         append(family::getChildren, "**Children**", description);
         append(family::getGrandchildren, "**Grandchildren**", description);
         append(family::getParents, "**Parents**", description);
