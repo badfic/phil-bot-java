@@ -145,7 +145,7 @@ public abstract class BaseSwampy extends Command {
 
                 MessageEmbed messageEmbed = new EmbedBuilder()
                         .setImage(newRank.getRankUpImage())
-                        .setTitle("Level Change!")
+                        .setTitle("Level " + newRank.getLevel() + '!')
                         .setColor(newRole.getColor())
                         .setDescription(newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()))
                         .build();
