@@ -17,12 +17,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class Fam extends BaseSwampy implements PhilMarker {
 
+    private final String modHelp;
+
     public Fam() {
         name = "fam";
         help = "!!fam\n" +
                 "Note for all the propose/divorce/adopt/disown commands, " +
-                "you can @ somebody or you can just type in a name if they are not currently on this server\n\n" +
-                "`!!fam show`: Show your fam\n" +
+                "you can @ somebody or you can just type in a name if they are not on this server\n\n" +
+                "`!!fam`: Show your fam\n" +
+                "`!!fam @incogmeato`: Show somebody's fam\n" +
                 "`!!fam propose Somebody`: Add a spouse\n" +
                 "`!!fam divorce Somebody`: Remove a spouse\n" +
                 "`!!fam add ex Somebody`: Add an ex\n" +
@@ -37,6 +40,9 @@ public class Fam extends BaseSwampy implements PhilMarker {
                 "`!!fam disown grandparent Somebody`: Remove a grandparent\n" +
                 "`!!fam adopt sibling Somebody`: Add a sibling\n" +
                 "`!!fam disown sibling Somebody`: Remove a sibling\n";
+        modHelp = help +
+                "\n**MOD ONLY COMMANDS**\n" +
+                "`!!fam nuke @incogmeato`: Delete someone's family tree if they are misbehaving and not getting consent";
     }
 
     @Override
@@ -48,9 +54,15 @@ public class Fam extends BaseSwampy implements PhilMarker {
         String args = event.getArgs();
 
         if (args.startsWith("help")) {
-            event.replyInDm(simpleEmbed("Help", help));
+            if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
+                event.replyInDm(simpleEmbed("Help", modHelp));
+            } else {
+                event.replyInDm(simpleEmbed("Help", help));
+            }
         } else if (args.startsWith("show")) {
             show(event);
+        } else if (args.startsWith("nuke")) {
+            nuke(event);
         } else if (args.startsWith("propose")) {
             propose(event);
         } else if (args.startsWith("divorce")) {
@@ -84,6 +96,25 @@ public class Fam extends BaseSwampy implements PhilMarker {
         } else {
             event.replyError("unrecognized fam command");
         }
+    }
+
+    private void nuke(CommandEvent event) {
+        if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
+            event.replyError(Constants.ADMIN_ROLE + " is required to use that command");
+            return;
+        }
+
+        if (CollectionUtils.size(event.getMessage().getMentionedMembers()) != 1) {
+            event.replyError("Please mention a user to nuke. Example `!!fam nuke @incogmeato`");
+            return;
+        }
+
+        Member memberToNuke = event.getMessage().getMentionedMembers().get(0);
+        DiscordUser discordUserToNuke = getUserAndFamily(memberToNuke);
+        discordUserToNuke.setFamily(new Family());
+        discordUserRepository.save(discordUserToNuke);
+
+        event.replySuccess("Putting the 'nuke' in nuclear family: " + memberToNuke.getEffectiveName() + "'s family has been nuked.");
     }
 
     private void adoptGrandparent(CommandEvent event) {
