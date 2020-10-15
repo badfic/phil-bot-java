@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,17 +41,10 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
     @Override
     public void execute(CommandEvent event) {
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
-
-        if (CollectionUtils.size(mentionedMembers) != 1) {
-            event.replyError("Please mention one user. Example `!!swiper @incogmeato`");
-            return;
-        }
-
-        doSwiper(mentionedMembers.get(0).getId());
+        event.replyError("Manually triggering swiper has been disabled for now.");
     }
 
-    @Scheduled(cron = "0 20,40 * * * ?", zone = "GMT")
+    @Scheduled(cron = "0 20,35 0,2,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
     public void swiper() {
         doSwiper(null);
     }
