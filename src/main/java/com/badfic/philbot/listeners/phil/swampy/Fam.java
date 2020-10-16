@@ -7,9 +7,11 @@ import com.badfic.philbot.data.Family;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -30,7 +32,8 @@ public class Fam extends BaseSwampy implements PhilMarker {
                 "Note for all the propose/divorce/adopt/disown commands, " +
                 "you can @ somebody or you can just type in a name if they are not on this server\n\n" +
                 "`!!fam`: Show your fam\n" +
-                "`!!fam @incogmeato`: Show somebody's fam\n" +
+                "`!!fam show @incogmeato`: Show somebody else's fam\n" +
+                "`!!fam tag there's a boost`: Tags all your fam, telling them \"there's a boost\"\n" +
                 "`!!fam propose Somebody`: Add a spouse\n" +
                 "`!!fam divorce Somebody`: Remove a spouse\n" +
                 "`!!fam add ex Somebody`: Add an ex\n" +
@@ -47,7 +50,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
                 "`!!fam disown sibling Somebody`: Remove a sibling\n";
         modHelp = help +
                 "\n**MOD ONLY COMMANDS**\n" +
-                "`!!fam nuke @incogmeato`: Delete someone's family tree if they are misbehaving and not getting consent";
+                "`!!fam nuke @incogmeato`: Delete someone's family tree if they are misbehaving or not getting consent";
     }
 
     @Override
@@ -66,6 +69,8 @@ public class Fam extends BaseSwampy implements PhilMarker {
             }
         } else if (args.startsWith("show")) {
             show(event);
+        } else if (args.startsWith("tag")) {
+            tag(event);
         } else if (args.startsWith("nuke")) {
             nuke(event);
         } else if (args.startsWith("propose")) {
@@ -101,6 +106,30 @@ public class Fam extends BaseSwampy implements PhilMarker {
         } else {
             event.replyError("unrecognized fam command");
         }
+    }
+
+    private void tag(CommandEvent event) {
+        StringBuilder msg = new StringBuilder();
+        String endOfMessage = event.getArgs().replace("tag", "");
+
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+
+        Family family = discordUser.getFamily();
+
+        String familyMentions = Stream.of(collectionToMentions(family.getSpouses()), collectionToMentions(family.getExes()),
+                collectionToMentions(family.getChildren()), collectionToMentions(family.getGrandchildren()), collectionToMentions(family.getParents()),
+                collectionToMentions(family.getGrandparents()), collectionToMentions(family.getSiblings()))
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.joining(" "));
+
+        msg.append(familyMentions)
+                .append(endOfMessage);
+
+        event.reply(msg.toString());
+    }
+
+    private String collectionToMentions(Collection<String> collection) {
+        return collection.stream().filter(NumberUtils::isParsable).map(s -> "<@!" + s + ">").collect(Collectors.joining(" "));
     }
 
     private void nuke(CommandEvent event) {
