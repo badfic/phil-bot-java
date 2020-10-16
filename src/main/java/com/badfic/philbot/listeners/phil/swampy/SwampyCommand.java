@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -65,12 +66,13 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     public static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 3;
     public static final long SLOTS_TIMEOUT_MINUTES = 3;
 
-    // soft bans
+    // soft point bans
     public static final Map<String, String> USER_WORD_BAN_SET = MapUtils.putAll(new HashMap<>(), new String[] {
             "486427102854381568", "I'm out",
             "307663738151108610", "oof",
             "307611036134146080", "nelly"
     });
+    public static final Pattern NO_NO_WORDS = Pattern.compile("\\b(shrantiago|shack|nice|simp)\\b", Pattern.CASE_INSENSITIVE);
 
     // volatile state
     private volatile boolean awaitingResetConfirmation = false;
@@ -213,7 +215,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 return;
             }
 
-            if (StringUtils.containsIgnoreCase(msgContent, "simp")) {
+            if (NO_NO_WORDS.matcher(msgContent).find()) {
                 takePointsFromMember(NO_NO_WORDS_TAKE_POINTS, event.getMember());
                 return;
             }
