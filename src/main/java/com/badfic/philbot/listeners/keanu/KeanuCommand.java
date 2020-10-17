@@ -11,7 +11,6 @@ import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiManager;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -21,7 +20,6 @@ import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -66,9 +64,8 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> implem
     private JDA keanuJda;
 
     @Autowired
-    public KeanuCommand(ObjectMapper objectMapper, BaseConfig baseConfig, KeanuResponsesConfigRepository keanuResponsesConfigRepository,
-                        CloseableHttpClient gfycatClient) throws Exception {
-        super(baseConfig, keanuResponsesConfigRepository, gfycatClient, objectMapper, "keanu",
+    public KeanuCommand(ObjectMapper objectMapper, BaseConfig baseConfig, KeanuResponsesConfigRepository keanuResponsesConfigRepository) throws Exception {
+        super(baseConfig, keanuResponsesConfigRepository, objectMapper, "keanu",
                 "keanu-kidFriendlyConfig.json", "keanu-nsfwConfig.json", KeanuResponsesConfig::new);
     }
 
@@ -90,7 +87,7 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> implem
                 responses = responsesConfig.getSfwConfig().getResponses();
             }
         } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
-            responses = maybeGetGif("keanu+reeves").map(Collections::singleton).orElseGet(() -> responsesConfig.getNsfwConfig().getResponses());
+            responses = responsesConfig.getNsfwConfig().getResponses();
         } else {
             return Optional.empty();
         }

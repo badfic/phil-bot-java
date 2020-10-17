@@ -12,7 +12,6 @@ import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiManager;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -24,7 +23,6 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -60,9 +58,8 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
     private JDA behradJda;
 
     @Autowired
-    public BehradCommand(ObjectMapper objectMapper, BaseConfig baseConfig, BehradResponsesConfigRepository behradResponsesConfigRepository,
-                         CloseableHttpClient gfycatClient) throws Exception {
-        super(baseConfig, behradResponsesConfigRepository, gfycatClient, objectMapper, "behrad",
+    public BehradCommand(ObjectMapper objectMapper, BaseConfig baseConfig, BehradResponsesConfigRepository behradResponsesConfigRepository) throws Exception {
+        super(baseConfig, behradResponsesConfigRepository, objectMapper, "behrad",
                 "behrad-kidFriendlyConfig.json", "behrad-nsfwConfig.json", BehradResponsesConfig::new);
     }
 
@@ -86,7 +83,7 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
                 return Optional.empty();
             }
 
-            responses = maybeGetGif("legends+of+tomorrow").map(Collections::singleton).orElseGet(() -> responsesConfig.getNsfwConfig().getResponses());
+            responses = responsesConfig.getNsfwConfig().getResponses();
         } else {
             return Optional.empty();
         }
