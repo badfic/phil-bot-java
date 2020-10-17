@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AntoniaMessageListener extends ListenerAdapter {
 
-    private static final Pattern ANTONIA_PATTERN = Pattern.compile("\\b(antonia)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern ANTONIA_PATTERN = Pattern.compile("\\b(antonia|toni|tony|stark|tash|iron man|tin can)\\b", Pattern.CASE_INSENSITIVE);
 
     private final AntoniaCommand antoniaCommand;
 

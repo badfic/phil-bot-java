@@ -2,6 +2,7 @@ package com.badfic.philbot.listeners.phil;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
+import com.badfic.philbot.listeners.antonia.AntoniaMessageListener;
 import com.badfic.philbot.listeners.behrad.BehradMessageListener;
 import com.badfic.philbot.listeners.keanu.KeanuMessageListener;
 import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
@@ -56,6 +57,10 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     @Lazy
     private KeanuMessageListener keanuMessageListener;
 
+    @Resource
+    @Lazy
+    private AntoniaMessageListener antoniaMessageListener;
+
     @Resource(name = "behradJda")
     @Lazy
     private JDA behradJda;
@@ -63,6 +68,10 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     @Resource(name = "keanuJda")
     @Lazy
     private JDA keanuJda;
+
+    @Resource(name = "antoniaJda")
+    @Lazy
+    private JDA antoniaJda;
 
     @Autowired
     public PhilMessageListener(PhilCommand philCommand,
@@ -79,6 +88,7 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        antoniaMessageListener.onMessageReceived(new MessageReceivedEvent(antoniaJda, event.getResponseNumber(), event.getMessage()));
         behradMessageListener.onMessageReceived(new MessageReceivedEvent(behradJda, event.getResponseNumber(), event.getMessage()));
         keanuMessageListener.onMessageReceived(new MessageReceivedEvent(keanuJda, event.getResponseNumber(), event.getMessage()));
 
