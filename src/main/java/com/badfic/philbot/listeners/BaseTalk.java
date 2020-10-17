@@ -2,6 +2,7 @@ package com.badfic.philbot.listeners;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.JDA;
 
 public abstract class BaseTalk extends Command {
 
@@ -9,6 +10,8 @@ public abstract class BaseTalk extends Command {
         this.name = name;
         guildOnly = false;
     }
+
+    public abstract JDA getJda();
 
     @Override
     public void execute(CommandEvent event) {
@@ -28,9 +31,7 @@ public abstract class BaseTalk extends Command {
         msg = msg.trim();
 
         String finalMsg = msg;
-        event.getPrivateChannel()
-                .getJDA()
-                .getGuilds()
+        getJda().getGuilds()
                 .get(0)
                 .getTextChannelsByName(split[0].replace("#", ""), true)
                 .stream()

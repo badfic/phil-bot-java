@@ -1,9 +1,7 @@
 package com.badfic.philbot.listeners.keanu;
 
-import com.badfic.philbot.config.KeanuMarker;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Collection;
 import java.util.Optional;
@@ -15,11 +13,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KeanuMessageListener extends ListenerAdapter implements KeanuMarker {
+public class KeanuMessageListener extends ListenerAdapter {
 
     private static final Pattern KEANU_PATTERN = compile("keanu|reeves|neo|john wick|puppy|puppies|pupper|doggo|doge");
     private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
@@ -30,13 +27,10 @@ public class KeanuMessageListener extends ListenerAdapter implements KeanuMarker
             .build();
 
     private final KeanuCommand keanuCommand;
-    private final CommandClient keanuCommandClient;
 
     @Autowired
-    public KeanuMessageListener(KeanuCommand keanuCommand,
-                                @Qualifier("keanuCommandClient") CommandClient keanuCommandClient) {
+    public KeanuMessageListener(KeanuCommand keanuCommand) {
         this.keanuCommand = keanuCommand;
-        this.keanuCommandClient = keanuCommandClient;
     }
 
     @Override
@@ -52,13 +46,14 @@ public class KeanuMessageListener extends ListenerAdapter implements KeanuMarker
             Optional<String> match = userTriggers.stream().filter(t -> t.getLeft().matcher(msgContent).find()).map(Pair::getRight).findAny();
 
             if (match.isPresent()) {
-                event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", " + match.get()).queue();
+                event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                        .sendMessage(event.getAuthor().getAsMention() + ", " + match.get()).queue();
                 return;
             }
         }
 
         if (KEANU_PATTERN.matcher(msgContent).find()) {
-            keanuCommand.execute(new CommandEvent(event, null, keanuCommandClient));
+            keanuCommand.execute(new CommandEvent(event, null, null));
             return;
         }
     }

@@ -1,9 +1,7 @@
 package com.badfic.philbot.listeners;
 
 import com.badfic.philbot.config.BaseConfig;
-import com.badfic.philbot.config.BehradMarker;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.KeanuMarker;
 import com.badfic.philbot.config.PhilMarker;
 import java.lang.invoke.MethodHandles;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -17,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GenericReadyListener extends ListenerAdapter implements PhilMarker, BehradMarker, KeanuMarker {
+public class GenericReadyListener extends ListenerAdapter implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final String commitSha;
@@ -34,7 +32,7 @@ public class GenericReadyListener extends ListenerAdapter implements PhilMarker,
         logger.info("Received ready event for [user={}]", event.getJDA().getSelfUser());
         MessageEmbed messageEmbed = new EmbedBuilder()
                 .setTitle("Restarted")
-                .setDescription(String.format("I just restarted\ngit sha: %s\ncommit msg: %s", commitSha, commitMessage))
+                .setDescription(String.format("We just restarted\ngit sha: %s\ncommit msg: %s", commitSha, commitMessage))
                 .setColor(Constants.SWAMP_GREEN)
                 .build();
         event.getJDA().getTextChannelsByName("test-channel", false).get(0).sendMessage(messageEmbed).queue();
