@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -22,12 +21,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeanuMessageListener extends ListenerAdapter implements KeanuMarker {
 
-    private static final Pattern KEANU_PATTERN = Pattern.compile("\\b(keanu|reeves|neo|john wick|puppy|puppies|pupper|doggo|doge)\\b", Pattern.CASE_INSENSITIVE);
-    private static final Multimap<String, Pair<String, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<String, String>>builder()
-            .put("513187180198363136", ImmutablePair.of("husband", "Hi honey"))
-            .put("513187180198363136", ImmutablePair.of("love", "I love you too"))
-            .put("601043580945170443", ImmutablePair.of("dad", "Hi pumpkin"))
-            .put("323520695550083074", ImmutablePair.of("son", "father"))
+    private static final Pattern KEANU_PATTERN = compile("keanu|reeves|neo|john wick|puppy|puppies|pupper|doggo|doge");
+    private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
+            .put("513187180198363136", ImmutablePair.of(compile("husband"), "Hi honey"))
+            .put("513187180198363136", ImmutablePair.of(compile("love"), "I love you too"))
+            .put("601043580945170443", ImmutablePair.of(compile("dad"), "Hi pumpkin"))
+            .put("323520695550083074", ImmutablePair.of(compile("son"), "father"))
             .build();
 
     private final KeanuCommand keanuCommand;
@@ -48,12 +47,12 @@ public class KeanuMessageListener extends ListenerAdapter implements KeanuMarker
             return;
         }
 
-        Collection<Pair<String, String>> userTriggers = USER_TRIGGER_WORDS.get(event.getAuthor().getId());
+        Collection<Pair<Pattern, String>> userTriggers = USER_TRIGGER_WORDS.get(event.getAuthor().getId());
         if (CollectionUtils.isNotEmpty(userTriggers)) {
-            Optional<Pair<String, String>> match = userTriggers.stream().filter(t -> StringUtils.containsIgnoreCase(msgContent, t.getLeft())).findAny();
+            Optional<String> match = userTriggers.stream().filter(t -> t.getLeft().matcher(msgContent).find()).map(Pair::getRight).findAny();
 
             if (match.isPresent()) {
-                event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", " + match.get().getRight()).queue();
+                event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", " + match.get()).queue();
                 return;
             }
         }
@@ -62,6 +61,10 @@ public class KeanuMessageListener extends ListenerAdapter implements KeanuMarker
             keanuCommand.execute(new CommandEvent(event, null, keanuCommandClient));
             return;
         }
+    }
+
+    private static Pattern compile(String s) {
+        return Pattern.compile("\\b(" + Pattern.quote(s) + ")\\b", Pattern.CASE_INSENSITIVE);
     }
 
 }
