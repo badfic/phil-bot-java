@@ -8,6 +8,8 @@ import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -348,8 +350,45 @@ public class Fam extends BaseSwampy implements PhilMarker {
         append(family::getParents, "**Parents**", description);
         append(family::getGrandparents, "**Grandparents**", description);
         append(family::getSiblings, "**Siblings**", description);
+        description.append("\n\nRandom family member spotlight:");
 
-        event.reply(simpleEmbed(member.getEffectiveName() + "'s Family", description.toString()));
+        try {
+            String img = getRandomFamImage(family, event);
+            MessageEmbed msg = new EmbedBuilder()
+                    .setTitle(member.getEffectiveName() + "'s Family")
+                    .setDescription(description.toString())
+                    .setColor(Constants.HALOWEEN_ORANGE)
+                    .setImage(img)
+                    .build();
+
+            event.reply(msg);
+        } catch (Exception e) {
+            description.append("\nFailed to load family member avatar :(");
+            event.reply(simpleEmbed(member.getEffectiveName() + "'s Family", description.toString()));
+        }
+    }
+
+    private String getRandomFamImage(Family family, CommandEvent event) {
+        Set<Member> allMembers = new HashSet<>();
+        allMembers.addAll(getMemberSet(family.getSpouses(), event));
+        allMembers.addAll(getMemberSet(family.getExes(), event));
+        allMembers.addAll(getMemberSet(family.getChildren(), event));
+        allMembers.addAll(getMemberSet(family.getGrandchildren(), event));
+        allMembers.addAll(getMemberSet(family.getParents(), event));
+        allMembers.addAll(getMemberSet(family.getGrandparents(), event));
+        allMembers.addAll(getMemberSet(family.getSiblings(), event));
+
+        Member member = pickRandom(allMembers);
+
+        return member.getUser().getEffectiveAvatarUrl();
+    }
+
+    private Set<Member> getMemberSet(Set<String> set, CommandEvent event) {
+        return set.stream()
+                .filter(NumberUtils::isParsable)
+                .map(s -> event.getGuild().getMemberById(s))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     private void append(Supplier<Set<String>> supplier, String relation, StringBuilder description) {

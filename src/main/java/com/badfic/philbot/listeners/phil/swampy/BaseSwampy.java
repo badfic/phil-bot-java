@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -119,16 +120,19 @@ public abstract class BaseSwampy extends Command {
             Set<String> allRoleNames = Rank.getAllRoleNames();
             Guild guild = member.getGuild();
 
-            member.getRoles().stream().filter(r -> allRoleNames.contains(r.getName())).forEach(roleToRemove -> {
-                try {
-                    guild.removeRoleFromMember(member, roleToRemove).complete();
-                } catch (Exception e) {
-                    logger.error("Failed to remove role {} from member {}", roleToRemove.getName(), member.getEffectiveName(), e);
+            CompletableFuture<Void> current = CompletableFuture.completedFuture(null);
+            for (Role r : member.getRoles()) {
+                if (allRoleNames.contains(r.getName())) {
+                    try {
+                        current = current.thenCompose(c -> guild.removeRoleFromMember(member, r).submit());
+                    } catch (Exception e) {
+                        logger.error("Failed to remove role {} from member {}", r.getName(), member.getEffectiveName(), e);
+                    }
                 }
-            });
+            }
 
             try {
-                guild.addRoleToMember(member, newRole).complete();
+                current = current.thenCompose(c -> guild.addRoleToMember(member, newRole).submit());
             } catch (Exception e) {
                 logger.error("Failed to add new role {} to member {}", newRole.getName(), member.getEffectiveName(), e);
             }
@@ -143,7 +147,7 @@ public abstract class BaseSwampy extends Command {
                         .setDescription(newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()))
                         .build();
 
-                announcementsChannel.sendMessage(messageEmbed).queue();
+                current.thenRun(() -> announcementsChannel.sendMessage(messageEmbed).queue());
             }
         }
 

@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -393,7 +394,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         StringBuilder description = new StringBuilder();
         swampyUsers.stream().filter(u -> {
             try {
-                Member member = event.getGuild().retrieveMemberById(u.getId()).complete();
+                Member member = Objects.requireNonNull(event.getGuild().getMemberById(u.getId()));
+
                 return hasRole(member, StringUtils.containsIgnoreCase(split[1], "bastard") ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE);
             } catch (Exception e) {
                 logger.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);

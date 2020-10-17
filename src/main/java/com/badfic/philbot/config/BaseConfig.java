@@ -14,11 +14,15 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.internal.utils.IOUtil;
+import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -108,6 +112,16 @@ public class BaseConfig {
     public String ownerId;
 
     @Bean
+    public ScheduledExecutorService childBotExecutor() {
+        return Executors.newSingleThreadScheduledExecutor();
+    }
+
+    @Bean
+    public OkHttpClient childBotOkHttpClient() {
+        return IOUtil.newHttpClientBuilder().build();
+    }
+
+    @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
@@ -125,6 +139,11 @@ public class BaseConfig {
     @Bean(name = "antoniaJda")
     public JDA antoniaJda() throws Exception {
         return JDABuilder.createLight(antoniaBotToken, Collections.emptyList())
+                .setRateLimitPool(childBotExecutor(), false)
+                .setCallbackPool(childBotExecutor(), false)
+                .setEventPool(childBotExecutor(), false)
+                .setGatewayPool(childBotExecutor(), false)
+                .setHttpClient(childBotOkHttpClient())
                 .setActivity(Activity.listening(ANTONIA_STATUS_LIST[ThreadLocalRandom.current().nextInt(ANTONIA_STATUS_LIST.length)]))
                 .build();
     }
@@ -132,6 +151,11 @@ public class BaseConfig {
     @Bean(name = "behradJda")
     public JDA behradJda() throws Exception {
         return JDABuilder.createLight(behradBotToken, Collections.emptyList())
+                .setRateLimitPool(childBotExecutor(), false)
+                .setCallbackPool(childBotExecutor(), false)
+                .setEventPool(childBotExecutor(), false)
+                .setGatewayPool(childBotExecutor(), false)
+                .setHttpClient(childBotOkHttpClient())
                 .setActivity(Activity.playing(BEHRAD_STATUS_LIST[ThreadLocalRandom.current().nextInt(BEHRAD_STATUS_LIST.length)]))
                 .build();
     }
@@ -139,6 +163,11 @@ public class BaseConfig {
     @Bean(name = "keanuJda")
     public JDA keanuJda() throws Exception {
         return JDABuilder.createLight(keanuBotToken, Collections.emptyList())
+                .setRateLimitPool(childBotExecutor(), false)
+                .setCallbackPool(childBotExecutor(), false)
+                .setEventPool(childBotExecutor(), false)
+                .setGatewayPool(childBotExecutor(), false)
+                .setHttpClient(childBotOkHttpClient())
                 .setActivity(Activity.watching(KEANU_STATUS_LIST[ThreadLocalRandom.current().nextInt(KEANU_STATUS_LIST.length)]))
                 .build();
     }

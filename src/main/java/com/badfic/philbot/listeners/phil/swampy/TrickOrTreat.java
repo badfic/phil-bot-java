@@ -44,7 +44,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
         for (DiscordUser user : allUsers) {
             if (user.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD) {
                 try {
-                    Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
+                    Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                     if (memberById != null && !memberById.getUser().isBot()) {
                         if (ThreadLocalRandom.current().nextInt() % 2 == 0 || hasRole(memberById, Constants.CHAOS_CHILDREN_ROLE)) {
                             givePointsToMember(TRICK_OR_TREAT_POINTS, memberById);

@@ -44,7 +44,7 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
                 "to all the chaos children!\n\n");
         for (DiscordUser user : allUsers) {
             try {
-                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
+                Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                 if (memberById != null
                         && !memberById.getUser().isBot()
                         && hasRole(memberById, Constants.CHAOS_CHILDREN_ROLE)
