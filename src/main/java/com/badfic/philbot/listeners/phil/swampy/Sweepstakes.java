@@ -69,7 +69,7 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
             DiscordUser winningUser = pickRandom(allUsers);
 
             try {
-                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
+                Member memberById = philJda.getGuilds().get(0).getMemberById(winningUser.getId());
                 if (memberById != null
                         && !memberById.getUser().isBot()
                         && hasRole(memberById, role)

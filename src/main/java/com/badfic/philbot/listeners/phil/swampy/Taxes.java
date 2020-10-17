@@ -74,7 +74,7 @@ public class Taxes extends BaseSwampy implements PhilMarker {
                     taxRate = Math.max(1, taxRate); // Always make sure it's at least 1 percent.
                     long taxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRate)).longValue();
                     totalTaxes += taxes;
-                    Member memberById = philJda.getGuilds().get(0).retrieveMemberById(user.getId()).complete();
+                    Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                     if (memberById != null && !memberById.getUser().isBot() && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
                         takePointsFromMember(taxes, memberById);
 

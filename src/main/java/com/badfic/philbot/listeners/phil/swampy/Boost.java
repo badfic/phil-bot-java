@@ -63,7 +63,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
                     .filter(u -> u.getAcceptedBoost().isAfter(oneHourAgo))
                     .forEach(u -> {
                         try {
-                            Member memberLookedUp = philJda.getGuilds().get(0).retrieveMemberById(u.getId()).complete();
+                            Member memberLookedUp = philJda.getGuilds().get(0).getMemberById(u.getId());
                             if (memberLookedUp == null) {
                                 throw new RuntimeException("member not found");
                             }

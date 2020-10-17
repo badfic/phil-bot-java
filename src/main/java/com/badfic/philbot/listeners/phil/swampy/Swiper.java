@@ -83,7 +83,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                             .build();
                 } else {
                     try {
-                        Member memberById = philJda.getGuilds().get(0).retrieveMemberById(victim.get().getId()).complete();
+                        Member memberById = philJda.getGuilds().get(0).getMemberById(victim.get().getId());
 
                         if (memberById != null) {
                             takePointsFromMember(SWIPER_POINTS_TO_STEAL, memberById);
@@ -111,7 +111,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         Member member = null;
         if (userId != null) {
             try {
-                Member memberById = philJda.getGuilds().get(0).retrieveMemberById(userId).complete();
+                Member memberById = philJda.getGuilds().get(0).getMemberById(userId);
                 if (memberById != null && !memberById.getUser().isBot()) {
                     member = memberById;
                 }
@@ -126,7 +126,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                 DiscordUser winningUser = pickRandom(allUsers);
 
                 try {
-                    Member memberById = philJda.getGuilds().get(0).retrieveMemberById(winningUser.getId()).complete();
+                    Member memberById = philJda.getGuilds().get(0).getMemberById(winningUser.getId());
                     if (memberById != null
                             && !memberById.getUser().isBot()
                             && winningUser.getXp() > SWIPER_POINTS_TO_STEAL
