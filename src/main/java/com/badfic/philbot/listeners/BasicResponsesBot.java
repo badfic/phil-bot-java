@@ -6,16 +6,13 @@ import com.badfic.philbot.data.BaseResponsesConfig;
 import com.badfic.philbot.data.BaseResponsesConfigRepository;
 import com.badfic.philbot.data.GenericBotResponsesConfigJson;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
@@ -26,16 +23,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,16 +32,14 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
     private final BaseConfig baseConfig;
     private final BaseResponsesConfigRepository<T> configRepository;
-    private final CloseableHttpClient gfycatClient;
     private final ObjectMapper objectMapper;
     private final String fullCmdPrefix;
 
-    public BasicResponsesBot(BaseConfig baseConfig, BaseResponsesConfigRepository<T> configRepository, CloseableHttpClient gfycatClient,
+    public BasicResponsesBot(BaseConfig baseConfig, BaseResponsesConfigRepository<T> configRepository,
                              ObjectMapper objectMapper, String name, String sfwBootstrapJson, String nsfwBootstrapJson,
                              Supplier<T> responsesConfigConstructor) throws Exception {
         this.baseConfig = baseConfig;
         this.configRepository = configRepository;
-        this.gfycatClient = gfycatClient;
         this.objectMapper = objectMapper;
 
         this.name = name;
@@ -97,7 +82,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
         Optional<T> optionalConfig = configRepository.findById(BaseResponsesConfig.SINGLETON_ID);
         if (!optionalConfig.isPresent()) {
-            event.getChannel().sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name).queue();
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId()).sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name).queue();
             return;
         }
 
@@ -271,79 +256,12 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         }
 
         getResponse(event, responsesConfig).ifPresent(response -> {
-            event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", " + response).queue();
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                    .sendMessage(event.getAuthor().getAsMention() + ", " + response).queue();
         });
     }
 
     protected abstract Optional<String> getResponse(CommandEvent event, T responsesConfig);
-
-    protected Optional<String> maybeGetGif(String searchTerm) {
-        if (StringUtils.isNotBlank(baseConfig.gfycatClientId) && ThreadLocalRandom.current().nextInt(100) < 25) {
-            try {
-                HttpPost credentialsRequest = new HttpPost("https://api.gfycat.com/v1/oauth/token");
-                credentialsRequest.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-
-                Map<String, String> mapBody = new HashMap<>();
-                mapBody.put("grant_type", "client_credentials");
-                mapBody.put("client_id", baseConfig.gfycatClientId);
-                mapBody.put("client_secret", baseConfig.gfycatClientSecret);
-
-                credentialsRequest.setEntity(new StringEntity(objectMapper.writeValueAsString(mapBody)));
-
-                String accessToken = null;
-                try (CloseableHttpResponse response = gfycatClient.execute(credentialsRequest)) {
-                    if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                        HttpEntity entity = response.getEntity();
-                        if (entity != null) {
-                            JsonNode jsonNode = objectMapper.readTree(EntityUtils.toString(entity));
-                            accessToken = jsonNode.get("access_token").asText();
-                        } else {
-                            logger.error("Failed to fetch a {} gif, token response body was null", searchTerm);
-                        }
-                    } else {
-                        logger.error("Failed to fetch a {} gif, got back non 200 status code from gfycat token endpoint", searchTerm);
-                    }
-                }
-
-                if (accessToken != null) {
-                    HttpGet searchRequest = new HttpGet("https://api.gfycat.com/v1/gfycats/search?search_text=" + searchTerm);
-                    searchRequest.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-                    searchRequest.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-                    try (CloseableHttpResponse response = gfycatClient.execute(searchRequest)) {
-                        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                            HttpEntity entity = response.getEntity();
-                            if (entity != null) {
-                                JsonNode jsonNode = objectMapper.readTree(EntityUtils.toString(entity));
-                                jsonNode.get("gfycats").get(0).get("max2mbGif").asText();
-                                JsonNode gfycatsArray = jsonNode.get("gfycats");
-                                if (gfycatsArray.isArray()) {
-                                    JsonNode singleGfy = gfycatsArray.get(ThreadLocalRandom.current().nextInt(gfycatsArray.size()));
-                                    String gifLink = singleGfy.get("max2mbGif").asText();
-
-                                    if (StringUtils.isNotBlank(gifLink)) {
-                                        return Optional.of(gifLink);
-                                    } else {
-                                        logger.error("Failed to extract single {} gif from gfycat search results", searchTerm);
-                                    }
-                                } else {
-                                    logger.error("gfycat did not return an array of search results for {}", searchTerm);
-                                }
-                            } else {
-                                logger.error("Failed to fetch a {} gif, search response body was null", searchTerm);
-                            }
-                        } else {
-                            logger.error("Failed to fetch a {} gif, got back non 200 status code from gfycat search endpoint", searchTerm);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                // continue on with a normal response
-                logger.error("Failed to fetch a {} gif", searchTerm, e);
-            }
-        }
-
-        return Optional.empty();
-    }
 
     protected <R> R pickRandom(Collection<R> collection) {
         int index = ThreadLocalRandom.current().nextInt(collection.size());

@@ -1,8 +1,8 @@
 package com.badfic.philbot.listeners.behrad;
 
 import com.badfic.philbot.config.BaseConfig;
-import com.badfic.philbot.config.BehradMarker;
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.behrad.BehradResponsesConfig;
 import com.badfic.philbot.data.behrad.BehradResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
@@ -12,7 +12,6 @@ import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiManager;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -24,14 +23,13 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> implements BehradMarker {
+public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> implements PhilMarker {
 
     private static final HashSet<String> SHAYAN_IMGS = new HashSet<>(Arrays.asList(
             "https://cdn.discordapp.com/attachments/323666308107599872/750575009650573332/unknown-15.png",
@@ -60,9 +58,8 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
     private JDA behradJda;
 
     @Autowired
-    public BehradCommand(ObjectMapper objectMapper, BaseConfig baseConfig, BehradResponsesConfigRepository behradResponsesConfigRepository,
-                         CloseableHttpClient gfycatClient) throws Exception {
-        super(baseConfig, behradResponsesConfigRepository, gfycatClient, objectMapper, "behrad",
+    public BehradCommand(ObjectMapper objectMapper, BaseConfig baseConfig, BehradResponsesConfigRepository behradResponsesConfigRepository) throws Exception {
+        super(baseConfig, behradResponsesConfigRepository, objectMapper, "behrad",
                 "behrad-kidFriendlyConfig.json", "behrad-nsfwConfig.json", BehradResponsesConfig::new);
     }
 
@@ -81,17 +78,19 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
             responses = responsesConfig.getSfwConfig().getResponses();
         } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
             if (NAME_PATTERN.matcher(msgContent).find()) {
-                event.getChannel().sendMessage(pickRandom(SHAYAN_IMGS)).queue();
+                event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                        .sendMessage(pickRandom(SHAYAN_IMGS)).queue();
                 return Optional.empty();
             }
 
-            responses = maybeGetGif("legends+of+tomorrow").map(Collections::singleton).orElseGet(() -> responsesConfig.getNsfwConfig().getResponses());
+            responses = responsesConfig.getNsfwConfig().getResponses();
         } else {
             return Optional.empty();
         }
 
         if (SLOTH_PATTERN.matcher(msgContent).find()) {
-            event.getChannel().sendMessage(pickRandom(SLOTH_GIFS)).queue();
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                    .sendMessage(pickRandom(SLOTH_GIFS)).queue();
             return Optional.empty();
         }
 
@@ -103,7 +102,8 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
             Message message = new MessageBuilder(messageEmbed)
                     .setContent("420 whatcha smokin?")
                     .build();
-            event.getChannel().sendMessage(message).queue();
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                    .sendMessage(message).queue();
             return Optional.empty();
         }
 

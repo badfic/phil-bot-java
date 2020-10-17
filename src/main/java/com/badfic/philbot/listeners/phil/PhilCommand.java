@@ -16,7 +16,6 @@ import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,9 +29,8 @@ public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> implemen
     private JDA philJda;
 
     @Autowired
-    public PhilCommand(ObjectMapper objectMapper, PhilResponsesConfigRepository philResponsesConfigRepository, BaseConfig baseConfig,
-                       CloseableHttpClient gfycatClient) throws Exception {
-        super(baseConfig, philResponsesConfigRepository, gfycatClient, objectMapper, "phil",
+    public PhilCommand(ObjectMapper objectMapper, PhilResponsesConfigRepository philResponsesConfigRepository, BaseConfig baseConfig) throws Exception {
+        super(baseConfig, philResponsesConfigRepository, objectMapper, "phil",
                 "phil-kidFriendlyConfig.json", "phil-nsfwConfig.json", PhilResponsesConfig::new);
     }
 
