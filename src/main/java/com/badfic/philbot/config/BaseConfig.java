@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import com.neovisionaries.ws.client.WebSocketFactory;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -20,8 +19,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.EventListener;
-import net.dv8tion.jda.internal.utils.IOUtil;
-import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -103,30 +100,16 @@ public class BaseConfig {
         return propsConfig;
     }
 
-    @Bean
-    public OkHttpClient okHttpClient() {
-        return IOUtil.newHttpClientBuilder().build();
-    }
-
-    @Bean
-    public WebSocketFactory webSocketFactory() {
-        return new WebSocketFactory();
-    }
-
     @Bean(name = "behradJda")
-    public JDA behradJda(OkHttpClient okHttpClient, WebSocketFactory webSocketFactory) throws Exception {
+    public JDA behradJda() throws Exception {
         return JDABuilder.createLight(behradBotToken, Collections.emptyList())
-                .setHttpClient(okHttpClient)
-                .setWebsocketFactory(webSocketFactory)
                 .setActivity(Activity.playing(PLAYING_STATUS_LIST[ThreadLocalRandom.current().nextInt(PLAYING_STATUS_LIST.length)]))
                 .build();
     }
 
     @Bean(name = "keanuJda")
-    public JDA keanuJda(OkHttpClient okHttpClient, WebSocketFactory webSocketFactory) throws Exception {
+    public JDA keanuJda() throws Exception {
         return JDABuilder.createLight(keanuBotToken, Collections.emptyList())
-                .setHttpClient(okHttpClient)
-                .setWebsocketFactory(webSocketFactory)
                 .setActivity(Activity.watching(WATCHING_STATUS_LIST[ThreadLocalRandom.current().nextInt(WATCHING_STATUS_LIST.length)]))
                 .build();
     }
@@ -144,13 +127,9 @@ public class BaseConfig {
     }
 
     @Bean(name = "philJda")
-    public JDA philJda(OkHttpClient okHttpClient,
-                       WebSocketFactory webSocketFactory,
-                       List<EventListener> eventListeners,
+    public JDA philJda(List<EventListener> eventListeners,
                        @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
         return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES))
-                .setHttpClient(okHttpClient)
-                .setWebsocketFactory(webSocketFactory)
                 .addEventListeners(eventListeners.stream().filter(e -> e instanceof PhilMarker).toArray(EventListener[]::new))
                 .addEventListeners(philCommandClient)
                 .setActivity(Activity.playing("with our feelings"))
