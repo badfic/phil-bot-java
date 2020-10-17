@@ -350,26 +350,28 @@ public class Fam extends BaseSwampy implements PhilMarker {
         append(family::getParents, "**Parents**", description);
         append(family::getGrandparents, "**Grandparents**", description);
         append(family::getSiblings, "**Siblings**", description);
-        description.append("\n\nRandom family member spotlight:");
+        description.append("\n\nRandom family member spotlight: ");
 
         try {
-            String img = getRandomFamImage(family, event);
+            Member familyMember = getRandomFamilyMember(family, event);
+            description.append(familyMember.getAsMention());
             MessageEmbed msg = new EmbedBuilder()
                     .setTitle(member.getEffectiveName() + "'s Family")
                     .setDescription(description.toString())
                     .setColor(Constants.HALOWEEN_ORANGE)
-                    .setImage(img)
+                    .setImage(familyMember.getUser().getEffectiveAvatarUrl())
                     .build();
 
             event.reply(msg);
         } catch (Exception e) {
-            description.append("\nFailed to load family member avatar :(");
+            description.append("Failed to load family member");
             event.reply(simpleEmbed(member.getEffectiveName() + "'s Family", description.toString()));
         }
     }
 
-    private String getRandomFamImage(Family family, CommandEvent event) {
+    private Member getRandomFamilyMember(Family family, CommandEvent event) {
         Set<Member> allMembers = new HashSet<>();
+        allMembers.add(event.getMember());
         allMembers.addAll(getMemberSet(family.getSpouses(), event));
         allMembers.addAll(getMemberSet(family.getExes(), event));
         allMembers.addAll(getMemberSet(family.getChildren(), event));
@@ -378,9 +380,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
         allMembers.addAll(getMemberSet(family.getGrandparents(), event));
         allMembers.addAll(getMemberSet(family.getSiblings(), event));
 
-        Member member = pickRandom(allMembers);
-
-        return member.getUser().getEffectiveAvatarUrl();
+        return pickRandom(allMembers);
     }
 
     private Set<Member> getMemberSet(Set<String> set, CommandEvent event) {
