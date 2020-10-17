@@ -5,6 +5,7 @@ import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
+import com.google.common.collect.ImmutableMap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
@@ -12,7 +13,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,12 +66,12 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     public static final long SLOTS_TIMEOUT_MINUTES = 3;
 
     // soft point bans
-    public static final Map<String, String> USER_WORD_BAN_SET = MapUtils.putAll(new HashMap<>(), new String[] {
-            "486427102854381568", "I'm out",
-            "307663738151108610", "oof",
-            "307611036134146080", "nelly"
-    });
-    public static final Pattern NO_NO_WORDS = Pattern.compile("\\b(shrantiago|shack|nice|simp)\\b", Pattern.CASE_INSENSITIVE);
+    public static final Map<String, String> USER_WORD_BAN_SET = ImmutableMap.<String, String>builder()
+            .put("486427102854381568", "I'm out")
+            .put("307663738151108610", "oof")
+            .put("307611036134146080", "nelly")
+            .build();
+    public static final Pattern NO_NO_WORDS = Pattern.compile("\\b(shrantiago|shack|nice|simp|shrony)\\b", Pattern.CASE_INSENSITIVE);
 
     // volatile state
     private volatile boolean awaitingResetConfirmation = false;
