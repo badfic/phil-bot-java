@@ -64,7 +64,7 @@ public class KeanuMessageListener extends ListenerAdapter implements KeanuMarker
     }
 
     private static Pattern compile(String s) {
-        return Pattern.compile("\\b(" + Pattern.quote(s) + ")\\b", Pattern.CASE_INSENSITIVE);
+        return Pattern.compile("\\b(" + s + ")\\b", Pattern.CASE_INSENSITIVE);
     }
 
 }
