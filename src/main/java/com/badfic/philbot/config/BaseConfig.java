@@ -29,7 +29,7 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 public class BaseConfig {
 
-    private static final String[] WATCHING_STATUS_LIST = {
+    private static final String[] KEANU_STATUS_LIST = {
             "Bill & Ted Face the Music",
             "The SpongeBob Movie: Sponge on the Run",
             "Toy Story 4",
@@ -51,7 +51,7 @@ public class BaseConfig {
             "Bill & Ted's Excellent Adventure"
     };
 
-    private static final String[] PLAYING_STATUS_LIST = {
+    private static final String[] BEHRAD_STATUS_LIST = {
             "Tekken",
             "in Heyworld",
             "Street Fighter",
@@ -67,6 +67,25 @@ public class BaseConfig {
             "Wii Sports"
     };
 
+    private static final String[] ANTONIA_STATUS_LIST = {
+            "Back in Black - AC/DC",
+            "Highway to Hell - AC/DC",
+            "You Shook Me All Night Long AC/DC",
+            "Shoot to Thrill - AC/DC",
+            "Driving With the Top Down - Ryeland Allison",
+            "Iron Man - Black Sabbath",
+            "For Whom the Bell Tolls - Metallica",
+            "Amerika - Rammstein",
+            "Back in the Saddle - Aerosmith",
+            "Irresistible - Fall Out Boy",
+            "Mad Sounds - Arctic Monkeys",
+            "I Want it All - Queen",
+            "Rock and Roll - Led Zeppelin",
+            "Mr. Brightside - The Killers",
+            "I Write Sins not Tragedies - Panic! At the Disco",
+            "Sugar We're Goin Down - Fall Out Boy"
+    };
+
     @Value("${PHIL_BOT_TOKEN}")
     public String philBotToken;
 
@@ -75,6 +94,9 @@ public class BaseConfig {
 
     @Value("${BEHRAD_BOT_TOKEN}")
     public String behradBotToken;
+
+    @Value("${ANTONIA_BOT_TOKEN}")
+    public String antoniaBotToken;
 
     @Value("${git.commit.id}")
     public String commitSha;
@@ -100,17 +122,24 @@ public class BaseConfig {
         return propsConfig;
     }
 
+    @Bean(name = "antoniaJda")
+    public JDA antoniaJda() throws Exception {
+        return JDABuilder.createLight(antoniaBotToken, Collections.emptyList())
+                .setActivity(Activity.listening(ANTONIA_STATUS_LIST[ThreadLocalRandom.current().nextInt(ANTONIA_STATUS_LIST.length)]))
+                .build();
+    }
+
     @Bean(name = "behradJda")
     public JDA behradJda() throws Exception {
         return JDABuilder.createLight(behradBotToken, Collections.emptyList())
-                .setActivity(Activity.playing(PLAYING_STATUS_LIST[ThreadLocalRandom.current().nextInt(PLAYING_STATUS_LIST.length)]))
+                .setActivity(Activity.playing(BEHRAD_STATUS_LIST[ThreadLocalRandom.current().nextInt(BEHRAD_STATUS_LIST.length)]))
                 .build();
     }
 
     @Bean(name = "keanuJda")
     public JDA keanuJda() throws Exception {
         return JDABuilder.createLight(keanuBotToken, Collections.emptyList())
-                .setActivity(Activity.watching(WATCHING_STATUS_LIST[ThreadLocalRandom.current().nextInt(WATCHING_STATUS_LIST.length)]))
+                .setActivity(Activity.watching(KEANU_STATUS_LIST[ThreadLocalRandom.current().nextInt(KEANU_STATUS_LIST.length)]))
                 .build();
     }
 
