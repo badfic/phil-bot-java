@@ -1,7 +1,5 @@
 package com.badfic.philbot.listeners.behrad;
 
-import com.badfic.philbot.config.BehradMarker;
-import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -9,22 +7,18 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-public class BehradMessageListener extends ListenerAdapter implements BehradMarker {
+@Service
+public class BehradMessageListener extends ListenerAdapter {
 
     private static final Pattern BEHRAD_PATTERN = Pattern.compile("\\b(behrad|shayan|sobhian|marijuana|weed|420|stoned|stoner|kush|hey b|sup sloth)\\b", Pattern.CASE_INSENSITIVE);
 
     private final BehradCommand behradCommand;
-    private final CommandClient behradCommandClient;
 
     @Autowired
-    public BehradMessageListener(BehradCommand behradCommand,
-                                 @Qualifier("behradCommandClient") CommandClient behradCommandClient) {
+    public BehradMessageListener(BehradCommand behradCommand) {
         this.behradCommand = behradCommand;
-        this.behradCommandClient = behradCommandClient;
     }
 
     @Override
@@ -36,12 +30,12 @@ public class BehradMessageListener extends ListenerAdapter implements BehradMark
         }
 
         if (BEHRAD_PATTERN.matcher(msgContent).find()) {
-            behradCommand.execute(new CommandEvent(event, null, behradCommandClient));
+            behradCommand.execute(new CommandEvent(event, null, null));
             return;
         }
 
         if (StringUtils.containsIgnoreCase(msgContent, "i'm gay")) {
-            event.getChannel().sendMessage("same").queue();
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId()).sendMessage("same").queue();
             return;
         }
     }

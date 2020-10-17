@@ -97,7 +97,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
         Optional<T> optionalConfig = configRepository.findById(BaseResponsesConfig.SINGLETON_ID);
         if (!optionalConfig.isPresent()) {
-            event.getChannel().sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name).queue();
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId()).sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name).queue();
             return;
         }
 
@@ -271,7 +271,8 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         }
 
         getResponse(event, responsesConfig).ifPresent(response -> {
-            event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", " + response).queue();
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                    .sendMessage(event.getAuthor().getAsMention() + ", " + response).queue();
         });
     }
 

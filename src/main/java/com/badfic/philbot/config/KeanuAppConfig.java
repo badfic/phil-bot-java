@@ -1,22 +1,10 @@
 package com.badfic.philbot.config;
 
-import static net.dv8tion.jda.api.requests.GatewayIntent.DIRECT_MESSAGES;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
-
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandClient;
-import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.hooks.EventListener;
-import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,28 +37,9 @@ public class KeanuAppConfig {
     @Value("${KEANU_BOT_TOKEN}")
     public String keanuBotToken;
 
-    @Resource
-    private BaseConfig baseConfig;
-
-    @Bean(name = "keanuCommandClient")
-    public CommandClient keanuCommandClient(List<Command> commands) {
-        return new CommandClientBuilder()
-                .setOwnerId(baseConfig.ownerId)
-                .setPrefix("!!")
-                .useHelpBuilder(false)
-                .addCommands(commands.stream().filter(c -> c instanceof KeanuMarker).toArray(Command[]::new))
-                .setActivity(Activity.watching(WATCHING_STATUS_LIST[ThreadLocalRandom.current().nextInt(WATCHING_STATUS_LIST.length)]))
-                .setEmojis("✅", "⚠️", "❌")
-                .build();
-    }
-
     @Bean(name = "keanuJda")
-    public JDA keanuJda(List<EventListener> eventListeners,
-                        @Qualifier("keanuCommandClient") CommandClient keanuCommandClient) throws Exception {
-        return JDABuilder.create(keanuBotToken, Arrays.asList(GUILD_MESSAGES, DIRECT_MESSAGES))
-                .disableCache(EnumSet.allOf(CacheFlag.class))
-                .addEventListeners(eventListeners.stream().filter(e -> e instanceof KeanuMarker).toArray(EventListener[]::new))
-                .addEventListeners(keanuCommandClient)
+    public JDA keanuJda() throws Exception {
+        return JDABuilder.createLight(keanuBotToken, Collections.emptyList())
                 .setActivity(Activity.watching(WATCHING_STATUS_LIST[ThreadLocalRandom.current().nextInt(WATCHING_STATUS_LIST.length)]))
                 .build();
     }

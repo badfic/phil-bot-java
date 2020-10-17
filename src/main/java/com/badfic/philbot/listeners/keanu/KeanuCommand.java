@@ -1,7 +1,7 @@
 package com.badfic.philbot.listeners.keanu;
 
 import com.badfic.philbot.config.BaseConfig;
-import com.badfic.philbot.config.KeanuMarker;
+import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.keanu.KeanuResponsesConfig;
 import com.badfic.philbot.data.keanu.KeanuResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
@@ -28,7 +28,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> implements KeanuMarker {
+public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> implements PhilMarker {
 
     private static final Pattern PUPPY_PATTERN = Pattern.compile("\\b(puppy|puppies|pupper|doggo|doge)\\b", Pattern.CASE_INSENSITIVE);
     private static final String HELLO_GIF = "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves";
@@ -96,12 +96,14 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> implem
         }
 
         if (StringUtils.containsIgnoreCase(msgContent, "hello")) {
-            event.getChannel().sendMessage(HELLO_GIF).queue();
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                    .sendMessage(HELLO_GIF).queue();
             return Optional.empty();
         }
 
         if (PUPPY_PATTERN.matcher(msgContent).find()) {
-            event.getChannel().sendMessage(PUPPIES_GIF).queue();
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                    .sendMessage(PUPPIES_GIF).queue();
             return Optional.empty();
         }
 

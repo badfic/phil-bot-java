@@ -2,6 +2,8 @@ package com.badfic.philbot.listeners.phil;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
+import com.badfic.philbot.listeners.behrad.BehradMessageListener;
+import com.badfic.philbot.listeners.keanu.KeanuMessageListener;
 import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -11,6 +13,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import javax.annotation.Resource;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
@@ -28,6 +32,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -42,6 +47,22 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     private final PhilCommand philCommand;
     private final SwampyCommand swampyCommand;
     private final CommandClient philCommandClient;
+
+    @Resource
+    @Lazy
+    private BehradMessageListener behradMessageListener;
+
+    @Resource
+    @Lazy
+    private KeanuMessageListener keanuMessageListener;
+
+    @Resource(name = "behradJda")
+    @Lazy
+    private JDA behradJda;
+
+    @Resource(name = "keanuJda")
+    @Lazy
+    private JDA keanuJda;
 
     @Autowired
     public PhilMessageListener(PhilCommand philCommand,
@@ -58,6 +79,9 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        behradMessageListener.onMessageReceived(new MessageReceivedEvent(behradJda, event.getResponseNumber(), event.getMessage()));
+        keanuMessageListener.onMessageReceived(new MessageReceivedEvent(keanuJda, event.getResponseNumber(), event.getMessage()));
+
         String msgContent = event.getMessage().getContentRaw();
 
         if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {

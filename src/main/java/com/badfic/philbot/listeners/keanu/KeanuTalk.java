@@ -1,12 +1,24 @@
 package com.badfic.philbot.listeners.keanu;
 
-import com.badfic.philbot.config.KeanuMarker;
+import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.listeners.BaseTalk;
+import javax.annotation.Resource;
+import net.dv8tion.jda.api.JDA;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KeanuTalk extends BaseTalk implements KeanuMarker {
+public class KeanuTalk extends BaseTalk implements PhilMarker {
+
+    @Resource(name = "keanuJda")
+    private JDA keanuJda;
+
     public KeanuTalk() {
         super("keanuTalk");
     }
+
+    @Override
+    public JDA getJda() {
+        return keanuJda;
+    }
+
 }
