@@ -1,0 +1,12 @@
+{
+  "channels": [
+    "general",
+    "the-swampys"
+  ],
+  "responses": [
+    "hi",
+    "yes",
+    "no",
+    "maybe"
+  ]
+}
