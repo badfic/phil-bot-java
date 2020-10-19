@@ -1,6 +1,5 @@
 package com.badfic.philbot.listeners;
 
-import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.BaseResponsesConfig;
 import com.badfic.philbot.data.BaseResponsesConfigRepository;
@@ -9,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -23,22 +21,16 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends Command {
 
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-    private final BaseConfig baseConfig;
     private final BaseResponsesConfigRepository<T> configRepository;
     private final ObjectMapper objectMapper;
     private final String fullCmdPrefix;
 
-    public BasicResponsesBot(BaseConfig baseConfig, BaseResponsesConfigRepository<T> configRepository,
+    public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository,
                              ObjectMapper objectMapper, String name, String sfwBootstrapJson, String nsfwBootstrapJson,
                              Supplier<T> responsesConfigConstructor) throws Exception {
-        this.baseConfig = baseConfig;
         this.configRepository = configRepository;
         this.objectMapper = objectMapper;
 
@@ -257,7 +249,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
         getResponse(event, responsesConfig).ifPresent(response -> {
             event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
-                    .sendMessage(event.getAuthor().getAsMention() + ", " + response).queue();
+                    .sendMessage(StringUtils.startsWithIgnoreCase(response, "http") ? response : (event.getAuthor().getAsMention() + ", " + response)).queue();
         });
     }
 

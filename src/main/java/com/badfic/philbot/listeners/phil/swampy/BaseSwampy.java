@@ -25,6 +25,8 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -79,52 +81,52 @@ public abstract class BaseSwampy extends Command {
         return optionalUserEntity.get();
     }
 
-    protected void givePointsToMember(long pointsToGive, Member member, DiscordUser user) {
+    protected CompletableFuture<Void> givePointsToMember(long pointsToGive, Member member, DiscordUser user) {
         if (isNotParticipating(member)) {
-            return;
+            return CompletableFuture.completedFuture(null);
         }
 
         user.setXp(user.getXp() + pointsToGive);
         user = discordUserRepository.save(user);
-        assignRolesIfNeeded(member, user);
+        return assignRolesIfNeeded(member, user).getRight();
     }
 
-    protected void givePointsToMember(long pointsToGive, Member member) {
+    protected CompletableFuture<Void> givePointsToMember(long pointsToGive, Member member) {
         if (isNotParticipating(member)) {
-            return;
+            return CompletableFuture.completedFuture(null);
         }
 
-        givePointsToMember(pointsToGive, member, getDiscordUserByMember(member));
+        return givePointsToMember(pointsToGive, member, getDiscordUserByMember(member));
     }
 
-    protected void takePointsFromMember(long pointsToTake, Member member) {
+    protected CompletableFuture<Void> takePointsFromMember(long pointsToTake, Member member) {
         if (isNotParticipating(member)) {
-            return;
+            return CompletableFuture.completedFuture(null);
         }
 
         DiscordUser user = getDiscordUserByMember(member);
         user.setXp(Math.max(0, user.getXp() - pointsToTake));
         user = discordUserRepository.save(user);
-        assignRolesIfNeeded(member, user);
+        return assignRolesIfNeeded(member, user).getRight();
     }
 
-    protected Role assignRolesIfNeeded(Member member, DiscordUser user) {
+    protected Pair<Role, CompletableFuture<Void>> assignRolesIfNeeded(Member member, DiscordUser user) {
         if (isNotParticipating(member)) {
-            return null;
+            return ImmutablePair.of(null, CompletableFuture.completedFuture(null));
         }
 
         Rank newRank = Rank.byXp(user.getXp());
         Role newRole = member.getGuild().getRolesByName(newRank.getRoleName(), true).get(0);
 
+        CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
         if (!hasRole(member, newRank)) {
             Set<String> allRoleNames = Rank.getAllRoleNames();
             Guild guild = member.getGuild();
 
-            CompletableFuture<Void> current = CompletableFuture.completedFuture(null);
             for (Role r : member.getRoles()) {
                 if (allRoleNames.contains(r.getName())) {
                     try {
-                        current = current.thenCompose(c -> guild.removeRoleFromMember(member, r).submit());
+                        future = future.thenCompose(c -> guild.removeRoleFromMember(member, r).submit());
                     } catch (Exception e) {
                         logger.error("Failed to remove role {} from member {}", r.getName(), member.getEffectiveName(), e);
                     }
@@ -132,7 +134,7 @@ public abstract class BaseSwampy extends Command {
             }
 
             try {
-                current = current.thenCompose(c -> guild.addRoleToMember(member, newRole).submit());
+                future = future.thenCompose(c -> guild.addRoleToMember(member, newRole).submit());
             } catch (Exception e) {
                 logger.error("Failed to add new role {} to member {}", newRole.getName(), member.getEffectiveName(), e);
             }
@@ -147,11 +149,11 @@ public abstract class BaseSwampy extends Command {
                         .setDescription(newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()))
                         .build();
 
-                current.thenRun(() -> announcementsChannel.sendMessage(messageEmbed).queue());
+                future = future.thenRun(() -> announcementsChannel.sendMessage(messageEmbed).queue());
             }
         }
 
-        return newRole;
+        return ImmutablePair.of(newRole, future);
     }
 
     protected MessageEmbed simpleEmbed(String title, String format, Object... args) {

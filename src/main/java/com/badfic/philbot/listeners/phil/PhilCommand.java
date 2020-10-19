@@ -1,20 +1,19 @@
 package com.badfic.philbot.listeners.phil;
 
-import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.PhilResponsesConfig;
 import com.badfic.philbot.data.phil.PhilResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.vdurmont.emoji.Emoji;
-import com.vdurmont.emoji.EmojiManager;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -29,8 +28,8 @@ public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> implemen
     private JDA philJda;
 
     @Autowired
-    public PhilCommand(ObjectMapper objectMapper, PhilResponsesConfigRepository philResponsesConfigRepository, BaseConfig baseConfig) throws Exception {
-        super(baseConfig, philResponsesConfigRepository, objectMapper, "phil",
+    public PhilCommand(ObjectMapper objectMapper, PhilResponsesConfigRepository philResponsesConfigRepository) throws Exception {
+        super(philResponsesConfigRepository, objectMapper, "phil",
                 "phil-kidFriendlyConfig.json", "phil-nsfwConfig.json", PhilResponsesConfig::new);
     }
 
@@ -57,10 +56,9 @@ public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> implemen
             return Optional.empty();
         }
 
-        if (EmojiManager.containsEmoji(msgContent)) {
-            Collection<Emoji> allEmoji = EmojiManager.getAll();
-            Emoji emoji = pickRandom(allEmoji);
-            return Optional.of(emoji.getUnicode());
+        List<Emote> emotes = event.getMessage().getEmotes();
+        if (CollectionUtils.isNotEmpty(emotes)) {
+            return Optional.of(emotes.get(0).getAsMention());
         }
 
         boolean isAllUppercase = true;

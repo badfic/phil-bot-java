@@ -6,10 +6,12 @@ import com.badfic.philbot.data.DiscordUser;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -40,6 +42,7 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
 
         long totalPointsGiven = 0;
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder("Shrek has infiltrated the swamp! He's giving \uD83E\uDDC5 \uD83E\uDDC5 \uD83E\uDDC5 " +
                 "to all the chaos children!\n\n");
         for (DiscordUser user : allUsers) {
@@ -60,7 +63,7 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
                         points = pickRandom(COMMON_POINTS);
                     }
 
-                    givePointsToMember(points, memberById);
+                    futures.add(givePointsToMember(points, memberById));
                     totalPointsGiven += points;
                     description
                             .append(NumberFormat.getIntegerInstance().format(points))
@@ -83,10 +86,12 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
                 .setDescription(description.toString())
                 .build();
 
-        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
-                .get(0)
-                .sendMessage(message)
-                .queue();
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
+            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
+                    .get(0)
+                    .sendMessage(message)
+                    .queue();
+        });
     }
 
 }
