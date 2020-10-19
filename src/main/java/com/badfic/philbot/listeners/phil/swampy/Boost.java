@@ -6,8 +6,11 @@ import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -56,6 +59,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
             swampyGamesConfig.setBoostPhrase(null);
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
             LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
             StringBuilder description = new StringBuilder();
             discordUserRepository.findAll()
@@ -68,7 +72,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
                                 throw new RuntimeException("member not found");
                             }
 
-                            givePointsToMember(1000, memberLookedUp);
+                            futures.add(givePointsToMember(1000, memberLookedUp));
                             description.append("Gave " + BOOST_POINTS_TO_GIVE + " points to <@!")
                                     .append(u.getId())
                                     .append(">\n");
@@ -86,7 +90,9 @@ public class Boost extends BaseSwampy implements PhilMarker {
                     .setDescription(description.toString())
                     .setColor(Constants.HALOWEEN_ORANGE)
                     .build();
-            swampysChannel.sendMessage(messageEmbed).queue();
+
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                    .thenRun(() -> swampysChannel.sendMessage(messageEmbed).queue());
             return;
         }
 

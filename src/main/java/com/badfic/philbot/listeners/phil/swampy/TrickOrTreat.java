@@ -6,7 +6,9 @@ import com.badfic.philbot.data.DiscordUser;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -40,6 +42,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
 
         long totalGiven = 0;
         long totalTaken = 0;
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
             if (user.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD) {
@@ -47,7 +50,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                     Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                     if (memberById != null && !memberById.getUser().isBot()) {
                         if (ThreadLocalRandom.current().nextInt() % 2 == 0 || hasRole(memberById, Constants.CHAOS_CHILDREN_ROLE)) {
-                            givePointsToMember(TRICK_OR_TREAT_POINTS, memberById);
+                            futures.add(givePointsToMember(TRICK_OR_TREAT_POINTS, memberById));
                             totalGiven += TRICK_OR_TREAT_POINTS;
 
                             description
@@ -57,7 +60,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                                     .append(user.getId())
                                     .append(">\n");
                         } else {
-                            takePointsFromMember(TRICK_OR_TREAT_POINTS, memberById);
+                            futures.add(takePointsFromMember(TRICK_OR_TREAT_POINTS, memberById));
                             totalTaken += TRICK_OR_TREAT_POINTS;
 
                             description
@@ -87,10 +90,12 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                 .setColor(Constants.HALOWEEN_ORANGE)
                 .build();
 
-        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
-                .get(0)
-                .sendMessage(message)
-                .queue();
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
+            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
+                    .get(0)
+                    .sendMessage(message)
+                    .queue();
+        });
     }
 
 }

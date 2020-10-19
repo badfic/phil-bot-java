@@ -12,6 +12,7 @@ import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
@@ -324,7 +326,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         }
 
         DiscordUser user = getDiscordUserByMember(member);
-        Role role = assignRolesIfNeeded(member, user);
+        Role role = assignRolesIfNeeded(member, user).getLeft();
 
         Rank[] allRanks = Rank.values();
         Rank rank = Rank.byXp(user.getXp());
@@ -638,26 +640,27 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
+        event.reply("Resetting, please wait...");
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
         for (DiscordUser discordUser : discordUserRepository.findAll()) {
             discordUser.setXp(0);
             discordUser = discordUserRepository.save(discordUser);
 
             try {
-                final DiscordUser finalDiscordUser = discordUser;
-                event.getGuild().retrieveMemberById(discordUser.getId()).submit().whenComplete((member, err) -> {
-                    if (member != null) {
-                        assignRolesIfNeeded(member, finalDiscordUser);
-                    } else {
-                        event.replyError("Failed to reset roles for user with discord id: <@!" + finalDiscordUser.getId() + '>');
-                    }
-                });
+                Member memberById = event.getGuild().getMemberById(discordUser.getId());
+
+                if (memberById == null) {
+                    event.replyError("Failed to reset roles for user with discord id: <@!" + discordUser.getId() + '>');
+                }
+
+                futures.add(assignRolesIfNeeded(memberById, discordUser).getRight());
             } catch (Exception e) {
                 logger.error("Failed to reset roles for user with [id={}]", discordUser.getId(), e);
                 event.replyError("Failed to reset roles for user with discord id: <@!" + discordUser.getId() + '>');
             }
         }
 
-        event.replySuccess("Reset the Swampys");
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> event.replySuccess("Reset the Swampys"));
     }
 
 }

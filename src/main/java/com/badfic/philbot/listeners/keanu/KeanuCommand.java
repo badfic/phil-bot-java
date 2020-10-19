@@ -1,24 +1,23 @@
 package com.badfic.philbot.listeners.keanu;
 
-import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.keanu.KeanuResponsesConfig;
 import com.badfic.philbot.data.keanu.KeanuResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.vdurmont.emoji.Emoji;
-import com.vdurmont.emoji.EmojiManager;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -64,8 +63,8 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> implem
     private JDA keanuJda;
 
     @Autowired
-    public KeanuCommand(ObjectMapper objectMapper, BaseConfig baseConfig, KeanuResponsesConfigRepository keanuResponsesConfigRepository) throws Exception {
-        super(baseConfig, keanuResponsesConfigRepository, objectMapper, "keanu",
+    public KeanuCommand(ObjectMapper objectMapper, KeanuResponsesConfigRepository keanuResponsesConfigRepository) throws Exception {
+        super(keanuResponsesConfigRepository, objectMapper, "keanu",
                 "keanu-kidFriendlyConfig.json", "keanu-nsfwConfig.json", KeanuResponsesConfig::new);
     }
 
@@ -104,10 +103,9 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> implem
             return Optional.empty();
         }
 
-        if (EmojiManager.containsEmoji(msgContent)) {
-            Collection<Emoji> allEmoji = EmojiManager.getAll();
-            Emoji emoji = pickRandom(allEmoji);
-            return Optional.of(emoji.getUnicode());
+        List<Emote> emotes = event.getMessage().getEmotes();
+        if (CollectionUtils.isNotEmpty(emotes)) {
+            return Optional.of(emotes.get(0).getAsMention());
         }
 
         return Optional.of(pickRandom(responses));

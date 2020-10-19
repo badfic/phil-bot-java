@@ -7,7 +7,9 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -63,6 +65,7 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
         allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
         long totalRecovered = 0;
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
             if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD) {
@@ -72,7 +75,7 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
                     totalRecovered += recoveredTaxes;
                     Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                     if (memberById != null && !memberById.getUser().isBot() && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
-                        givePointsToMember(recoveredTaxes, memberById);
+                        futures.add(givePointsToMember(recoveredTaxes, memberById));
 
                         description
                                 .append("Recovered ")
@@ -101,10 +104,12 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
                 .setColor(Constants.HALOWEEN_ORANGE)
                 .build();
 
-        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
-                .get(0)
-                .sendMessage(message)
-                .queue();
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
+            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
+                    .get(0)
+                    .sendMessage(message)
+                    .queue();
+        });
     }
 
 }

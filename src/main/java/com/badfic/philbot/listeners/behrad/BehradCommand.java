@@ -1,6 +1,5 @@
 package com.badfic.philbot.listeners.behrad;
 
-import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.behrad.BehradResponsesConfig;
@@ -8,11 +7,9 @@ import com.badfic.philbot.data.behrad.BehradResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.vdurmont.emoji.Emoji;
-import com.vdurmont.emoji.EmojiManager;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -20,9 +17,11 @@ import javax.annotation.Resource;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -58,8 +57,8 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
     private JDA behradJda;
 
     @Autowired
-    public BehradCommand(ObjectMapper objectMapper, BaseConfig baseConfig, BehradResponsesConfigRepository behradResponsesConfigRepository) throws Exception {
-        super(baseConfig, behradResponsesConfigRepository, objectMapper, "behrad",
+    public BehradCommand(ObjectMapper objectMapper, BehradResponsesConfigRepository behradResponsesConfigRepository) throws Exception {
+        super(behradResponsesConfigRepository, objectMapper, "behrad",
                 "behrad-kidFriendlyConfig.json", "behrad-nsfwConfig.json", BehradResponsesConfig::new);
     }
 
@@ -107,10 +106,9 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
             return Optional.empty();
         }
 
-        if (EmojiManager.containsEmoji(msgContent)) {
-            Collection<Emoji> allEmoji = EmojiManager.getAll();
-            Emoji emoji = pickRandom(allEmoji);
-            return Optional.of(emoji.getUnicode());
+        List<Emote> emotes = event.getMessage().getEmotes();
+        if (CollectionUtils.isNotEmpty(emotes)) {
+            return Optional.of(emotes.get(0).getAsMention());
         }
 
         return Optional.of(pickRandom(responses));
