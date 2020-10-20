@@ -1,6 +1,10 @@
 package com.badfic.philbot.data.phil;
 
+import com.badfic.philbot.data.JsonSetConverter;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -27,6 +31,16 @@ public class SwampyGamesConfig {
 
     @Column
     private int storyTimeCounter;
+
+    @Column
+    private String jigsawAwaiting;
+
+    @Column
+    private String jigsawMessageId;
+
+    @Column
+    @Convert(converter = JsonSetConverter.class)
+    private Set<String> pastVictims = new HashSet<>();
 
     public Short getId() {
         return id;
@@ -76,4 +90,27 @@ public class SwampyGamesConfig {
         this.storyTimeCounter = storyTimeCounter;
     }
 
+    public String getJigsawAwaiting() {
+        return jigsawAwaiting;
+    }
+
+    public void setJigsawAwaiting(String jigsawAwaiting) {
+        this.jigsawAwaiting = jigsawAwaiting;
+    }
+
+    public String getJigsawMessageId() {
+        return jigsawMessageId;
+    }
+
+    public void setJigsawMessageId(String jigsawMessageId) {
+        this.jigsawMessageId = jigsawMessageId;
+    }
+
+    public Set<String> getPastVictims() {
+        return pastVictims;
+    }
+
+    public void setPastVictims(Set<String> pastVictims) {
+        this.pastVictims = pastVictims;
+    }
 }

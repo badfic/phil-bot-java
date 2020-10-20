@@ -18,7 +18,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -44,7 +43,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         event.replyError("Manually triggering swiper has been disabled for now.");
     }
 
-    @Scheduled(cron = "0 20,35 0,2,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
+    // @Scheduled(cron = "0 20,35 0,2,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
     public void swiper() {
         doSwiper(null);
     }
