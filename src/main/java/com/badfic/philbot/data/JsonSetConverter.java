@@ -22,6 +22,9 @@ public class JsonSetConverter implements AttributeConverter<Set<String>, String>
     @Override
     public String convertToDatabaseColumn(Set<String> set) {
         try {
+            if (set == null) {
+                return null;
+            }
             return OBJECT_MAPPER.writeValueAsString(set);
         } catch (JsonProcessingException e) {
             throw new PersistenceException(e);
@@ -31,6 +34,9 @@ public class JsonSetConverter implements AttributeConverter<Set<String>, String>
     @Override
     public Set<String> convertToEntityAttribute(String s) {
         try {
+            if (s == null) {
+                return null;
+            }
             return OBJECT_MAPPER.readValue(s, new TypeReference<Set<String>>() {});
         } catch (JsonProcessingException e) {
             throw new PersistenceException(e);

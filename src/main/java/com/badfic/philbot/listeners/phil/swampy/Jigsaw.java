@@ -49,6 +49,10 @@ public class Jigsaw extends BaseSwampy implements PhilMarker {
         }
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
 
+        if (swampyGamesConfig.getPastVictims() == null) {
+            swampyGamesConfig.setPastVictims(new HashSet<>());
+        }
+
         if (swampyGamesConfig.getJigsawAwaiting() != null) {
             final String messageId = swampyGamesConfig.getJigsawMessageId();
             final String victimId = swampyGamesConfig.getJigsawAwaiting();
