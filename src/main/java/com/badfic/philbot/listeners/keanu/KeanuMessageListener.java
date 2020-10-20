@@ -21,9 +21,9 @@ public class KeanuMessageListener extends ListenerAdapter {
     private static final Pattern KEANU_PATTERN = compile("keanu|reeves|neo|john wick|puppy|puppies|pupper|doggo|doge");
     private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
             .put("513187180198363136", ImmutablePair.of(compile("husband"), "Hi honey"))
-            .put("513187180198363136", ImmutablePair.of(compile("love"), "I love you too"))
+            .put("513187180198363136", ImmutablePair.of(compile("partner"), "Howdy"))
             .put("601043580945170443", ImmutablePair.of(compile("dad"), "Hi pumpkin"))
-            .put("323520695550083074", ImmutablePair.of(compile("son"), "father"))
+            .put("323520695550083074", ImmutablePair.of(compile("son"), "Yes father?"))
             .build();
 
     private final KeanuCommand keanuCommand;
