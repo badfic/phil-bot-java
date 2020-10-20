@@ -27,7 +27,6 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
-    private static final Cache<String, Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = CacheBuilder.newBuilder()
+    private static final Cache<String, Function<GuildMessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = CacheBuilder.newBuilder()
             .maximumSize(200)
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .build();
@@ -82,7 +81,7 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
         this.philCommandClient = philCommandClient;
     }
 
-    public static void addReactionTask(String messageId, Function<MessageReactionAddEvent, Boolean> function) {
+    public static void addReactionTask(String messageId, Function<GuildMessageReactionAddEvent, Boolean> function) {
         OUTSTANDING_REACTION_TASKS.put(messageId, function);
     }
 
@@ -107,18 +106,6 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     }
 
     @Override
-    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
-        OUTSTANDING_REACTION_TASKS.asMap().computeIfPresent(event.getMessageId(), (key, function) -> {
-            boolean taskIsComplete = function.apply(event);
-
-            if (taskIsComplete) {
-                return null;
-            }
-            return function;
-        });
-    }
-
-    @Override
     public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
         swampyCommand.voiceJoined(event.getMember());
     }
@@ -130,6 +117,14 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+        OUTSTANDING_REACTION_TASKS.asMap().computeIfPresent(event.getMessageId(), (key, function) -> {
+            boolean taskIsComplete = function.apply(event);
+
+            if (taskIsComplete) {
+                return null;
+            }
+            return function;
+        });
         swampyCommand.emote(event);
     }
 

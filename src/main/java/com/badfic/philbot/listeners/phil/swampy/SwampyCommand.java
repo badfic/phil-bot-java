@@ -51,8 +51,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     ));
     public static final long PICTURE_MSG_POINTS = 150;
     public static final long CURSED_PICTURE_MSG_POINTS = 250;
-    public static final long NORMAL_REACTION_POINTS = 2;
-    public static final long EMOTE_REACTION_POINTS = 7;
+    public static final long REACTION_POINTS = 7;
     public static final long VOICE_CHAT_POINTS_PER_MINUTE = 5;
     public static final int NO_NO_WORDS_TAKE_POINTS = 100;
 
@@ -257,11 +256,14 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     }
 
     public void emote(GuildMessageReactionAddEvent event) {
-        long points = SwampyCommand.NORMAL_REACTION_POINTS;
-        if (event.getReactionEmote().isEmote()) {
-            points = SwampyCommand.EMOTE_REACTION_POINTS;
-        }
-        givePointsToMember(points, event.getMember());
+        givePointsToMember(REACTION_POINTS, event.getMember());
+        long messageId = event.getMessageIdLong();
+        long reactionGiverId = event.getMember().getIdLong();
+        event.getChannel().retrieveMessageById(messageId).queue(msg -> {
+            if (msg != null && msg.getMember() != null && msg.getMember().getIdLong() != reactionGiverId) {
+                givePointsToMember(REACTION_POINTS, msg.getMember());
+            }
+        });
     }
 
     public void removeFromGames(String id) {
