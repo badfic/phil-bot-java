@@ -7,11 +7,13 @@ import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.Color;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ISnowflake;
@@ -72,6 +74,7 @@ public class Jigsaw extends BaseSwampy implements PhilMarker {
 
                             final long pointsPerPerson = MAX_POINTS / victimSet.size();
 
+                            List<CompletableFuture<Void>> futures = new ArrayList<>();
                             StringBuilder description = new StringBuilder();
                             for (String v : victimSet) {
                                 try {
@@ -84,7 +87,7 @@ public class Jigsaw extends BaseSwampy implements PhilMarker {
                                                 .append(v)
                                                 .append(">\n");
                                     } else {
-                                        takePointsFromMember(pointsPerPerson, memberById);
+                                        futures.add(takePointsFromMember(pointsPerPerson, memberById));
                                         description.append("Took ")
                                                 .append(NumberFormat.getIntegerInstance().format(pointsPerPerson))
                                                 .append(" points from <@!")
@@ -107,10 +110,12 @@ public class Jigsaw extends BaseSwampy implements PhilMarker {
                                     .setImage(GAME_OVER)
                                     .build();
 
-                            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
-                                    .get(0)
-                                    .sendMessage(message)
-                                    .queue();
+                            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
+                                philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
+                                        .get(0)
+                                        .sendMessage(message)
+                                        .queue();
+                            });
                         }, err -> {
                             if (err != null) {
                                 MessageEmbed message = new EmbedBuilder()
