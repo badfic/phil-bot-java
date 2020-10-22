@@ -6,6 +6,7 @@ import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Family {
+    private String intro;
     private Set<String> spouses = new HashSet<>();
     private Set<String> exes = new HashSet<>();
     private Set<String> children = new HashSet<>();
@@ -13,6 +14,14 @@ public class Family {
     private Set<String> grandparents = new HashSet<>();
     private Set<String> parents = new HashSet<>();
     private Set<String> siblings = new HashSet<>();
+
+    public String getIntro() {
+        return intro;
+    }
+
+    public void setIntro(String intro) {
+        this.intro = intro;
+    }
 
     public Set<String> getSpouses() {
         return spouses;

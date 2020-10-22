@@ -343,6 +343,12 @@ public class Fam extends BaseSwampy implements PhilMarker {
 
         StringBuilder description = new StringBuilder();
 
+        if (family.getIntro() != null) {
+            description.append("**Introduction**\n")
+                    .append(family.getIntro())
+                    .append("\n\n");
+        }
+
         append(family::getSpouses, "**Spouses**", description);
         append(family::getExes, "**Exes**", description);
         append(family::getChildren, "**Children**", description);
