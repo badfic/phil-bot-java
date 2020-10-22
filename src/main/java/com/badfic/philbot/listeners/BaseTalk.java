@@ -2,7 +2,9 @@ package com.badfic.philbot.listeners;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.ChannelType;
 
 public abstract class BaseTalk extends Command {
 
@@ -15,7 +17,7 @@ public abstract class BaseTalk extends Command {
 
     @Override
     public void execute(CommandEvent event) {
-        if (event.getPrivateChannel() == null) {
+        if (event.getChannelType() != ChannelType.PRIVATE) {
             return;
         }
 
@@ -36,7 +38,11 @@ public abstract class BaseTalk extends Command {
                 .getTextChannelsByName(split[0].replace("#", ""), true)
                 .stream()
                 .findFirst()
-                .ifPresent(channel -> channel.sendMessage(finalMsg).queue());
+                .ifPresent(channel -> {
+                    channel.sendTyping()
+                            .submit()
+                            .thenRun(() -> channel.sendMessage(finalMsg).queueAfter(5, TimeUnit.SECONDS));
+                });
     }
 
 }
