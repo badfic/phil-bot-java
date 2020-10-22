@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -41,15 +40,15 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
     @Override
     public void execute(CommandEvent event) {
-        event.replyError("Manually triggering swiper has been disabled for now.");
+        event.replyError("Manually triggering swiper has been disabled.");
     }
 
     @Scheduled(cron = "0 20,35 0,2,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
     public void swiper() {
-        doSwiper(null);
+        doSwiper();
     }
 
-    private void doSwiper(String userId) {
+    private void doSwiper() {
         Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
         if (!optionalConfig.isPresent()) {
             return;
@@ -77,7 +76,8 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
                     message = new EmbedBuilder()
                             .setTitle(noSwipingPhrase)
-                            .setDescription("Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody") + "> scared them away from <@!" + victim.get().getId() + ">")
+                            .setDescription("Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
+                                    + "> scared them away from <@!" + victim.get().getId() + ">")
                             .setColor(Constants.HALOWEEN_ORANGE)
                             .setImage(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? NO_SWIPING : NO_SNART)
                             .build();
@@ -109,46 +109,23 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         }
 
         Member member = null;
-        if (userId != null) {
+        List<DiscordUser> allUsers = discordUserRepository.findAll();
+        Collections.shuffle(allUsers);
+
+        for (DiscordUser winningUser : allUsers) {
             try {
-                Member memberById = philJda.getGuilds().get(0).getMemberById(userId);
-                if (memberById != null && !memberById.getUser().isBot()) {
+                Member memberById = philJda.getGuilds().get(0).getMemberById(winningUser.getId());
+                if (memberById != null
+                        && !memberById.getUser().isBot()
+                        && winningUser.getXp() > SWIPER_POINTS_TO_STEAL
+                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                     member = memberById;
                 }
             } catch (Exception ignored) {}
-        } else {
-            List<DiscordUser> allUsers = discordUserRepository.findAll();
-            Collections.shuffle(allUsers);
-
-            long startTime = System.currentTimeMillis();
-
-            while (member == null && System.currentTimeMillis() - startTime < TimeUnit.SECONDS.toMillis(30)) {
-                DiscordUser winningUser = pickRandom(allUsers);
-
-                try {
-                    Member memberById = philJda.getGuilds().get(0).getMemberById(winningUser.getId());
-                    if (memberById != null
-                            && !memberById.getUser().isBot()
-                            && winningUser.getXp() > SWIPER_POINTS_TO_STEAL
-                            && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
-                        member = memberById;
-                    }
-                } catch (Exception ignored) {}
-            }
         }
 
         if (member == null) {
-            MessageEmbed message = new EmbedBuilder()
-                    .setTitle("Swiper Was Spotted Nearby")
-                    .setDescription("Swiper was spotted nearby, be on the lookout for him")
-                    .setColor(Constants.HALOWEEN_ORANGE)
-                    .setImage(NO_SWIPING)
-                    .build();
-
-            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
-                    .get(0)
-                    .sendMessage(message)
-                    .queue();
+            logger.info("Swiper did not find any eligible victim");
             return;
         }
 
