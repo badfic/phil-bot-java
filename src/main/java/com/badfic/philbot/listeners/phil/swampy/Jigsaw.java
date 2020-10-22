@@ -6,6 +6,7 @@ import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.Color;
+import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,11 +20,15 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Jigsaw extends BaseSwampy implements PhilMarker {
+
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final long MAX_POINTS = 51_777;
     private static final String JIGSAW = "https://cdn.discordapp.com/attachments/323666308107599872/767999453969252362/jigsaw.png";
@@ -40,11 +45,15 @@ public class Jigsaw extends BaseSwampy implements PhilMarker {
 
     @Override
     protected void execute(CommandEvent event) {
-        doJigsaw();
+        doJigsaw(event);
     }
 
     @Scheduled(cron = "0 0,15,30,45 * * * ?", zone = "GMT")
-    public void doJigsaw() {
+    public void jigsaw() {
+        doJigsaw(null);
+    }
+
+    private void doJigsaw(CommandEvent event) {
         Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
         if (!optionalConfig.isPresent()) {
             return;
@@ -191,10 +200,10 @@ public class Jigsaw extends BaseSwampy implements PhilMarker {
                         swampyGamesConfigRepository.save(swampyGamesConfig);
                     });
         } else {
-            philJda.getTextChannelsByName(Constants.TEST_CHANNEL, false)
-                    .get(0)
-                    .sendMessage("jigsaw did not find any victims")
-                    .queue();
+            logger.info("Jigsaw did not find any eligible victims");
+            if (event != null) {
+                event.replyError("Jigsaw did not find any eligible victims");
+            }
         }
     }
 

@@ -5,8 +5,8 @@ import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -62,12 +62,10 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
 
     private void doSweepstakes(String role) {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
+        Collections.shuffle(allUsers);
 
-        long startTime = System.currentTimeMillis();
         Member member = null;
-        while (member == null && System.currentTimeMillis() - startTime < TimeUnit.SECONDS.toMillis(30)) {
-            DiscordUser winningUser = pickRandom(allUsers);
-
+        for (DiscordUser winningUser : allUsers) {
             try {
                 Member memberById = philJda.getGuilds().get(0).getMemberById(winningUser.getId());
                 if (memberById != null

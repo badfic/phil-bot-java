@@ -91,7 +91,6 @@ public class UpdateIntroCache extends Command implements PhilMarker {
         }
 
         debug("Successfully updated member introductions cache");
-        throw new RuntimeException("Test exception YOLO");
     }
 
     private void debug(String msg) {
