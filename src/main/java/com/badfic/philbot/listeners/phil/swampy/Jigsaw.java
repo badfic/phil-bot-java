@@ -43,7 +43,7 @@ public class Jigsaw extends BaseSwampy implements PhilMarker {
         doJigsaw();
     }
 
-    @Scheduled(cron = "0 20,35 0,2,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 0,15,30,45 * * * ?", zone = "GMT")
     public void doJigsaw() {
         Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
         if (!optionalConfig.isPresent()) {
@@ -191,16 +191,9 @@ public class Jigsaw extends BaseSwampy implements PhilMarker {
                         swampyGamesConfigRepository.save(swampyGamesConfig);
                     });
         } else {
-            MessageEmbed message = new EmbedBuilder()
-                    .setTitle("Let's Play A Game")
-                    .setDescription("Jigsaw was spotted nearby, keep an eye out")
-                    .setColor(JIGSAW_COLOR)
-                    .setImage(JIGSAW)
-                    .build();
-
-            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
+            philJda.getTextChannelsByName(Constants.TEST_CHANNEL, false)
                     .get(0)
-                    .sendMessage(message)
+                    .sendMessage("jigsaw did not find any victims")
                     .queue();
         }
     }

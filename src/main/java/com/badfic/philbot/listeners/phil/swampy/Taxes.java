@@ -46,7 +46,8 @@ public class Taxes extends BaseSwampy implements PhilMarker {
     }
 
     private void doTaxes(boolean force) {
-        if (!force && ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_TAXES_DOESNT_HAPPEN) {
+//        if (!force && ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_TAXES_DOESNT_HAPPEN) {
+        if (!force) {
             MessageEmbed message = new EmbedBuilder()
                     .setTitle("No taxes today!")
                     .setDescription("Snoop Dogg caught Martha Stewart before she could take taxes from the swamp.")
