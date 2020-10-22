@@ -8,6 +8,7 @@ public interface Constants {
     String EIGHTEEN_PLUS_ROLE = "18+";
     String CHAOS_CHILDREN_ROLE = "Chaos Children";
     String SWAMPYS_CHANNEL = "the-swampys";
+    String TEST_CHANNEL = "test-channel";
 
     Color HALOWEEN_ORANGE = new Color(220, 73, 1);
     Color SWAMP_GREEN = new Color(89, 145, 17);
