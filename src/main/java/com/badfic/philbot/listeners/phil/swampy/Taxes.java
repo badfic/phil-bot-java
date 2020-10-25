@@ -25,10 +25,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class Taxes extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    public static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
-    public static final long PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
-    public static final String TAXES = "https://cdn.discordapp.com/attachments/323666308107599872/761472008734244864/martha_taxes.png";
-    public static final String PERSON_WHO_STOPS_TAXES = "https://cdn.discordapp.com/attachments/323666308107599872/761473370604568606/snoop_no_taxes.png";
+
+    private static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
+    private static final long PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
+    private static final String TAXES = "https://cdn.discordapp.com/attachments/323666308107599872/761472008734244864/martha_taxes.png";
+    private static final String PERSON_WHO_STOPS_TAXES = "https://cdn.discordapp.com/attachments/323666308107599872/761473370604568606/snoop_no_taxes.png";
 
     public Taxes() {
         requiredRole = Constants.ADMIN_ROLE;

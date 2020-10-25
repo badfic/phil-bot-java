@@ -24,14 +24,15 @@ import org.springframework.stereotype.Component;
 public class Swiper extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public static final long SWIPER_POINTS_TO_STEAL = 1_500;
+    private static final long SWIPER_POINTS_TO_STEAL = 1_500;
 
-    public static final String SWIPER_SPOTTED = "https://cdn.discordapp.com/attachments/323666308107599872/761495531498373120/swiper-spotted.jpg";
-    public static final String SWIPER_WON = "https://cdn.discordapp.com/attachments/761398315119280158/765049616412180500/stephen-molyneaux-dora-swiper-1001.png";
-    public static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/707453916882665552/757776008639283321/unknown.png";
-    public static final String SNART_SPOTTED = "https://cdn.discordapp.com/attachments/323666308107599872/758910821950029824/snart_rory.png";
-    public static final String SNART_WON = "https://cdn.discordapp.com/attachments/323666308107599872/758911981176094801/snart_rory_mischief_managed.png";
-    public static final String NO_SNART = "https://cdn.discordapp.com/attachments/323666308107599872/758911984925802516/snart_rory_you_cant_steal_here.png";
+    private static final String SWIPER_SPOTTED = "https://cdn.discordapp.com/attachments/323666308107599872/761495531498373120/swiper-spotted.jpg";
+    private static final String SWIPER_WON = "https://cdn.discordapp.com/attachments/761398315119280158/765049616412180500/stephen-molyneaux-dora-swiper-1001.png";
+    private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/707453916882665552/757776008639283321/unknown.png";
+    private static final String SNART_SPOTTED = "https://cdn.discordapp.com/attachments/323666308107599872/758910821950029824/snart_rory.png";
+    private static final String SNART_WON = "https://cdn.discordapp.com/attachments/323666308107599872/758911981176094801/snart_rory_mischief_managed.png";
+    private static final String NO_SNART = "https://cdn.discordapp.com/attachments/323666308107599872/758911984925802516/snart_rory_you_cant_steal_here.png";
+    private static final String SPIDERMAN_PNG = "https://cdn.discordapp.com/attachments/707453916882665552/769837667617079316/spiderman.png";
 
     public Swiper() {
         requiredRole = Constants.ADMIN_ROLE;
@@ -74,12 +75,21 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                     Optional<DiscordUser> savior = discordUserRepository.findById(swampyGamesConfig.getSwiperSavior());
                     swampyGamesConfig.setSwiperSavior(null);
 
+                    String image;
+                    if (savior.isPresent() && savior.get().getId().equalsIgnoreCase(victim.get().getId())) {
+                        image = SPIDERMAN_PNG;
+                    } else if (StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper")) {
+                        image = NO_SWIPING;
+                    } else {
+                        image = NO_SNART;
+                    }
+
                     message = new EmbedBuilder()
                             .setTitle(noSwipingPhrase)
                             .setDescription("Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
                                     + "> scared them away from <@!" + victim.get().getId() + ">")
                             .setColor(Constants.HALOWEEN_ORANGE)
-                            .setImage(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? NO_SWIPING : NO_SNART)
+                            .setImage(image)
                             .build();
                 } else {
                     try {

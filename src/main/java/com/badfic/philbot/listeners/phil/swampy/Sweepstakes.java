@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class Sweepstakes extends BaseSwampy implements PhilMarker {
 
-    public static final long SWEEPSTAKES_WIN_POINTS = 3_000;
-    public static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/323666308107599872/761467155333644298/sweepstakes_cats.png";
+    private static final long SWEEPSTAKES_WIN_POINTS = 3_000;
+    private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/323666308107599872/761467155333644298/sweepstakes_cats.png";
 
     public Sweepstakes() {
         requiredRole = Constants.ADMIN_ROLE;

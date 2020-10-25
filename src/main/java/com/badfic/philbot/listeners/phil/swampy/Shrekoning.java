@@ -22,10 +22,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class Shrekoning extends BaseSwampy implements PhilMarker {
 
-    public static final Set<Long> COMMON_POINTS = new HashSet<>(Arrays.asList(500L, 1_000L));
-    public static final Set<Long> RARE_POINTS = new HashSet<>(Arrays.asList(2_000L, 4_000L));
-    public static final long LEGENDARY_POINTS = 7_000;
-    public static final String SHREKONING = "https://cdn.discordapp.com/attachments/741053845098201099/763280555793580042/the_shrekoning.png";
+    private static final Set<Long> COMMON_POINTS = new HashSet<>(Arrays.asList(500L, 1_000L));
+    private static final Set<Long> RARE_POINTS = new HashSet<>(Arrays.asList(2_000L, 4_000L));
+    private static final long LEGENDARY_POINTS = 7_000;
+    private static final String SHREKONING = "https://cdn.discordapp.com/attachments/741053845098201099/763280555793580042/the_shrekoning.png";
 
     public Shrekoning() {
         requiredRole = Constants.ADMIN_ROLE;
