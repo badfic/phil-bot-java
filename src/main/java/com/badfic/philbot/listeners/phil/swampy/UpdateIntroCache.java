@@ -43,7 +43,7 @@ public class UpdateIntroCache extends Command implements PhilMarker {
         doUpdateIntroCache();
     }
 
-    @Scheduled(cron = "0 0 * * * ?", zone = "GMT")
+    @Scheduled(cron = "0 0 1,12 * * ?", zone = "GMT")
     public void doUpdateIntroCache() {
         Optional<TextChannel> optionalIntroChannel = philJda.getGuilds().get(0).getTextChannelsByName("introductions", false).stream().findFirst();
 

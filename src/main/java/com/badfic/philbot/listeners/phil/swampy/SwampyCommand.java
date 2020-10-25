@@ -5,7 +5,6 @@ import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
-import com.google.common.collect.ImmutableMap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -41,39 +39,34 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // message/vc/emote points
-    public static final long NORMAL_MSG_POINTS = 5;
-    public static final long CURSED_MSG_POINTS = 10;
-    public static final Set<String> CURSED_MSG_CHANNELS = new HashSet<>(Arrays.asList(
+    private static final long NORMAL_MSG_POINTS = 5;
+    private static final long CURSED_MSG_POINTS = 10;
+    private static final Set<String> CURSED_MSG_CHANNELS = new HashSet<>(Arrays.asList(
             "cursed-swamp",
             "nate-heywoods-simp-hour",
             "thirsty-legends",
             "gay-receipts"
     ));
-    public static final long PICTURE_MSG_POINTS = 150;
-    public static final long CURSED_PICTURE_MSG_POINTS = 250;
-    public static final long REACTION_POINTS = 7;
-    public static final long VOICE_CHAT_POINTS_PER_MINUTE = 5;
-    public static final int NO_NO_WORDS_TAKE_POINTS = 100;
+    private static final long PICTURE_MSG_POINTS = 150;
+    private static final long CURSED_PICTURE_MSG_POINTS = 250;
+    private static final long REACTION_POINTS = 7;
+    private static final long VOICE_CHAT_POINTS_PER_MINUTE = 5;
+    private static final int NO_NO_WORDS_TAKE_POINTS = 100;
 
     // upvote/downvote points
-    public static final long UPVOTE_TIMEOUT_MINUTES = 1;
-    public static final long DOWNVOTE_TIMEOUT_MINUTES = 1;
-    public static final long UPVOTE_POINTS_TO_UPVOTEE = 500;
-    public static final long UPVOTE_POINTS_TO_UPVOTER = 250;
-    public static final long DOWNVOTE_POINTS_FROM_DOWNVOTEE = 100;
-    public static final long DOWNVOTE_POINTS_TO_DOWNVOTER = 50;
+    private static final long UPVOTE_TIMEOUT_MINUTES = 1;
+    private static final long DOWNVOTE_TIMEOUT_MINUTES = 1;
+    private static final long UPVOTE_POINTS_TO_UPVOTEE = 500;
+    private static final long UPVOTE_POINTS_TO_UPVOTER = 250;
+    private static final long DOWNVOTE_POINTS_FROM_DOWNVOTEE = 100;
+    private static final long DOWNVOTE_POINTS_TO_DOWNVOTER = 50;
 
     // Timeouts
-    public static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 3;
-    public static final long SLOTS_TIMEOUT_MINUTES = 3;
+    private static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 3;
+    private static final long SLOTS_TIMEOUT_MINUTES = 3;
 
     // soft point bans
-    public static final Map<String, String> USER_WORD_BAN_SET = ImmutableMap.<String, String>builder()
-            .put("486427102854381568", "I'm out")
-            .put("307663738151108610", "oof")
-            .put("307611036134146080", "nelly")
-            .build();
-    public static final Pattern NO_NO_WORDS = Pattern.compile("\\b(shrantiago|shack|nice|simp|shrony)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NO_NO_WORDS = Pattern.compile("\\b(shrantiago|shack|nice|simp|shrony)\\b", Pattern.CASE_INSENSITIVE);
 
     // volatile state
     private volatile boolean awaitingResetConfirmation = false;
@@ -209,11 +202,6 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             } else if (bonus && now.isAfter(nextMsgBonusTime)) {
                 pointsToGive = PICTURE_MSG_POINTS;
                 discordUser.setLastMessageBonus(now);
-            }
-
-            if (StringUtils.containsIgnoreCase(msgContent, USER_WORD_BAN_SET.get(discordUser.getId()))) {
-                takePointsFromMember(NO_NO_WORDS_TAKE_POINTS, event.getMember());
-                return;
             }
 
             if (NO_NO_WORDS.matcher(msgContent).find()) {

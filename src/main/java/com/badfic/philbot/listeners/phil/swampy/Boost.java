@@ -25,10 +25,10 @@ import org.springframework.stereotype.Component;
 public class Boost extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public static final long BOOST_POINTS_TO_GIVE = 1_000;
-    public static final long PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR = 15;
-    public static final String BOOST_START = "https://cdn.discordapp.com/attachments/323666308107599872/761492230379798538/BOOST.png";
-    public static final String BOOST_END = "https://cdn.discordapp.com/attachments/323666308107599872/761494374445219850/stan_loona_goddess.png";
+    private static final long BOOST_POINTS_TO_GIVE = 1_000;
+    private static final long PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR = 15;
+    private static final String BOOST_START = "https://cdn.discordapp.com/attachments/323666308107599872/761492230379798538/BOOST.png";
+    private static final String BOOST_END = "https://cdn.discordapp.com/attachments/323666308107599872/761494374445219850/stan_loona_goddess.png";
 
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;

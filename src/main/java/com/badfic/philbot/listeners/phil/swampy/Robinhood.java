@@ -26,10 +26,10 @@ import org.springframework.stereotype.Component;
 public class Robinhood extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
-    public static final long PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
-    public static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761475204702535680/oprah_refund_robinhood.png";
-    public static final String PERSON_WHO_STOPS_ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761477965586366484/george_lopez_stop_oprah.png";
+    private static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
+    private static final long PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
+    private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761475204702535680/oprah_refund_robinhood.png";
+    private static final String PERSON_WHO_STOPS_ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761477965586366484/george_lopez_stop_oprah.png";
 
     public Robinhood() {
         requiredRole = Constants.ADMIN_ROLE;
