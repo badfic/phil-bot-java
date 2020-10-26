@@ -22,7 +22,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -48,7 +47,7 @@ public class Jigsaw extends BaseSwampy implements PhilMarker {
         doJigsaw(event);
     }
 
-    @Scheduled(cron = "0 0,15,30,45 * * * ?", zone = "GMT")
+//    @Scheduled(cron = "0 0,15,30,45 * * * ?", zone = "GMT")
     public void jigsaw() {
         doJigsaw(null);
     }
