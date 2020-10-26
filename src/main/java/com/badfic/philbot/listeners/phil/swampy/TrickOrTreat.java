@@ -48,7 +48,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                 try {
                     Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                     if (memberById != null && !memberById.getUser().isBot()) {
-                        if (ThreadLocalRandom.current().nextInt() % 2 == 0 || hasRole(memberById, Constants.CHAOS_CHILDREN_ROLE)) {
+                        if (ThreadLocalRandom.current().nextInt() % 2 == 0) {
                             futures.add(givePointsToMember(TRICK_OR_TREAT_POINTS, memberById));
                             totalGiven += TRICK_OR_TREAT_POINTS;
 

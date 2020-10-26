@@ -16,7 +16,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,7 +36,7 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
         shrekoning();
     }
 
-    @Scheduled(cron = "0 37 4 * * ?", zone = "GMT")
+//    @Scheduled(cron = "0 37 4 * * ?", zone = "GMT")
     public void shrekoning() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
 
