@@ -1,3 +1,5 @@
+![](https://quay.io/repository/badfic/phil-bot-java/status)
+
 Start up postgres before running
 
 `docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres`
