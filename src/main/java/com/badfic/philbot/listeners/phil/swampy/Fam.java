@@ -83,6 +83,10 @@ public class Fam extends BaseSwampy implements PhilMarker {
             addEx(event);
         } else if (args.startsWith("remove ex")) {
             removeEx(event);
+        } else if (args.startsWith("add cousin")) {
+            addCousin(event);
+        } else if (args.startsWith("remove cousin")) {
+            removeCousin(event);
         } else if (args.startsWith("adopt child")) {
             adoptChild(event);
         } else if (args.startsWith("disown child")) {
@@ -171,6 +175,16 @@ public class Fam extends BaseSwampy implements PhilMarker {
     private void removeEx(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "remove ex", discordUser, "getExes", false);
+    }
+
+    private void addCousin(CommandEvent event) {
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "add cousin", discordUser, "getCousins", true);
+    }
+
+    private void removeCousin(CommandEvent event) {
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "remove cousin", discordUser, "getCousins", false);
     }
 
     private void adoptParent(CommandEvent event) {
@@ -356,6 +370,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
         append(family::getParents, "**Parents**", description);
         append(family::getGrandparents, "**Grandparents**", description);
         append(family::getSiblings, "**Siblings**", description);
+        append(family::getCousins, "**Cousins**", description);
         description.append("\n\nRandom family member spotlight: ");
 
         try {
@@ -385,6 +400,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
         allMembers.addAll(getMemberSet(family.getParents(), event));
         allMembers.addAll(getMemberSet(family.getGrandparents(), event));
         allMembers.addAll(getMemberSet(family.getSiblings(), event));
+        allMembers.addAll(getMemberSet(family.getCousins(), event));
 
         return pickRandom(allMembers);
     }

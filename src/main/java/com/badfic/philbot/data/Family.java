@@ -14,6 +14,7 @@ public class Family {
     private Set<String> grandparents = new HashSet<>();
     private Set<String> parents = new HashSet<>();
     private Set<String> siblings = new HashSet<>();
+    private Set<String> cousins = new HashSet<>();
 
     public String getIntro() {
         return intro;
@@ -77,5 +78,13 @@ public class Family {
 
     public void setSiblings(Set<String> siblings) {
         this.siblings = siblings;
+    }
+
+    public Set<String> getCousins() {
+        return cousins;
+    }
+
+    public void setCousins(Set<String> cousins) {
+        this.cousins = cousins;
     }
 }
