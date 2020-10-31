@@ -44,24 +44,20 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder("Shrek has infiltrated the swamp! He's giving \uD83E\uDDC5 \uD83E\uDDC5 \uD83E\uDDC5 " +
-                "to all the chaos children!\n\n");
+                "to all of the not-top-10 chaos children!\n\n");
 
         allUsers.stream()
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
+                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24)))
                 .filter(u -> {
                     Member m = philJda.getGuilds().get(0).getMemberById(u.getId());
-                    return m != null && hasRole(m, Constants.CHAOS_CHILDREN_ROLE);
+                    return m != null && !m.getUser().isBot() && hasRole(m, Constants.CHAOS_CHILDREN_ROLE);
                 })
                 .skip(10)
                 .forEachOrdered(user -> {
                     try {
                         Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
-                        if (memberById != null
-                                && !memberById.getUser().isBot()
-                                && hasRole(memberById, Constants.CHAOS_CHILDREN_ROLE)
-                                && user.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD
-                                && user.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
-
+                        if (memberById != null) {
                             long points;
                             if (ThreadLocalRandom.current().nextInt(100) < 25) {
                                 points = pickRandom(RARE_POINTS);
