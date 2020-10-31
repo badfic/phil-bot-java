@@ -145,7 +145,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         swampyGamesConfig = swampyGamesConfigRepository.save(swampyGamesConfig);
 
         String description = "They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
-                + "' in this channel to stop them!";
+                + "' in this channel within 15 minutes to stop them!";
 
         MessageEmbed message = new EmbedBuilder()
                 .setTitle(swiper ? "Swiper Was Spotted Nearby" : "Rory and Snart Were Spotted Nearby")
