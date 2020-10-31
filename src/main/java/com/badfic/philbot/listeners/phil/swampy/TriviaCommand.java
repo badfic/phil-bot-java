@@ -152,7 +152,7 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
                         .append(user.getId())
                         .append(">\n");
                 if (points < 1) {
-                    takePointsFromMember(points, memberById);
+                    takePointsFromMember(points * -1, memberById);
                 } else {
                     givePointsToMember(points, memberById);
                 }
