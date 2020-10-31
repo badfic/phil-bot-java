@@ -110,7 +110,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
 
             MessageEmbed message = new EmbedBuilder()
                     .setTitle("BOOST BLITZ")
-                    .setDescription("Type `" + boostPhrase + "` in this channel within the next hour to be boosted by "
+                    .setDescription("Type `" + boostPhrase + "` in this channel before the top of the hour to be boosted by "
                             + BOOST_POINTS_TO_GIVE + " points")
                     .setImage(BOOST_START)
                     .setColor(Constants.HALOWEEN_ORANGE)
