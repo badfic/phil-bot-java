@@ -1,10 +1,12 @@
 package com.badfic.philbot.listeners;
 
+import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Member;
 
 public abstract class BaseTalk extends Command {
 
@@ -18,6 +20,12 @@ public abstract class BaseTalk extends Command {
     @Override
     public void execute(CommandEvent event) {
         if (event.getChannelType() != ChannelType.PRIVATE) {
+            return;
+        }
+
+        Member memberById = getJda().getGuilds().get(0).getMemberById(event.getAuthor().getId());
+        if (memberById == null || memberById.getRoles().stream().noneMatch(r -> r.getName().equalsIgnoreCase(Constants.ADMIN_ROLE))) {
+            event.replyError("Failed, either you're not an admin or you left the server or the member cache is broken");
             return;
         }
 

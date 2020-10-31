@@ -2,6 +2,7 @@ package com.badfic.philbot.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -86,5 +87,26 @@ public class Family {
 
     public void setCousins(Set<String> cousins) {
         this.cousins = cousins;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Family family = (Family) o;
+        return Objects.equals(intro, family.intro) &&
+                Objects.equals(spouses, family.spouses) &&
+                Objects.equals(exes, family.exes) &&
+                Objects.equals(children, family.children) &&
+                Objects.equals(grandchildren, family.grandchildren) &&
+                Objects.equals(grandparents, family.grandparents) &&
+                Objects.equals(parents, family.parents) &&
+                Objects.equals(siblings, family.siblings) &&
+                Objects.equals(cousins, family.cousins);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(intro, spouses, exes, children, grandchildren, grandparents, parents, siblings, cousins);
     }
 }

@@ -111,6 +111,9 @@ public class BaseConfig {
     @Value("${OWNER_ID}")
     public String ownerId;
 
+    @Value("${HOSTNAME}")
+    public String hostname;
+
     @Bean
     public ScheduledExecutorService childBotExecutor() {
         return Executors.newSingleThreadScheduledExecutor();
