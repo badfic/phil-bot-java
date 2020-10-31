@@ -24,7 +24,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -156,10 +155,15 @@ public abstract class BaseSwampy extends Command {
         return ImmutablePair.of(newRole, future);
     }
 
-    protected MessageEmbed simpleEmbed(String title, String format, Object... args) {
+    protected MessageEmbed simpleEmbed(String title, String description) {
+        return simpleEmbed(title, description, null);
+    }
+
+    protected MessageEmbed simpleEmbed(String title, String description, String image) {
         return new EmbedBuilder()
                 .setTitle(title)
-                .setDescription(ArrayUtils.isNotEmpty(args) ? String.format(format, args) : format)
+                .setDescription(description)
+                .setImage(image)
                 .setColor(Constants.HALOWEEN_ORANGE)
                 .build();
     }

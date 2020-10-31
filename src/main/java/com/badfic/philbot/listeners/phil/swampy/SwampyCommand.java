@@ -291,15 +291,15 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
         if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
             givePointsToMember(SLOTS_WIN_POINTS, member, discordUser);
-            event.reply(simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, "%s\n%s%s%s \nYou won " + SLOTS_WIN_POINTS + " points!",
-                    member.getAsMention(), one, two, three));
+            event.reply(simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou won " + SLOTS_WIN_POINTS + " points!",
+                    member.getAsMention(), one, two, three)));
         } else if (one.equalsIgnoreCase(two) || one.equalsIgnoreCase(three) || two.equalsIgnoreCase(three)) {
             givePointsToMember(SLOTS_TWO_OUT_OF_THREE_POINTS, member, discordUser);
-            event.reply(simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, "%s\n%s%s%s \nYou got 2 out of 3! You won " + SLOTS_TWO_OUT_OF_THREE_POINTS + " points!",
-                    member.getAsMention(), one, two, three));
+            event.reply(simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou got 2 out of 3! You won " + SLOTS_TWO_OUT_OF_THREE_POINTS + " points!",
+                    member.getAsMention(), one, two, three)));
         } else {
-            event.reply(simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, "%s\n%s%s%s",
-                    member.getAsMention(), one, two, three));
+            event.reply(simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, String.format("%s\n%s%s%s",
+                    member.getAsMention(), one, two, three)));
             discordUserRepository.save(discordUser);
         }
     }

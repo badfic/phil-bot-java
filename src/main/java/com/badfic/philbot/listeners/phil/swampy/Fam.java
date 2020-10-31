@@ -48,6 +48,8 @@ public class Fam extends BaseSwampy implements PhilMarker {
                 "`!!fam disown parent Somebody`: Remove a parent\n" +
                 "`!!fam adopt grandparent Somebody`: Add a grandparent\n" +
                 "`!!fam disown grandparent Somebody`: Remove a grandparent\n" +
+                "`!!fam add cousin Somebody`: Add a cousin\n" +
+                "`!!fam remove cousin Somebody`: Remove a cousin\n" +
                 "`!!fam adopt sibling Somebody`: Add a sibling\n" +
                 "`!!fam disown sibling Somebody`: Remove a sibling\n";
         modHelp = help +
