@@ -3,12 +3,14 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
+import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -47,6 +49,12 @@ public class Taxes extends BaseSwampy implements PhilMarker {
     }
 
     private void doTaxes(boolean force) {
+        Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
+        if (!optionalConfig.isPresent()) {
+            return;
+        }
+        SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
+
         if (!force && ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_TAXES_DOESNT_HAPPEN) {
             MessageEmbed message = new EmbedBuilder()
                     .setTitle("No taxes today!")
@@ -96,6 +104,9 @@ public class Taxes extends BaseSwampy implements PhilMarker {
                 }
             }
         }
+
+        swampyGamesConfig.setMostRecentTaxes(totalTaxes);
+        swampyGamesConfigRepository.save(swampyGamesConfig);
 
         MessageEmbed message = new EmbedBuilder()
                 .setTitle("Tax time! " + NumberFormat.getIntegerInstance().format(totalTaxes) + " points in taxes have been paid to Martha Stewart")
