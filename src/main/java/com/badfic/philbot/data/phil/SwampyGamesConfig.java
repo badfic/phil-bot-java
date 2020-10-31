@@ -1,5 +1,6 @@
 package com.badfic.philbot.data.phil;
 
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -30,6 +31,12 @@ public class SwampyGamesConfig {
 
     @Column
     private long mostRecentTaxes;
+
+    @Column
+    private String triviaMsgId;
+
+    @Column
+    private UUID triviaGuid;
 
     public Short getId() {
         return id;
@@ -87,4 +94,19 @@ public class SwampyGamesConfig {
         this.mostRecentTaxes = mostRecentTaxes;
     }
 
+    public void setTriviaMsgId(String triviaMsgId) {
+        this.triviaMsgId = triviaMsgId;
+    }
+
+    public String getTriviaMsgId() {
+        return triviaMsgId;
+    }
+
+    public UUID getTriviaGuid() {
+        return triviaGuid;
+    }
+
+    public void setTriviaGuid(UUID triviaGuid) {
+        this.triviaGuid = triviaGuid;
+    }
 }
