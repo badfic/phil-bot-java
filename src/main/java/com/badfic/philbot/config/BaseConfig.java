@@ -183,7 +183,7 @@ public class BaseConfig {
                 .useHelpBuilder(false)
                 .addCommands(commands.stream().filter(c -> c instanceof PhilMarker).toArray(Command[]::new))
                 .setActivity(Activity.playing("with our feelings"))
-                .setEmojis("\uD83C\uDF83", "⚠️", "\uD83D\uDC80")
+                .setEmojis("\uD83E\uDD83", "⚠️", "\uD83D\uDD2A")
                 .build();
     }
 
