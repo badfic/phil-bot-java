@@ -44,14 +44,6 @@ public class Stonks extends BaseSwampy implements PhilMarker {
 
     @Scheduled(cron = "0 37 3 * * ?", zone = "GMT")
     public void stonks() {
-        // todo remove
-        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
-           channel.sendMessage(simpleEmbed("Stonks", "Coming soon to a swamp near you...", pickRandom(STONKS))).queue();
-        });
-        if (true) {
-            return;
-        }
-
         Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
         if (!optionalConfig.isPresent()) {
             return;
