@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -47,7 +46,6 @@ public class SpookyGifScheduled extends BaseSwampy implements PhilMarker {
         spookyGif();
     }
 
-    @Scheduled(cron = "0 58 0,4,8,12,16,20 * * ?", zone = "GMT")
     public void spookyGif() {
         String gif = pickRandom(GIFS);
         philJda.getTextChannelsByName("general", false).stream().findAny().ifPresent(channel -> {
