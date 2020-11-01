@@ -28,7 +28,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
     private static final String SWIPER_SPOTTED = "https://cdn.discordapp.com/attachments/323666308107599872/761495531498373120/swiper-spotted.jpg";
     private static final String SWIPER_WON = "https://cdn.discordapp.com/attachments/761398315119280158/765049616412180500/stephen-molyneaux-dora-swiper-1001.png";
-    private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/707453916882665552/757776008639283321/unknown.png";
+    private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/752665380182425677/772352107042701352/ddf.png";
     private static final String SNART_SPOTTED = "https://cdn.discordapp.com/attachments/323666308107599872/758910821950029824/snart_rory.png";
     private static final String SNART_WON = "https://cdn.discordapp.com/attachments/323666308107599872/758911981176094801/snart_rory_mischief_managed.png";
     private static final String NO_SNART = "https://cdn.discordapp.com/attachments/323666308107599872/758911984925802516/snart_rory_you_cant_steal_here.png";
