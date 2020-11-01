@@ -97,14 +97,9 @@ public class Boost extends BaseSwampy implements PhilMarker {
         }
 
         if (force || ThreadLocalRandom.current().nextInt(100) < PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR) {
-            String boostPhrase = pickRandom(Arrays.asList("boost", "yeet", "simp", "swamp", "spooner", "grapefruit", "thicc", "ranch", "bounce", "hard", "firm",
-                    "loose", "rub", "moist", "wet", "damp", "wap", "spooky", "season", "pumpkin", "skeleton", "vampire", "bat", "coffin", "trick", "treat",
-                    "harvest", "ghost", "skull", "spirit", "halloween", "costume", "afraid", "cat", "witch", "magic", "boo", "broomstick", "boogeyman",
-                    "corpse", "casket", "cloak", "creepy", "devil", "dark", "demon", "prank", "darkness", "evil", "death", "goblin", "zombie", "spider",
-                    "fog", "karl", "gruesome", "grave", "goodies", "haunted", "howl", "horror", "spoopy", "horrifying", "macabre", "masquerade", "mist",
-                    "moon", "morbid", "midnight", "mummy", "nightmare", "night", "ogre", "october", "petrify", "phantom", "rip", "scarecrow", "scare",
-                    "fright", "scary", "scream", "shadow", "startled", "web", "sweets", "supernatural", "tomb", "wand", "wicked", "witch", "wizard", "wraith",
-                    "warlock", "sorcerer"));
+            String boostPhrase = pickRandom(Arrays.asList("butter", "shortening", "lard", "ghee", "oleo", "spread", "thanks", "giving", "family", "turkey",
+                    "feet", "foot", "stuffing", "cranberry", "cornbread", "bird", "greenbean", "stringbean", "rice", "pumpkin", "pie", "apple", "gravy",
+                    "potato", "corn", "maze", "maize", "stonks", "stimulus", "baster", "turducken", "scarecrow", "butters"));
             swampyGamesConfig.setBoostPhrase(boostPhrase);
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
