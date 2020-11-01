@@ -95,6 +95,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
     @PostConstruct
     public void init() {
+        Rank.init();
+
         // seed swampy games config data
         Optional<SwampyGamesConfig> optionalConfig = this.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
         if (!optionalConfig.isPresent()) {
@@ -318,7 +320,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         DiscordUser user = getDiscordUserByMember(member);
         Role role = assignRolesIfNeeded(member, user).getLeft();
 
-        Rank[] allRanks = Rank.values();
+        Rank[] allRanks = Rank.getAllRanks();
         Rank rank = Rank.byXp(user.getXp());
         Rank nextRank = (rank.ordinal() > allRanks.length - 1) ? rank : allRanks[rank.ordinal() + 1];
 
