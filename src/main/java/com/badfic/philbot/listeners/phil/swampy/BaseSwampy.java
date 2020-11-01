@@ -138,7 +138,7 @@ public abstract class BaseSwampy extends Command {
                 logger.error("Failed to add new role {} to member {}", newRole.getName(), member.getEffectiveName(), e);
             }
 
-            if (newRank != Rank.CINNAMON_ROLL) {
+            if (newRank.ordinal() != 0) {
                 TextChannel announcementsChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
                 MessageEmbed messageEmbed = new EmbedBuilder()
