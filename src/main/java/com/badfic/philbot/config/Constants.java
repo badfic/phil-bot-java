@@ -10,6 +10,6 @@ public interface Constants {
     String SWAMPYS_CHANNEL = "the-swampys";
     String TEST_CHANNEL = "test-channel";
 
-    Color HALOWEEN_ORANGE = new Color(220, 73, 1);
+    Color COLOR_OF_THE_MONTH = new Color(225, 168, 0);
     Color SWAMP_GREEN = new Color(89, 145, 17);
 }

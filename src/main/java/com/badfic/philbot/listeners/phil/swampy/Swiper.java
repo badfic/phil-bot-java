@@ -66,7 +66,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
             MessageEmbed message = new EmbedBuilder()
                     .setTitle(noSwipingPhrase)
                     .setDescription("Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points")
-                    .setColor(Constants.HALOWEEN_ORANGE)
+                    .setColor(Constants.COLOR_OF_THE_MONTH)
                     .setImage(NO_SWIPING)
                     .build();
 
@@ -88,7 +88,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                             .setTitle(noSwipingPhrase)
                             .setDescription("Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
                                     + "> scared them away from <@!" + victim.get().getId() + ">")
-                            .setColor(Constants.HALOWEEN_ORANGE)
+                            .setColor(Constants.COLOR_OF_THE_MONTH)
                             .setImage(image)
                             .build();
                 } else {
@@ -100,7 +100,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                             message = new EmbedBuilder()
                                     .setTitle(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? "Swiper Escaped!" : "Rory and Snart Escaped!")
                                     .setDescription("You didn't save <@!" + victim.get().getId() + "> in time, they lost " + SWIPER_POINTS_TO_STEAL + " points")
-                                    .setColor(Constants.HALOWEEN_ORANGE)
+                                    .setColor(Constants.COLOR_OF_THE_MONTH)
                                     .setImage(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? SWIPER_WON : SNART_WON)
                                     .build();
                         }
@@ -150,7 +150,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         MessageEmbed message = new EmbedBuilder()
                 .setTitle(swiper ? "Swiper Was Spotted Nearby" : "Rory and Snart Were Spotted Nearby")
                 .setDescription(description)
-                .setColor(Constants.HALOWEEN_ORANGE)
+                .setColor(Constants.COLOR_OF_THE_MONTH)
                 .setImage(swiper ? SWIPER_SPOTTED : SNART_SPOTTED)
                 .build();
 

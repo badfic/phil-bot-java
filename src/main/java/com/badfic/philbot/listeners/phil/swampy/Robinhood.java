@@ -28,8 +28,8 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
 
     private static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
     private static final long PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
-    private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761475204702535680/oprah_refund_robinhood.png";
-    private static final String PERSON_WHO_STOPS_ROBINHOOD = "https://cdn.discordapp.com/attachments/323666308107599872/761477965586366484/george_lopez_stop_oprah.png";
+    private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/587078427400732682/772345794418180107/robinhood_tg.png";
+    private static final String PERSON_WHO_STOPS_ROBINHOOD = "https://cdn.discordapp.com/attachments/587078427400732682/772345791636307978/no_robinhood_tg.png";
 
     public Robinhood() {
         requiredRole = Constants.ADMIN_ROLE;
@@ -49,10 +49,10 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
     private void doRobinhood(boolean force) {
         if (!force && ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN) {
             MessageEmbed message = new EmbedBuilder()
-                    .setTitle("Wapa!!!")
-                    .setDescription("George Lopez caught Oprah while she was trying to return taxes to the swamp.")
+                    .setTitle("I NEED TO SPEAK TO THE MANAGER!!!")
+                    .setDescription("Saundra Lee caught Guy while he was trying to return taxes to the swamp.")
                     .setImage(PERSON_WHO_STOPS_ROBINHOOD)
-                    .setColor(Constants.HALOWEEN_ORANGE)
+                    .setColor(Constants.COLOR_OF_THE_MONTH)
                     .build();
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
@@ -105,7 +105,7 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
                 .setTitle(title)
                 .setDescription(description.toString())
                 .setImage(ROBINHOOD)
-                .setColor(Constants.HALOWEEN_ORANGE)
+                .setColor(Constants.COLOR_OF_THE_MONTH)
                 .build();
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {

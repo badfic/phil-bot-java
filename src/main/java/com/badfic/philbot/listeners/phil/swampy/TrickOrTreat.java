@@ -23,7 +23,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final int TRICK_OR_TREAT_POINTS = 500;
-    private static final String TRICK_OR_TREAT = "https://cdn.discordapp.com/attachments/323666308107599872/761499236940251136/trick_or_treat.png";
+    private static final String TRICK_OR_TREAT = "https://cdn.discordapp.com/attachments/587078427400732682/772345787027816458/checkedout_ortrampled_tg.png";
 
     public TrickOrTreat() {
         requiredRole = Constants.ADMIN_ROLE;
@@ -53,7 +53,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                             totalGiven += TRICK_OR_TREAT_POINTS;
 
                             description
-                                    .append("\uD83C\uDF6C gave ")
+                                    .append("\uD83D\uDED2 got the deal ")
                                     .append(NumberFormat.getIntegerInstance().format(TRICK_OR_TREAT_POINTS))
                                     .append(" points to <@!")
                                     .append(user.getId())
@@ -63,7 +63,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                             totalTaken += TRICK_OR_TREAT_POINTS;
 
                             description
-                                    .append("\uD83D\uDC80 took ")
+                                    .append("\uD83D\uDEA7 got trampled ")
                                     .append(NumberFormat.getIntegerInstance().format(TRICK_OR_TREAT_POINTS))
                                     .append(" points from <@!")
                                     .append(user.getId())
@@ -81,12 +81,12 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                 .append(" points and took ")
                 .append(NumberFormat.getIntegerInstance().format(totalTaken));
 
-        String title = "\uD83C\uDF6C Trick Or Treat! \uD83C\uDF6C";
+        String title = "\uD83D\uDED2 Checkout or Trampled! \uD83D\uDEA7";
         MessageEmbed message = new EmbedBuilder()
                 .setTitle(title)
                 .setDescription(description.toString())
                 .setImage(TRICK_OR_TREAT)
-                .setColor(Constants.HALOWEEN_ORANGE)
+                .setColor(Constants.COLOR_OF_THE_MONTH)
                 .build();
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {

@@ -381,7 +381,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
             MessageEmbed msg = new EmbedBuilder()
                     .setTitle(member.getEffectiveName() + "'s Family")
                     .setDescription(description.toString())
-                    .setColor(Constants.HALOWEEN_ORANGE)
+                    .setColor(Constants.COLOR_OF_THE_MONTH)
                     .setImage(familyMember.getUser().getEffectiveAvatarUrl())
                     .build();
 

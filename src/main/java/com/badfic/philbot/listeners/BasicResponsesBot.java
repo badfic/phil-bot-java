@@ -268,7 +268,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         return new EmbedBuilder()
                 .setTitle(title)
                 .setDescription(String.format(format, args))
-                .setColor(Constants.HALOWEEN_ORANGE)
+                .setColor(Constants.COLOR_OF_THE_MONTH)
                 .build();
     }
 
