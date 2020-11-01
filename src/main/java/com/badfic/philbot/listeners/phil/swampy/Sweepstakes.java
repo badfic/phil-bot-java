@@ -91,7 +91,7 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
         MessageEmbed message = new EmbedBuilder()
                 .setTitle(role + " Sweepstakes Results")
                 .setImage(SWEEPSTAKES)
-                .setColor(Constants.HALOWEEN_ORANGE)
+                .setColor(Constants.COLOR_OF_THE_MONTH)
                 .setDescription(String.format("Congratulations %s you won today's sweepstakes worth 4000 points!", member.getAsMention()))
                 .build();
 

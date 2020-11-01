@@ -27,8 +27,8 @@ public class Boost extends BaseSwampy implements PhilMarker {
 
     private static final long BOOST_POINTS_TO_GIVE = 1_000;
     private static final long PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR = 15;
-    private static final String BOOST_START = "https://cdn.discordapp.com/attachments/323666308107599872/761492230379798538/BOOST.png";
-    private static final String BOOST_END = "https://cdn.discordapp.com/attachments/323666308107599872/761494374445219850/stan_loona_goddess.png";
+    private static final String BOOST_START = "https://cdn.discordapp.com/attachments/587078427400732682/772345771885985842/booawoost_tg.png";
+    private static final String BOOST_END = "https://cdn.discordapp.com/attachments/587078427400732682/772345775556132864/boostend_tg.png";
 
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;
@@ -88,7 +88,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
                     .setImage(BOOST_END)
                     .setTitle("Boost Blitz Complete")
                     .setDescription(description.toString())
-                    .setColor(Constants.HALOWEEN_ORANGE)
+                    .setColor(Constants.COLOR_OF_THE_MONTH)
                     .build();
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
@@ -108,7 +108,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
                     .setDescription("Type `" + boostPhrase + "` in this channel before the top of the hour to be boosted by "
                             + BOOST_POINTS_TO_GIVE + " points")
                     .setImage(BOOST_START)
-                    .setColor(Constants.HALOWEEN_ORANGE)
+                    .setColor(Constants.COLOR_OF_THE_MONTH)
                     .build();
 
             swampysChannel.sendMessage(message).queue();

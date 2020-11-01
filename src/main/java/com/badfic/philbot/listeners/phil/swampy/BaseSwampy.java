@@ -164,7 +164,7 @@ public abstract class BaseSwampy extends Command {
                 .setTitle(title)
                 .setDescription(description)
                 .setImage(image)
-                .setColor(Constants.HALOWEEN_ORANGE)
+                .setColor(Constants.COLOR_OF_THE_MONTH)
                 .build();
     }
 

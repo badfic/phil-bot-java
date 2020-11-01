@@ -84,7 +84,7 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
         MessageEmbed message = new EmbedBuilder()
                 .setTitle("The Shrekoning")
                 .setImage(SHREKONING)
-                .setColor(Constants.HALOWEEN_ORANGE)
+                .setColor(Constants.COLOR_OF_THE_MONTH)
                 .setDescription(description.toString())
                 .build();
 

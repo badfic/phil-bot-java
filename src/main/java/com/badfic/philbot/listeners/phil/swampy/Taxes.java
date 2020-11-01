@@ -30,8 +30,8 @@ public class Taxes extends BaseSwampy implements PhilMarker {
 
     private static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
     private static final long PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
-    private static final String TAXES = "https://cdn.discordapp.com/attachments/323666308107599872/761472008734244864/martha_taxes.png";
-    private static final String PERSON_WHO_STOPS_TAXES = "https://cdn.discordapp.com/attachments/323666308107599872/761473370604568606/snoop_no_taxes.png";
+    private static final String TAXES = "https://cdn.discordapp.com/attachments/587078427400732682/772345794593685524/taxes_tg.png";
+    private static final String PERSON_WHO_STOPS_TAXES = "https://cdn.discordapp.com/attachments/587078427400732682/772345792676495371/no_tax_tg.png";
 
     public Taxes() {
         requiredRole = Constants.ADMIN_ROLE;
@@ -58,9 +58,9 @@ public class Taxes extends BaseSwampy implements PhilMarker {
         if (!force && ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_TAXES_DOESNT_HAPPEN) {
             MessageEmbed message = new EmbedBuilder()
                     .setTitle("No taxes today!")
-                    .setDescription("Snoop Dogg caught Martha Stewart before she could take taxes from the swamp.")
+                    .setDescription("Snoop Dogg caught Paula Deen before she could take taxes from the swamp.")
                     .setImage(PERSON_WHO_STOPS_TAXES)
-                    .setColor(Constants.HALOWEEN_ORANGE)
+                    .setColor(Constants.COLOR_OF_THE_MONTH)
                     .build();
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
@@ -109,10 +109,10 @@ public class Taxes extends BaseSwampy implements PhilMarker {
         swampyGamesConfigRepository.save(swampyGamesConfig);
 
         MessageEmbed message = new EmbedBuilder()
-                .setTitle("Tax time! " + NumberFormat.getIntegerInstance().format(totalTaxes) + " points in taxes have been paid to Martha Stewart")
+                .setTitle("Tax time! " + NumberFormat.getIntegerInstance().format(totalTaxes) + " points in taxes have been paid to Paula Deen")
                 .setDescription(description.toString())
                 .setImage(TAXES)
-                .setColor(Constants.HALOWEEN_ORANGE)
+                .setColor(Constants.COLOR_OF_THE_MONTH)
                 .build();
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
