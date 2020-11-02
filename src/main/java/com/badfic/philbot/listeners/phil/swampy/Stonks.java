@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -52,14 +53,13 @@ public class Stonks extends BaseSwampy implements PhilMarker {
 
         List<DiscordUser> allUsers = discordUserRepository.findAll();
 
-        MutableLong totalBastards = new MutableLong(0);
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder("Stonky? has infiltrated the swamp, giving \uD83D\uDCC8 \uD83D\uDCC8 \uD83D\uDCC8 " +
                 "to all of the not-top-10 bastards!\n" +
                 "There's a very complicated formula involving how many taxes were paid, but the min per user is 500 and the max is 4,000\n\n");
 
-        allUsers.stream()
+        List<DiscordUser> filteredUsers = allUsers.stream()
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
                 .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24)))
                 .filter(u -> {
@@ -67,25 +67,27 @@ public class Stonks extends BaseSwampy implements PhilMarker {
                     return m != null && !m.getUser().isBot() && hasRole(m, Constants.EIGHTEEN_PLUS_ROLE);
                 })
                 .skip(10)
-                .peek(u -> totalBastards.increment())
-                .forEachOrdered(user -> {
-                    try {
-                        long mostRecentTaxes = swampyGamesConfig.getMostRecentTaxes();
-                        long pointsToGive = Math.min(THEORETICAL_MAX, Math.max(500, mostRecentTaxes / totalBastards.getValue()));
+                .collect(Collectors.toList());
 
-                        Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
-                        if (memberById != null) {
-                            futures.add(givePointsToMember(pointsToGive, memberById));
-                            totalPointsGiven.add(pointsToGive);
-                            description
-                                    .append(NumberFormat.getIntegerInstance().format(pointsToGive))
-                                    .append(" \uD83D\uDCC8")
-                                    .append(" for <@!")
-                                    .append(user.getId())
-                                    .append(">\n");
-                        }
-                    } catch (Exception ignored) {}
-                });
+        int totalBastards = filteredUsers.size();
+        for (DiscordUser user : filteredUsers) {
+            try {
+                long mostRecentTaxes = swampyGamesConfig.getMostRecentTaxes();
+                long pointsToGive = Math.min(THEORETICAL_MAX, Math.max(500, mostRecentTaxes / totalBastards));
+
+                Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
+                if (memberById != null) {
+                    futures.add(givePointsToMember(pointsToGive, memberById));
+                    totalPointsGiven.add(pointsToGive);
+                    description
+                            .append(NumberFormat.getIntegerInstance().format(pointsToGive))
+                            .append(" \uD83D\uDCC8")
+                            .append(" for <@!")
+                            .append(user.getId())
+                            .append(">\n");
+                }
+            } catch (Exception ignored) {}
+        }
 
         description.append("\nStonky? gave a total of ")
                 .append(NumberFormat.getIntegerInstance().format(totalPointsGiven.getValue()))
