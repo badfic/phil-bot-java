@@ -4,11 +4,17 @@ import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Member;
+import org.springframework.context.annotation.Lazy;
 
 public abstract class BaseTalk extends Command {
+
+    @Resource(name = "philJda")
+    @Lazy
+    protected JDA philJda;
 
     public BaseTalk(String name) {
         this.name = name;
@@ -23,7 +29,7 @@ public abstract class BaseTalk extends Command {
             return;
         }
 
-        Member memberById = getJda().getGuilds().get(0).getMemberById(event.getAuthor().getId());
+        Member memberById = philJda.getGuilds().get(0).getMemberById(event.getAuthor().getId());
         if (memberById == null || memberById.getRoles().stream().noneMatch(r -> r.getName().equalsIgnoreCase(Constants.ADMIN_ROLE))) {
             event.replyError("Failed, either you're not an admin or you left the server or the member cache is broken");
             return;
