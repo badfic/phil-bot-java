@@ -45,7 +45,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             "cursed-swamp",
             "nate-heywoods-simp-hour",
             "thirsty-legends",
-            "gay-receipts"
+            "gay-receipts",
+            "the-swampys"
     ));
     private static final long PICTURE_MSG_POINTS = 150;
     private static final long CURSED_PICTURE_MSG_POINTS = 250;
@@ -66,7 +67,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     private static final long SLOTS_TIMEOUT_MINUTES = 3;
 
     // soft point bans
-    private static final Pattern NO_NO_WORDS = Pattern.compile("\\b(shrantiago|shack|nice|simp|shrony)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NO_NO_WORDS = Pattern.compile("\\b(no nut november|nice|simp)\\b", Pattern.CASE_INSENSITIVE);
 
     // volatile state
     private volatile boolean awaitingResetConfirmation = false;
@@ -76,9 +77,9 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
     public SwampyCommand() {
         name = "swampy";
-        aliases = new String[] {"bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble"};
+        aliases = new String[] {"bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin"};
         userHelp =
-                "`!!swampy` aka... `bastard, spooky, cursed, gay, aww, moist, moisten, gobble` HELP:\n" +
+                "`!!swampy` aka... `bastard, spooky, cursed, gay, aww, moist, moisten, gobble, sin` HELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
                 "`!!swampy leaderboard bastard` show the 18+ leaderboard\n" +
                 "`!!swampy leaderboard chaos` show the chaos children leaderboard\n" +
