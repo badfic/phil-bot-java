@@ -7,6 +7,7 @@ import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.badfic.philbot.data.phil.Trivia;
 import com.badfic.philbot.data.phil.TriviaRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -63,6 +64,32 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
             discordUserRepository.save(discordUser);
 
             event.reply("Please fill out this form in the next 15 minutes. " + baseConfig.hostname + "/trivia/" + triviaGuid.toString());
+            return;
+        }
+
+        if (event.getArgs().startsWith("dump")) {
+            List<Trivia> all = triviaRepository.findAll();
+            try {
+                event.getChannel().sendFile(objectMapper.writeValueAsBytes(all), "trivia.json").queue();
+            } catch (JsonProcessingException e) {
+                event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send sfw config to you").queue();
+            }
+            return;
+        } else if (event.getArgs().startsWith("delete")) {
+            String guidStr = event.getArgs().replace("delete", "").trim();
+            try {
+                UUID guid = UUID.fromString(guidStr);
+                if (triviaRepository.existsById(guid)) {
+                    triviaRepository.deleteById(guid);
+                    event.replySuccess("Successfully deleted " + guid.toString());
+                } else {
+                    event.replyError("Trivia with id " + guid.toString() + " does not exist.");
+                }
+            } catch (Exception e) {
+                event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", badly formatted command." +
+                        "Example: `!!trivia delete 44e04b28-7d39-41d8-8009-80ca6de5a04a`").queue();
+            }
+
             return;
         }
 

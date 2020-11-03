@@ -5,6 +5,7 @@ import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.data.phil.SwampyGamesConfigRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
@@ -66,6 +67,9 @@ public abstract class BaseSwampy extends Command {
 
     @Resource
     protected SwampyGamesConfigRepository swampyGamesConfigRepository;
+
+    @Resource
+    protected ObjectMapper objectMapper;
 
     protected DiscordUser getDiscordUserByMember(Member member) {
         String userId = member.getId();
