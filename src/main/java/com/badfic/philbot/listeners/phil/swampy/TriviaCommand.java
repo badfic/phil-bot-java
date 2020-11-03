@@ -85,13 +85,27 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
 
             if (!optTriviaQuestion.isPresent()) {
                 swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
+
+                swampyGamesConfig.setTriviaMsgId(null);
+                swampyGamesConfig.setTriviaGuid(null);
+                swampyGamesConfigRepository.save(swampyGamesConfig);
                 return;
             }
             Trivia triviaQuestion = optTriviaQuestion.get();
 
             StringBuilder description = new StringBuilder();
 
-            Message msg = swampysChannel.retrieveMessageById(triviaMsgId).complete();
+            Message msg;
+            try {
+                msg = swampysChannel.retrieveMessageById(triviaMsgId).complete();
+            } catch (Exception e) {
+                swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
+
+                swampyGamesConfig.setTriviaMsgId(null);
+                swampyGamesConfig.setTriviaGuid(null);
+                swampyGamesConfigRepository.save(swampyGamesConfig);
+                return;
+            }
 
             List<User> users = msg.retrieveReactionUsers("\uD83C\uDDE6").complete();
             awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 0 ? 100 : -100);
