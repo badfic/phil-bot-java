@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -93,9 +94,10 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        trivia();
+        event.replyError("Unrecognized command. You can no longer trigger a trivia manually.");
     }
 
+    @Scheduled(cron = "0 37,57 1,3,5,7,9,11,13,15,17,19,21,23 * * ?", zone = "GMT")
     public void trivia() {
         Optional<SwampyGamesConfig> optionalSwampyGamesConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
 
@@ -142,6 +144,8 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
 
             users = msg.retrieveReactionUsers("\uD83C\uDDE8").complete();
             awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 2 ? 100 : -100);
+
+            msg.clearReactions().queue();
 
             swampyGamesConfig.setTriviaMsgId(null);
             swampyGamesConfig.setTriviaGuid(null);
