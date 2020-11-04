@@ -94,7 +94,11 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        event.replyError("Unrecognized command. You can no longer trigger a trivia manually.");
+        if (baseConfig.ownerId.equalsIgnoreCase(event.getAuthor().getId())) {
+            trivia();
+        } else {
+            event.replyError("Unrecognized command. You can no longer trigger a trivia manually.");
+        }
     }
 
     @Scheduled(cron = "0 37,57 1,3,5,7,9,11,13,15,17,19,21,23 * * ?", zone = "GMT")
