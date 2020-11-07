@@ -9,7 +9,6 @@ import com.badfic.philbot.data.phil.Trivia;
 import com.badfic.philbot.data.phil.TriviaRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -58,13 +57,7 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
                 return;
             }
 
-            UUID triviaGuid = UUID.randomUUID();
-            discordUser.setTriviaGuid(triviaGuid);
-            discordUser.setTriviaGuidTime(LocalDateTime.now());
-
-            discordUserRepository.save(discordUser);
-
-            event.reply("Please fill out this form in the next 15 minutes. " + baseConfig.hostname + "/trivia/" + triviaGuid.toString());
+            event.reply("Please fill out the form: " + baseConfig.hostname + "/trivia");
             return;
         }
 

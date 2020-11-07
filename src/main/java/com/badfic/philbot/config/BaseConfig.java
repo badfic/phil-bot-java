@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class BaseConfig {
@@ -114,6 +115,12 @@ public class BaseConfig {
     @Value("${HOSTNAME}")
     public String hostname;
 
+    @Value("${DISCORD_CLIENT_ID}")
+    public String discordClientId;
+
+    @Value("${DISCORD_CLIENT_SECRET}")
+    public String discordClientSecret;
+
     @Bean
     public ScheduledExecutorService childBotExecutor() {
         return Executors.newSingleThreadScheduledExecutor();
@@ -127,6 +134,11 @@ public class BaseConfig {
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
     @Bean
