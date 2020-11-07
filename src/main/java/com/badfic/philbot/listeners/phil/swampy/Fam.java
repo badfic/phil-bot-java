@@ -376,7 +376,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
         description.append("\n\nRandom family member spotlight: ");
 
         try {
-            Member familyMember = getRandomFamilyMember(family, event);
+            Member familyMember = getRandomFamilyMember(family, event, member);
             description.append(familyMember.getAsMention());
             MessageEmbed msg = new EmbedBuilder()
                     .setTitle(member.getEffectiveName() + "'s Family")
@@ -392,9 +392,9 @@ public class Fam extends BaseSwampy implements PhilMarker {
         }
     }
 
-    private Member getRandomFamilyMember(Family family, CommandEvent event) {
+    private Member getRandomFamilyMember(Family family, CommandEvent event, Member rootMember) {
         Set<Member> allMembers = new HashSet<>();
-        allMembers.add(event.getMember());
+        allMembers.add(rootMember);
         allMembers.addAll(getMemberSet(family.getSpouses(), event));
         allMembers.addAll(getMemberSet(family.getExes(), event));
         allMembers.addAll(getMemberSet(family.getChildren(), event));
