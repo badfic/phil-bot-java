@@ -30,6 +30,7 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
     public Shrekoning() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "shrekoning";
+        help = "!!shrekoning\nTrigger a shrekoning for non-top-10 chaos children";
     }
 
     @Override

@@ -36,6 +36,7 @@ public class Stonks extends BaseSwampy implements PhilMarker {
     public Stonks() {
         name = "stonks";
         requiredRole = Constants.ADMIN_ROLE;
+        help = "!!stonks\nTrigger a stonks for all the non-top-10 bastards";
     }
 
     @Override

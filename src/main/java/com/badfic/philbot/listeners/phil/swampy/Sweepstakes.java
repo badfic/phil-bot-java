@@ -24,6 +24,7 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
     public Sweepstakes() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "sweepstakes";
+        help = "!!sweepstakes\nTrigger a sweepstakes for the given role, you must specify a role\nExample: !!sweepstakes @18+";
     }
 
     @Override

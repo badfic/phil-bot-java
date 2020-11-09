@@ -39,20 +39,16 @@ public class SpookyGifScheduled extends BaseSwampy implements PhilMarker {
 
     public SpookyGifScheduled() {
         name = "spookyGif";
+        help = "!!spookyGif\nMake phil respond with a spooky gif";
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        spookyGif();
-    }
-
-    public void spookyGif() {
         String gif = pickRandom(GIFS);
-        philJda.getTextChannelsByName("general", false).stream().findAny().ifPresent(channel -> {
-            channel.sendTyping()
-                    .submit()
-                    .thenRun(() -> channel.sendMessage(gif).queueAfter(5, TimeUnit.SECONDS));
-        });
+        event.getChannel()
+                .sendTyping()
+                .submit()
+                .thenRun(() -> event.getChannel().sendMessage(gif).queueAfter(5, TimeUnit.SECONDS));
     }
 
 }

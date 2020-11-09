@@ -37,6 +37,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
     public Swiper() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "swiper";
+        help = "Manually triggering swiper has been disabled";
     }
 
     @Override

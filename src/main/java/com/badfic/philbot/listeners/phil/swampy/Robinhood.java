@@ -34,6 +34,7 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
     public Robinhood() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "robinhood";
+        help = "!!robinhood\nTrigger a robinhood";
     }
 
     @Override

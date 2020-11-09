@@ -48,7 +48,7 @@ public class LeaderboardController extends BaseController {
                 })
                 .map(user -> {
                     Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
-                    return new SimpleMember(member.getUser().getAvatarUrl(), member.getEffectiveName(), member.getId(), user.getXp());
+                    return new SimpleMember(member.getUser().getEffectiveAvatarUrl(), member.getEffectiveName(), member.getId(), user.getXp());
                 })
                 .collect(Collectors.toList());
 
@@ -60,7 +60,7 @@ public class LeaderboardController extends BaseController {
                 })
                 .map(user -> {
                     Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
-                    return new SimpleMember(member.getUser().getAvatarUrl(), member.getEffectiveName(), member.getId(), user.getXp());
+                    return new SimpleMember(member.getUser().getEffectiveAvatarUrl(), member.getEffectiveName(), member.getId(), user.getXp());
                 })
                 .collect(Collectors.toList());
 

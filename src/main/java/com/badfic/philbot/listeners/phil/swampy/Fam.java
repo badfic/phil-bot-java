@@ -31,8 +31,8 @@ public class Fam extends BaseSwampy implements PhilMarker {
     public Fam() {
         name = "fam";
         help = "!!fam\n" +
-                "Note for all the propose/divorce/adopt/disown commands, " +
-                "you can @ somebody or you can just type in a name if they are not on this server\n\n" +
+                "Note for all the propose/divorce/adopt/disown commands,\n" +
+                "You can @ somebody or you can just type in any name if they are not on this server\n\n" +
                 "`!!fam`: Show your fam\n" +
                 "`!!fam show @incogmeato`: Show somebody else's fam\n" +
                 "`!!fam tag there's a boost`: Tags all your fam, telling them \"there's a boost\"\n" +

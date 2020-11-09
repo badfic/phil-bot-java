@@ -6,8 +6,10 @@ import com.badfic.philbot.data.phil.TriviaRepository;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -40,8 +42,21 @@ public class TriviaController extends BaseController {
     public ResponseEntity<String> getTriviaForm(HttpSession httpSession) throws Exception {
         checkSession(httpSession);
 
+        List<TriviaForm> triviaList = triviaRepository.findAll().stream().map(t -> {
+            TriviaForm triviaForm = new TriviaForm();
+            triviaForm.setUuid(t.getId());
+            triviaForm.setQuestion(t.getQuestion());
+            triviaForm.setCorrectAnswer(TriviaForm.Answer.values()[t.getCorrectAnswer()]);
+            triviaForm.setAnswerA(t.getAnswerA());
+            triviaForm.setAnswerB(t.getAnswerB());
+            triviaForm.setAnswerC(t.getAnswerC());
+            return triviaForm;
+        }).collect(Collectors.toList());
+
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Submit A New Trivia Question");
+        props.put("trivia", triviaList);
+
         try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
             mustache.execute(stringWriter, props);
             return ResponseEntity.ok(stringWriter.toString());
@@ -69,7 +84,7 @@ public class TriviaController extends BaseController {
 
         triviaRepository.save(trivia);
 
-        return ResponseEntity.ok("Successfully created new trivia question! Thank you for your submission!");
+        return ResponseEntity.ok("Successfully created new trivia question! Thank you for your submission! Refresh to see it below.");
     }
 
 }
