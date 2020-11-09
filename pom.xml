@@ -19,6 +19,7 @@
 		<jda.version>4.2.0_214</jda.version>
 		<jda-utilities.version>3.0.4</jda-utilities.version>
 		<guava.version>30.0-jre</guava.version>
+		<mustache.version>0.9.7</mustache.version>
 	</properties>
 
 	<dependencies>
@@ -33,6 +34,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.spullara.mustache.java</groupId>
+			<artifactId>compiler</artifactId>
+			<version>${mustache.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

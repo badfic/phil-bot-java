@@ -3,15 +3,16 @@ package com.badfic.philbot.web;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordApiIdentityResponse;
 import com.badfic.philbot.data.DiscordApiLoginResponse;
-import com.google.common.io.CharStreams;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.entities.Member;
 import org.slf4j.Logger;
@@ -31,12 +32,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private String indexHtml;
+    @Resource
+    private MustacheFactory mustacheFactory;
+
+    private Mustache mustache;
 
     @PostConstruct
-    public void init() throws Exception {
-        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("static/index.html");
-        indexHtml = CharStreams.toString(new InputStreamReader(Objects.requireNonNull(resourceAsStream), StandardCharsets.UTF_8));
+    public void init() {
+        mustache = mustacheFactory.compile("index.mustache");
     }
 
     @GetMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
@@ -93,7 +96,12 @@ public class HomeController extends BaseController {
             }
             refreshTokenIfNeeded(httpSession);
 
-            return ResponseEntity.ok(indexHtml);
+            Map<String, Object> props = new HashMap<>();
+            props.put("pageTitle", "Phil's Swamp");
+            try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
+                mustache.execute(stringWriter, props);
+                return ResponseEntity.ok(stringWriter.toString());
+            }
         } catch (Exception e) {
             logger.error("Exception in home controller", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("You are either unauthorized or something broke, ask Santiago");

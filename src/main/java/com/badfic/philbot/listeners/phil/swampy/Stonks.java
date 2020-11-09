@@ -43,7 +43,7 @@ public class Stonks extends BaseSwampy implements PhilMarker {
         stonks();
     }
 
-    @Scheduled(cron = "0 37 3 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 36 3 * * ?", zone = "GMT")
     public void stonks() {
         Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
         if (!optionalConfig.isPresent()) {

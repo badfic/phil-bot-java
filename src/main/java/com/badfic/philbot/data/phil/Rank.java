@@ -22,6 +22,7 @@ public class Rank {
     private final long level;
     private final String rankUpImage;
     private final String rankUpMessage;
+    private final boolean newCardDeck;
 
     private Rank(int ordinal, String roleName, long level, String rankUpImage, String rankupMessage) {
         this.ordinal = ordinal;
@@ -29,6 +30,7 @@ public class Rank {
         this.level = level;
         this.rankUpImage = rankUpImage;
         this.rankUpMessage = rankupMessage;
+        this.newCardDeck = ordinal % 3 == 0;
     }
 
     public int ordinal() {
@@ -49,6 +51,14 @@ public class Rank {
 
     public String getRankUpMessage() {
         return rankUpMessage;
+    }
+
+    public boolean isNewCardDeck() {
+        return ordinal % 3 == 0;
+    }
+
+    public boolean isFirstRank() {
+        return ordinal == 0;
     }
 
     public static void init() {
