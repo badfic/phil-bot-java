@@ -31,30 +31,62 @@
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+
+    <br/><br/><hr/><br/><br/>
+
+    <div class="container">
+        <p>
+            Warning: Spoilers below, scroll down at your own risk
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+        </p>
+    </div>
+
+    <br/><br/><hr/><br/><br/>
+
+    <div class="container">
+        <h1>Existing Questions</h1>
+        {{#trivia}}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{uuid}}</h5>
+                    <p class="card-text">
+                        Question: {{question}}<br/>
+                        Answer: {{correctAnswer}}<br/>
+                        A: {{answerA}}<br/>
+                        B: {{answerB}}<br/>
+                        C: {{answerC}}
+                    </p>
+                </div>
+            </div>
+        {{/trivia}}
+    </div>
 </div>
 
 <script>
-        $("#triviaForm").submit(function(e) {
-            e.preventDefault();
-            var postData = {
-                question: $("#question").val(),
-                answerA: $("#answerA").val(),
-                answerB: $("#answerB").val(),
-                answerC: $("#answerC").val(),
-                correctAnswer: $("#correctAnswer").val()
-            };
+    $("#triviaForm").submit(function(e) {
+        e.preventDefault();
+        var postData = {
+            question: $("#question").val(),
+            answerA: $("#answerA").val(),
+            answerB: $("#answerB").val(),
+            answerC: $("#answerC").val(),
+            correctAnswer: $("#correctAnswer").val()
+        };
 
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", window.location.href, true);
-            xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-            xhr.send(JSON.stringify(postData));
+        $("#question").val("");
+        $("#answerA").val("");
+        $("#answerB").val("");
+        $("#answerC").val("");
 
-            xhr.onloadend = function(e) {
-                $("#triviaForm").addClass("d-none");
-                $("#cardAlert").removeClass("d-none");
-                $("#cardAlert").html(xhr.response);
-            };
-        });
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", window.location.href, true);
+        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        xhr.send(JSON.stringify(postData));
 
+        xhr.onloadend = function(e) {
+            $("#cardAlert").removeClass("d-none");
+            $("#cardAlert").html(xhr.response);
+        };
+    });
 </script>
 {{> footer}}

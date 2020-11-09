@@ -33,6 +33,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "boost";
+        help = "!!boost\nManually trigger a boost, if you don't end it manually it will end at the top of the hour";
     }
 
     @Override

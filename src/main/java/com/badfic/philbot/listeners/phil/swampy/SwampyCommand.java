@@ -72,22 +72,20 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     // volatile state
     private volatile boolean awaitingResetConfirmation = false;
 
-    private final String userHelp;
-    private final String adminHelp;
+    private final String modHelp;
 
     public SwampyCommand() {
         name = "swampy";
         aliases = new String[] {"bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simpy"};
-        userHelp =
+        help =
                 "`!!swampy` aka... `bastard, spooky, cursed, gay, aww, moist, moisten, gobble, sin, simpy` HELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
                 "`!!swampy leaderboard bastard` show the 18+ leaderboard\n" +
                 "`!!swampy leaderboard chaos` show the chaos children leaderboard\n" +
                 "`!!swampy up @incogmeato` upvote a user for the swampys\n" +
                 "`!!swampy down @incogmeato` downvote a user for the swampys\n" +
-                "`!!swampy steal @incogmeato` attempt to steal swampy points from user\n" +
                 "`!!swampy slots` Play slots. Winners for 2 out of 3 matches or 3 out of 3 matches.";
-        adminHelp = userHelp + "\n\nMODS ONLY COMMANDS:\n" +
+        modHelp = help + "\n\nMODS ONLY COMMANDS:\n" +
                 "`!!swampy give 120 @incogmeato` give 120 points to incogmeato\n" +
                 "`!!swampy take 120 @incogmeato` remove 120 points from incogmeato\n" +
                 "`!!swampy set 120 @incogmeato` set incogmeato to 120 points\n" +
@@ -118,9 +116,9 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
         if (args.startsWith("help")) {
             if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
-                event.replyInDm(simpleEmbed("Help", adminHelp));
+                event.replyInDm(simpleEmbed("Help", modHelp));
             } else {
-                event.replyInDm(simpleEmbed("Help", userHelp));
+                event.replyInDm(simpleEmbed("Help", help));
             }
         } else if (args.startsWith("rank")) {
             showRank(event);
@@ -195,7 +193,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 pointsToGive = CURSED_MSG_POINTS;
 
                 if (bonus && now.isAfter(nextMsgBonusTime)) {
-                    if ("cursed-swamp".equalsIgnoreCase(event.getChannel().getName()) || "gay-receipts".equalsIgnoreCase(event.getChannel().getName())) {
+                    if ("cursed-swamp".equalsIgnoreCase(event.getChannel().getName()) || "valigaytion".equalsIgnoreCase(event.getChannel().getName())) {
                         pointsToGive = CURSED_PICTURE_MSG_POINTS;
                     } else {
                         pointsToGive = PICTURE_MSG_POINTS;

@@ -28,6 +28,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
     public TrickOrTreat() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "trickortreat";
+        help = "!!trickortreat\nManually trigger a Trick Or Treat (aka Checkout or Trampled, aka Naughty or Nice)";
     }
 
     @Override

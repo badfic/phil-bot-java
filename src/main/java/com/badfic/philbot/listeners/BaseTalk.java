@@ -19,6 +19,7 @@ public abstract class BaseTalk extends Command {
     public BaseTalk(String name) {
         this.name = name;
         guildOnly = false;
+        help = "!!" + name + " #channel Type Your Message\nExample: !!philTalk #general Hello Swamplings";
     }
 
     public abstract JDA getJda();

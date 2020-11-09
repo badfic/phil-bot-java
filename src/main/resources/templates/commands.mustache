@@ -1,0 +1,26 @@
+{{> header}}
+<div class="container">
+    {{#commands}}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{name}}</h5>
+            <p class="card-text">
+                {{#aliases}}
+                Aliases: {{aliases}}<br/>
+                {{/aliases}}
+                {{#requiredRole}}
+                Required Role: {{requiredRole}}<br/>
+                {{/requiredRole}}
+                Help:
+            </p>
+            {{#modHelp}}
+                <pre>{{modHelp}}</pre>
+            {{/modHelp}}
+            {{^modHelp}}
+                <pre>{{help}}</pre>
+            {{/modHelp}}
+        </div>
+    </div>
+    {{/commands}}
+</div>
+{{> footer}}

@@ -35,6 +35,9 @@ public class UpdateIntroCache extends Command implements PhilMarker {
     public UpdateIntroCache(DiscordUserRepository discordUserRepository) {
         name = "updateIntroCache";
         requiredRole = Constants.ADMIN_ROLE;
+        help = "!!updateIntroCache\n" +
+                "Manually update the user introductions cache \n" +
+                "that is used to populate introductions from the #introductions channel onto users' `!!fam`";
         this.discordUserRepository = discordUserRepository;
     }
 

@@ -36,6 +36,7 @@ public class Taxes extends BaseSwampy implements PhilMarker {
     public Taxes() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "taxes";
+        help = "!!taxes\nManually trigger taxes";
     }
 
     @Override

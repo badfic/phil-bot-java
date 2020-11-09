@@ -34,6 +34,9 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
     public TriviaCommand() {
         name = "trivia";
         guildOnly = false;
+        help = "!!trivia\n" +
+                "DM Phil `!!trivia` to get back a link to this admin site where you can add new trivia questions\n" +
+                "Manually triggering a trivia question has been disabled";
     }
 
     @Override
@@ -52,12 +55,17 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
             DiscordUser discordUser = optionalDiscordUser.get();
 
             Member memberById = philJda.getGuilds().get(0).getMemberById(discordUser.getId());
-            if (memberById == null || !hasRole(memberById, Constants.ADMIN_ROLE)) {
+            if (memberById == null || (!hasRole(memberById, Constants.ADMIN_ROLE) && !hasRole(memberById, Constants.MOD_ROLE))) {
                 event.replyError("Failed, either you're not an admin or you left the server or the member cache is broken");
                 return;
             }
 
             event.reply("Please login here and click the 'Trivia' link on the navigation bar: " + baseConfig.hostname);
+            return;
+        }
+
+        if (!hasRole(event.getMember(), Constants.ADMIN_ROLE) && !hasRole(event.getMember(), Constants.MOD_ROLE)) {
+            event.replyError("You must be a mod to use this command");
             return;
         }
 

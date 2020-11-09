@@ -20,6 +20,10 @@ public class Storytime extends BaseSwampy implements PhilMarker {
     public Storytime() throws Exception {
         name = "storytime";
         story = new ArrayList<>();
+        help = "!!storytime\n" +
+                "Phil tells a story\n" +
+                "`!!storyTime reset`: Makes Phil start the story from the beginning\n" +
+                "`!!storyTime set 20`: Sets Phil's storytime index to 20";
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("storytime.txt")))) {
             while (reader.ready()) {
                 story.add(reader.readLine());
