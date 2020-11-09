@@ -1,8 +1,12 @@
 package com.badfic.philbot.web;
 
 import com.badfic.philbot.config.BaseConfig;
+import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.config.NewSessionException;
+import com.badfic.philbot.config.UnauthorizedException;
 import com.badfic.philbot.data.DiscordApiIdentityResponse;
 import com.badfic.philbot.data.DiscordApiLoginResponse;
+import com.badfic.philbot.data.DiscordUserRepository;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -10,10 +14,10 @@ import java.util.Objects;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -31,17 +35,20 @@ public abstract class BaseController {
     @Resource
     protected RestTemplate restTemplate;
 
+    @Resource
+    protected DiscordUserRepository discordUserRepository;
+
     @Resource(name = "philJda")
     protected JDA philJda;
 
-    protected ResponseEntity<String> redirectDiscordLogin() throws UnsupportedEncodingException {
-        StringBuilder urlBuilder = new StringBuilder()
-                .append("https://discord.com/api/oauth2/authorize?client_id=")
-                .append(baseConfig.discordClientId)
-                .append("&redirect_uri=")
-                .append(URLEncoder.encode(baseConfig.hostname, StandardCharsets.UTF_8.name()))
-                .append("&response_type=code&scope=identify");
-        return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, urlBuilder.toString()).build();
+    protected void checkSession(HttpSession httpSession) throws UnsupportedEncodingException {
+        if (httpSession.isNew()) {
+            throw new NewSessionException();
+        }
+        if (httpSession.getAttribute(DISCORD_TOKEN) == null) {
+            throw new UnauthorizedException("You do not have a valid session. Please refresh and login again");
+        }
+        refreshTokenIfNeeded(httpSession);
     }
 
     protected DiscordApiIdentityResponse getDiscordApiIdentityResponse(String accessToken) {
@@ -56,9 +63,21 @@ public abstract class BaseController {
         return identityResponse.getBody();
     }
 
-    protected void refreshTokenIfNeeded(HttpSession httpSession) throws UnsupportedEncodingException {
+    protected boolean hasRole(Member member, String role) {
+        return member.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
+    }
+
+    private void refreshTokenIfNeeded(HttpSession httpSession) throws UnsupportedEncodingException {
         try {
-            Objects.requireNonNull(getDiscordApiIdentityResponse((String) httpSession.getAttribute(DISCORD_TOKEN)));
+            DiscordApiIdentityResponse discordApiIdentityResponse = Objects.requireNonNull(
+                    getDiscordApiIdentityResponse((String) httpSession.getAttribute(DISCORD_TOKEN)));
+
+            Member memberById = philJda.getGuilds().get(0).getMemberById(discordApiIdentityResponse.getId());
+            if (memberById == null || (!hasRole(memberById, Constants.ADMIN_ROLE) && !hasRole(memberById, Constants.MOD_ROLE))) {
+                throw new UnauthorizedException(discordApiIdentityResponse.getId() + " You are not authorized, you must be a swamp admin to access this page");
+            }
+        } catch (UnauthorizedException e) {
+            throw e;
         } catch (Exception e) {
             String authApi = "https://discordapp.com/api/oauth2/token";
             String body = new StringBuilder()

@@ -1,0 +1,24 @@
+{{> header}}
+<div class="container">
+    <div class="row">
+        <div class="col-lg">
+            <h2>Bastards</h2>
+            {{#bastards}}
+                <div>
+                    <img src="{{image}}" width="50" height="50">
+                    <span>{{xp}} xp: {{name}} <@!{{id}}></span>
+                </div>
+            {{/bastards}}
+        </div>
+        <div class="col-lg">
+            <h2>Children</h2>
+            {{#children}}
+                <div>
+                    <img src="{{image}}" width="50" height="50">
+                    <span>{{xp}} xp: {{name}} <@!{{id}}></span>
+                </div>
+            {{/children}}
+        </div>
+    </div>
+</div>
+{{> footer}}

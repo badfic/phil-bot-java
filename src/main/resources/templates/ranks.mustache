@@ -1,19 +1,19 @@
 {{> header}}
-    <div class="container">
-        {{#ranks}}
-        {{#newCardDeck}}
-            {{^firstRank}}
-                </div>
-            {{/firstRank}}
-            <div class="card-deck" style="margin-top: 1em; margin-bottom: 1em;">
-        {{/newCardDeck}}
-                <div class="card" style="width: 20em;">
-                    <img class="card-img-top" src="{{rankUpImage}}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{level}}: {{roleName}}</h5>
-                        <p class="card-text">{{rankUpMessage}}</p>
-                    </div>
-                </div>
-        {{/ranks}}
-    </div>
+<div class="container">
+{{#ranks}}
+    {{#newCardDeck}}
+        {{^firstRank}}
+            </div>
+        {{/firstRank}}
+        <div class="card-deck" style="margin-top: 1em; margin-bottom: 1em;">
+    {{/newCardDeck}}
+        <div class="card" style="width: 20em;">
+            <img class="card-img-top" src="{{rankUpImage}}">
+            <div class="card-body">
+                <h5 class="card-title">{{level}}: {{roleName}}</h5>
+                <p class="card-text">{{rankUpMessage}}</p>
+            </div>
+        </div>
+{{/ranks}}
+</div>
 {{> footer}}
