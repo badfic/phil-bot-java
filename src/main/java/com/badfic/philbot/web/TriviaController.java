@@ -3,12 +3,11 @@ package com.badfic.philbot.web;
 import com.badfic.philbot.data.TriviaForm;
 import com.badfic.philbot.data.phil.Trivia;
 import com.badfic.philbot.data.phil.TriviaRepository;
-import com.google.common.io.CharStreams;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 import java.lang.invoke.MethodHandles;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
@@ -32,17 +31,14 @@ public class TriviaController extends BaseController {
     @Resource
     private TriviaRepository triviaRepository;
 
-    private String triviaHtml;
+    @Resource
+    private MustacheFactory mustacheFactory;
+
+    private Mustache mustache;
 
     @PostConstruct
     public void init() {
-        try {
-            InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("static/trivia-form.html");
-            triviaHtml = CharStreams.toString(new InputStreamReader(Objects.requireNonNull(resourceAsStream), StandardCharsets.UTF_8));
-        } catch (Exception e) {
-            logger.error("Failed to read trivia-form.html", e);
-            triviaHtml = "Contact Santiago, it broke";
-        }
+        mustache = mustacheFactory.compile("trivia-form.mustache");
     }
 
     @GetMapping(value = "/trivia", produces = MediaType.TEXT_HTML_VALUE)
@@ -57,7 +53,12 @@ public class TriviaController extends BaseController {
             }
             refreshTokenIfNeeded(httpSession);
 
-            return ResponseEntity.ok(triviaHtml);
+            Map<String, Object> props = new HashMap<>();
+            props.put("pageTitle", "Submit A New Trivia Question");
+            try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
+                mustache.execute(stringWriter, props);
+                return ResponseEntity.ok(stringWriter.toString());
+            }
         } catch (Exception e) {
             logger.error("Exception in get trivia form controller", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("You are either unauthorized or something broke, ask Santiago");

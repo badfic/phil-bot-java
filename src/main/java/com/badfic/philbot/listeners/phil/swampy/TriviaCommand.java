@@ -57,7 +57,7 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
                 return;
             }
 
-            event.reply("Please fill out the form: " + baseConfig.hostname + "/trivia");
+            event.reply("Please login here and click the 'Trivia' link on the navigation bar: " + baseConfig.hostname);
             return;
         }
 
