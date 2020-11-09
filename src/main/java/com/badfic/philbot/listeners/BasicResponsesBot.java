@@ -109,7 +109,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
                 responsesConfig.getNsfwConfig().getChannels().add(mentionedChannels.get(0).getName());
                 configRepository.save(responsesConfig);
-                event.getChannel().sendMessageFormat("%s, saved %s to nsfw config",event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention())
+                event.getChannel().sendMessageFormat("%s, saved %s to nsfw config", event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention())
                         .queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw remove channel")) {
                 List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();

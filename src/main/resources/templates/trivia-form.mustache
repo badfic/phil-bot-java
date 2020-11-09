@@ -1,39 +1,39 @@
 {{> header}}
-    <div class="container">
-        <h1>New Trivia Question</h1>
+<div class="container">
+    <h1>New Trivia Question</h1>
 
-        <div class="alert alert-primary d-none" role="alert" id="cardAlert">Status will appear here, probably</div>
+    <div class="alert alert-primary d-none" role="alert" id="cardAlert">Status will appear here, probably</div>
 
-        <form id="triviaForm">
-            <div class="form-group">
-                <label for="question">Question</label>
-                <input type="text" class="form-control" id="question" required>
-            </div>
-            <div class="form-group">
-                <label for="answerA">A</label>
-                <input type="text" class="form-control" id="answerA" required>
-            </div>
-            <div class="form-group">
-                <label for="answerB">B</label>
-                <input type="text" class="form-control" id="answerB" required>
-            </div>
-            <div class="form-group">
-                <label for="answerC">C</label>
-                <input type="text" class="form-control" id="answerC" required>
-            </div>
-            <div class="form-group">
-                <label for="correctAnswer">Correct Answer</label>
-                <select class="form-control" id="correctAnswer" required>
-                    <option>A</option>
-                    <option>B</option>
-                    <option>C</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
+    <form id="triviaForm">
+        <div class="form-group">
+            <label for="question">Question</label>
+            <input type="text" class="form-control" id="question" required>
+        </div>
+        <div class="form-group">
+            <label for="answerA">A</label>
+            <input type="text" class="form-control" id="answerA" required>
+        </div>
+        <div class="form-group">
+            <label for="answerB">B</label>
+            <input type="text" class="form-control" id="answerB" required>
+        </div>
+        <div class="form-group">
+            <label for="answerC">C</label>
+            <input type="text" class="form-control" id="answerC" required>
+        </div>
+        <div class="form-group">
+            <label for="correctAnswer">Correct Answer</label>
+            <select class="form-control" id="correctAnswer" required>
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
 
-    <script>
+<script>
         $("#triviaForm").submit(function(e) {
             e.preventDefault();
             var postData = {
@@ -55,5 +55,6 @@
                 $("#cardAlert").html(xhr.response);
             };
         });
-    </script>
+
+</script>
 {{> footer}}
