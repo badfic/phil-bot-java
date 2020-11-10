@@ -14,6 +14,10 @@ import com.github.mustachejava.resolver.ClasspathResolver;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.CommandListener;
+import io.honeybadger.reporter.HoneybadgerReporter;
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -26,16 +30,22 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.internal.utils.IOUtil;
 import okhttp3.OkHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.task.TaskSchedulerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class BaseConfig {
+public class BaseConfig implements TaskSchedulerCustomizer {
+
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final String[] KEANU_STATUS_LIST = {
             "Bill & Ted Face the Music",
@@ -191,7 +201,7 @@ public class BaseConfig {
     }
 
     @Bean(name = "philCommandClient")
-    public CommandClient philCommandClient(List<Command> commands) {
+    public CommandClient philCommandClient(List<Command> commands, HoneybadgerReporter honeybadgerReporter) {
         return new CommandClientBuilder()
                 .setOwnerId(ownerId)
                 .setPrefix("!!")
@@ -199,6 +209,13 @@ public class BaseConfig {
                 .addCommands(commands.stream().filter(c -> c instanceof PhilMarker).toArray(Command[]::new))
                 .setActivity(Activity.playing("with our feelings"))
                 .setEmojis("\uD83E\uDD83", "⚠️", "\uD83D\uDD2A")
+                .setListener(new CommandListener() {
+                    @Override
+                    public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
+                        logger.error("Exception in command: " + command.getName(), throwable);
+                        honeybadgerReporter.reportError(throwable, event, "Exception in command: " + command.getName());
+                    }
+                })
                 .build();
     }
 
@@ -215,6 +232,19 @@ public class BaseConfig {
     @Bean
     public MustacheFactory mustacheFactory() {
         return new DefaultMustacheFactory(new ClasspathResolver("templates"));
+    }
+
+    @Bean
+    public HoneybadgerReporter honeybadgerReporter() {
+        return new HoneybadgerReporter();
+    }
+
+    @Override
+    public void customize(ThreadPoolTaskScheduler taskScheduler) {
+        taskScheduler.setErrorHandler(t -> {
+            logger.error("Error in scheduled task", t);
+            honeybadgerReporter().reportError(t, null, "Error in scheduled task");
+        });
     }
 
 }

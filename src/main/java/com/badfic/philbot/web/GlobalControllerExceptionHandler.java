@@ -3,10 +3,12 @@ package com.badfic.philbot.web;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.NewSessionException;
 import com.badfic.philbot.config.UnauthorizedException;
+import io.honeybadger.reporter.HoneybadgerReporter;
 import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,9 @@ public class GlobalControllerExceptionHandler {
 
     @Resource
     private BaseConfig baseConfig;
+
+    @Resource
+    private HoneybadgerReporter honeybadgerReporter;
 
     @ExceptionHandler(NewSessionException.class)
     public ResponseEntity<Object> handleNewSessionException(NewSessionException e) throws Exception {
@@ -42,9 +47,10 @@ public class GlobalControllerExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleException(Exception e) {
+    public ResponseEntity<Object> handleException(Exception e, HttpServletRequest request) {
         logger.error("Exception caught at top level", e);
-        return new ResponseEntity<>("Generic Top Level Exception, ask Santiago. Something broke.", HttpStatus.UNAUTHORIZED);
+        honeybadgerReporter.reportError(e, request, "Controller Exception caught at top level");
+        return new ResponseEntity<>("Generic Top Level Exception, ask Santiago. Something might have broke.", HttpStatus.UNAUTHORIZED);
     }
 
 }
