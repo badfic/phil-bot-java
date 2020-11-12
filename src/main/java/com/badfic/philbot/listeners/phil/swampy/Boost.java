@@ -77,6 +77,9 @@ public class Boost extends BaseSwampy implements PhilMarker {
                             description.append("Gave " + BOOST_POINTS_TO_GIVE + " points to <@!")
                                     .append(u.getId())
                                     .append(">\n");
+
+                            u.setBoostParticipations(u.getBoostParticipations() + 1);
+                            discordUserRepository.save(u);
                         } catch (Exception e) {
                             logger.error("Failed to give boost points to user [id={}]", u.getId(), e);
                             description.append("OOPS: Unable to give points to <@!")

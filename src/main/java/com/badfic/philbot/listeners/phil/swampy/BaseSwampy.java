@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
+import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.DiscordUserRepository;
@@ -70,6 +71,9 @@ public abstract class BaseSwampy extends Command {
 
     @Resource
     protected ObjectMapper objectMapper;
+
+    @Resource
+    protected BaseConfig baseConfig;
 
     protected DiscordUser getDiscordUserByMember(Member member) {
         String userId = member.getId();
