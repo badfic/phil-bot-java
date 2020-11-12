@@ -1,6 +1,5 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
-import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
@@ -24,9 +23,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TriviaCommand extends BaseSwampy implements PhilMarker {
-
-    @Resource
-    private BaseConfig baseConfig;
 
     @Resource
     private TriviaRepository triviaRepository;

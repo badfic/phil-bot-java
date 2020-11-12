@@ -383,6 +383,54 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
+        if ("swiper".equalsIgnoreCase(split[1])) {
+            AtomicInteger place = new AtomicInteger(0);
+            StringBuilder description = new StringBuilder();
+
+            swampyUsers.stream()
+                    .sorted((u1, u2) -> Long.compare(u2.getSwiperParticipations(), u1.getSwiperParticipations()))
+                    .limit(10)
+                    .forEachOrdered(swampyUser -> {
+                        description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
+                                .append(": <@!")
+                                .append(swampyUser.getId())
+                                .append("> - ")
+                                .append(NumberFormat.getIntegerInstance().format(swampyUser.getSwiperParticipations()))
+                                .append('\n');
+                    });
+            MessageEmbed messageEmbed = new EmbedBuilder()
+                    .setTitle("Swiper Leaderboard")
+                    .setDescription(description.toString())
+                    .build();
+
+            event.reply(messageEmbed);
+            return;
+        }
+
+        if ("boost".equalsIgnoreCase(split[1])) {
+            AtomicInteger place = new AtomicInteger(0);
+            StringBuilder description = new StringBuilder();
+
+            swampyUsers.stream()
+                    .sorted((u1, u2) -> Long.compare(u2.getBoostParticipations(), u1.getBoostParticipations()))
+                    .limit(10)
+                    .forEachOrdered(swampyUser -> {
+                        description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
+                                .append(": <@!")
+                                .append(swampyUser.getId())
+                                .append("> - ")
+                                .append(NumberFormat.getIntegerInstance().format(swampyUser.getBoostParticipations()))
+                                .append('\n');
+                    });
+            MessageEmbed messageEmbed = new EmbedBuilder()
+                    .setTitle("Boost Leaderboard")
+                    .setDescription(description.toString())
+                    .build();
+
+            event.reply(messageEmbed);
+            return;
+        }
+
         AtomicInteger place = new AtomicInteger(0);
         StringBuilder description = new StringBuilder();
         swampyUsers.stream().filter(u -> {
@@ -635,6 +683,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         for (DiscordUser discordUser : discordUserRepository.findAll()) {
             discordUser.setXp(0);
+            discordUser.setSwiperParticipations(0);
+            discordUser.setBoostParticipations(0);
             discordUser = discordUserRepository.save(discordUser);
 
             try {

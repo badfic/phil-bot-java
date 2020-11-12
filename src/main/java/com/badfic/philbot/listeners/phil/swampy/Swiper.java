@@ -42,7 +42,11 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
     @Override
     public void execute(CommandEvent event) {
-        event.replyError("Manually triggering swiper has been disabled.");
+        if (baseConfig.ownerId.equalsIgnoreCase(event.getAuthor().getId())) {
+            doSwiper();
+        } else {
+            event.replyError("Manually triggering swiper has been disabled.");
+        }
     }
 
     @Scheduled(cron = "0 20,35 0,2,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
@@ -73,25 +77,34 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
             if (victim.isPresent()) {
                 if (swampyGamesConfig.getSwiperSavior() != null) {
-                    Optional<DiscordUser> savior = discordUserRepository.findById(swampyGamesConfig.getSwiperSavior());
-                    swampyGamesConfig.setSwiperSavior(null);
+                    try {
+                        Optional<DiscordUser> savior = discordUserRepository.findById(swampyGamesConfig.getSwiperSavior());
+                        swampyGamesConfig.setSwiperSavior(null);
 
-                    String image;
-                    if (savior.isPresent() && savior.get().getId().equalsIgnoreCase(victim.get().getId())) {
-                        image = SPIDERMAN_PNG;
-                    } else if (StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper")) {
-                        image = NO_SWIPING;
-                    } else {
-                        image = NO_SNART;
+                        String image;
+                        if (savior.isPresent() && savior.get().getId().equalsIgnoreCase(victim.get().getId())) {
+                            image = SPIDERMAN_PNG;
+                        } else if (StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper")) {
+                            image = NO_SWIPING;
+                        } else {
+                            image = NO_SNART;
+                        }
+
+                        message = new EmbedBuilder()
+                                .setTitle(noSwipingPhrase)
+                                .setDescription("Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
+                                        + "> scared them away from <@!" + victim.get().getId() + ">")
+                                .setColor(Constants.COLOR_OF_THE_MONTH)
+                                .setImage(image)
+                                .build();
+
+                        if (savior.isPresent()) {
+                            savior.get().setSwiperParticipations(savior.get().getSwiperParticipations() + 1);
+                            discordUserRepository.save(savior.get());
+                        }
+                    } catch (Exception e) {
+                        logger.error("Exception with swiper savior branch", e);
                     }
-
-                    message = new EmbedBuilder()
-                            .setTitle(noSwipingPhrase)
-                            .setDescription("Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
-                                    + "> scared them away from <@!" + victim.get().getId() + ">")
-                            .setColor(Constants.COLOR_OF_THE_MONTH)
-                            .setImage(image)
-                            .build();
                 } else {
                     try {
                         Member memberById = philJda.getGuilds().get(0).getMemberById(victim.get().getId());

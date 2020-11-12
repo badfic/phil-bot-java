@@ -19,6 +19,12 @@ public class DiscordUser {
     private long xp;
 
     @Column
+    private long boostParticipations;
+
+    @Column
+    private long swiperParticipations;
+
+    @Column
     @Convert(converter = FamilyJsonConverter.class)
     private Family family;
 
@@ -55,6 +61,22 @@ public class DiscordUser {
 
     public void setXp(long xp) {
         this.xp = xp;
+    }
+
+    public long getBoostParticipations() {
+        return boostParticipations;
+    }
+
+    public void setBoostParticipations(long boostParticipations) {
+        this.boostParticipations = boostParticipations;
+    }
+
+    public long getSwiperParticipations() {
+        return swiperParticipations;
+    }
+
+    public void setSwiperParticipations(long swiperParticipations) {
+        this.swiperParticipations = swiperParticipations;
     }
 
     public Family getFamily() {
