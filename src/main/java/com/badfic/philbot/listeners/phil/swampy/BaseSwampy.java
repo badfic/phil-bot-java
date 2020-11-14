@@ -176,6 +176,16 @@ public abstract class BaseSwampy extends Command {
                 .build();
     }
 
+    protected MessageEmbed simpleEmbed(String title, String description, String image, String footer) {
+        return new EmbedBuilder()
+                .setTitle(title)
+                .setDescription(description)
+                .setImage(image)
+                .setColor(Constants.COLOR_OF_THE_MONTH)
+                .setFooter(footer)
+                .build();
+    }
+
     protected boolean isNotParticipating(Member member) {
         return member.getUser().isBot() || !(hasRole(member, Constants.CHAOS_CHILDREN_ROLE) || hasRole(member, Constants.EIGHTEEN_PLUS_ROLE));
     }
