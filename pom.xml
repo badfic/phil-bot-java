@@ -21,6 +21,7 @@
 		<guava.version>30.0-jre</guava.version>
 		<mustache.version>0.9.7</mustache.version>
 		<honeybadger.version>2.0.2</honeybadger.version>
+		<jumblr.version>0.0.13</jumblr.version>
 	</properties>
 
 	<dependencies>
@@ -87,6 +88,11 @@
 			<groupId>io.honeybadger</groupId>
 			<artifactId>honeybadger-java</artifactId>
 			<version>${honeybadger.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tumblr</groupId>
+			<artifactId>jumblr</artifactId>
+			<version>${jumblr.version}</version>
 		</dependency>
 	</dependencies>
 
