@@ -2,6 +2,8 @@ package com.badfic.philbot.listeners.phil;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
+import com.badfic.philbot.data.phil.Quote;
+import com.badfic.philbot.data.phil.QuoteRepository;
 import com.badfic.philbot.listeners.antonia.AntoniaMessageListener;
 import com.badfic.philbot.listeners.behrad.BehradMessageListener;
 import com.badfic.philbot.listeners.keanu.KeanuMessageListener;
@@ -15,8 +17,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import javax.annotation.Resource;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
@@ -73,6 +77,9 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     @Lazy
     private JDA antoniaJda;
 
+    @Resource
+    private QuoteRepository quoteRepository;
+
     @Autowired
     public PhilMessageListener(PhilCommand philCommand,
                                SwampyCommand swampyCommand,
@@ -122,6 +129,28 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+        if (event.getReactionEmote().isEmoji() && "\uD83D\uDCAC".equalsIgnoreCase(event.getReactionEmote().getEmoji())) {
+            if (!quoteRepository.existsByMessageId(event.getMessageIdLong())) {
+                event.getChannel().retrieveMessageById(event.getMessageId()).queue(msg -> {
+                    long msgId = msg.getIdLong();
+                    long channelId = msg.getChannel().getIdLong();
+                    Quote savedQuote = quoteRepository.save(new Quote(msgId, channelId, msg.getContentRaw(),
+                            msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
+
+                    msg.addReaction("\uD83D\uDCAC").queue();
+
+                    String msgLink = " [(jump)](https://discordapp.com/channels/" + event.getGuild().getIdLong() + '/' + channelId + '/' + msgId + ')';
+
+                    MessageEmbed messageEmbed = new EmbedBuilder()
+                            .setTitle("Quote #" + savedQuote.getId() + " Added")
+                            .setDescription("<@!" + event.getUserId() + "> Added quote #" + savedQuote.getId() + msgLink)
+                            .build();
+
+                    event.getChannel().sendMessage(messageEmbed).queue();
+                });
+            }
+        }
+
         OUTSTANDING_REACTION_TASKS.asMap().computeIfPresent(event.getMessageId(), (key, function) -> {
             boolean taskIsComplete = function.apply(event);
 
