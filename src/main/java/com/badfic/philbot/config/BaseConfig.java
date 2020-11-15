@@ -16,6 +16,7 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.CommandListener;
+import com.tumblr.jumblr.JumblrClient;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
@@ -134,6 +135,18 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     @Value("${DISCORD_CLIENT_SECRET}")
     public String discordClientSecret;
 
+    @Value("${TUMBLR_CONSUMER_KEY}")
+    public String tumblrConsumerKey;
+
+    @Value("${TUMBLR_CONSUMER_SECRET}")
+    public String tumblrConsumerSecret;
+
+    @Value("${TUMBLR_OAUTH_TOKEN}")
+    public String tumblrOauthToken;
+
+    @Value("${TUMBLR_OAUTH_SECRET}")
+    public String tumblrOauthSecret;
+
     @Bean
     public ScheduledExecutorService childBotExecutor() {
         return Executors.newSingleThreadScheduledExecutor();
@@ -237,6 +250,11 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     @Bean
     public HoneybadgerReporter honeybadgerReporter() {
         return new HoneybadgerReporter();
+    }
+
+    @Bean
+    public JumblrClient jumblrClient() {
+        return new JumblrClient(tumblrConsumerKey, tumblrConsumerSecret, tumblrOauthToken, tumblrOauthSecret);
     }
 
     @Override
