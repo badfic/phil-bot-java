@@ -46,7 +46,7 @@ public class Tumblr extends BaseSwampy implements PhilMarker {
                 }
             }
         } catch (JumblrException e) {
-            event.replyError("Failed to find tumblr user " + split[0]);
+            event.replyError("Something went wrong trying to get user's posts: " + split[0]);
             throw e;
         }
     }
