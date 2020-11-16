@@ -5,10 +5,12 @@ import com.badfic.philbot.data.phil.Reminder;
 import com.badfic.philbot.data.phil.ReminderRepository;
 import com.badfic.philbot.data.phil.SnarkyReminderResponse;
 import com.badfic.philbot.data.phil.SnarkyReminderResponseRepository;
+import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
@@ -35,6 +37,29 @@ public class JohnMessageListener extends ListenerAdapter {
     private static final Pattern JOHN_PATTERN = Pattern.compile("\\b(john|constantine|johnno|johnny|hellblazer)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern REMINDER_PATTER = Pattern.compile("\\b(remind me in |remind <@![0-9]+> in )[0-9]+\\b", Pattern.CASE_INSENSITIVE);
     private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
+    private static final Set<String> UWU = ImmutableSet.of(
+            "https://tenor.com/bbmRv.gif",
+            "https://tenor.com/X7Nq.gif",
+            "https://tenor.com/bhbNA.gif",
+            "https://tenor.com/baaJk.gif",
+            "https://tenor.com/bedWY.gif",
+            "https://tenor.com/bpXCH.gif",
+            "https://tenor.com/bjCS0.gif",
+            "https://tenor.com/bcse7.gif",
+            "https://tenor.com/bcsfc.gif",
+            "https://tenor.com/bcse9.gif",
+            "https://tenor.com/bcsfb.gif",
+            "https://tenor.com/bcsfd.gif",
+            "https://tenor.com/bcsfe.gif",
+            "https://tenor.com/bcse6.gif",
+            "https://tenor.com/bh7al.gif",
+            "https://tenor.com/bgP9d.gif",
+            "https://tenor.com/beotA.gif",
+            "https://tenor.com/bfoYa.gif",
+            "https://tenor.com/bhzQJ.gif",
+            "https://tenor.com/bhngy.gif",
+            "https://tenor.com/POHh.gif",
+            "https://cdn.discordapp.com/attachments/530193785351569423/777962192083353611/zaricat.gif");
 
     @Resource
     private JohnCommand johnCommand;
@@ -91,20 +116,23 @@ public class JohnMessageListener extends ListenerAdapter {
         }
 
         if ("ayy".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(event.getChannel().getId()).sendMessage("lmao").queue();
+            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage("lmao").queue();
             return;
         }
         if ("slang".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(event.getChannel().getId()).sendMessage("You're an absolute whopper").queue();
+            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage("You're an absolute whopper").queue();
         }
         if ("stughead".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(event.getChannel().getId()).sendMessage("\uD83D\uDC40").queue();
+            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage("\uD83D\uDC40").queue();
         }
         if ("Africa".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(event.getChannel().getId()).sendMessage("I BLESS THE RAINS DOWN IN AAAAFRICAAA").queue();
+            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage("I BLESS THE RAINS DOWN IN AAAAFRICAAA").queue();
         }
         if ("cool".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(event.getChannel().getId()).sendMessage("cool cool cool").queue();
+            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage("cool cool cool").queue();
+        }
+        if ("uwu".equalsIgnoreCase(msgContent)) {
+            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(Constants.pickRandom(UWU)).queue();
         }
 
         if (JOHN_PATTERN.matcher(msgContent).find()) {

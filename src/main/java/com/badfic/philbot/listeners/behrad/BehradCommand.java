@@ -6,9 +6,8 @@ import com.badfic.philbot.data.behrad.BehradResponsesConfig;
 import com.badfic.philbot.data.behrad.BehradResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -30,14 +29,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> implements PhilMarker {
 
-    private static final HashSet<String> SHAYAN_IMGS = new HashSet<>(Arrays.asList(
+    private static final Set<String> SHAYAN_IMGS = ImmutableSet.of(
             "https://cdn.discordapp.com/attachments/323666308107599872/750575009650573332/unknown-15.png",
             "https://cdn.discordapp.com/attachments/323666308107599872/750575009885454356/unknown-21.png",
             "https://cdn.discordapp.com/attachments/323666308107599872/750575010221129889/unknown-17.png",
             "https://cdn.discordapp.com/attachments/323666308107599872/750575275783487598/MV5BMGEyZDE2YmYtNjRhNi00MzQwLThjNjItM2E5YjVjOTI3MDMwXkEyXkFqcGdeQXVyMTAzMjM0MjE0.png",
             "https://cdn.discordapp.com/attachments/323666308107599872/750575276026626129/MV5BYTRjOGE2OWUtMjk2MS00MGFkLTg2YjEtYmNjZDRjODAzNWI4XkEyXkFqcGdeQXVyMTAzMjM0MjE0.png"
-    ));
-    private static final HashSet<String> SLOTH_GIFS = new HashSet<>(Arrays.asList(
+    );
+    private static final Set<String> SLOTH_GIFS = ImmutableSet.of(
             "https://gfycat.com/cooperativeglamoroushoneybee-animals-sloth-cute",
             "https://gfycat.com/ornateplumpicterinewarbler-animals-sloth-baby",
             "https://gfycat.com/femaleastonishingflies-relax",
@@ -47,7 +46,7 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
             "https://gfycat.com/definitivetangiblefreshwatereel-sloth-animal",
             "https://gfycat.com/flatgraveharborporpoise-sloth",
             "https://gfycat.com/accomplishedinstructivefish"
-    ));
+    );
     private static final Pattern NAME_PATTERN = Pattern.compile("\\b(shayan|sobhian)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern WEED_PATTERN = Pattern.compile("\\b(marijuana|weed|420|stoned|high|stoner|kush)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern SLOTH_PATTERN = Pattern.compile("\\b(sup sloth)\\b", Pattern.CASE_INSENSITIVE);

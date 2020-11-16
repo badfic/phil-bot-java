@@ -3,13 +3,14 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
+import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -29,6 +30,10 @@ public class Boost extends BaseSwampy implements PhilMarker {
     private static final long PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR = 15;
     private static final String BOOST_START = "https://cdn.discordapp.com/attachments/587078427400732682/772345771885985842/booawoost_tg.png";
     private static final String BOOST_END = "https://cdn.discordapp.com/attachments/587078427400732682/772345775556132864/boostend_tg.png";
+    private static final Set<String> BOOST_WORDS = ImmutableSet.of(
+            "butter", "shortening", "lard", "ghee", "oleo", "spread", "thanks", "giving", "family", "turkey", "feet", "foot", "stuffing", "cranberry",
+            "cornbread", "bird", "greenbean", "stringbean", "rice", "pumpkin", "pie", "apple", "gravy", "potato", "corn", "maze", "maize", "stonks",
+            "stimulus", "baster", "turducken", "scarecrow", "butters");
 
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;
@@ -101,9 +106,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
         }
 
         if (force || ThreadLocalRandom.current().nextInt(100) < PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR) {
-            String boostPhrase = Constants.pickRandom(Arrays.asList("butter", "shortening", "lard", "ghee", "oleo", "spread", "thanks", "giving", "family",
-                    "turkey", "feet", "foot", "stuffing", "cranberry", "cornbread", "bird", "greenbean", "stringbean", "rice", "pumpkin", "pie", "apple",
-                    "gravy", "potato", "corn", "maze", "maize", "stonks", "stimulus", "baster", "turducken", "scarecrow", "butters"));
+            String boostPhrase = Constants.pickRandom(BOOST_WORDS);
             swampyGamesConfig.setBoostPhrase(boostPhrase);
             swampyGamesConfigRepository.save(swampyGamesConfig);
 

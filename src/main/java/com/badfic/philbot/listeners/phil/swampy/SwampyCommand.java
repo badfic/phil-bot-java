@@ -5,6 +5,7 @@ import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
+import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
@@ -12,8 +13,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,13 +40,13 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     // message/vc/emote points
     private static final long NORMAL_MSG_POINTS = 5;
     private static final long CURSED_MSG_POINTS = 10;
-    private static final Set<String> CURSED_MSG_CHANNELS = new HashSet<>(Arrays.asList(
+    private static final Set<String> CURSED_MSG_CHANNELS = ImmutableSet.of(
             "cursed-swamp",
             "nate-heywoods-simp-hour",
             "thirsty-legends",
             "gay-receipts",
             "the-swampys"
-    ));
+    );
     private static final long PICTURE_MSG_POINTS = 150;
     private static final long CURSED_PICTURE_MSG_POINTS = 250;
     private static final long REACTION_POINTS = 7;
@@ -79,18 +78,18 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
-    public static final Set<String> PLAIN_SLOTS = new HashSet<>(Arrays.asList(
+    public static final Set<String> PLAIN_SLOTS = ImmutableSet.of(
             "\uD83E\uDD5D", "\uD83C\uDF53", "\uD83C\uDF4B", "\uD83E\uDD6D", "\uD83C\uDF51",
             "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4D", "\uD83C\uDF50", "\uD83C\uDF47"
-    ));
-    public static final Set<String> SPOOKY_SLOTS = new HashSet<>(Arrays.asList(
+    );
+    public static final Set<String> SPOOKY_SLOTS = ImmutableSet.of(
             "\uD83C\uDF83", "\uD83D\uDC7B", "\uD83D\uDC80", "\uD83C\uDF42", "\uD83C\uDF15",
             "\uD83E\uDDDB", "\uD83E\uDDDF", "\uD83D\uDD77️", "\uD83E\uDD87", "\uD83C\uDF6C"
-    ));
-    public static final Set<String> TURKEY_SLOTS = new HashSet<>(Arrays.asList(
+    );
+    public static final Set<String> TURKEY_SLOTS = ImmutableSet.of(
             "\uD83E\uDD83", "\uD83C\uDF57", "\uD83E\uDD54", "\uD83C\uDF60", "\uD83E\uDD24",
             "\uD83D\uDC6A", "\uD83E\uDD55", "\uD83C\uDF3D", "\uD83E\uDD67", "\uD83C\uDFC8"
-    ));
+    );
 
     // volatile state
     private volatile boolean awaitingResetConfirmation = false;

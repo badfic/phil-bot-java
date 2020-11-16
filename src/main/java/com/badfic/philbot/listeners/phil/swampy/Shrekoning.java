@@ -3,12 +3,11 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
+import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -23,8 +22,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class Shrekoning extends BaseSwampy implements PhilMarker {
 
-    private static final Set<Long> COMMON_POINTS = new HashSet<>(Arrays.asList(500L, 1_000L));
-    private static final Set<Long> RARE_POINTS = new HashSet<>(Arrays.asList(2_000L, 4_000L));
+    private static final Set<Long> COMMON_POINTS = ImmutableSet.of(500L, 1_000L);
+    private static final Set<Long> RARE_POINTS = ImmutableSet.of(2_000L, 4_000L);
     private static final String SHREKONING = "https://cdn.discordapp.com/attachments/741053845098201099/763280555793580042/the_shrekoning.png";
 
     public Shrekoning() {
