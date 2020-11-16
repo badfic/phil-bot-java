@@ -20,7 +20,7 @@ public class SnarkyReminderCommand extends BaseSwampy implements PhilMarker {
 
     public SnarkyReminderCommand() {
         name = "snarkyReminder";
-        aliases = new String[] {"reminderResponse", "reminderResponses"};
+        aliases = new String[] {"reminderResponse", "reminderResponses", "snarkyReminders", "snarkyResponses", "snarkyResponse"};
         help = "`!!snarkyReminder add whatever` " +
                 "Adds a snarky response for when you ask to be reminded of something.\n" +
                 "NOTE: you can (and should) use `<name>` in your responses for a personal touch.\n" +
@@ -55,7 +55,12 @@ public class SnarkyReminderCommand extends BaseSwampy implements PhilMarker {
                         .append('\n');
             }
 
-            event.reply(simpleEmbed("Reminder Responses", description.toString()));
+            String finalString = description.toString();
+            if (finalString.length() > 2_000) {
+                event.getChannel().sendFile(finalString.getBytes(), "snarky-responses.txt").queue();
+            } else {
+                event.reply(finalString);
+            }
         } else if (StringUtils.containsIgnoreCase(event.getArgs(), "delete")) {
             String number = event.getArgs().replace("delete", "").trim();
 

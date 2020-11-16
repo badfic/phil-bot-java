@@ -77,7 +77,13 @@ public class RemindersCommand extends BaseSwampy implements PhilMarker {
                             .append(reminder.getReminder())
                             .append(" at ")
                             .append(TIMESTAMP_FORMAT.format(reminder.getDueDate()));
-                    event.reply(description.toString());
+
+                    String finalString = description.toString();
+                    if (finalString.length() > 2_000) {
+                        event.getChannel().sendFile(finalString.getBytes(), "active-reminders.txt").queue();
+                    } else {
+                        event.reply(finalString);
+                    }
                 } else {
                     event.replyError("Reminder #" + toLookup + " does not exist");;
                 }
