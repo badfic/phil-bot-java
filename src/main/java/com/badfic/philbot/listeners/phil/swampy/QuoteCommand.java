@@ -4,7 +4,6 @@ import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.Quote;
 import com.badfic.philbot.data.phil.QuoteRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class QuoteCommand extends BaseSwampy implements PhilMarker {
-
-    private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy HH:mm");
 
     @Resource
     private QuoteRepository quoteRepository;
