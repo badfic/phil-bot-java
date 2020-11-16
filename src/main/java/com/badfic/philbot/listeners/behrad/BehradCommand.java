@@ -78,7 +78,7 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
         } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
             if (NAME_PATTERN.matcher(msgContent).find()) {
                 event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
-                        .sendMessage(pickRandom(SHAYAN_IMGS)).queue();
+                        .sendMessage(Constants.pickRandom(SHAYAN_IMGS)).queue();
                 return Optional.empty();
             }
 
@@ -89,7 +89,7 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
 
         if (SLOTH_PATTERN.matcher(msgContent).find()) {
             event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
-                    .sendMessage(pickRandom(SLOTH_GIFS)).queue();
+                    .sendMessage(Constants.pickRandom(SLOTH_GIFS)).queue();
             return Optional.empty();
         }
 
@@ -111,7 +111,7 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
             return Optional.of(emotes.get(0).getAsMention());
         }
 
-        return Optional.of(pickRandom(responses));
+        return Optional.of(Constants.pickRandom(responses));
     }
 
 }

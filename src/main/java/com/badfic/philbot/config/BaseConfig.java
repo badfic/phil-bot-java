@@ -117,6 +117,9 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     @Value("${ANTONIA_BOT_TOKEN}")
     public String antoniaBotToken;
 
+    @Value("${JOHN_BOT_TOKEN}")
+    public String johnBotToken;
+
     @Value("${git.commit.id}")
     public String commitSha;
 
@@ -186,6 +189,18 @@ public class BaseConfig implements TaskSchedulerCustomizer {
                 .setGatewayPool(childBotExecutor(), false)
                 .setHttpClient(childBotOkHttpClient())
                 .setActivity(Activity.listening(ANTONIA_STATUS_LIST[ThreadLocalRandom.current().nextInt(ANTONIA_STATUS_LIST.length)]))
+                .build();
+    }
+
+    @Bean(name = "johnJda")
+    public JDA johnJda() throws Exception {
+        return JDABuilder.createLight(johnBotToken, Collections.emptyList())
+                .setRateLimitPool(childBotExecutor(), false)
+                .setCallbackPool(childBotExecutor(), false)
+                .setEventPool(childBotExecutor(), false)
+                .setGatewayPool(childBotExecutor(), false)
+                .setHttpClient(childBotOkHttpClient())
+                .setActivity(Activity.watching("Constantine"))
                 .build();
     }
 

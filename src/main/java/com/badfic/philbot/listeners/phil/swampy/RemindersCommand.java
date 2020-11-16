@@ -4,13 +4,10 @@ import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.Reminder;
 import com.badfic.philbot.data.phil.ReminderRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
-import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,21 +24,6 @@ public class RemindersCommand extends BaseSwampy implements PhilMarker {
                 "`!!reminders` lists all reminders\n" +
                 "`!!reminders 5` Show reminder number 5\n" +
                 "`!!reminders delete 5` Delete reminder number 5";
-    }
-
-    @Scheduled(cron = "0 * * * * ?", zone = "GMT")
-    public void checkReminders() {
-        LocalDateTime now = LocalDateTime.now();
-        for (Reminder reminder : reminderRepository.findAll()) {
-            if (reminder.getDueDate().isBefore(now) || reminder.getDueDate().isEqual(now)) {
-                TextChannel textChannelById = philJda.getTextChannelById(reminder.getChannelId());
-
-                if (textChannelById != null) {
-                    textChannelById.sendMessage("(reminder #" + reminder.getId() + ") <@!" + reminder.getUserId() + "> " + reminder.getReminder()).queue();
-                    reminderRepository.deleteById(reminder.getId());
-                }
-            }
-        }
     }
 
     @Override

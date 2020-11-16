@@ -404,7 +404,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
         allMembers.addAll(getMemberSet(family.getSiblings(), event));
         allMembers.addAll(getMemberSet(family.getCousins(), event));
 
-        return pickRandom(allMembers);
+        return Constants.pickRandom(allMembers);
     }
 
     private Set<Member> getMemberSet(Set<String> set, CommandEvent event) {

@@ -1,9 +1,9 @@
-package com.badfic.philbot.listeners.antonia;
+package com.badfic.philbot.listeners.john;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
-import com.badfic.philbot.data.antonia.AntoniaResponsesConfig;
-import com.badfic.philbot.data.antonia.AntoniaResponsesConfigRepository;
+import com.badfic.philbot.data.john.JohnResponsesConfig;
+import com.badfic.philbot.data.john.JohnResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -19,20 +19,21 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AntoniaCommand extends BasicResponsesBot<AntoniaResponsesConfig> implements PhilMarker {
+public class JohnCommand extends BasicResponsesBot<JohnResponsesConfig> implements PhilMarker {
 
-    @Resource(name = "antoniaJda")
+    @Resource(name = "johnJda")
     @Lazy
-    private JDA antoniaJda;
+    private JDA johnJda;
 
     @Autowired
-    public AntoniaCommand(ObjectMapper objectMapper, AntoniaResponsesConfigRepository antoniaResponsesConfigRepository) throws Exception {
-        super(antoniaResponsesConfigRepository, objectMapper, "antonia",
-                "antonia-kidFriendlyConfig.json", "antonia-nsfwConfig.json", AntoniaResponsesConfig::new);
+    public JohnCommand(ObjectMapper objectMapper, JohnResponsesConfigRepository johnResponsesConfigRepository) throws Exception {
+        super(johnResponsesConfigRepository, objectMapper, "john",
+                "john-kidFriendlyConfig.json", "john-nsfwConfig.json", JohnResponsesConfig::new);
     }
 
     @Override
-    protected Optional<String> getResponse(CommandEvent event, AntoniaResponsesConfig responsesConfig) {
+    protected Optional<String> getResponse(CommandEvent event, JohnResponsesConfig responsesConfig) {
+        String msgContent = event.getMessage().getContentRaw();
         String channelName = event.getChannel().getName();
         Set<String> responses;
         if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
@@ -51,4 +52,7 @@ public class AntoniaCommand extends BasicResponsesBot<AntoniaResponsesConfig> im
         return Optional.of(Constants.pickRandom(responses));
     }
 
+    public JDA getJohnJda() {
+        return johnJda;
+    }
 }

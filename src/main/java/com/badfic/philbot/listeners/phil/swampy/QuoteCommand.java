@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.Quote;
 import com.badfic.philbot.data.phil.QuoteRepository;
@@ -27,7 +28,7 @@ public class QuoteCommand extends BaseSwampy implements PhilMarker {
         if (StringUtils.isBlank(event.getArgs())) {
             List<Quote> quotes = quoteRepository.findAll();
             Collections.shuffle(quotes);
-            Quote quote = pickRandom(quotes);
+            Quote quote = Constants.pickRandom(quotes);
 
             respondWithQuote(event, quote);
             return;

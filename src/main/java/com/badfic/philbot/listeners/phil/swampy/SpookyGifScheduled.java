@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Arrays;
@@ -44,7 +45,7 @@ public class SpookyGifScheduled extends BaseSwampy implements PhilMarker {
 
     @Override
     protected void execute(CommandEvent event) {
-        String gif = pickRandom(GIFS);
+        String gif = Constants.pickRandom(GIFS);
         event.getChannel()
                 .sendTyping()
                 .submit()

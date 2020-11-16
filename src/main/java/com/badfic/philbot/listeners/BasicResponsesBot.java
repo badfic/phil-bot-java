@@ -8,11 +8,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -254,15 +251,6 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
     }
 
     protected abstract Optional<String> getResponse(CommandEvent event, T responsesConfig);
-
-    protected <R> R pickRandom(Collection<R> collection) {
-        int index = ThreadLocalRandom.current().nextInt(collection.size());
-        Iterator<R> iterator = collection.iterator();
-        for (int i = 0; i < index; i++) {
-            iterator.next();
-        }
-        return iterator.next();
-    }
 
     protected MessageEmbed simpleEmbed(String title, String format, Object... args) {
         return new EmbedBuilder()

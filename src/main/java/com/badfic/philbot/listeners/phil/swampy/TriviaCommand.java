@@ -163,7 +163,7 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        Trivia trivia = pickRandom(allTrivias);
+        Trivia trivia = Constants.pickRandom(allTrivias);
 
         String description = trivia.getQuestion() +
                 "\nA: " + trivia.getAnswerA() +
