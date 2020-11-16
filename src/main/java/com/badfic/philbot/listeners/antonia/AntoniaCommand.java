@@ -51,4 +51,7 @@ public class AntoniaCommand extends BasicResponsesBot<AntoniaResponsesConfig> im
         return Optional.of(Constants.pickRandom(responses));
     }
 
+    public JDA getAntoniaJda() {
+        return antoniaJda;
+    }
 }
