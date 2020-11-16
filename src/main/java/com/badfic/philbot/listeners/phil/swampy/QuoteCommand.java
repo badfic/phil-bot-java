@@ -9,11 +9,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
+import net.dv8tion.jda.api.JDA;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class QuoteCommand extends BaseSwampy implements PhilMarker {
+
+    @Resource(name = "johnJda")
+    @Lazy
+    private JDA johnJda;
 
     @Resource
     private QuoteRepository quoteRepository;
@@ -39,13 +45,13 @@ public class QuoteCommand extends BaseSwampy implements PhilMarker {
             Optional<Quote> optionalQuote = quoteRepository.findById(id);
 
             if (!optionalQuote.isPresent()) {
-                event.replyError("Quote #" + id + " does not exist");
+                johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " does not exist").queue();
                 return;
             }
 
             respondWithQuote(event, optionalQuote.get());
         } catch (NumberFormatException e) {
-            event.replyError("Did not recognize number " + event.getArgs());
+            johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Did not recognize number " + event.getArgs()).queue();
         }
     }
 
@@ -59,7 +65,8 @@ public class QuoteCommand extends BaseSwampy implements PhilMarker {
                 .append(quote.getUserId())
                 .append("> ")
                 .append(msgLink);
-        event.reply(simpleEmbed("Quote #" + quote.getId(), description.toString(), null, TIMESTAMP_FORMAT.format(quote.getCreated())));
+        johnJda.getTextChannelById(event.getChannel().getIdLong())
+                .sendMessage(simpleEmbed("Quote #" + quote.getId(), description.toString(), null, TIMESTAMP_FORMAT.format(quote.getCreated()))).queue();
     }
 
 }
