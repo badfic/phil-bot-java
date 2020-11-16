@@ -1,17 +1,17 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
-import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.Quote;
 import com.badfic.philbot.data.phil.QuoteRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,9 +32,10 @@ public class QuoteCommand extends BaseSwampy implements PhilMarker {
     @Override
     protected void execute(CommandEvent event) {
         if (StringUtils.isBlank(event.getArgs())) {
-            List<Quote> quotes = quoteRepository.findAll();
-            Collections.shuffle(quotes);
-            Quote quote = Constants.pickRandom(quotes);
+            int count = (int) quoteRepository.count();
+            int idx = ThreadLocalRandom.current().nextInt(0, count);
+            Page<Quote> quotes = quoteRepository.findAll(PageRequest.of(idx, 1));
+            Quote quote = quotes.getContent().get(0);
 
             respondWithQuote(event, quote);
             return;
