@@ -20,8 +20,13 @@ public class SnarkyReminderCommand extends BaseSwampy implements PhilMarker {
 
     public SnarkyReminderCommand() {
         name = "snarkyReminder";
-        help = "!!snarkyReminder add Something Something Something\n" +
-                "Adds a snarky reponse for when you ask to be reminded of something";
+        aliases = new String[] {"reminderResponse", "reminderResponses"};
+        help = "`!!snarkyReminder add whatever` " +
+                "Adds a snarky response for when you ask to be reminded of something.\n" +
+                "NOTE: you can (and should) use `<name>` in your responses for a personal touch.\n" +
+                "`!!snarkyReminder delete 1` deletes snarky reminder number 1\n" +
+                "`!!snarkyReminder 1` shows snarky reminder 1\n" +
+                "`!!snarkyReminder` shows a list of all snarky reminders";
         requiredRole = Constants.ADMIN_ROLE;
     }
 

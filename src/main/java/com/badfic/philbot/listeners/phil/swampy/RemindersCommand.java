@@ -21,6 +21,7 @@ public class RemindersCommand extends BaseSwampy implements PhilMarker {
 
     public RemindersCommand() {
         name = "reminders";
+        aliases = new String[] {"reminder"};
         help = "!!reminders\n" +
                 "Type 'remind me in x minutes/hours/days to wash the garage' to be reminded\n" +
                 "`!!reminders` lists all reminders\n" +
