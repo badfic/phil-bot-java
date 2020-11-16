@@ -161,7 +161,7 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
                             .setDescription("<@!" + event.getUserId() + "> Added quote #" + savedQuote.getId() + msgLink)
                             .build();
 
-                    event.getChannel().sendMessage(messageEmbed).queue();
+                    johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage(messageEmbed).queue();
                 });
             }
         }
@@ -174,6 +174,7 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
             }
             return function;
         });
+
         swampyCommand.emote(event);
     }
 
