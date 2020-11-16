@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import org.springframework.context.annotation.Lazy;
 
 public abstract class BaseSwampy extends Command {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    protected static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy HH:mm");
 
     // sweepstakes, taxes, robinhood
     public static final BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");

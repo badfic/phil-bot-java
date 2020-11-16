@@ -4,6 +4,10 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.Quote;
 import com.badfic.philbot.data.phil.QuoteRepository;
+import com.badfic.philbot.data.phil.Reminder;
+import com.badfic.philbot.data.phil.ReminderRepository;
+import com.badfic.philbot.data.phil.SnarkyReminderResponse;
+import com.badfic.philbot.data.phil.SnarkyReminderResponseRepository;
 import com.badfic.philbot.listeners.antonia.AntoniaMessageListener;
 import com.badfic.philbot.listeners.behrad.BehradMessageListener;
 import com.badfic.philbot.listeners.keanu.KeanuMessageListener;
@@ -12,7 +16,13 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -20,6 +30,8 @@ import javax.annotation.Resource;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -34,7 +46,10 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -43,11 +58,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     private static final Cache<String, Function<GuildMessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = CacheBuilder.newBuilder()
             .maximumSize(200)
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .build();
     private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer|phellen|cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REMINDER_PATTER = Pattern.compile("\\b(remind me in |remind <@![0-9]+> in )[0-9]+\\b", Pattern.CASE_INSENSITIVE);
 
     private final PhilCommand philCommand;
     private final SwampyCommand swampyCommand;
@@ -80,6 +98,12 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     @Resource
     private QuoteRepository quoteRepository;
 
+    @Resource
+    private ReminderRepository reminderRepository;
+
+    @Resource
+    private SnarkyReminderResponseRepository snarkyReminderResponseRepository;
+
     @Autowired
     public PhilMessageListener(PhilCommand philCommand,
                                SwampyCommand swampyCommand,
@@ -106,6 +130,11 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
         String msgContent = event.getMessage().getContentRaw();
 
         if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {
+            return;
+        }
+
+        if (REMINDER_PATTER.matcher(msgContent).find()) {
+            addReminder(event.getMessage());
             return;
         }
 
@@ -200,6 +229,58 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
         swampyCommand.removeFromGames(user.getId());
         Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("announcements", false).stream().findFirst();
         announcementsChannel.ifPresent(channel -> channel.sendMessage("Begone Bot " + user.getAsMention()).queue());
+    }
+
+    private void addReminder(Message message) {
+        try {
+            String reminder;
+            int remindIdx = StringUtils.indexOf(message.getContentRaw(), "remind");
+
+            Member member = message.getMember();
+            if (CollectionUtils.isNotEmpty(message.getMentionedMembers())) {
+                member = message.getMentionedMembers().get(0);
+
+                reminder = message.getContentRaw().substring(remindIdx + ("remind <@!" + member.getIdLong() + "> in ").length());
+            } else {
+                reminder = message.getContentRaw().substring(remindIdx + "remind me in ".length());
+            }
+            String[] split = reminder.split("\\s+");
+            int number = Integer.parseInt(split[0]);
+            String temporal = split[1];
+            reminder = reminder.substring((split[0] + split[1]).length() + 1).trim();
+
+            if (StringUtils.startsWithIgnoreCase(reminder, "to")) {
+                reminder = reminder.replace("to", "").trim();
+            }
+
+            LocalDateTime dueDate = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+
+            if (StringUtils.containsIgnoreCase(temporal, "minute")) {
+                dueDate = dueDate.plus(number, ChronoUnit.MINUTES);
+            } else if (StringUtils.containsIgnoreCase(temporal, "hour")) {
+                dueDate = dueDate.plus(number, ChronoUnit.HOURS);
+            } else if (StringUtils.containsIgnoreCase(temporal, "day")) {
+                dueDate = dueDate.plus(number, ChronoUnit.DAYS);
+            }
+
+            Reminder savedReminder = reminderRepository.save(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
+            SnarkyReminderResponse snarkyReminderResponse = pickRandom(snarkyReminderResponseRepository.findAll());
+            message.getChannel()
+                    .sendMessage("(reminder #" + savedReminder.getId() + ") " +
+                            snarkyReminderResponse.getResponse().replace("<name>", "<@!" + message.getAuthor().getId() + ">"))
+                    .queue();
+        } catch (Exception e) {
+            logger.error("Exception trying to parse a reminder", e);
+        }
+    }
+
+    private <T> T pickRandom(Collection<T> collection) {
+        int index = ThreadLocalRandom.current().nextInt(collection.size());
+        Iterator<T> iterator = collection.iterator();
+        for (int i = 0; i < index; i++) {
+            iterator.next();
+        }
+        return iterator.next();
     }
 
 }
