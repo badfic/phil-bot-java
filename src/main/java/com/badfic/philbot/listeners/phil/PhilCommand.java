@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners.phil;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.PhilResponsesConfig;
 import com.badfic.philbot.data.phil.PhilResponsesConfigRepository;
@@ -66,10 +67,10 @@ public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> implemen
             isAllUppercase &= StringUtils.isAllUpperCase(s);
         }
         if (isAllUppercase) {
-            return Optional.of(StringUtils.upperCase(pickRandom(responses)));
+            return Optional.of(StringUtils.upperCase(Constants.pickRandom(responses)));
         }
 
-        return Optional.of(pickRandom(responses));
+        return Optional.of(Constants.pickRandom(responses));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners.keanu;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.keanu.KeanuResponsesConfig;
 import com.badfic.philbot.data.keanu.KeanuResponsesConfigRepository;
@@ -71,7 +72,7 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> implem
     @Scheduled(cron = "0 0 17 * * ?", zone = "GMT")
     public void goodMorning() {
         TextChannel general = keanuJda.getTextChannelsByName("general", false).get(0);
-        general.sendMessage(pickRandom(GOOD_MORNING_GIFS)).queue();
+        general.sendMessage(Constants.pickRandom(GOOD_MORNING_GIFS)).queue();
     }
 
     @Override
@@ -108,7 +109,7 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> implem
             return Optional.of(emotes.get(0).getAsMention());
         }
 
-        return Optional.of(pickRandom(responses));
+        return Optional.of(Constants.pickRandom(responses));
     }
 
 }

@@ -62,12 +62,35 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     private static final long DOWNVOTE_POINTS_FROM_DOWNVOTEE = 100;
     private static final long DOWNVOTE_POINTS_TO_DOWNVOTER = 50;
 
+    // slots
+    public static final long SLOTS_WIN_POINTS = 10_000;
+    public static final long SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
+
     // Timeouts
     private static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 3;
     private static final long SLOTS_TIMEOUT_MINUTES = 3;
 
     // soft point bans
     private static final Pattern NO_NO_WORDS = Pattern.compile("\\b(nut|nice|simp|rep)\\b", Pattern.CASE_INSENSITIVE);
+
+    // emoji
+    public static final String[] LEADERBOARD_MEDALS = {
+            "\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49",
+            "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
+    };
+    public static final String SLOT_MACHINE = "\uD83C\uDFB0";
+    public static final Set<String> PLAIN_SLOTS = new HashSet<>(Arrays.asList(
+            "\uD83E\uDD5D", "\uD83C\uDF53", "\uD83C\uDF4B", "\uD83E\uDD6D", "\uD83C\uDF51",
+            "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4D", "\uD83C\uDF50", "\uD83C\uDF47"
+    ));
+    public static final Set<String> SPOOKY_SLOTS = new HashSet<>(Arrays.asList(
+            "\uD83C\uDF83", "\uD83D\uDC7B", "\uD83D\uDC80", "\uD83C\uDF42", "\uD83C\uDF15",
+            "\uD83E\uDDDB", "\uD83E\uDDDF", "\uD83D\uDD77️", "\uD83E\uDD87", "\uD83C\uDF6C"
+    ));
+    public static final Set<String> TURKEY_SLOTS = new HashSet<>(Arrays.asList(
+            "\uD83E\uDD83", "\uD83C\uDF57", "\uD83E\uDD54", "\uD83C\uDF60", "\uD83E\uDD24",
+            "\uD83D\uDC6A", "\uD83E\uDD55", "\uD83C\uDF3D", "\uD83E\uDD67", "\uD83C\uDFC8"
+    ));
 
     // volatile state
     private volatile boolean awaitingResetConfirmation = false;
@@ -286,9 +309,9 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
         discordUser.setLastSlots(now);
 
-        String one = pickRandom(SPOOKY_SLOTS);
-        String two = pickRandom(SPOOKY_SLOTS);
-        String three = pickRandom(SPOOKY_SLOTS);
+        String one = Constants.pickRandom(TURKEY_SLOTS);
+        String two = Constants.pickRandom(TURKEY_SLOTS);
+        String three = Constants.pickRandom(TURKEY_SLOTS);
 
         if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
             givePointsToMember(SLOTS_WIN_POINTS, member, discordUser);

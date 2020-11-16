@@ -11,14 +11,9 @@ import com.jagrosh.jdautilities.command.Command;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -41,25 +36,6 @@ public abstract class BaseSwampy extends Command {
     public static final BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");
     public static final long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 99;
     public static final long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 999;
-
-    // slots
-    public static final long SLOTS_WIN_POINTS = 10_000;
-    public static final long SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
-
-    // emoji
-    public static final String[] LEADERBOARD_MEDALS = {
-            "\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49",
-            "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
-    };
-    public static final String SLOT_MACHINE = "\uD83C\uDFB0";
-    public static final Set<String> SPOOKY_SLOTS = new HashSet<>(Arrays.asList(
-            "\uD83C\uDF83", "\uD83D\uDC7B", "\uD83D\uDC80", "\uD83C\uDF42", "\uD83C\uDF15",
-            "\uD83E\uDDDB", "\uD83E\uDDDF", "\uD83D\uDD77️", "\uD83E\uDD87", "\uD83C\uDF6C"
-    ));
-    public static final Set<String> SLOTS = new HashSet<>(Arrays.asList(
-            "\uD83E\uDD5D", "\uD83C\uDF53", "\uD83C\uDF4B", "\uD83E\uDD6D", "\uD83C\uDF51",
-            "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4D", "\uD83C\uDF50", "\uD83C\uDF47"
-    ));
 
     @Resource(name = "philJda")
     @Lazy
@@ -198,15 +174,6 @@ public abstract class BaseSwampy extends Command {
 
     protected boolean hasRole(Member member, String role) {
         return member.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
-    }
-
-    protected <T> T pickRandom(Collection<T> collection) {
-        int index = ThreadLocalRandom.current().nextInt(collection.size());
-        Iterator<T> iterator = collection.iterator();
-        for (int i = 0; i < index; i++) {
-            iterator.next();
-        }
-        return iterator.next();
     }
 
 }

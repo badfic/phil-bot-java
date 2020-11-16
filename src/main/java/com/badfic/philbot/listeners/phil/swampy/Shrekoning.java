@@ -61,9 +61,9 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
                         if (memberById != null) {
                             long points;
                             if (ThreadLocalRandom.current().nextInt(100) < 25) {
-                                points = pickRandom(RARE_POINTS);
+                                points = Constants.pickRandom(RARE_POINTS);
                             } else {
-                                points = pickRandom(COMMON_POINTS);
+                                points = Constants.pickRandom(COMMON_POINTS);
                             }
 
                             futures.add(givePointsToMember(points, memberById));

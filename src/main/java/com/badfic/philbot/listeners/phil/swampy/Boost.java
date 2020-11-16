@@ -101,9 +101,9 @@ public class Boost extends BaseSwampy implements PhilMarker {
         }
 
         if (force || ThreadLocalRandom.current().nextInt(100) < PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR) {
-            String boostPhrase = pickRandom(Arrays.asList("butter", "shortening", "lard", "ghee", "oleo", "spread", "thanks", "giving", "family", "turkey",
-                    "feet", "foot", "stuffing", "cranberry", "cornbread", "bird", "greenbean", "stringbean", "rice", "pumpkin", "pie", "apple", "gravy",
-                    "potato", "corn", "maze", "maize", "stonks", "stimulus", "baster", "turducken", "scarecrow", "butters"));
+            String boostPhrase = Constants.pickRandom(Arrays.asList("butter", "shortening", "lard", "ghee", "oleo", "spread", "thanks", "giving", "family",
+                    "turkey", "feet", "foot", "stuffing", "cranberry", "cornbread", "bird", "greenbean", "stringbean", "rice", "pumpkin", "pie", "apple",
+                    "gravy", "potato", "corn", "maze", "maize", "stonks", "stimulus", "baster", "turducken", "scarecrow", "butters"));
             swampyGamesConfig.setBoostPhrase(boostPhrase);
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
