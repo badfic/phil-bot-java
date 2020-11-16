@@ -5,6 +5,8 @@ import com.google.common.collect.Multimap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -24,6 +26,7 @@ public class AntoniaMessageListener extends ListenerAdapter {
             .put("307611036134146080", ImmutablePair.of(compile("I love you"), "I know"))
             .put("323520695550083074", ImmutablePair.of(compile("togna"), "bologna"))
             .build();
+    private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
 
     private final AntoniaCommand antoniaCommand;
 
@@ -39,6 +42,23 @@ public class AntoniaMessageListener extends ListenerAdapter {
         if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {
             return;
         }
+
+        long channelId = event.getMessage().getChannel().getIdLong();
+        LAST_WORD_MAP.compute(channelId, (key, oldValue) -> {
+            if (oldValue == null) {
+                return new ImmutablePair<>(msgContent, 1L);
+            }
+            if (oldValue.getLeft().equalsIgnoreCase(msgContent)) {
+                if (oldValue.getRight() + 1 >= 3 && "bird".equalsIgnoreCase(msgContent)) {
+                    antoniaCommand.getAntoniaJda().getTextChannelById(channelId).sendMessage("the bird is the word").queue();
+                    return new ImmutablePair<>(msgContent, 0L);
+                }
+
+                return new ImmutablePair<>(msgContent, oldValue.getRight() + 1);
+            } else {
+                return new ImmutablePair<>(msgContent, 1L);
+            }
+        });
 
         if (StringUtils.containsIgnoreCase(event.getMessage().getContentRaw(), "kite man")) {
             event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
