@@ -4,12 +4,11 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
+import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,14 +22,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class Stonks extends BaseSwampy implements PhilMarker {
 
-    private static final Set<String> STONKS = new HashSet<>(Arrays.asList(
+    private static final Set<String> STONKS = ImmutableSet.of(
             "https://cdn.discordapp.com/attachments/741053845098201099/771913890731655188/image0.jpg",
             "https://cdn.discordapp.com/attachments/741053845098201099/771913707403083836/image0.jpg",
             "https://cdn.discordapp.com/attachments/741053845098201099/771914968701599744/image0.jpg",
             "https://cdn.discordapp.com/attachments/741053845098201099/771916094091952138/image0.jpg",
             "https://cdn.discordapp.com/attachments/741053845098201099/771917366660694036/image0.jpg",
             "https://cdn.discordapp.com/attachments/741053845098201099/771917366904750160/image1.jpg"
-    ));
+    );
     private static final long THEORETICAL_MAX = 4_000L;
 
     public Stonks() {

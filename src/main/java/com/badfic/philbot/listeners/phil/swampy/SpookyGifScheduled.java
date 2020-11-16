@@ -2,9 +2,8 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
+import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Component;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpookyGifScheduled extends BaseSwampy implements PhilMarker {
 
-    private static final Set<String> GIFS = new HashSet<>(Arrays.asList(
+    private static final Set<String> GIFS = ImmutableSet.of(
             "https://tenor.com/view/spooky-gif-6177876",
             "https://tenor.com/view/happy-halloweens-eve-halloween-dance-michael-myers-gif-15439377",
             "https://tenor.com/view/halloween-scary-jack-skellington-nightmare-before-christmas-gif-12759576",
@@ -36,7 +35,7 @@ public class SpookyGifScheduled extends BaseSwampy implements PhilMarker {
             "https://tenor.com/view/glee-kurt-chris-colfer-bada-bing-trick-or-treat-gif-4841997",
             "https://tenor.com/view/halloween-costume-halloweengifs-mean-girls-gif-9561686",
             "https://tenor.com/view/zombie-sleepy-yawn-goodnight-grave-gif-4616504"
-    ));
+    );
 
     public SpookyGifScheduled() {
         name = "spookyGif";
