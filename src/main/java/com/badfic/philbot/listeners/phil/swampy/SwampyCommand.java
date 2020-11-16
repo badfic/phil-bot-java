@@ -187,7 +187,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                     || CollectionUtils.isNotEmpty(message.getEmotes());
 
             long pointsToGive = NORMAL_MSG_POINTS;
-            if ("bot-space".equals(event.getChannel().getName())) {
+            if ("bot-space".equals(event.getChannel().getName()) || "sim-games".equals(event.getChannel().getName())) {
                 pointsToGive = 1;
             } else if (CURSED_MSG_CHANNELS.contains(event.getChannel().getName())) {
                 pointsToGive = CURSED_MSG_POINTS;
