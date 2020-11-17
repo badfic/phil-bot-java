@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,7 +26,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -69,21 +67,6 @@ public class JohnMessageListener extends ListenerAdapter {
 
     @Resource
     private SnarkyReminderResponseRepository snarkyReminderResponseRepository;
-
-    @Scheduled(cron = "0 * * * * ?", zone = "GMT")
-    public void checkReminders() {
-        LocalDateTime now = LocalDateTime.now();
-        for (Reminder reminder : reminderRepository.findAll()) {
-            if (reminder.getDueDate().isBefore(now) || reminder.getDueDate().isEqual(now)) {
-                TextChannel textChannelById = johnCommand.getJohnJda().getTextChannelById(reminder.getChannelId());
-
-                if (textChannelById != null) {
-                    textChannelById.sendMessage("(reminder #" + reminder.getId() + ") <@!" + reminder.getUserId() + "> " + reminder.getReminder()).queue();
-                    reminderRepository.deleteById(reminder.getId());
-                }
-            }
-        }
-    }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
