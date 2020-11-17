@@ -51,8 +51,7 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
 
         UsStateJson chosenState = Constants.pickRandom(states);
         swampyGamesConfig.setMapPhrase(chosenState.getState());
-        // TODO Change from 1 to 15
-        swampyGamesConfig.setMapTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(1));
+        swampyGamesConfig.setMapTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
         swampyGamesConfigRepository.save(swampyGamesConfig);
 
         String description = null;

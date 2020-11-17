@@ -56,8 +56,7 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
             List<CompletableFuture<Void>> futures = new ArrayList<>();
-            // TODO Change from 1 to 15
-            LocalDateTime startTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(1);
+            LocalDateTime startTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(15);
             StringBuilder description = new StringBuilder();
             discordUserRepository.findAll()
                     .stream()
