@@ -11,6 +11,8 @@ public interface Constants {
     String EIGHTEEN_PLUS_ROLE = "18+";
     String CHAOS_CHILDREN_ROLE = "Chaos Children";
     String SWAMPYS_CHANNEL = "the-swampys";
+    String MEGA_HELL_CHANNEL = "mega-hell";
+    String MEGA_HELL_ROLE = "in mega hell";
     String TEST_CHANNEL = "test-channel";
 
     Color COLOR_OF_THE_MONTH = new Color(225, 168, 0);
