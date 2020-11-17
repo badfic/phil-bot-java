@@ -191,6 +191,11 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                     return;
                 }
 
+                if (swampyGamesConfig.getMapPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getMapPhrase())) {
+                    acceptedMap(event.getMember());
+                    return;
+                }
+
                 if (swampyGamesConfig.getSwiperAwaiting() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getNoSwipingPhrase())) {
                     swampyGamesConfig.setSwiperSavior(event.getMember().getId());
                     swampyGamesConfigRepository.save(swampyGamesConfig);
@@ -286,6 +291,12 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     private void acceptedBoost(Member member) {
         DiscordUser discordUser = getDiscordUserByMember(member);
         discordUser.setAcceptedBoost(LocalDateTime.now());
+        discordUserRepository.save(discordUser);
+    }
+
+    private void acceptedMap(Member member) {
+        DiscordUser discordUser = getDiscordUserByMember(member);
+        discordUser.setAcceptedMapTrivia(LocalDateTime.now());
         discordUserRepository.save(discordUser);
     }
 

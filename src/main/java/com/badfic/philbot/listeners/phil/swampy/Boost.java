@@ -81,7 +81,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
                                 throw new RuntimeException("member not found");
                             }
 
-                            futures.add(givePointsToMember(1000, memberLookedUp));
+                            futures.add(givePointsToMember(BOOST_POINTS_TO_GIVE, memberLookedUp));
                             description.append("Gave " + BOOST_POINTS_TO_GIVE + " points to <@!")
                                     .append(u.getId())
                                     .append(">\n");
