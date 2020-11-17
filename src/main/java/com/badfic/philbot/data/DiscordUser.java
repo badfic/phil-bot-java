@@ -47,6 +47,9 @@ public class DiscordUser {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime acceptedBoost = LocalDateTime.now();
 
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime acceptedMapTrivia = LocalDateTime.now();
+
     public String getId() {
         return id;
     }
@@ -135,4 +138,11 @@ public class DiscordUser {
         this.acceptedBoost = acceptedBoost;
     }
 
+    public LocalDateTime getAcceptedMapTrivia() {
+        return acceptedMapTrivia;
+    }
+
+    public void setAcceptedMapTrivia(LocalDateTime acceptedMapTrivia) {
+        this.acceptedMapTrivia = acceptedMapTrivia;
+    }
 }

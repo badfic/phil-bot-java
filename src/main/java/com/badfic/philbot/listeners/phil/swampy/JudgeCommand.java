@@ -6,6 +6,7 @@ import com.badfic.philbot.data.phil.CourtCase;
 import com.badfic.philbot.data.phil.CourtCaseRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -72,7 +73,8 @@ public class JudgeCommand extends BaseSwampy implements PhilMarker {
                 Sentence.ONE_DAY.getEmoji() + " for a 1 day sentence";
 
         swampysChannel.sendMessage(simpleEmbed("Jury Summons", description)).queue(msg -> {
-            CourtCase courtCase = new CourtCase(defendant.getIdLong(), accuser.getIdLong(), msg.getIdLong(), finalCrime, LocalDateTime.now().plusMinutes(15));
+            CourtCase courtCase = new CourtCase(defendant.getIdLong(), accuser.getIdLong(), msg.getIdLong(), finalCrime,
+                    LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
             courtCaseRepository.save(courtCase);
 
             msg.addReaction(Sentence.ACQUIT.getEmoji()).queue();

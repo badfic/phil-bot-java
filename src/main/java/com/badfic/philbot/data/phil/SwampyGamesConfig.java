@@ -1,5 +1,6 @@
 package com.badfic.philbot.data.phil;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,12 @@ public class SwampyGamesConfig {
 
     @Column
     private String boostPhrase;
+
+    @Column
+    private String mapPhrase;
+
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime mapTriviaExpiration;
 
     @Column
     private int storyTimeCounter;
@@ -76,6 +83,22 @@ public class SwampyGamesConfig {
 
     public void setBoostPhrase(String boostPhrase) {
         this.boostPhrase = boostPhrase;
+    }
+
+    public String getMapPhrase() {
+        return mapPhrase;
+    }
+
+    public void setMapPhrase(String mapPhrase) {
+        this.mapPhrase = mapPhrase;
+    }
+
+    public LocalDateTime getMapTriviaExpiration() {
+        return mapTriviaExpiration;
+    }
+
+    public void setMapTriviaExpiration(LocalDateTime mapTriviaExpiration) {
+        this.mapTriviaExpiration = mapTriviaExpiration;
     }
 
     public int getStoryTimeCounter() {
