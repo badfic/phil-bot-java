@@ -1,0 +1,14 @@
+{{> header}}
+<div class="container">
+    <h1>Quotes</h1>
+{{#quotes}}
+    <div class="card" style="width: 20em;">
+        <div class="card-body">
+            <h5 class="card-title">Quote #{{id}}</h5>
+            <p class="card-text lead">{{quote}}</p>
+            <p class="blockquote-footer"><@!{{userId}}> {{created}}</p>
+        </div>
+    </div>
+{{/quotes}}
+</div>
+{{> footer}}
