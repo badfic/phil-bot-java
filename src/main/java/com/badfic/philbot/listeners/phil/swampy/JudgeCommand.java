@@ -72,8 +72,7 @@ public class JudgeCommand extends BaseSwampy implements PhilMarker {
                 Sentence.ONE_DAY.getEmoji() + " for a 1 day sentence";
 
         swampysChannel.sendMessage(simpleEmbed("Jury Summons", description)).queue(msg -> {
-            // TODO RESET TO 15 MINUTES
-            CourtCase courtCase = new CourtCase(defendant.getIdLong(), accuser.getIdLong(), msg.getIdLong(), finalCrime, LocalDateTime.now().plusMinutes(1));
+            CourtCase courtCase = new CourtCase(defendant.getIdLong(), accuser.getIdLong(), msg.getIdLong(), finalCrime, LocalDateTime.now().plusMinutes(15));
             courtCaseRepository.save(courtCase);
 
             msg.addReaction(Sentence.ACQUIT.getEmoji()).queue();
