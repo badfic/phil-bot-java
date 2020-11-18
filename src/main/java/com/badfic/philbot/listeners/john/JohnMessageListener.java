@@ -58,6 +58,28 @@ public class JohnMessageListener extends ListenerAdapter {
             "https://tenor.com/bhngy.gif",
             "https://tenor.com/POHh.gif",
             "https://cdn.discordapp.com/attachments/530193785351569423/777962192083353611/zaricat.gif");
+    private static final Set<String> GOOD_BOT = ImmutableSet.of(
+            ":D!!!",
+            "I know",
+            "Yeah, yeah",
+            "Everyone who puts their trust in me dies",
+            "I'm damned is what I am",
+            "Thanks, luv",
+            "Quite right",
+            "Ey up",
+            "**Oi**",
+            "You must be off yer trolley, mate",
+            "Shut up yer biff",
+            "Oi, just geg out will ya",
+            "Are you messin?",
+            "Give it a rest ya muppet",
+            "Yeah, sound mate",
+            "That's right boss innit",
+            "Ain't you a proper meff, then?",
+            "Thanks, luv. I'm absolutely made up.",
+            "What a beut!",
+            "Ta, mate"
+    );
 
     @Resource
     private JohnCommand johnCommand;
@@ -118,7 +140,7 @@ public class JohnMessageListener extends ListenerAdapter {
             johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(Constants.pickRandom(UWU)).queue();
         }
         if ("good bot".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(":D!!!").queue();
+            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(Constants.pickRandom(GOOD_BOT)).queue();
         }
 
         if (JOHN_PATTERN.matcher(msgContent).find()) {
