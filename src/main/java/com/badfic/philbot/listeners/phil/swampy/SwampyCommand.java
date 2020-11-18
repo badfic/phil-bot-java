@@ -57,7 +57,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     private static final long UPVOTE_TIMEOUT_MINUTES = 1;
     private static final long DOWNVOTE_TIMEOUT_MINUTES = 1;
     private static final long UPVOTE_POINTS_TO_UPVOTEE = 500;
-    private static final long UPVOTE_POINTS_TO_UPVOTER = 250;
+    private static final long UPVOTE_POINTS_TO_UPVOTER = 125;
     private static final long DOWNVOTE_POINTS_FROM_DOWNVOTEE = 100;
     private static final long DOWNVOTE_POINTS_TO_DOWNVOTER = 50;
 
@@ -98,9 +98,9 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
     public SwampyCommand() {
         name = "swampy";
-        aliases = new String[] {"bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simpy"};
+        aliases = new String[] {"bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simpy", "daddy"};
         help =
-                "`!!swampy` aka... `bastard, spooky, cursed, gay, aww, moist, moisten, gobble, sin, simpy` HELP:\n" +
+                "`!!swampy` aka... `bastard, spooky, cursed, gay, aww, moist, moisten, gobble, sin, simpy, daddy` HELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
                 "`!!swampy leaderboard bastard` show the 18+ leaderboard\n" +
                 "`!!swampy leaderboard chaos` show the chaos children leaderboard\n" +
