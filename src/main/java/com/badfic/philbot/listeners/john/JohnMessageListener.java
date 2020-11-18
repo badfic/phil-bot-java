@@ -117,6 +117,9 @@ public class JohnMessageListener extends ListenerAdapter {
         if ("uwu".equalsIgnoreCase(msgContent)) {
             johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(Constants.pickRandom(UWU)).queue();
         }
+        if ("good bot".equalsIgnoreCase(msgContent)) {
+            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(":D!!!").queue();
+        }
 
         if (JOHN_PATTERN.matcher(msgContent).find()) {
             johnCommand.execute(new CommandEvent(event, null, null));
