@@ -97,7 +97,7 @@ public class JudgeTickable implements MinuteTickable {
                                 courtCaseRepository.save(courtCase);
                                 swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
                                         + courtCase.getCrime()).queue();
-                                megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mgea hell for "
+                                megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
                                         + courtCase.getCrime()).queue();
                                 break;
                             case FIVE_HOUR:
