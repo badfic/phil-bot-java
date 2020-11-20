@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -245,17 +246,14 @@ public class Fam extends BaseSwampy implements PhilMarker {
         Set<String> set = (Set<String>) ReflectionUtils.invokeMethod(method, discordUser.getFamily());
 
         if (set == null) {
-            event.replyError("Something went terrible wrong. Try again later");
+            event.replyError("Something went terribly wrong. Try again later");
             return;
         }
 
-        if (CollectionUtils.size(event.getMessage().getMentionedMembers()) == 1) {
-            Member mentionedMember = event.getMessage().getMentionedMembers().get(0);
-            if (isNotEligible(mentionedMember, event)) {
-                return;
-            }
+        if (CollectionUtils.size(event.getMessage().getMentionedUsers()) == 1) {
+            User mentionedMember = event.getMessage().getMentionedUsers().get(0);
 
-            if (mentionedMember.getUser().isBot()) {
+            if (mentionedMember.isBot()) {
                 if (add) {
                     set.add(mentionedMember.getId());
                 } else {
@@ -263,19 +261,24 @@ public class Fam extends BaseSwampy implements PhilMarker {
                 }
 
                 discordUserRepository.save(discordUser);
-                event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + mentionedMember.getEffectiveName());
+                event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + mentionedMember.getName());
                 return;
             }
 
             if (!add) {
                 set.remove(mentionedMember.getId());
                 discordUserRepository.save(discordUser);
-                event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + mentionedMember.getEffectiveName());
+                event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + mentionedMember.getName());
                 return;
             }
 
             if (set.contains(mentionedMember.getId())) {
-                event.replySuccess(event.getMember().getAsMention() + ", " + mentionedMember.getEffectiveName() + " is already `" + argName + "`'d");
+                event.replySuccess(event.getMember().getAsMention() + ", " + mentionedMember.getName() + " is already `" + argName + "`'d");
+                return;
+            }
+
+            if (event.getGuild().getMemberById(mentionedMember.getId()) == null) {
+                event.replyError("You can't add someone who is not a member of the swamp");
                 return;
             }
 
