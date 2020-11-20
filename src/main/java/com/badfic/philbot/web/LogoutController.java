@@ -17,7 +17,7 @@ public class LogoutController extends BaseController {
         }
 
         httpSession.invalidate();
-        return ResponseEntity.ok("You have successfully logged out");
+        return ResponseEntity.ok("You have successfully logged out. If you want to log in again: <a href=\"" + baseConfig.hostname + "\">Login</a>");
     }
 
 }

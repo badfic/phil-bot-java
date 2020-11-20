@@ -41,14 +41,14 @@ public abstract class BaseController {
     @Resource(name = "philJda")
     protected JDA philJda;
 
-    protected void checkSession(HttpSession httpSession) throws UnsupportedEncodingException {
+    protected void checkSession(HttpSession httpSession, boolean requiresAdmin) throws UnsupportedEncodingException {
         if (httpSession.isNew()) {
             throw new NewSessionException();
         }
         if (httpSession.getAttribute(DISCORD_TOKEN) == null) {
             throw new UnauthorizedException("You do not have a valid session. Please refresh and login again");
         }
-        refreshTokenIfNeeded(httpSession);
+        refreshTokenIfNeeded(httpSession, requiresAdmin);
     }
 
     protected DiscordApiIdentityResponse getDiscordApiIdentityResponse(String accessToken) {
@@ -67,14 +67,15 @@ public abstract class BaseController {
         return member.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
     }
 
-    private void refreshTokenIfNeeded(HttpSession httpSession) throws UnsupportedEncodingException {
+    private void refreshTokenIfNeeded(HttpSession httpSession, boolean requiresAdmin) throws UnsupportedEncodingException {
         try {
             DiscordApiIdentityResponse discordApiIdentityResponse = Objects.requireNonNull(
                     getDiscordApiIdentityResponse((String) httpSession.getAttribute(DISCORD_TOKEN)));
 
             Member memberById = philJda.getGuilds().get(0).getMemberById(discordApiIdentityResponse.getId());
-            if (memberById == null || (!hasRole(memberById, Constants.ADMIN_ROLE) && !hasRole(memberById, Constants.MOD_ROLE))) {
-                throw new UnauthorizedException(discordApiIdentityResponse.getId() + " You are not authorized, you must be a swamp admin to access this page");
+            if (memberById == null || (requiresAdmin && !hasRole(memberById, Constants.ADMIN_ROLE) && !hasRole(memberById, Constants.MOD_ROLE))) {
+                throw new UnauthorizedException(discordApiIdentityResponse.getId() +
+                        " You are not authorized, you must be a swamp " + (requiresAdmin ? "admin" : "member") + " to access this page");
             }
         } catch (UnauthorizedException e) {
             throw e;

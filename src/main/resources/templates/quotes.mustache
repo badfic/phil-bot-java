@@ -1,14 +1,25 @@
 {{> header}}
 <div class="container">
     <h1>Quotes</h1>
-{{#quotes}}
-    <div class="card" style="width: 20em;">
-        <div class="card-body">
-            <h5 class="card-title">Quote #{{id}}</h5>
-            <p class="card-text lead">{{quote}}</p>
-            <p class="blockquote-footer"><@!{{userId}}> {{created}}</p>
-        </div>
-    </div>
-{{/quotes}}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Number</th>
+            <th scope="col">Author</th>
+            <th scope="col">Quote</th>
+            <th scope="col">Link</th>
+        </tr>
+        </thead>
+        <tbody>
+    {{#quotes}}
+        <tr>
+            <th scope="row">{{id}}</th>
+            <td>{{name}}</td>
+            <td>{{quote}}</td>
+            <td><a href="https://discordapp.com/channels/740999022340341791/{{channelId}}/{{messageId}}">jump</a></td>
+        </tr>
+    {{/quotes}}
+        </tbody>
+    </table>
 </div>
 {{> footer}}

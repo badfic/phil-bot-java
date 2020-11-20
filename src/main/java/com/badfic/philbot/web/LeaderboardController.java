@@ -32,12 +32,12 @@ public class LeaderboardController extends BaseController {
 
     @GetMapping(value = "/leaderboard", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> getRanks(HttpSession httpSession) throws Exception {
-        checkSession(httpSession);
+        checkSession(httpSession, false);
 
-        return ResponseEntity.ok(leaderboard());
+        return ResponseEntity.ok(leaderboard(httpSession));
     }
 
-    private String leaderboard() {
+    private String leaderboard(HttpSession httpSession) {
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
 
         List<SimpleMember> bastards = swampyUsers.stream()
@@ -66,6 +66,7 @@ public class LeaderboardController extends BaseController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Leaderboard");
+        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
         props.put("bastards", bastards);
         props.put("children", children);
         try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
