@@ -4,6 +4,7 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,13 +80,13 @@ public class LeaderboardController extends BaseController {
         private final String image;
         private final String name;
         private final String id;
-        private final long xp;
+        private final String xp;
 
         public SimpleMember(String image, String name, String id, long xp) {
             this.image = image;
             this.name = name;
             this.id = id;
-            this.xp = xp;
+            this.xp = NumberFormat.getIntegerInstance().format(xp);
         }
 
         public String getImage() {
@@ -100,7 +101,7 @@ public class LeaderboardController extends BaseController {
             return id;
         }
 
-        public long getXp() {
+        public String getXp() {
             return xp;
         }
     }
