@@ -3,21 +3,49 @@
     <div class="row">
         <div class="col-lg">
             <h2>Bastards</h2>
-            {{#bastards}}
-                <div>
-                    <img src="{{image}}" width="50" height="50">
-                    <span>{{xp}} xp: {{name}} <@!{{id}}></span>
-                </div>
-            {{/bastards}}
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Profile</th>
+                    <th scope="col">XP</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#bastards}}
+                    <tr>
+                        <td><img src="{{image}}" width="50" height="50"></td>
+                        <td>{{xp}}</td>
+                        <td>{{name}}</td>
+                        <td>{{id}}</td>
+                    </tr>
+                {{/bastards}}
+                </tbody>
+            </table>
         </div>
         <div class="col-lg">
             <h2>Children</h2>
-            {{#children}}
-                <div>
-                    <img src="{{image}}" width="50" height="50">
-                    <span>{{xp}} xp: {{name}} <@!{{id}}></span>
-                </div>
-            {{/children}}
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Profile</th>
+                    <th scope="col">XP</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#children}}
+                    <tr>
+                        <td><img src="{{image}}" width="50" height="50"></td>
+                        <td>{{xp}}</td>
+                        <td>{{name}}</td>
+                        <td>{{id}}</td>
+                    </tr>
+                {{/children}}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
