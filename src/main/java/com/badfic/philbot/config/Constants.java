@@ -1,6 +1,7 @@
 package com.badfic.philbot.config;
 
 import java.awt.Color;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
@@ -26,4 +27,12 @@ public interface Constants {
         }
         return iterator.next();
     }
+
+    static String prettyPrintDuration(Duration duration) {
+        return duration.toString()
+                .substring(2)
+                .replaceAll("(\\d[HMS])(?!$)", "$1 ")
+                .toLowerCase();
+    }
+
 }

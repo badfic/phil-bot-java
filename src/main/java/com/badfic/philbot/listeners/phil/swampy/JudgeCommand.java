@@ -5,8 +5,10 @@ import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.CourtCase;
 import com.badfic.philbot.data.phil.CourtCaseRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -52,6 +54,27 @@ public class JudgeCommand extends BaseSwampy implements PhilMarker {
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
         Member accuser = event.getMember();
         Member defendant = event.getMessage().getMentionedMembers().get(0);
+
+        Optional<CourtCase> optionalExistingCase = courtCaseRepository.findById(defendant.getIdLong());
+        if (optionalExistingCase.isPresent()) {
+            CourtCase courtCase = optionalExistingCase.get();
+
+            if (courtCase.getReleaseDate() != null) {
+                event.reply(defendant.getEffectiveName() + " is currently serving a sentence of "
+                        + Constants.prettyPrintDuration(Duration.between(LocalDateTime.now(), courtCase.getReleaseDate())));
+            } else {
+                event.reply(defendant.getEffectiveName() + " is currently on trial with "
+                        + Constants.prettyPrintDuration(Duration.between(LocalDateTime.now(), courtCase.getTrialDate())) + " left");
+            }
+
+            return;
+        }
+
+        if (event.getArgs().startsWith("show")) {
+            event.reply(defendant.getEffectiveName() + " is neither serving nor on trial.");
+            return;
+        }
+
         String crime = event.getArgs().replace("<@!" + defendant.getIdLong() + ">", "").trim();
         if (crime.startsWith("for")) {
             crime = crime.substring(3).trim();
@@ -60,11 +83,6 @@ public class JudgeCommand extends BaseSwampy implements PhilMarker {
             crime = "unspecified crimes";
         }
         String finalCrime = crime;
-
-        if (courtCaseRepository.existsById(defendant.getIdLong())) {
-            event.replyError("You cannot judge that user, they are currently serving a sentence or awaiting trial");
-            return;
-        }
 
         String description = accuser.getAsMention() + " is accusing " + defendant.getAsMention() +
                 " of " + crime + "\n\nReact below with a\n" + Sentence.ACQUIT.getEmoji() + " to acquit\n" +

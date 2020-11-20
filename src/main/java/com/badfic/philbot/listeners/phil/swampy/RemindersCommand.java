@@ -1,9 +1,12 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.Reminder;
 import com.badfic.philbot.data.phil.ReminderRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
@@ -39,8 +42,8 @@ public class RemindersCommand extends BaseSwampy implements PhilMarker {
                         .append(reminder.getUserId())
                         .append("> ")
                         .append(reminder.getReminder())
-                        .append(" at ")
-                        .append(TIMESTAMP_FORMAT.format(reminder.getDueDate()))
+                        .append(" in ")
+                        .append(Constants.prettyPrintDuration(Duration.between(LocalDateTime.now(), reminder.getDueDate())))
                         .append('\n');
             }
 
@@ -75,8 +78,8 @@ public class RemindersCommand extends BaseSwampy implements PhilMarker {
                             .append(reminder.getUserId())
                             .append("> ")
                             .append(reminder.getReminder())
-                            .append(" at ")
-                            .append(TIMESTAMP_FORMAT.format(reminder.getDueDate()));
+                            .append(" in ")
+                            .append(Constants.prettyPrintDuration(Duration.between(LocalDateTime.now(), reminder.getDueDate())));
 
                     String finalString = description.toString();
                     if (finalString.length() > 2_000) {
