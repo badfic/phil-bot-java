@@ -34,7 +34,7 @@ public class CommandsController extends BaseController {
 
     @GetMapping(value = "/commands", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> getRanks(HttpSession httpSession) throws Exception {
-        checkSession(httpSession);
+        checkSession(httpSession, false);
 
         List<SimpleCommand> simpleCommandsList = commands.stream().map(command -> {
             String modHelp = null;
@@ -57,6 +57,7 @@ public class CommandsController extends BaseController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Commands");
+        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
         props.put("commands", simpleCommandsList);
         try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
             mustache.execute(stringWriter, props);

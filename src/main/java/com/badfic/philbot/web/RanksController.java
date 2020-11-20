@@ -28,10 +28,11 @@ public class RanksController extends BaseController {
 
     @GetMapping(value = "/ranks", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> getRanks(HttpSession httpSession) throws Exception {
-        checkSession(httpSession);
+        checkSession(httpSession, false);
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Ranks");
+        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
         props.put("ranks", Rank.getAllRanks());
 
         try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {

@@ -1,6 +1,5 @@
 package com.badfic.philbot.web;
 
-import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.UnauthorizedException;
 import com.badfic.philbot.data.DiscordApiIdentityResponse;
 import com.badfic.philbot.data.DiscordApiLoginResponse;
@@ -70,7 +69,7 @@ public class HomeController extends BaseController {
             DiscordApiIdentityResponse discordApiIdentityResponse = getDiscordApiIdentityResponse(accessToken);
 
             Member memberById = philJda.getGuilds().get(0).getMemberById(discordApiIdentityResponse.getId());
-            if (memberById != null && (hasRole(memberById, Constants.ADMIN_ROLE) || hasRole(memberById, Constants.MOD_ROLE))) {
+            if (memberById != null) {
                 httpSession.setAttribute(DISCORD_TOKEN, accessToken);
                 httpSession.setAttribute(DISCORD_REFRESH_TOKEN, discordApiLoginResponse.getRefreshToken());
                 httpSession.setAttribute(DISCORD_ID, discordApiIdentityResponse.getId());
@@ -79,10 +78,11 @@ public class HomeController extends BaseController {
                 throw new UnauthorizedException(discordApiIdentityResponse.getId() + " You are not authorized, you must be a swamp admin to access this page");
             }
         }
-        checkSession(httpSession);
+        checkSession(httpSession, false);
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Phil's Swamp");
+        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
         try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
             mustache.execute(stringWriter, props);
             return ResponseEntity.ok(stringWriter.toString());
