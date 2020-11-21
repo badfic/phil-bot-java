@@ -4,17 +4,17 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
+import com.google.common.collect.ImmutableMap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,12 +26,41 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
     private static final long SWIPER_POINTS_TO_STEAL = 1_500;
 
-    private static final String SWIPER_SPOTTED = "https://cdn.discordapp.com/attachments/752665380182425677/772352670769741824/images.png";
-    private static final String SWIPER_WON = "https://cdn.discordapp.com/attachments/761398315119280158/765049616412180500/stephen-molyneaux-dora-swiper-1001.png";
-    private static final String NO_SWIPING = "https://cdn.discordapp.com/attachments/752665380182425677/772352107042701352/ddf.png";
-    private static final String SNART_SPOTTED = "https://cdn.discordapp.com/attachments/323666308107599872/758910821950029824/snart_rory.png";
-    private static final String SNART_WON = "https://cdn.discordapp.com/attachments/323666308107599872/758911981176094801/snart_rory_mischief_managed.png";
-    private static final String NO_SNART = "https://cdn.discordapp.com/attachments/323666308107599872/758911984925802516/snart_rory_you_cant_steal_here.png";
+    private static final Map<String, TheSwiper> SWIPERS = ImmutableMap.<String, TheSwiper>builder()
+            .put("Swiper No Swiping", new TheSwiper(
+                    "Swiper No Swiping",
+                    "Swiper Was Spotted Nearby",
+                    "https://cdn.discordapp.com/attachments/752665380182425677/772352670769741824/images.png",
+                    "https://cdn.discordapp.com/attachments/752665380182425677/772352107042701352/ddf.png",
+                    "Swiper Escaped!",
+                    "https://cdn.discordapp.com/attachments/761398315119280158/765049616412180500/stephen-molyneaux-dora-swiper-1001.png"
+            ))
+            .put("Snarter No Snarting", new TheSwiper(
+                    "Snarter No Snarting",
+                    "Rory and Snart Were Spotted Nearby",
+                    "https://cdn.discordapp.com/attachments/323666308107599872/758910821950029824/snart_rory.png",
+                    "https://cdn.discordapp.com/attachments/323666308107599872/758911984925802516/snart_rory_you_cant_steal_here.png",
+                    "Rory and Snart Escaped!",
+                    "https://cdn.discordapp.com/attachments/323666308107599872/758911981176094801/snart_rory_mischief_managed.png"
+            ))
+            .put("Squidward No Squidding", new TheSwiper(
+                    "Squidward No Squidding",
+                    "Squidward Was Spotted Nearby",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/779842927655780372/99784025-0c213880-2ad0-11eb-832e-a07fd430914a.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/779843093448097852/99784075-1ba08180-2ad0-11eb-91a4-8f72a43df4db.png",
+                    "Squidward Escaped!",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/779843213808238642/99784155-3d016d80-2ad0-11eb-862e-bccfec33eb9f.png"
+            ))
+            .put("Simper No Simping", new TheSwiper(
+                    "Simper No Simping",
+                    "Simps Spotted Nearby",
+                    "https://cdn.discordapp.com/attachments/761398315119280158/772926342945570836/gobblesimp.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/779844003855204393/99784554-d6308400-2ad0-11eb-8645-ae51bc4785df.png",
+                    "The Simps Escaped!",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/779844165433163776/99784902-50610880-2ad1-11eb-937c-6e768aa4f5db.png"
+            ))
+            .build();
+
     private static final String SPIDERMAN_PNG = "https://cdn.discordapp.com/attachments/707453916882665552/769837667617079316/spiderman.png";
 
     public Swiper() {
@@ -62,17 +91,18 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
 
         if (swampyGamesConfig.getSwiperAwaiting() != null) {
-            String noSwipingPhrase = swampyGamesConfig.getNoSwipingPhrase();
+            TheSwiper theSwiper = SWIPERS.get(swampyGamesConfig.getNoSwipingPhrase());
+
             swampyGamesConfig.setNoSwipingPhrase(null);
 
             Optional<DiscordUser> victim = discordUserRepository.findById(swampyGamesConfig.getSwiperAwaiting());
             swampyGamesConfig.setSwiperAwaiting(null);
 
             MessageEmbed message = new EmbedBuilder()
-                    .setTitle(noSwipingPhrase)
+                    .setTitle(theSwiper.getNoSwipingPhrase())
                     .setDescription("Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points")
                     .setColor(Constants.COLOR_OF_THE_MONTH)
-                    .setImage(NO_SWIPING)
+                    .setImage(theSwiper.getSwiperLostImage())
                     .build();
 
             if (victim.isPresent()) {
@@ -81,17 +111,12 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                         Optional<DiscordUser> savior = discordUserRepository.findById(swampyGamesConfig.getSwiperSavior());
                         swampyGamesConfig.setSwiperSavior(null);
 
-                        String image;
-                        if (savior.isPresent() && savior.get().getId().equalsIgnoreCase(victim.get().getId())) {
-                            image = SPIDERMAN_PNG;
-                        } else if (StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper")) {
-                            image = NO_SWIPING;
-                        } else {
-                            image = NO_SNART;
-                        }
+                        String image = savior.isPresent() && savior.get().getId().equalsIgnoreCase(victim.get().getId())
+                                ? SPIDERMAN_PNG
+                                : theSwiper.getSwiperLostImage();
 
                         message = new EmbedBuilder()
-                                .setTitle(noSwipingPhrase)
+                                .setTitle(theSwiper.getNoSwipingPhrase())
                                 .setDescription("Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
                                         + "> scared them away from <@!" + victim.get().getId() + ">")
                                 .setColor(Constants.COLOR_OF_THE_MONTH)
@@ -112,10 +137,10 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                         if (memberById != null) {
                             takePointsFromMember(SWIPER_POINTS_TO_STEAL, memberById);
                             message = new EmbedBuilder()
-                                    .setTitle(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? "Swiper Escaped!" : "Rory and Snart Escaped!")
+                                    .setTitle(theSwiper.getSwiperWonPhrase())
                                     .setDescription("You didn't save <@!" + victim.get().getId() + "> in time, they lost " + SWIPER_POINTS_TO_STEAL + " points")
                                     .setColor(Constants.COLOR_OF_THE_MONTH)
-                                    .setImage(StringUtils.containsIgnoreCase(noSwipingPhrase, "swiper") ? SWIPER_WON : SNART_WON)
+                                    .setImage(theSwiper.getSwiperWonImage())
                                     .build();
                         }
                     } catch (Exception e) {
@@ -153,25 +178,69 @@ public class Swiper extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        boolean swiper = ThreadLocalRandom.current().nextInt() % 2 == 0;
+        TheSwiper theSwiper = Constants.pickRandom(SWIPERS.values());
+
         swampyGamesConfig.setSwiperAwaiting(member.getId());
-        swampyGamesConfig.setNoSwipingPhrase(swiper ? "Swiper No Swiping" : "Snarter No Snarting");
+        swampyGamesConfig.setNoSwipingPhrase(theSwiper.getNoSwipingPhrase());
         swampyGamesConfig = swampyGamesConfigRepository.save(swampyGamesConfig);
 
         String description = "They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
                 + "' in this channel within 15 minutes to stop them!";
 
         MessageEmbed message = new EmbedBuilder()
-                .setTitle(swiper ? "Swiper Was Spotted Nearby" : "Rory and Snart Were Spotted Nearby")
+                .setTitle(theSwiper.getSpottedPhrase())
                 .setDescription(description)
                 .setColor(Constants.COLOR_OF_THE_MONTH)
-                .setImage(swiper ? SWIPER_SPOTTED : SNART_SPOTTED)
+                .setImage(theSwiper.getSpottedImage())
                 .build();
 
         philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0)
                 .sendMessage(message)
                 .queue();
+    }
+
+    private static class TheSwiper {
+        private final String noSwipingPhrase;
+        private final String spottedPhrase;
+        private final String spottedImage;
+        private final String swiperLostImage;
+        private final String swiperWonPhrase;
+        private final String swiperWonImage;
+
+        public TheSwiper(String noSwipingPhrase, String spottedPhrase, String spottedImage, String swiperLostImage,
+                         String swiperWonPhrase, String swiperWonImage) {
+            this.noSwipingPhrase = noSwipingPhrase;
+            this.spottedPhrase = spottedPhrase;
+            this.spottedImage = spottedImage;
+            this.swiperLostImage = swiperLostImage;
+            this.swiperWonPhrase = swiperWonPhrase;
+            this.swiperWonImage = swiperWonImage;
+        }
+
+        public String getNoSwipingPhrase() {
+            return noSwipingPhrase;
+        }
+
+        public String getSpottedPhrase() {
+            return spottedPhrase;
+        }
+
+        public String getSpottedImage() {
+            return spottedImage;
+        }
+
+        public String getSwiperLostImage() {
+            return swiperLostImage;
+        }
+
+        public String getSwiperWonPhrase() {
+            return swiperWonPhrase;
+        }
+
+        public String getSwiperWonImage() {
+            return swiperWonImage;
+        }
     }
 
 }
