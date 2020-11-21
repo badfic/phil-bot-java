@@ -22,6 +22,7 @@
 		<mustache.version>0.9.7</mustache.version>
 		<honeybadger.version>2.0.2</honeybadger.version>
 		<jumblr.version>0.0.13</jumblr.version>
+		<rome.version>1.15.0</rome.version>
 	</properties>
 
 	<dependencies>
@@ -93,6 +94,11 @@
 			<groupId>com.tumblr</groupId>
 			<artifactId>jumblr</artifactId>
 			<version>${jumblr.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.rometools</groupId>
+			<artifactId>rome</artifactId>
+			<version>${rome.version}</version>
 		</dependency>
 	</dependencies>
 
