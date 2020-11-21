@@ -59,6 +59,17 @@ public class JudgeCommand extends BaseSwampy implements PhilMarker {
         if (optionalExistingCase.isPresent()) {
             CourtCase courtCase = optionalExistingCase.get();
 
+            if (event.getArgs().startsWith("mistrial")) {
+                if (defendant.getIdLong() == courtCase.getDefendantId() && accuser.getIdLong() == courtCase.getAccuserId() && courtCase.getReleaseDate() == null) {
+                    long trialMessageId = courtCase.getTrialMessageId();
+                    courtCaseRepository.deleteById(courtCase.getDefendantId());
+                    swampysChannel.retrieveMessageById(trialMessageId)
+                            .queue(msg -> msg.delete().queue());
+                    event.reply("The accuser has declared a mistrial. " + defendant.getEffectiveName() + " is free to go");
+                    return;
+                }
+            }
+
             if (courtCase.getReleaseDate() != null) {
                 event.reply(defendant.getEffectiveName() + " is currently serving a sentence of "
                         + Constants.prettyPrintDuration(Duration.between(LocalDateTime.now(), courtCase.getReleaseDate())));
