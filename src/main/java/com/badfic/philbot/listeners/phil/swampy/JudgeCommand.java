@@ -40,8 +40,9 @@ public class JudgeCommand extends BaseSwampy implements PhilMarker {
 
     public JudgeCommand() {
         name = "judge";
-        help = "`!!judge @user for such and such crime`\n" +
-                "To judge a user for simpy crimes. People then vote on their sentence in mega-hell";
+        help = "`!!judge @user for such and such crime` To judge a user for various crimes. People then vote on their sentence in mega-hell\n" +
+                "`!!judge mistrial @user` if you accidentally judged them you can cancel the trial, but only if they have not been convicted yet.\n" +
+                "`!!judge show @user` to see how much longer the person has for their trial or their sentence.";
     }
 
     @Override
@@ -56,11 +57,13 @@ public class JudgeCommand extends BaseSwampy implements PhilMarker {
         Member defendant = event.getMessage().getMentionedMembers().get(0);
 
         Optional<CourtCase> optionalExistingCase = courtCaseRepository.findById(defendant.getIdLong());
-        if (optionalExistingCase.isPresent()) {
-            CourtCase courtCase = optionalExistingCase.get();
 
-            if (event.getArgs().startsWith("mistrial")) {
-                if (defendant.getIdLong() == courtCase.getDefendantId() && accuser.getIdLong() == courtCase.getAccuserId() && courtCase.getReleaseDate() == null) {
+        if (event.getArgs().startsWith("mistrial")) {
+            if (optionalExistingCase.isPresent()) {
+                CourtCase courtCase = optionalExistingCase.get();
+                if (defendant.getIdLong() == courtCase.getDefendantId()
+                        && accuser.getIdLong() == courtCase.getAccuserId()
+                        && courtCase.getReleaseDate() == null) {
                     long trialMessageId = courtCase.getTrialMessageId();
                     courtCaseRepository.deleteById(courtCase.getDefendantId());
                     swampysChannel.retrieveMessageById(trialMessageId)
@@ -69,6 +72,12 @@ public class JudgeCommand extends BaseSwampy implements PhilMarker {
                     return;
                 }
             }
+            event.replyError("That person is not on trial, or you aren't the original accuser");
+            return;
+        }
+
+        if (optionalExistingCase.isPresent()) {
+            CourtCase courtCase = optionalExistingCase.get();
 
             if (courtCase.getReleaseDate() != null) {
                 event.reply(defendant.getEffectiveName() + " is currently serving a sentence of "
