@@ -1,36 +1,30 @@
 package com.badfic.philbot.data.phil;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class MapQuestionJson {
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class UsStateJson {
-
-    private String state;
-
+    private String answer;
+    private String identifier;
     private String nickname;
-
-    @JsonProperty("capital_city")
     private String capital;
-
-    @JsonProperty("state_flag_url")
-    private String stateFlagUrl;
-
-    @JsonProperty("map_image_url")
+    private String flagUrl;
     private String mapUrl;
-
-    @JsonProperty("landscape_background_url")
     private String landscapeUrl;
-
-    @JsonProperty("skyline_background_url")
     private String skylineUrl;
 
-    public String getState() {
-        return state;
+    public String getAnswer() {
+        return answer;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public String getNickname() {
@@ -49,12 +43,12 @@ public class UsStateJson {
         this.capital = capital;
     }
 
-    public String getStateFlagUrl() {
-        return stateFlagUrl;
+    public String getFlagUrl() {
+        return flagUrl;
     }
 
-    public void setStateFlagUrl(String stateFlagUrl) {
-        this.stateFlagUrl = stateFlagUrl;
+    public void setFlagUrl(String flagUrl) {
+        this.flagUrl = flagUrl;
     }
 
     public String getMapUrl() {
