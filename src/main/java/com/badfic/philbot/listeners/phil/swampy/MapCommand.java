@@ -2,8 +2,8 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
+import com.badfic.philbot.data.phil.MapQuestionJson;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
-import com.badfic.philbot.data.phil.UsStateJson;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.io.IOException;
 import java.net.URL;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MapCommand extends BaseSwampy implements PhilMarker {
-    private List<UsStateJson> states;
+    private List<MapQuestionJson> questions;
 
     public MapCommand() throws Exception {
         name = "map";
@@ -30,7 +30,7 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
 
     @PostConstruct
     public void init() throws Exception {
-        states = Arrays.asList(objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("us-states-trivia.json"), UsStateJson[].class));
+        questions = Arrays.asList(objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("map-trivia.json"), MapQuestionJson[].class));
     }
 
     @Override
@@ -49,8 +49,8 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        UsStateJson chosenState = Constants.pickRandom(states);
-        swampyGamesConfig.setMapPhrase(chosenState.getState());
+        MapQuestionJson chosenQuestion = Constants.pickRandom(questions);
+        swampyGamesConfig.setMapPhrase(chosenQuestion.getAnswer());
         swampyGamesConfig.setMapTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
         swampyGamesConfigRepository.save(swampyGamesConfig);
 
@@ -58,26 +58,26 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
         String image = null;
         switch (ThreadLocalRandom.current().nextInt(1, 7)) {
             case 1:
-                description = '"' + chosenState.getNickname() + "\" is the nickname of what US state?";
+                description = '"' + chosenQuestion.getNickname() + "\" is the nickname of what " + chosenQuestion.getIdentifier() + "?";
                 break;
             case 2:
-                description = chosenState.getCapital() + " is the capital of what US state?";
+                description = chosenQuestion.getCapital() + " is the capital of what " + chosenQuestion.getIdentifier() + "?";
                 break;
             case 3:
-                description = "This flag represents what US state?";
-                image = chosenState.getStateFlagUrl();
+                description = "This flag represents what " + chosenQuestion.getIdentifier() + "?";
+                image = chosenQuestion.getFlagUrl();
                 break;
             case 4:
-                description = "What US state is highlighted on this map?";
-                image = chosenState.getMapUrl();
+                description = "What " + chosenQuestion.getIdentifier() + " is highlighted on this map?";
+                image = chosenQuestion.getMapUrl();
                 break;
             case 5:
-                description = "This image is a landscape from what US state?";
-                image = chosenState.getLandscapeUrl();
+                description = "This image is a landscape from what " + chosenQuestion.getIdentifier() + "?";
+                image = chosenQuestion.getLandscapeUrl();
                 break;
             case 6:
-                description = "This image is the skyline from what US state?";
-                image = chosenState.getSkylineUrl();
+                description = "This image is the skyline from what " + chosenQuestion.getIdentifier() + "?";
+                image = chosenQuestion.getSkylineUrl();
                 break;
         }
 
@@ -87,14 +87,14 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
 
         if (image != null) {
             try {
-                swampysChannel.sendMessage(simpleEmbed("US State Trivia", description))
+                swampysChannel.sendMessage(simpleEmbed("Map Trivia", description))
                         .addFile(new URL(image).openStream(), "image." + imageExtension)
                         .queue();
             } catch (IOException e) {
                 event.replyError("Failed to load image for map trivia");
             }
         } else {
-            swampysChannel.sendMessage(simpleEmbed("US State Trivia", description)).queue();
+            swampysChannel.sendMessage(simpleEmbed("Map Trivia", description)).queue();
         }
     }
 }
