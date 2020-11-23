@@ -5,6 +5,7 @@ import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
 import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,12 +17,15 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.lang3.mutable.MutableLong;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Shrekoning extends BaseSwampy implements PhilMarker {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final Set<Long> COMMON_POINTS = ImmutableSet.of(500L, 1_000L);
     private static final Set<Long> RARE_POINTS = ImmutableSet.of(2_000L, 4_000L);
     private static final String SHREKONING = "https://cdn.discordapp.com/attachments/741053845098201099/763280555793580042/the_shrekoning.png";
@@ -74,7 +78,10 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
                                     .append(user.getId())
                                     .append(">\n");
                         }
-                    } catch (Exception ignored) {}
+                    } catch (Exception e) {
+                        logger.error("Failed to shrekoning user [id={}]", user.getId(), e);
+                        honeybadgerReporter.reportError(e, "Failed to shrekoning user: " + user.getId());
+                    }
                 });
 
         description.append("\nShrek gave a total of ")

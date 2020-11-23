@@ -6,6 +6,7 @@ import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,11 +17,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang3.mutable.MutableLong;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Stonks extends BaseSwampy implements PhilMarker {
+
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final Set<String> STONKS = ImmutableSet.of(
             "https://cdn.discordapp.com/attachments/741053845098201099/771913890731655188/image0.jpg",
@@ -86,7 +91,10 @@ public class Stonks extends BaseSwampy implements PhilMarker {
                             .append(user.getId())
                             .append(">\n");
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                logger.error("Failed to stonks user [id={}]", user.getId(), e);
+                honeybadgerReporter.reportError(e, "Failed to stonks user: " + user.getId());
+            }
         }
 
         description.append("\nStonky? gave a total of ")

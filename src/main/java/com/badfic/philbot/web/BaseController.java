@@ -54,7 +54,7 @@ public abstract class BaseController {
     protected DiscordApiIdentityResponse getDiscordApiIdentityResponse(String accessToken) {
         LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-        headers.add(HttpHeaders.USER_AGENT, "swamp");
+        headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
         ResponseEntity<DiscordApiIdentityResponse> identityResponse = restTemplate.exchange("https://discord.com/api/users/@me", HttpMethod.GET,
@@ -98,7 +98,7 @@ public abstract class BaseController {
             LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
             headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-            headers.add(HttpHeaders.USER_AGENT, "swamp");
+            headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
             ResponseEntity<DiscordApiLoginResponse> loginResponse = restTemplate.exchange(authApi, HttpMethod.POST,
                     new HttpEntity<>(body, headers), DiscordApiLoginResponse.class);
             httpSession.setAttribute(DISCORD_TOKEN, loginResponse.getBody().getAccessToken());

@@ -13,7 +13,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -27,7 +26,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
@@ -35,29 +33,19 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     private static final Cache<String, Function<GuildMessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = CacheBuilder.newBuilder()
             .maximumSize(200)
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .build();
     private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer|phellen|cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam)\\b", Pattern.CASE_INSENSITIVE);
-
-    private final PhilCommand philCommand;
-    private final SwampyCommand swampyCommand;
-    private final CommandClient philCommandClient;
+    private static final Pattern AO3_PATTERN = Pattern.compile("^(?:http(s)?://)?(archiveofourown\\.org/works/)([0-9]+).*$", Pattern.CASE_INSENSITIVE);
 
     @Resource
     @Lazy
@@ -94,14 +82,18 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     @Resource
     private QuoteRepository quoteRepository;
 
-    @Autowired
-    public PhilMessageListener(PhilCommand philCommand,
-                               SwampyCommand swampyCommand,
-                               @Qualifier("philCommandClient") CommandClient philCommandClient) {
-        this.philCommand = philCommand;
-        this.swampyCommand = swampyCommand;
-        this.philCommandClient = philCommandClient;
-    }
+    @Resource
+    private PhilCommand philCommand;
+
+    @Resource
+    private SwampyCommand swampyCommand;
+
+    @Resource
+    @Lazy
+    private Ao3MetadataParser ao3MetadataParser;
+
+    @Resource(name = "philCommandClient")
+    private CommandClient philCommandClient;
 
     public static void addReactionTask(String messageId, Function<GuildMessageReactionAddEvent, Boolean> function) {
         OUTSTANDING_REACTION_TASKS.put(messageId, function);
@@ -122,6 +114,10 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
         if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {
             return;
+        }
+
+        if (AO3_PATTERN.matcher(msgContent).find()) {
+            ao3MetadataParser.parseLink(msgContent, event.getChannel().getName());
         }
 
         swampyCommand.execute(new CommandEvent(event, "", philCommandClient));
@@ -197,19 +193,6 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
         begone(event.getUser(), event);
-    }
-
-    @Override
-    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        event.getGuild().loadMembers().onSuccess(members -> {
-            if (CollectionUtils.size(members) == 100) {
-                event.getGuild().getTextChannelsByName("announcements", false).stream().findAny().ifPresent(channel -> {
-                    channel.sendMessage("Ah shit. I guess I should say something special since we hit 100 members..... uh......").queue(msg -> {
-                        channel.sendMessage("https://media.giphy.com/media/xUOwGjPHOGcv9ddpYc/giphy.gif").queue();
-                    });
-                });
-            }
-        });
     }
 
     private void begone(User user, GenericGuildEvent event) {

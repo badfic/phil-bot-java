@@ -23,6 +23,8 @@
 		<honeybadger.version>2.0.2</honeybadger.version>
 		<jumblr.version>0.0.13</jumblr.version>
 		<rome.version>1.15.0</rome.version>
+		<jsoup.version>1.13.1</jsoup.version>
+		<commons-io.version>2.8.0</commons-io.version>
 	</properties>
 
 	<dependencies>
@@ -64,6 +66,11 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>net.dv8tion</groupId>
 			<artifactId>JDA</artifactId>
 			<version>${jda.version}</version>
@@ -99,6 +106,17 @@
 			<groupId>com.rometools</groupId>
 			<artifactId>rome</artifactId>
 			<version>${rome.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>${jsoup.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

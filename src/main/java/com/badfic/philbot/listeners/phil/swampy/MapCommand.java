@@ -6,6 +6,7 @@ import com.badfic.philbot.data.phil.MapQuestionJson;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -16,10 +17,13 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.PostConstruct;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MapCommand extends BaseSwampy implements PhilMarker {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private List<MapQuestionJson> questions;
 
     public MapCommand() throws Exception {
@@ -91,6 +95,8 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
                         .addFile(new URL(image).openStream(), "image." + imageExtension)
                         .queue();
             } catch (IOException e) {
+                logger.error("Failed to load [image={}] for map trivia", image, e);
+                honeybadgerReporter.reportError(e, null, "Failed to load image for map trivia: " + image);
                 event.replyError("Failed to load image for map trivia");
             }
         } else {

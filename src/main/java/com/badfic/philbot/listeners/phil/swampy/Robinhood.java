@@ -93,6 +93,7 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
                     }
                 } catch (Exception e) {
                     logger.error("Failed to robinhood user [id={}]", user.getId(), e);
+                    honeybadgerReporter.reportError(e, "Failed to robinhood user: " + user.getId());
                 }
             }
         }

@@ -115,7 +115,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     }
 
     @PostConstruct
-    public void init() {
+    public void init() throws Exception {
         Rank.init();
 
         // seed swampy games config data
@@ -473,6 +473,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 return hasRole(member, StringUtils.containsIgnoreCase(split[1], "bastard") ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE);
             } catch (Exception e) {
                 logger.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);
+                honeybadgerReporter.reportError(e, "unable to lookup user for leaderboard: " + u.getId());
                 return false;
             }
         }).sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())).limit(10).forEachOrdered(swampyUser -> {

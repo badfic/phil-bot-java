@@ -102,6 +102,7 @@ public class Taxes extends BaseSwampy implements PhilMarker {
                     }
                 } catch (Exception e) {
                     logger.error("Failed to tax user [id={}]", user.getId(), e);
+                    honeybadgerReporter.reportError(e, "Failed to tax user: " + user.getId());
                 }
             }
         }

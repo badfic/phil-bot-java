@@ -6,14 +6,19 @@ import com.tumblr.jumblr.JumblrClient;
 import com.tumblr.jumblr.exceptions.JumblrException;
 import com.tumblr.jumblr.types.Blog;
 import com.tumblr.jumblr.types.Post;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Tumblr extends BaseSwampy implements PhilMarker {
+
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Resource
     private JumblrClient jumblrClient;
@@ -46,6 +51,8 @@ public class Tumblr extends BaseSwampy implements PhilMarker {
                 }
             }
         } catch (JumblrException e) {
+            logger.error("Failed to get [user={}] tumblr posts", split[0], e);
+            honeybadgerReporter.reportError(e, "Failed to get user's tumblr posts: " + split[0]);
             event.replyError("Something went wrong trying to get user's posts: " + split[0]);
             throw e;
         }
