@@ -691,12 +691,20 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
+        Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
+        if (optionalConfig.isPresent()) {
+            SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
+            swampyGamesConfig.setMostRecentTaxes(0);
+            swampyGamesConfigRepository.save(swampyGamesConfig);
+        }
+
         event.reply("Resetting, please wait...");
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         for (DiscordUser discordUser : discordUserRepository.findAll()) {
             discordUser.setXp(0);
             discordUser.setSwiperParticipations(0);
             discordUser.setBoostParticipations(0);
+            discordUser.setScooterAnkleParticipant(false);
             discordUser = discordUserRepository.save(discordUser);
 
             try {

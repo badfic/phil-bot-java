@@ -50,6 +50,9 @@ public class DiscordUser {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime acceptedMapTrivia = LocalDateTime.now();
 
+    @Column
+    private boolean scooterAnkleParticipant;
+
     public String getId() {
         return id;
     }
@@ -144,5 +147,13 @@ public class DiscordUser {
 
     public void setAcceptedMapTrivia(LocalDateTime acceptedMapTrivia) {
         this.acceptedMapTrivia = acceptedMapTrivia;
+    }
+
+    public boolean isScooterAnkleParticipant() {
+        return scooterAnkleParticipant;
+    }
+
+    public void setScooterAnkleParticipant(boolean scooterAnkleParticipant) {
+        this.scooterAnkleParticipant = scooterAnkleParticipant;
     }
 }
