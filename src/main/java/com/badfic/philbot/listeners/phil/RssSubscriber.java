@@ -51,6 +51,9 @@ public class RssSubscriber implements MinuteTickable {
     @Resource
     private HoneybadgerReporter honeybadgerReporter;
 
+    @Resource
+    private Ao3MetadataParser ao3MetadataParser;
+
     @Resource(name = "philJda")
     @Lazy
     private JDA philJda;
@@ -89,14 +92,17 @@ public class RssSubscriber implements MinuteTickable {
                         addedLinks++;
 
                         if (!initialLoad) {
-                            // todo parse link, extract metadata
                             if (StringUtils.containsIgnoreCase(entry.getDescription().getValue(), "teen and up audience")
                                     || StringUtils.containsIgnoreCase(entry.getDescription().getValue(), "general audience")) {
-                                sfwChannel.sendMessage("\uD83D\uDCF0\n" + link).queue();
+                                if (!ao3MetadataParser.parseLink(link, sfwChannel.getName())) {
+                                    sfwChannel.sendMessage("\uD83D\uDCF0\n" + link).queue();
+                                }
                             } else if (StringUtils.containsIgnoreCase(entry.getDescription().getValue(), "mature")
                                     || StringUtils.containsIgnoreCase(entry.getDescription().getValue(), "explicit")
                                     || StringUtils.containsIgnoreCase(entry.getDescription().getValue(), "not rated")) {
-                                nsfwChannel.sendMessage("\uD83D\uDCF0\n" + link).queue();
+                                if (!ao3MetadataParser.parseLink(link, nsfwChannel.getName())) {
+                                    nsfwChannel.sendMessage("\uD83D\uDCF0\n" + link).queue();
+                                }
                             }
                         }
                     }
