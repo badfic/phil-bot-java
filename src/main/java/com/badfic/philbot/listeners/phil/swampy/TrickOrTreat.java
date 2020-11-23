@@ -73,6 +73,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                     }
                 } catch (Exception e) {
                     logger.error("Failed to trick or treat user [id={}]", user.getId(), e);
+                    honeybadgerReporter.reportError(e, "Failed to trick or treat user: " + user.getId());
                 }
             }
         }

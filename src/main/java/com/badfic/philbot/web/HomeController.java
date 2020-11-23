@@ -1,5 +1,6 @@
 package com.badfic.philbot.web;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.UnauthorizedException;
 import com.badfic.philbot.data.DiscordApiIdentityResponse;
 import com.badfic.philbot.data.DiscordApiLoginResponse;
@@ -59,7 +60,7 @@ public class HomeController extends BaseController {
             LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
             headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-            headers.add(HttpHeaders.USER_AGENT, "swamp");
+            headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
             ResponseEntity<DiscordApiLoginResponse> loginResponse = restTemplate.exchange(authApi, HttpMethod.POST,
                     new HttpEntity<>(body, headers), DiscordApiLoginResponse.class);
 

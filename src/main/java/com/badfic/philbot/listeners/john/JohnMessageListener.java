@@ -7,6 +7,7 @@ import com.badfic.philbot.data.phil.SnarkyReminderResponse;
 import com.badfic.philbot.data.phil.SnarkyReminderResponseRepository;
 import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import io.honeybadger.reporter.HoneybadgerReporter;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -89,6 +90,9 @@ public class JohnMessageListener extends ListenerAdapter {
 
     @Resource
     private SnarkyReminderResponseRepository snarkyReminderResponseRepository;
+
+    @Resource
+    private HoneybadgerReporter honeybadgerReporter;
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -188,7 +192,8 @@ public class JohnMessageListener extends ListenerAdapter {
                             snarkyReminderResponse.getResponse().replace("<name>", "<@!" + message.getAuthor().getId() + ">"))
                     .queue();
         } catch (Exception e) {
-            logger.error("Exception trying to parse a reminder", e);
+            logger.error("Exception trying to parse a reminder. [msgText={}]", message.getContentRaw(), e);
+            honeybadgerReporter.reportError(e, "Exception trying to parse reminder. MsgText=" + message.getContentRaw());
         }
     }
 

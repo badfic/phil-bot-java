@@ -8,6 +8,7 @@ import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.data.phil.SwampyGamesConfigRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
+import io.honeybadger.reporter.HoneybadgerReporter;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
@@ -52,6 +53,9 @@ public abstract class BaseSwampy extends Command {
 
     @Resource
     protected BaseConfig baseConfig;
+
+    @Resource
+    protected HoneybadgerReporter honeybadgerReporter;
 
     protected DiscordUser getDiscordUserByMember(Member member) {
         String userId = member.getId();

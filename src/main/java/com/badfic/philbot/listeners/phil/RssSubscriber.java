@@ -1,8 +1,9 @@
-package com.badfic.philbot.listeners.phil.swampy;
+package com.badfic.philbot.listeners.phil;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.RssEntry;
 import com.badfic.philbot.data.phil.RssEntryRepository;
+import com.badfic.philbot.listeners.phil.swampy.MinuteTickable;
 import com.google.common.collect.ImmutableSet;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -34,7 +35,7 @@ import org.springframework.web.client.RestTemplate;
 public class RssSubscriber implements MinuteTickable {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
-    private static final int MINUTE_REFRESH_INTERVAL = 60;
+    private static final int MINUTE_REFRESH_INTERVAL = 30;
     private static final AtomicInteger REFRESH_COUNT = new AtomicInteger(-1);
     private static final Set<String> FEEDS = ImmutableSet.of(
             "https://archiveofourown.org/tags/39926683/feed.atom",
@@ -73,7 +74,7 @@ public class RssSubscriber implements MinuteTickable {
             try {
                 LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
                 headers.add(HttpHeaders.ACCEPT, "application/atom+xml");
-                headers.add(HttpHeaders.USER_AGENT, "swamp");
+                headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
                 ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
                 SyndFeed feed = new SyndFeedInput().build(new XmlReader(new ByteArrayInputStream(response.getBody().getBytes())));
 

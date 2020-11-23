@@ -1,15 +1,13 @@
 package com.badfic.philbot.data.phil;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class Rank {
@@ -61,9 +59,8 @@ public class Rank {
         return ordinal == 0;
     }
 
-    public static void init() {
-        InputStream stream = Rank.class.getClassLoader().getResourceAsStream("ranks.tsv");
-        List<String> lines = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines().collect(Collectors.toList());
+    public static void init() throws Exception {
+        List<String> lines = IOUtils.readLines(Objects.requireNonNull(Rank.class.getClassLoader().getResourceAsStream("ranks.tsv")), StandardCharsets.UTF_8);
 
         for (int i = 1; i < lines.size(); i++) {
             String line = lines.get(i);

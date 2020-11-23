@@ -2,13 +2,13 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
+import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 
@@ -19,16 +19,11 @@ public class Storytime extends BaseSwampy implements PhilMarker {
 
     public Storytime() throws Exception {
         name = "storytime";
-        story = new ArrayList<>();
         help = "!!storytime\n" +
                 "Phil tells a story\n" +
                 "`!!storyTime reset`: Makes Phil start the story from the beginning\n" +
                 "`!!storyTime set 20`: Sets Phil's storytime index to 20";
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("storytime.txt")))) {
-            while (reader.ready()) {
-                story.add(reader.readLine());
-            }
-        }
+        story = IOUtils.readLines(Rank.class.getClassLoader().getResourceAsStream("storytime.txt"), StandardCharsets.UTF_8);
     }
 
     @Override

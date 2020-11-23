@@ -129,6 +129,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                         }
                     } catch (Exception e) {
                         logger.error("Exception with swiper savior branch", e);
+                        honeybadgerReporter.reportError(e, "Exception during swiper savior logic");
                     }
                 } else {
                     try {
@@ -145,6 +146,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                         }
                     } catch (Exception e) {
                         logger.error("Exception looking up swiper victim [id={}] after they were not saved", victim.get().getId(), e);
+                        honeybadgerReporter.reportError(e, "Exception looking up swiper victim after they were not saved: " + victim.get().getId());
                     }
                 }
             }
