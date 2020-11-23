@@ -39,16 +39,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
     // message/vc/emote points
     private static final long NORMAL_MSG_POINTS = 5;
-    private static final long CURSED_MSG_POINTS = 10;
-    private static final Set<String> CURSED_MSG_CHANNELS = ImmutableSet.of(
-            "cursed-swamp",
-            "nate-heywoods-simp-hour",
-            "thirsty-legends",
-            "gay-receipts",
-            "the-swampys"
-    );
-    private static final long PICTURE_MSG_POINTS = 150;
-    private static final long CURSED_PICTURE_MSG_POINTS = 250;
+    private static final long PICTURE_MSG_POINTS = 250;
     private static final long REACTION_POINTS = 7;
     private static final long VOICE_CHAT_POINTS_PER_MINUTE = 5;
     private static final int NO_NO_WORDS_TAKE_POINTS = 100;
@@ -203,38 +194,25 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 }
             }
 
+            if (NO_NO_WORDS.matcher(msgContent).find()) {
+                takePointsFromMember(NO_NO_WORDS_TAKE_POINTS, event.getMember());
+                return;
+            }
+
             Message message = event.getMessage();
 
             DiscordUser discordUser = getDiscordUserByMember(event.getMember());
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(PICTURE_MSG_BONUS_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
 
-            boolean bonus = CollectionUtils.isNotEmpty(message.getAttachments())
-                    || CollectionUtils.isNotEmpty(message.getEmbeds())
-                    || CollectionUtils.isNotEmpty(message.getEmotes());
+            boolean bonus = CollectionUtils.isNotEmpty(message.getAttachments()) || CollectionUtils.isNotEmpty(message.getEmbeds());
 
             long pointsToGive = NORMAL_MSG_POINTS;
             if ("bot-space".equals(event.getChannel().getName()) || "sim-games".equals(event.getChannel().getName())) {
                 pointsToGive = 1;
-            } else if (CURSED_MSG_CHANNELS.contains(event.getChannel().getName())) {
-                pointsToGive = CURSED_MSG_POINTS;
-
-                if (bonus && now.isAfter(nextMsgBonusTime)) {
-                    if ("cursed-swamp".equalsIgnoreCase(event.getChannel().getName()) || "valigaytion".equalsIgnoreCase(event.getChannel().getName())) {
-                        pointsToGive = CURSED_PICTURE_MSG_POINTS;
-                    } else {
-                        pointsToGive = PICTURE_MSG_POINTS;
-                    }
-                    discordUser.setLastMessageBonus(now);
-                }
             } else if (bonus && now.isAfter(nextMsgBonusTime)) {
                 pointsToGive = PICTURE_MSG_POINTS;
                 discordUser.setLastMessageBonus(now);
-            }
-
-            if (NO_NO_WORDS.matcher(msgContent).find()) {
-                takePointsFromMember(NO_NO_WORDS_TAKE_POINTS, event.getMember());
-                return;
             }
 
             givePointsToMember(pointsToGive, event.getMember(), discordUser);
