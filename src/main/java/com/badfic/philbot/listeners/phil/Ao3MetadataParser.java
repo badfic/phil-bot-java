@@ -42,7 +42,7 @@ public class Ao3MetadataParser {
     @Resource
     private RestTemplate restTemplate;
 
-    public void parseLink(String link, String channelName) {
+    public boolean parseLink(String link, String channelName) {
         try {
             URIBuilder uriBuilder = new URIBuilder(link);
             uriBuilder.clearParameters();
@@ -53,15 +53,16 @@ public class Ao3MetadataParser {
             headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
             ResponseEntity<String> loginResponse = restTemplate.exchange(uriBuilder.build().toString(), HttpMethod.GET, new HttpEntity<>(headers), String.class);
             String work = loginResponse.getBody();
-            parseWork(link, work, channelName);
+            return parseWork(link, work, channelName);
         } catch (Exception e) {
             logger.error("Failed to download ao3 [link={}]", link, e);
             honeybadgerReporter.reportError(e, null, "Failed to download ao3 link: " + link);
+            return false;
         }
     }
 
     @VisibleForTesting
-    void parseWork(String originalLink, String work, String channelName) {
+    boolean parseWork(String originalLink, String work, String channelName) {
         TextChannel channel = philJda.getTextChannelsByName(channelName, false).get(0);
 
         try {
@@ -238,9 +239,11 @@ public class Ao3MetadataParser {
                     .build();
 
             channel.sendMessage(messageEmbed).queue();
+            return true;
         } catch (Exception e) {
             logger.error("Failed to parse ao3 [link={}]", originalLink, e);
             honeybadgerReporter.reportError(e, null, "Failed to parse ao3 link " + originalLink);
+            return false;
         }
     }
 
