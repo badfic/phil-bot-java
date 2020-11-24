@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.collections4.CollectionUtils;
@@ -49,12 +48,9 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
 
     private void doRobinhood(boolean force) {
         if (!force && ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN) {
-            MessageEmbed message = new EmbedBuilder()
-                    .setTitle("I NEED TO SPEAK TO THE MANAGER!!!")
-                    .setDescription("Saundra Lee caught Guy while he was trying to return taxes to the swamp.")
-                    .setImage(PERSON_WHO_STOPS_ROBINHOOD)
-                    .setColor(Constants.COLOR_OF_THE_MONTH)
-                    .build();
+            MessageEmbed message = Constants.simpleEmbed("I NEED TO SPEAK TO THE MANAGER!!!",
+                    "Saundra Lee caught Guy while he was trying to return taxes to the swamp.",
+                    PERSON_WHO_STOPS_ROBINHOOD);
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
@@ -103,12 +99,7 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
                 .append(" points and gave them back to the swamp!");
 
         String title = "Robinhood! The following taxes have been returned";
-        MessageEmbed message = new EmbedBuilder()
-                .setTitle(title)
-                .setDescription(description.toString())
-                .setImage(ROBINHOOD)
-                .setColor(Constants.COLOR_OF_THE_MONTH)
-                .build();
+        MessageEmbed message = Constants.simpleEmbed(title, description.toString(), ROBINHOOD);
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)

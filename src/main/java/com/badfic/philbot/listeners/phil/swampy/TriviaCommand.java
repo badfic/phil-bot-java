@@ -152,7 +152,7 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
             swampyGamesConfig.setTriviaGuid(null);
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
-            swampysChannel.sendMessage(simpleEmbed("Trivia Results", description.toString())).queue();
+            swampysChannel.sendMessage(Constants.simpleEmbed("Trivia Results", description.toString())).queue();
             return;
         }
 
@@ -169,7 +169,7 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
                 "\nA: " + trivia.getAnswerA() +
                 "\nB: " + trivia.getAnswerB() +
                 "\nC: " + trivia.getAnswerC();
-        swampysChannel.sendMessage(simpleEmbed("Trivia time!", description)).queue(success -> {
+        swampysChannel.sendMessage(Constants.simpleEmbed("Trivia time!", description)).queue(success -> {
             swampyGamesConfig.setTriviaGuid(trivia.getId());
             swampyGamesConfig.setTriviaMsgId(success.getId());
             swampyGamesConfigRepository.save(swampyGamesConfig);

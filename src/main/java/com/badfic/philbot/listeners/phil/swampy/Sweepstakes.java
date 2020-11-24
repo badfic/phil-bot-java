@@ -7,7 +7,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Sweepstakes extends BaseSwampy implements PhilMarker {
 
-    private static final long SWEEPSTAKES_WIN_POINTS = 3_000;
+    private static final long SWEEPSTAKES_WIN_POINTS = 4_000;
     private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/752665408770801737/775602510395736104/sweepstakes_tg.png";
 
     public Sweepstakes() {
@@ -82,19 +81,16 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
         if (member == null) {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(simpleEmbed(role + " Sweepstakes Results", "Unable to choose a winner, nobody wins"))
+                    .sendMessage(Constants.simpleEmbed(role + " Sweepstakes Results", "Unable to choose a winner, nobody wins"))
                     .queue();
             return;
         }
 
         givePointsToMember(SWEEPSTAKES_WIN_POINTS, member);
 
-        MessageEmbed message = new EmbedBuilder()
-                .setTitle(role + " Sweepstakes Results")
-                .setImage(SWEEPSTAKES)
-                .setColor(Constants.COLOR_OF_THE_MONTH)
-                .setDescription(String.format("Congratulations %s you won today's sweepstakes worth 4000 points!", member.getAsMention()))
-                .build();
+        MessageEmbed message = Constants.simpleEmbed(role + " Sweepstakes Results",
+                String.format("Congratulations %s you won today's sweepstakes worth %d points!", member.getAsMention(), SWEEPSTAKES_WIN_POINTS),
+                SWEEPSTAKES);
 
         philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0)

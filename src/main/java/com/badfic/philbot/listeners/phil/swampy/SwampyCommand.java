@@ -21,7 +21,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -129,9 +128,9 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
         if (args.startsWith("help")) {
             if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
-                event.replyInDm(simpleEmbed("Help", modHelp));
+                event.replyInDm(Constants.simpleEmbed("Help", modHelp));
             } else {
-                event.replyInDm(simpleEmbed("Help", help));
+                event.replyInDm(Constants.simpleEmbed("Help", help));
             }
         } else if (args.startsWith("rank")) {
             showRank(event);
@@ -156,11 +155,11 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             }
 
             if (!awaitingResetConfirmation) {
-                event.reply(simpleEmbed("Reset The Games", "Are you sure you want to reset the Swampys? This will reset everyone's points. If you are sure, type `!!swampy reset confirm`"));
+                event.reply(Constants.simpleEmbed("Reset The Games", "Are you sure you want to reset the Swampys? This will reset everyone's points. If you are sure, type `!!swampy reset confirm`"));
                 awaitingResetConfirmation = true;
             } else {
                 if (!args.startsWith("reset confirm")) {
-                    event.reply(simpleEmbed("Abort Reset", "Swampy reset aborted. You must type `!!swampy reset` and then confirm it with `!!swampy reset confirm`."));
+                    event.reply(Constants.simpleEmbed("Abort Reset", "Swampy reset aborted. You must type `!!swampy reset` and then confirm it with `!!swampy reset confirm`."));
                     awaitingResetConfirmation = false;
                     return;
                 }
@@ -303,14 +302,14 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
         if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
             givePointsToMember(SLOTS_WIN_POINTS, member, discordUser);
-            event.reply(simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou won " + SLOTS_WIN_POINTS + " points!",
+            event.reply(Constants.simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou won " + SLOTS_WIN_POINTS + " points!",
                     member.getAsMention(), one, two, three)));
         } else if (one.equalsIgnoreCase(two) || one.equalsIgnoreCase(three) || two.equalsIgnoreCase(three)) {
             givePointsToMember(SLOTS_TWO_OUT_OF_THREE_POINTS, member, discordUser);
-            event.reply(simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou got 2 out of 3! You won " + SLOTS_TWO_OUT_OF_THREE_POINTS + " points!",
+            event.reply(Constants.simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou got 2 out of 3! You won " + SLOTS_TWO_OUT_OF_THREE_POINTS + " points!",
                     member.getAsMention(), one, two, three)));
         } else {
-            event.reply(simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, String.format("%s\n%s%s%s",
+            event.reply(Constants.simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, String.format("%s\n%s%s%s",
                     member.getAsMention(), one, two, three)));
             discordUserRepository.save(discordUser);
         }
@@ -323,7 +322,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         }
 
         if (isNotParticipating(member)) {
-            event.reply(simpleEmbed("Your Rank", "You can't see rank because it appears you are a newbie or a bot"));
+            event.reply(Constants.simpleEmbed("Your Rank", "You can't see rank because it appears you are a newbie or a bot"));
             return;
         }
 
@@ -334,19 +333,19 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         Rank rank = Rank.byXp(user.getXp());
         Rank nextRank = (rank.ordinal() > allRanks.length - 1) ? rank : allRanks[rank.ordinal() + 1];
 
-        MessageEmbed messageEmbed = new EmbedBuilder()
-                .setImage(rank.getRankUpImage())
-                .setTitle("Level " + rank.getLevel() + ": " + rank.getRoleName())
-                .setColor(role.getColor())
-                .setDescription(rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
-                        "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total points.\n\n" +
-                        "The next level is level " +
-                        (rank == nextRank
-                                ? " LOL NVM YOU'RE THE TOP LEVEL."
-                                : nextRank.getLevel() + ": " + nextRank.getRoleName() + ".") +
-                        "\n You have " + NumberFormat.getIntegerInstance().format((nextRank.getLevel() * Rank.LVL_MULTIPLIER) - user.getXp()) + " points to go." +
-                        "\n\nBest of Luck in the Swampys!")
-                .build();
+        String description = rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
+                "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total points.\n\n" +
+                "The next level is level " +
+                (rank == nextRank
+                        ? " LOL NVM YOU'RE THE TOP LEVEL."
+                        : nextRank.getLevel() + ": " + nextRank.getRoleName() + ".") +
+                "\n You have " + NumberFormat.getIntegerInstance().format((nextRank.getLevel() * Rank.LVL_MULTIPLIER) - user.getXp()) + " points to go." +
+                "\n\nBest of Luck in the Swampys!";
+
+        MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + rank.getLevel() + ": " + rank.getRoleName(),
+                description,
+                rank.getRankUpImage(),
+                role.getColor());
 
         event.reply(messageEmbed);
     }
@@ -409,10 +408,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                                 .append(NumberFormat.getIntegerInstance().format(swampyUser.getSwiperParticipations()))
                                 .append('\n');
                     });
-            MessageEmbed messageEmbed = new EmbedBuilder()
-                    .setTitle("Swiper Leaderboard")
-                    .setDescription(description.toString())
-                    .build();
+            MessageEmbed messageEmbed = Constants.simpleEmbed("Swiper Leaderboard", description.toString());
 
             event.reply(messageEmbed);
             return;
@@ -433,10 +429,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                                 .append(NumberFormat.getIntegerInstance().format(swampyUser.getBoostParticipations()))
                                 .append('\n');
                     });
-            MessageEmbed messageEmbed = new EmbedBuilder()
-                    .setTitle("Boost Leaderboard")
-                    .setDescription(description.toString())
-                    .build();
+            MessageEmbed messageEmbed = Constants.simpleEmbed("Boost Leaderboard", description.toString());
 
             event.reply(messageEmbed);
             return;
@@ -463,10 +456,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                     .append('\n');
         });
 
-        MessageEmbed messageEmbed = new EmbedBuilder()
-                .setTitle(StringUtils.containsIgnoreCase(split[1], "bastard") ? "Bastard Leaderboard" : "Chaos Leaderboard")
-                .setDescription(description.toString())
-                .build();
+        MessageEmbed messageEmbed = Constants.simpleEmbed(StringUtils.containsIgnoreCase(split[1], "bastard") ? "Bastard Leaderboard" : "Chaos Leaderboard",
+                description.toString());
 
         event.reply(messageEmbed);
     }

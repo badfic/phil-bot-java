@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.Quote;
 import com.badfic.philbot.data.phil.QuoteRepository;
@@ -67,7 +68,7 @@ public class QuoteCommand extends BaseSwampy implements PhilMarker {
                 .append("> ")
                 .append(msgLink);
         johnJda.getTextChannelById(event.getChannel().getIdLong())
-                .sendMessage(simpleEmbed("Quote #" + quote.getId(), description.toString(), null, TIMESTAMP_FORMAT.format(quote.getCreated()))).queue();
+                .sendMessage(Constants.simpleEmbed("Quote #" + quote.getId(), description.toString(), null, TIMESTAMP_FORMAT.format(quote.getCreated()))).queue();
     }
 
 }

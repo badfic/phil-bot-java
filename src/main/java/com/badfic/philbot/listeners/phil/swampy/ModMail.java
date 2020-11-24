@@ -1,11 +1,11 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Optional;
 import javax.annotation.Resource;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -37,11 +37,9 @@ public class ModMail extends Command implements PhilMarker {
                 .findFirst();
 
         if (modChannel.isPresent()) {
-            MessageEmbed msg = new EmbedBuilder()
-                    .setTitle("Incoming Mod Mail")
-                    .setDescription("New mod mail from " + (event.getChannelType() == ChannelType.PRIVATE ? "anonymous user" : event.getAuthor().getAsMention())
-                            + "\n\n" + event.getMessage().getContentRaw())
-                    .build();
+            MessageEmbed msg = Constants.simpleEmbed("Incoming Mod Mail",
+                    "New mod mail from " + (event.getChannelType() == ChannelType.PRIVATE ? "anonymous user" : event.getAuthor().getAsMention())
+                            + "\n\n" + event.getMessage().getContentRaw());
             modChannel.get().sendMessage(msg).queue();
             event.replySuccess("Successfully sent your message along to the mods");
         } else {

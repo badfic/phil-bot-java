@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.collections4.CollectionUtils;
@@ -57,12 +56,8 @@ public class Taxes extends BaseSwampy implements PhilMarker {
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
 
         if (!force && ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_TAXES_DOESNT_HAPPEN) {
-            MessageEmbed message = new EmbedBuilder()
-                    .setTitle("No taxes today!")
-                    .setDescription("Snoop Dogg caught Paula Deen before she could take taxes from the swamp.")
-                    .setImage(PERSON_WHO_STOPS_TAXES)
-                    .setColor(Constants.COLOR_OF_THE_MONTH)
-                    .build();
+            MessageEmbed message = Constants.simpleEmbed("No taxes today!", "Snoop Dogg caught Paula Deen before she could take taxes from the swamp.",
+                    PERSON_WHO_STOPS_TAXES);
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
@@ -110,12 +105,9 @@ public class Taxes extends BaseSwampy implements PhilMarker {
         swampyGamesConfig.setMostRecentTaxes(totalTaxes);
         swampyGamesConfigRepository.save(swampyGamesConfig);
 
-        MessageEmbed message = new EmbedBuilder()
-                .setTitle("Tax time! " + NumberFormat.getIntegerInstance().format(totalTaxes) + " points in taxes have been paid to Paula Deen")
-                .setDescription(description.toString())
-                .setImage(TAXES)
-                .setColor(Constants.COLOR_OF_THE_MONTH)
-                .build();
+        MessageEmbed message = Constants.simpleEmbed(
+                "Tax time! " + NumberFormat.getIntegerInstance().format(totalTaxes) + " points in taxes have been paid to Paula Deen",
+                description.toString(), TAXES);
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)

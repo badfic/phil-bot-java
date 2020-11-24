@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.slf4j.Logger;
@@ -84,12 +83,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                 .append(NumberFormat.getIntegerInstance().format(totalTaken));
 
         String title = "\uD83D\uDED2 Checkout or Trampled! \uD83D\uDEA7";
-        MessageEmbed message = new EmbedBuilder()
-                .setTitle(title)
-                .setDescription(description.toString())
-                .setImage(TRICK_OR_TREAT)
-                .setColor(Constants.COLOR_OF_THE_MONTH)
-                .build();
+        MessageEmbed message = Constants.simpleEmbed(title, description.toString(), TRICK_OR_TREAT);
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)

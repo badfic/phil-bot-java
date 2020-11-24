@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.lang3.mutable.MutableLong;
@@ -88,12 +87,7 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
                 .append(NumberFormat.getIntegerInstance().format(totalPointsGiven.getValue()))
                 .append(" \uD83E\uDDC5 to the chaos children!");
 
-        MessageEmbed message = new EmbedBuilder()
-                .setTitle("The Shrekoning")
-                .setImage(SHREKONING)
-                .setColor(Constants.COLOR_OF_THE_MONTH)
-                .setDescription(description.toString())
-                .build();
+        MessageEmbed message = Constants.simpleEmbed("The Shrekoning", description.toString(), SHREKONING);
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)

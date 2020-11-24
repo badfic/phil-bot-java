@@ -104,7 +104,7 @@ public class Stonks extends BaseSwampy implements PhilMarker {
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(simpleEmbed("STONKS", description.toString(), Constants.pickRandom(STONKS)))
+                    .sendMessage(Constants.simpleEmbed("STONKS", description.toString(), Constants.pickRandom(STONKS)))
                     .queue();
         });
     }

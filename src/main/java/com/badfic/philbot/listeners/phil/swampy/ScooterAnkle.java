@@ -88,7 +88,8 @@ public class ScooterAnkle extends BaseSwampy implements PhilMarker {
         }
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                .thenRun(() -> swampysChannel.sendMessage(simpleEmbed("\uD83D\uDEF4 Scooter Ankle \uD83D\uDEF4", description.toString(), SCOOTER_IMAGE)).queue());
+                .thenRun(() -> swampysChannel.sendMessage(
+                        Constants.simpleEmbed("\uD83D\uDEF4 Scooter Ankle \uD83D\uDEF4", description.toString(), SCOOTER_IMAGE)).queue());
     }
 
 }

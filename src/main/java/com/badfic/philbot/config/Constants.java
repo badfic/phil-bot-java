@@ -5,6 +5,9 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.apache.commons.lang3.StringUtils;
 
 public interface Constants {
     String ADMIN_ROLE = "Queens of the Castle";
@@ -35,6 +38,43 @@ public interface Constants {
                 .substring(2)
                 .replaceAll("(\\d[HMS])(?!$)", "$1 ")
                 .toLowerCase();
+    }
+
+    static MessageEmbed simpleEmbed(String title, String description) {
+        return simpleEmbed(title, description, null, null, Constants.COLOR_OF_THE_MONTH);
+    }
+
+    static MessageEmbed simpleEmbed(String title, String description, Color color) {
+        return simpleEmbed(title, description, null, null, color);
+    }
+
+    static MessageEmbed simpleEmbed(String title, String description, String image) {
+        return simpleEmbed(title, description, image, null, Constants.COLOR_OF_THE_MONTH);
+    }
+
+    static MessageEmbed simpleEmbed(String title, String description, String image, Color color) {
+        return simpleEmbed(title, description, image, null, color);
+    }
+
+    static MessageEmbed simpleEmbed(String title, String description, String image, String footer) {
+        return simpleEmbed(title, description, image, footer, Constants.COLOR_OF_THE_MONTH);
+    }
+
+    static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color) {
+        final String finalDesc;
+        if (StringUtils.isNotBlank(description)) {
+            finalDesc = description.length() > 2048 ? (description.substring(0, 2044) + "...") : description;
+        } else {
+            finalDesc = null;
+        }
+
+        return new EmbedBuilder()
+                .setTitle(title)
+                .setDescription(finalDesc)
+                .setImage(image)
+                .setColor(color)
+                .setFooter(footer)
+                .build();
     }
 
 }

@@ -4,7 +4,6 @@ import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import java.lang.invoke.MethodHandles;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -30,11 +29,8 @@ public class GenericReadyListener extends ListenerAdapter implements PhilMarker 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         logger.info("Received ready event for [user={}]", event.getJDA().getSelfUser());
-        MessageEmbed messageEmbed = new EmbedBuilder()
-                .setTitle("Restarted")
-                .setDescription(String.format("We just restarted\ngit sha: %s\ncommit msg: %s", commitSha, commitMessage))
-                .setColor(Constants.SWAMP_GREEN)
-                .build();
+        MessageEmbed messageEmbed = Constants.simpleEmbed("Restarted",
+                String.format("We just restarted\ngit sha: %s\ncommit msg: %s", commitSha, commitMessage), Constants.SWAMP_GREEN);
         event.getJDA().getTextChannelsByName("test-channel", false).get(0).sendMessage(messageEmbed).queue();
     }
 
