@@ -172,7 +172,7 @@ public class JohnMessageListener extends ListenerAdapter {
             reminder = reminder.substring((split[0] + split[1]).length() + 1).trim();
 
             if (StringUtils.startsWithIgnoreCase(reminder, "to")) {
-                reminder = reminder.replace("to", "").trim();
+                reminder = reminder.substring(2).trim();
             }
 
             LocalDateTime dueDate = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
