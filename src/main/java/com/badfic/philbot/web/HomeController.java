@@ -5,14 +5,12 @@ import com.badfic.philbot.config.UnauthorizedException;
 import com.badfic.philbot.data.DiscordApiIdentityResponse;
 import com.badfic.philbot.data.DiscordApiLoginResponse;
 import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.HttpEntity;
@@ -27,9 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HomeController extends BaseController {
-
-    @Resource
-    private MustacheFactory mustacheFactory;
 
     private Mustache mustache;
 

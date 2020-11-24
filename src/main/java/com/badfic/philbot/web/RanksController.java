@@ -2,11 +2,9 @@ package com.badfic.philbot.web;
 
 import com.badfic.philbot.data.phil.Rank;
 import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RanksController extends BaseController {
 
-    @Resource
-    private MustacheFactory mustacheFactory;
-
     private Mustache mustache;
 
     @PostConstruct
@@ -27,7 +22,7 @@ public class RanksController extends BaseController {
     }
 
     @GetMapping(value = "/ranks", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> getRanks(HttpSession httpSession) throws Exception {
+    public ResponseEntity<String> get(HttpSession httpSession) throws Exception {
         checkSession(httpSession, false);
 
         Map<String, Object> props = new HashMap<>();

@@ -2,7 +2,6 @@ package com.badfic.philbot.web;
 
 import com.badfic.philbot.data.phil.QuoteRepository;
 import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,9 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuoteController extends BaseController {
 
     @Resource
-    private MustacheFactory mustacheFactory;
-
-    @Resource
     private QuoteRepository quoteRepository;
 
     private Mustache mustache;
@@ -32,7 +28,7 @@ public class QuoteController extends BaseController {
     }
 
     @GetMapping(value = "/quotes", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> getRanks(HttpSession httpSession) throws Exception {
+    public ResponseEntity<String> get(HttpSession httpSession) throws Exception {
         checkSession(httpSession, false);
 
         Map<String, Object> props = new HashMap<>();

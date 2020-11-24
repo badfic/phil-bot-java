@@ -3,14 +3,12 @@ package com.badfic.philbot.web;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
@@ -21,9 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LeaderboardController extends BaseController {
 
-    @Resource
-    private MustacheFactory mustacheFactory;
-
     private Mustache mustache;
 
     @PostConstruct
@@ -32,7 +27,7 @@ public class LeaderboardController extends BaseController {
     }
 
     @GetMapping(value = "/leaderboard", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> getRanks(HttpSession httpSession) throws Exception {
+    public ResponseEntity<String> get(HttpSession httpSession) throws Exception {
         checkSession(httpSession, false);
 
         return ResponseEntity.ok(leaderboard(httpSession));
