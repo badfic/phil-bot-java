@@ -518,5 +518,45 @@
     "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780658542675886100/location-map-of-albania-small.png",
     "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780658820250206238/Lakes-in-Albanian-Alps-1024x683.png",
     "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780660142685159424/tiranacityview-min_0.png"
+  },
+  {
+    "answer": "Bhutan",
+    "identifier": "Asian Country",
+    "nickname": "Land of the Thunder Dragon",
+    "capital": "Thimphu",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780682423645503498/1920px-Flag_of_Bhutan.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780682580164214784/1920px-Bhutan_in_its_region.png",
+    "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780682765266845696/GettyImages-537245779_doc.png",
+    "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780682933727395860/manila-to-bhutan480.png"
+  },
+  {
+    "answer": "China",
+    "identifier": "Asian Country",
+    "nickname": "The Red Dragon",
+    "capital": "Beijing",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780683316466548776/1920px-Flag_of_the_People27s_Republic_of_China.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780683415308599316/1024px-CHN_orthographic.png",
+    "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780688146030788608/1280px-YangshuoFromTvTower.png",
+    "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684049063608350/1920px-Pudong_Shanghai_November_2017_panorama.png"
+  },
+  {
+    "answer": "Indonesia",
+    "identifier": "Asian Country",
+    "nickname": "The Emerald of the Equator",
+    "capital": "Jakarta",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684182673686528/1920px-Flag_of_Indonesia.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684372055293952/1024px-Indonesia_28orthographic_projection29.png",
+    "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684537893617714/c4fedab1-4041-4db5-9245-97439472cf2c.png",
+    "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684693800222750/6352924-3x2-940x627.png"
+  },
+  {
+    "answer": "Japan",
+    "identifier": "Asian Country",
+    "nickname": "Land of the Rising Sun",
+    "capital": "Tokyo",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780685253445943296/1920px-Flag_of_Japan.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780685376388988968/1024px-Japan_28orthographic_projection29.png",
+    "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780686046076600350/takashi-komatsubara-japan-16.png",
+    "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780685825075052544/bf0717455d34f187946b360646d3bfa9.png"
   }
 ]
