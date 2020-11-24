@@ -24,6 +24,7 @@ public class KeanuMessageListener extends ListenerAdapter {
             .put("513187180198363136", ImmutablePair.of(compile("partner"), "Howdy"))
             .put("601043580945170443", ImmutablePair.of(compile("dad"), "Hi pumpkin"))
             .put("323520695550083074", ImmutablePair.of(compile("son"), "Yes father?"))
+            .put("323520695550083074", ImmutablePair.of(compile("dance"), "https://emoji.gg/assets/emoji/9682_partykeanuparrot.gif"))
             .build();
 
     private final KeanuCommand keanuCommand;
@@ -47,7 +48,7 @@ public class KeanuMessageListener extends ListenerAdapter {
 
             if (match.isPresent()) {
                 event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
-                        .sendMessage(event.getAuthor().getAsMention() + ", " + match.get()).queue();
+                        .sendMessage(match.get()).queue();
                 return;
             }
         }

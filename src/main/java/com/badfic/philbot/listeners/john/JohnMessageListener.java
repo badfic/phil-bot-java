@@ -58,7 +58,13 @@ public class JohnMessageListener extends ListenerAdapter {
             "https://tenor.com/bhzQJ.gif",
             "https://tenor.com/bhngy.gif",
             "https://tenor.com/POHh.gif",
-            "https://cdn.discordapp.com/attachments/530193785351569423/777962192083353611/zaricat.gif");
+            "https://cdn.discordapp.com/attachments/530193785351569423/777962192083353611/zaricat.gif",
+            "https://emoji.gg/assets/emoji/8178_arainblob.gif",
+            "https://emoji.gg/assets/emoji/8195_agooglecat.gif",
+            "https://emoji.gg/assets/emoji/8569_ablobmeltsoblove.gif",
+            "https://emoji.gg/assets/emoji/2231_ablobhearteyes.gif",
+            "https://emoji.gg/assets/emoji/2171_ablobaww.gif",
+            "https://emoji.gg/assets/emoji/1279_Flying_Hearts_Red.gif");
     private static final Set<String> GOOD_BOT = ImmutableSet.of(
             ":D!!!",
             "I know",
@@ -79,7 +85,9 @@ public class JohnMessageListener extends ListenerAdapter {
             "Ain't you a proper meff, then?",
             "Thanks, luv. I'm absolutely made up.",
             "What a beut!",
-            "Ta, mate"
+            "Ta, mate",
+            "https://emoji.gg/assets/emoji/1554_ablobderpyhappy.gif",
+            "https://emoji.gg/assets/emoji/8783_ablobhop.gif"
     );
 
     @Resource
@@ -144,7 +152,11 @@ public class JohnMessageListener extends ListenerAdapter {
             johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(Constants.pickRandom(UWU)).queue();
         }
         if ("good bot".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(Constants.pickRandom(GOOD_BOT)).queue();
+            if (601043580945170443L == event.getAuthor().getIdLong()) {
+                johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(":D!!!").queue();
+            } else {
+                johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(Constants.pickRandom(GOOD_BOT)).queue();
+            }
         }
 
         if (JOHN_PATTERN.matcher(msgContent).find()) {
