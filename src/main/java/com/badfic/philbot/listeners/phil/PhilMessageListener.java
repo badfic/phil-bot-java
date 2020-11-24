@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import javax.annotation.Resource;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -152,10 +151,8 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
                     String msgLink = " [(jump)](https://discordapp.com/channels/" + event.getGuild().getIdLong() + '/' + channelId + '/' + msgId + ')';
 
-                    MessageEmbed messageEmbed = new EmbedBuilder()
-                            .setTitle("Quote #" + savedQuote.getId() + " Added")
-                            .setDescription("<@!" + event.getUserId() + "> Added quote #" + savedQuote.getId() + msgLink)
-                            .build();
+                    MessageEmbed messageEmbed = Constants.simpleEmbed("Quote #" + savedQuote.getId() + " Added",
+                            "<@!" + event.getUserId() + "> Added quote #" + savedQuote.getId() + msgLink);
 
                     johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage(messageEmbed).queue();
                 });

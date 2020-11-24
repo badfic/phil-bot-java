@@ -11,10 +11,8 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -88,7 +86,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
             }
 
             if (msgContent.startsWith(fullCmdPrefix + " help")) {
-                event.replyInDm(simpleEmbed(name + " Help", help));
+                event.replyInDm(Constants.simpleEmbed(name + " Help", help));
                 return;
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw add channel")) {
                 List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
@@ -251,13 +249,5 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
     }
 
     protected abstract Optional<String> getResponse(CommandEvent event, T responsesConfig);
-
-    protected MessageEmbed simpleEmbed(String title, String format, Object... args) {
-        return new EmbedBuilder()
-                .setTitle(title)
-                .setDescription(String.format(format, args))
-                .setColor(Constants.COLOR_OF_THE_MONTH)
-                .build();
-    }
 
 }

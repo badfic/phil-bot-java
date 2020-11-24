@@ -6,6 +6,7 @@ import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.Family;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.awt.Color;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,7 +15,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -68,9 +68,9 @@ public class Fam extends BaseSwampy implements PhilMarker {
 
         if (args.startsWith("help")) {
             if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
-                event.replyInDm(simpleEmbed("Help", modHelp));
+                event.replyInDm(Constants.simpleEmbed("Help", modHelp));
             } else {
-                event.replyInDm(simpleEmbed("Help", help));
+                event.replyInDm(Constants.simpleEmbed("Help", help));
             }
         } else if (args.startsWith("show")) {
             show(event);
@@ -282,12 +282,10 @@ public class Fam extends BaseSwampy implements PhilMarker {
                 return;
             }
 
-            MessageEmbed message = new EmbedBuilder()
-                    .setTitle(argName)
-                    .setDescription("Hello, " + mentionedMember.getAsMention() + "\n\n" + event.getMember().getAsMention() + " would like to `" + argName
-                            + "` you.\nDo you accept?\n\n(You have 15 minutes to respond or else it defaults to reject)")
-                    .setColor(Constants.SWAMP_GREEN)
-                    .build();
+            MessageEmbed message = Constants.simpleEmbed(argName,
+                    "Hello, " + mentionedMember.getAsMention() + "\n\n" + event.getMember().getAsMention() + " would like to `" + argName
+                            + "` you.\nDo you accept?\n\n(You have 15 minutes to respond or else it defaults to reject)",
+                    Constants.SWAMP_GREEN);
 
             event.getChannel().sendMessage(message).queue(msg -> {
                 msg.addReaction("✅").queue();
@@ -306,20 +304,16 @@ public class Fam extends BaseSwampy implements PhilMarker {
                             ((Set<String>) ReflectionUtils.invokeMethod(method, relookupUser.getFamily())).add(mentionedMember.getId());
                             discordUserRepository.save(relookupUser);
 
-                            MessageEmbed messageSuccess = new EmbedBuilder()
-                                    .setTitle(argName)
-                                    .setDescription(mentionedMember.getAsMention() + " accepted " + event.getMember().getAsMention() + "'s `" + argName + '`')
-                                    .setColor(Constants.SWAMP_GREEN)
-                                    .build();
+                            MessageEmbed messageSuccess = Constants.simpleEmbed(argName,
+                                    mentionedMember.getAsMention() + " accepted " + event.getMember().getAsMention() + "'s `" + argName + '`',
+                                    Constants.SWAMP_GREEN);
 
                             msg.editMessage(messageSuccess).queue();
                             return true;
                         } else if ("❌".equalsIgnoreCase(messageReactionAddEvent.getReactionEmote().getName())) {
-                            MessageEmbed messageFail = new EmbedBuilder()
-                                    .setTitle(argName)
-                                    .setDescription(mentionedMember.getAsMention() + " rejected " + event.getMember().getAsMention() + "'s `" + argName + '`')
-                                    .setColor(Constants.SWAMP_GREEN)
-                                    .build();
+                            MessageEmbed messageFail = Constants.simpleEmbed(argName,
+                                    mentionedMember.getAsMention() + " rejected " + event.getMember().getAsMention() + "'s `" + argName + '`',
+                                    Color.RED);
 
                             msg.editMessage(messageFail).queue();
                             return true;
@@ -381,17 +375,14 @@ public class Fam extends BaseSwampy implements PhilMarker {
         try {
             Member familyMember = getRandomFamilyMember(family, event, member);
             description.append(familyMember.getAsMention());
-            MessageEmbed msg = new EmbedBuilder()
-                    .setTitle(member.getEffectiveName() + "'s Family")
-                    .setDescription(description.toString())
-                    .setColor(Constants.COLOR_OF_THE_MONTH)
-                    .setImage(familyMember.getUser().getEffectiveAvatarUrl())
-                    .build();
+            MessageEmbed msg = Constants.simpleEmbed(member.getEffectiveName() + "'s Family",
+                    description.toString(),
+                    familyMember.getUser().getEffectiveAvatarUrl());
 
             event.reply(msg);
         } catch (Exception e) {
             description.append("Failed to load family member");
-            event.reply(simpleEmbed(member.getEffectiveName() + "'s Family", description.toString()));
+            event.reply(Constants.simpleEmbed(member.getEffectiveName() + "'s Family", description.toString()));
         }
     }
 

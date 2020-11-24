@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import javax.annotation.Resource;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -80,11 +79,7 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
                         }
                     });
 
-            MessageEmbed messageEmbed = new EmbedBuilder()
-                    .setTitle("Map Trivia Complete")
-                    .setDescription(description.toString())
-                    .setColor(Constants.COLOR_OF_THE_MONTH)
-                    .build();
+            MessageEmbed messageEmbed = Constants.simpleEmbed("Map Trivia Complete", description.toString());
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                     .thenRun(() -> swampysChannel.sendMessage(messageEmbed).queue());

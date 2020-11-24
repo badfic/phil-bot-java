@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import javax.annotation.Resource;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -131,41 +130,15 @@ public abstract class BaseSwampy extends Command {
             if (newRank.ordinal() != 0) {
                 TextChannel announcementsChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
-                MessageEmbed messageEmbed = new EmbedBuilder()
-                        .setImage(newRank.getRankUpImage())
-                        .setTitle("Level " + newRank.getLevel() + '!')
-                        .setColor(newRole.getColor())
-                        .setDescription(newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()))
-                        .build();
+                MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + newRank.getLevel() + '!',
+                        newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()),
+                        newRank.getRankUpImage(), newRole.getColor());
 
                 future = future.thenRun(() -> announcementsChannel.sendMessage(messageEmbed).queue());
             }
         }
 
         return ImmutablePair.of(newRole, future);
-    }
-
-    protected MessageEmbed simpleEmbed(String title, String description) {
-        return simpleEmbed(title, description, null);
-    }
-
-    protected MessageEmbed simpleEmbed(String title, String description, String image) {
-        return new EmbedBuilder()
-                .setTitle(title)
-                .setDescription(description)
-                .setImage(image)
-                .setColor(Constants.COLOR_OF_THE_MONTH)
-                .build();
-    }
-
-    protected MessageEmbed simpleEmbed(String title, String description, String image, String footer) {
-        return new EmbedBuilder()
-                .setTitle(title)
-                .setDescription(description)
-                .setImage(image)
-                .setColor(Constants.COLOR_OF_THE_MONTH)
-                .setFooter(footer)
-                .build();
     }
 
     protected boolean isNotParticipating(Member member) {

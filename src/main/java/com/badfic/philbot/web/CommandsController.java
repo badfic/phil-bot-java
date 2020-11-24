@@ -36,7 +36,9 @@ public class CommandsController extends BaseController {
     public ResponseEntity<String> getRanks(HttpSession httpSession) throws Exception {
         checkSession(httpSession, false);
 
-        List<SimpleCommand> simpleCommandsList = commands.stream().map(command -> {
+        List<SimpleCommand> simpleCommandsList = commands.stream()
+                .filter(c -> !c.isOwnerCommand())
+                .map(command -> {
             String modHelp = null;
             try {
                 modHelp = Arrays.stream(command.getClass().getDeclaredFields())

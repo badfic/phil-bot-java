@@ -47,7 +47,7 @@ public class RemindersCommand extends BaseSwampy implements PhilMarker {
                         .append('\n');
             }
 
-            event.reply(simpleEmbed("Reminders", description.toString()));
+            event.reply(Constants.simpleEmbed("Reminders", description.toString()));
         } else if (StringUtils.containsIgnoreCase(event.getArgs(), "delete")) {
             String number = event.getArgs().replace("delete", "").trim();
 

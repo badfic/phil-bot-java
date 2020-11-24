@@ -91,7 +91,7 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
 
         if (image != null) {
             try {
-                swampysChannel.sendMessage(simpleEmbed("Map Trivia", description))
+                swampysChannel.sendMessage(Constants.simpleEmbed("Map Trivia", description))
                         .addFile(new URL(image).openStream(), "image." + imageExtension)
                         .queue();
             } catch (IOException e) {
@@ -100,7 +100,7 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
                 event.replyError("Failed to load image for map trivia");
             }
         } else {
-            swampysChannel.sendMessage(simpleEmbed("Map Trivia", description)).queue();
+            swampysChannel.sendMessage(Constants.simpleEmbed("Map Trivia", description)).queue();
         }
     }
 }

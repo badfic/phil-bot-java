@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.slf4j.Logger;
@@ -98,12 +97,9 @@ public class Swiper extends BaseSwampy implements PhilMarker {
             Optional<DiscordUser> victim = discordUserRepository.findById(swampyGamesConfig.getSwiperAwaiting());
             swampyGamesConfig.setSwiperAwaiting(null);
 
-            MessageEmbed message = new EmbedBuilder()
-                    .setTitle(theSwiper.getNoSwipingPhrase())
-                    .setDescription("Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points")
-                    .setColor(Constants.COLOR_OF_THE_MONTH)
-                    .setImage(theSwiper.getSwiperLostImage())
-                    .build();
+            MessageEmbed message = Constants.simpleEmbed(theSwiper.getNoSwipingPhrase(),
+                    "Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points",
+                    theSwiper.getSwiperLostImage());
 
             if (victim.isPresent()) {
                 if (swampyGamesConfig.getSwiperSavior() != null) {
@@ -115,13 +111,10 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                                 ? SPIDERMAN_PNG
                                 : theSwiper.getSwiperLostImage();
 
-                        message = new EmbedBuilder()
-                                .setTitle(theSwiper.getNoSwipingPhrase())
-                                .setDescription("Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
-                                        + "> scared them away from <@!" + victim.get().getId() + ">")
-                                .setColor(Constants.COLOR_OF_THE_MONTH)
-                                .setImage(image)
-                                .build();
+                        message = Constants.simpleEmbed(theSwiper.getNoSwipingPhrase(),
+                                "Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
+                                        + "> scared them away from <@!" + victim.get().getId() + ">",
+                                image);
 
                         if (savior.isPresent()) {
                             savior.get().setSwiperParticipations(savior.get().getSwiperParticipations() + 1);
@@ -137,12 +130,9 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
                         if (memberById != null) {
                             takePointsFromMember(SWIPER_POINTS_TO_STEAL, memberById);
-                            message = new EmbedBuilder()
-                                    .setTitle(theSwiper.getSwiperWonPhrase())
-                                    .setDescription("You didn't save <@!" + victim.get().getId() + "> in time, they lost " + SWIPER_POINTS_TO_STEAL + " points")
-                                    .setColor(Constants.COLOR_OF_THE_MONTH)
-                                    .setImage(theSwiper.getSwiperWonImage())
-                                    .build();
+                            message = Constants.simpleEmbed(theSwiper.getSwiperWonPhrase(),
+                                    "You didn't save <@!" + victim.get().getId() + "> in time, they lost " + SWIPER_POINTS_TO_STEAL + " points",
+                                    theSwiper.getSwiperWonImage());
                         }
                     } catch (Exception e) {
                         logger.error("Exception looking up swiper victim [id={}] after they were not saved", victim.get().getId(), e);
@@ -189,12 +179,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         String description = "They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
                 + "' in this channel within 15 minutes to stop them!";
 
-        MessageEmbed message = new EmbedBuilder()
-                .setTitle(theSwiper.getSpottedPhrase())
-                .setDescription(description)
-                .setColor(Constants.COLOR_OF_THE_MONTH)
-                .setImage(theSwiper.getSpottedImage())
-                .build();
+        MessageEmbed message = Constants.simpleEmbed(theSwiper.getSpottedPhrase(), description, theSwiper.getSpottedImage());
 
         philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0)

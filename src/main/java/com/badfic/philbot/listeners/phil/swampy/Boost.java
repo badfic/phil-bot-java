@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -93,12 +92,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
                         }
                     });
 
-            MessageEmbed messageEmbed = new EmbedBuilder()
-                    .setImage(BOOST_END)
-                    .setTitle("Boost Blitz Complete")
-                    .setDescription(description.toString())
-                    .setColor(Constants.COLOR_OF_THE_MONTH)
-                    .build();
+            MessageEmbed messageEmbed = Constants.simpleEmbed("Boost Blitz Complete", description.toString(), BOOST_END);
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                     .thenRun(() -> swampysChannel.sendMessage(messageEmbed).queue());
@@ -110,13 +104,10 @@ public class Boost extends BaseSwampy implements PhilMarker {
             swampyGamesConfig.setBoostPhrase(boostPhrase);
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
-            MessageEmbed message = new EmbedBuilder()
-                    .setTitle("BOOST BLITZ")
-                    .setDescription("Type `" + boostPhrase + "` in this channel before the top of the hour to be boosted by "
-                            + BOOST_POINTS_TO_GIVE + " points")
-                    .setImage(BOOST_START)
-                    .setColor(Constants.COLOR_OF_THE_MONTH)
-                    .build();
+            MessageEmbed message = Constants.simpleEmbed("BOOST BLITZ",
+                    "Type `" + boostPhrase + "` in this channel before the top of the hour to be boosted by "
+                            + BOOST_POINTS_TO_GIVE + " points",
+                    BOOST_START);
 
             swampysChannel.sendMessage(message).queue();
         }
