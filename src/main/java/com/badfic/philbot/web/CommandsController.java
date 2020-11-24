@@ -1,7 +1,6 @@
 package com.badfic.philbot.web;
 
 import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 import com.jagrosh.jdautilities.command.Command;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,9 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommandsController extends BaseController {
 
     @Resource
-    private MustacheFactory mustacheFactory;
-
-    @Resource
     private List<Command> commands;
 
     private Mustache mustache;
@@ -33,7 +29,7 @@ public class CommandsController extends BaseController {
     }
 
     @GetMapping(value = "/commands", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> getRanks(HttpSession httpSession) throws Exception {
+    public ResponseEntity<String> get(HttpSession httpSession) throws Exception {
         checkSession(httpSession, false);
 
         List<SimpleCommand> simpleCommandsList = commands.stream()

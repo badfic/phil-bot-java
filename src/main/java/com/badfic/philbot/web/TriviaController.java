@@ -4,7 +4,6 @@ import com.badfic.philbot.data.TriviaForm;
 import com.badfic.philbot.data.phil.Trivia;
 import com.badfic.philbot.data.phil.TriviaRepository;
 import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +26,6 @@ public class TriviaController extends BaseController {
 
     @Resource
     private TriviaRepository triviaRepository;
-
-    @Resource
-    private MustacheFactory mustacheFactory;
 
     private Mustache mustache;
 

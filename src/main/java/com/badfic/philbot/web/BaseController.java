@@ -7,6 +7,7 @@ import com.badfic.philbot.config.UnauthorizedException;
 import com.badfic.philbot.data.DiscordApiIdentityResponse;
 import com.badfic.philbot.data.DiscordApiLoginResponse;
 import com.badfic.philbot.data.DiscordUserRepository;
+import com.github.mustachejava.MustacheFactory;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -40,6 +41,9 @@ public abstract class BaseController {
 
     @Resource(name = "philJda")
     protected JDA philJda;
+
+    @Resource
+    protected MustacheFactory mustacheFactory;
 
     protected void checkSession(HttpSession httpSession, boolean requiresAdmin) throws UnsupportedEncodingException {
         if (httpSession.isNew()) {
