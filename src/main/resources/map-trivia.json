@@ -508,5 +508,15 @@
     "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/779857396012154920/72318322-map-of-netherlands-highlighted-in-red-on-simple-shiny-metallic-map-with-clear-country-borde.png",
     "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/779857674967449630/shutterstock_474434224-2200x880.png",
     "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/779857519165308928/domtoren-hoofdafbeelding.png"
+  },
+  {
+    "answer": "Albania",
+    "identifier": "European Country",
+    "nickname": "Land of the Eagles",
+    "capital": "Tirana",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780658103498178560/1280px-Flag_of_Albania.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780658542675886100/location-map-of-albania-small.png",
+    "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780658820250206238/Lakes-in-Albanian-Alps-1024x683.png",
+    "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780660142685159424/tiranacityview-min_0.png"
   }
 ]

@@ -2,6 +2,8 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.PhilMarker;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +23,14 @@ public class QuickPoll extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        event.reply(event.getAuthor().getAsMention() + " asks: " + event.getArgs(), msg -> {
-            msg.addReaction("✅").queue();
-            msg.addReaction("❌").queue();
+        MessageEmbed messageEmbed = new EmbedBuilder()
+                .setTitle("Quick Poll")
+                .setDescription(event.getAuthor().getAsMention() + " asks:\n\n" + event.getArgs())
+                .setThumbnail("https://emoji.gg/assets/emoji/4392_ablobcouncil.gif")
+                .build();
+
+        event.reply(messageEmbed, msg -> {
+            msg.addReaction("❌").submit().thenRun(() -> msg.addReaction("✅").queue());
         });
     }
 }
