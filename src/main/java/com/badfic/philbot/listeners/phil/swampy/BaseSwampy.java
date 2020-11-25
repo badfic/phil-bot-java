@@ -27,6 +27,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.web.client.RestTemplate;
 
 public abstract class BaseSwampy extends Command {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -55,6 +56,9 @@ public abstract class BaseSwampy extends Command {
 
     @Resource
     protected HoneybadgerReporter honeybadgerReporter;
+
+    @Resource
+    protected RestTemplate restTemplate;
 
     protected DiscordUser getDiscordUserByMember(Member member) {
         String userId = member.getId();
