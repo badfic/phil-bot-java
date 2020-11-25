@@ -5,9 +5,7 @@ import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.MapQuestionJson;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -19,7 +17,12 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 
 @Component
 public class MapCommand extends BaseSwampy implements PhilMarker {
@@ -91,10 +94,14 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
 
         if (image != null) {
             try {
+                LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+                headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
+                ResponseEntity<byte[]> imageResponse = restTemplate.exchange(image, HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
+
                 swampysChannel.sendMessage(Constants.simpleEmbed("Map Trivia", description))
-                        .addFile(new URL(image).openStream(), "image." + imageExtension)
+                        .addFile(imageResponse.getBody(), "image." + imageExtension)
                         .queue();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("Failed to load [image={}] for map trivia", image, e);
                 honeybadgerReporter.reportError(e, null, "Failed to load image for map trivia: " + image);
                 event.replyError("Failed to load image for map trivia");
