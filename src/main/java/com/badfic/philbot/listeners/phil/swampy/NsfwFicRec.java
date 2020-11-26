@@ -1,12 +1,18 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.PhilMarker;
+import com.badfic.philbot.listeners.phil.Ao3MetadataParser;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NsfwFicRec extends BaseSwampy implements PhilMarker {
+
+    @Resource
+    private Ao3MetadataParser ao3MetadataParser;
+
     public NsfwFicRec() {
         name = "nsfwficrec";
         aliases = new String[] {"swampyficrec"};
@@ -21,7 +27,12 @@ public class NsfwFicRec extends BaseSwampy implements PhilMarker {
         }
 
         event.getGuild().getTextChannelsByName("nsfw-fic-recs", false).stream().findAny().ifPresent(textChannel -> {
-            textChannel.sendMessage(event.getAuthor().getAsMention() + " recommended this fic: " + event.getArgs()).queue();
+            String link = event.getArgs().trim();
+
+            textChannel.sendMessage(event.getAuthor().getAsMention() + " recommended this fic: " + link).queue();
+            if (StringUtils.containsIgnoreCase(link, "archiveofourown")) {
+                ao3MetadataParser.parseLink(link, "nsfw-fic-recs");
+            }
         });
 
         event.getMessage().delete().queue();
