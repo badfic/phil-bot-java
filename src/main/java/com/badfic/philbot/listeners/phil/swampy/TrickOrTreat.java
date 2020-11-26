@@ -6,6 +6,7 @@ import com.badfic.philbot.data.DiscordUser;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -38,13 +39,14 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
     @Scheduled(cron = "0 3 19 * * ?", zone = "GMT")
     public void trickOrTreat() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
+        allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
         long totalGiven = 0;
         long totalTaken = 0;
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
-            if (user.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD) {
+            if (user.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && user.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                 try {
                     Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                     if (memberById != null && !memberById.getUser().isBot()) {
