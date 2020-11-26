@@ -6,7 +6,6 @@ import io.honeybadger.reporter.HoneybadgerReporter;
 import java.awt.Color;
 import java.lang.invoke.MethodHandles;
 import javax.annotation.Resource;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -230,13 +229,13 @@ public class Ao3MetadataParser {
             }
 
             String footer = "%s | %s | %s";
-            MessageEmbed messageEmbed = new EmbedBuilder()
-                    .setTitle("Phil's AO3 Summary Report")
-                    .setThumbnail("https://cdn.discordapp.com/attachments/707453916882665552/780261925212520508/wITXDY67Xw1sAAAAABJRU5ErkJggg.png")
-                    .setDescription(description.length() > 2048 ? (description.substring(0, 2044) + "...") : description.toString())
-                    .setFooter(String.format(footer, "Words: " + words, "Chapters: " + chapters, language.toString()))
-                    .setColor(color)
-                    .build();
+            MessageEmbed messageEmbed = Constants.simpleEmbed(
+                    "Phil's AO3 Summary Report",
+                    description.toString(),
+                    null,
+                    String.format(footer, "Words: " + words, "Chapters: " + chapters, language.toString()),
+                    color,
+                    "https://cdn.discordapp.com/attachments/707453916882665552/780261925212520508/wITXDY67Xw1sAAAAABJRU5ErkJggg.png");
 
             channel.sendMessage(messageEmbed).queue();
             return true;
