@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -88,9 +89,11 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
     public SwampyCommand() {
         name = "swampy";
-        aliases = new String[] {"bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simpy", "daddy", "punny", "dakota"};
+        aliases = new String[] {
+                "swamp", "bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simp", "simpy", "shrimp", "shrimpy", "shremp",
+                "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek"};
         help =
-                "`!!swampy` aka... `bastard, spooky, cursed, gay, aww, moist, moisten, gobble, sin, simpy, daddy, punny, dakota` HELP:\n" +
+                "`!!swampy` aka... `" + Arrays.toString(aliases) + "` HELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
                 "`!!swampy leaderboard bastard` show the 18+ leaderboard\n" +
                 "`!!swampy leaderboard chaos` show the chaos children leaderboard\n" +
