@@ -40,27 +40,35 @@ public interface Constants {
                 .toLowerCase();
     }
 
+    static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {
+        return simpleEmbed(title, description, null, null, Constants.COLOR_OF_THE_MONTH, thumbnail);
+    }
+
     static MessageEmbed simpleEmbed(String title, String description) {
-        return simpleEmbed(title, description, null, null, Constants.COLOR_OF_THE_MONTH);
+        return simpleEmbed(title, description, null, null, Constants.COLOR_OF_THE_MONTH, null);
     }
 
     static MessageEmbed simpleEmbed(String title, String description, Color color) {
-        return simpleEmbed(title, description, null, null, color);
+        return simpleEmbed(title, description, null, null, color, null);
     }
 
     static MessageEmbed simpleEmbed(String title, String description, String image) {
-        return simpleEmbed(title, description, image, null, Constants.COLOR_OF_THE_MONTH);
+        return simpleEmbed(title, description, image, null, Constants.COLOR_OF_THE_MONTH, null);
     }
 
     static MessageEmbed simpleEmbed(String title, String description, String image, Color color) {
-        return simpleEmbed(title, description, image, null, color);
+        return simpleEmbed(title, description, image, null, color, null);
     }
 
     static MessageEmbed simpleEmbed(String title, String description, String image, String footer) {
-        return simpleEmbed(title, description, image, footer, Constants.COLOR_OF_THE_MONTH);
+        return simpleEmbed(title, description, image, footer, Constants.COLOR_OF_THE_MONTH, null);
     }
 
     static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color) {
+        return simpleEmbed(title, description, image, footer, color, null);
+    }
+
+    static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color, String thumbnail) {
         final String finalDesc;
         if (StringUtils.isNotBlank(description)) {
             finalDesc = description.length() > 2048 ? (description.substring(0, 2044) + "...") : description;
@@ -74,6 +82,7 @@ public interface Constants {
                 .setImage(image)
                 .setColor(color)
                 .setFooter(footer)
+                .setThumbnail(thumbnail)
                 .build();
     }
 
