@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -66,7 +67,7 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
-            if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD) {
+            if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD && user.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
                 try {
                     long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current().nextInt(ROBINHOOD_PERCENTAGE_MIN_MAX.getLeft(), ROBINHOOD_PERCENTAGE_MIN_MAX.getRight());
                     if (user.getFamily() != null && CollectionUtils.isNotEmpty(user.getFamily().getSpouses())) {
