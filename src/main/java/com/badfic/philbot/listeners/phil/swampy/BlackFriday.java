@@ -38,12 +38,12 @@ public class BlackFriday extends BaseSwampy implements PhilMarker {
     private void blackFriday() {
         MutableLong totalPoints = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
-        StringBuilder description = new StringBuilder("Shrek gave " + POINTS + " points to every swampling who was active in the last hour\n\n");
+        StringBuilder description = new StringBuilder("Shrek gave " + POINTS + " points to every swampling who was active in the last ~55 minutes\n\n");
 
         discordUserRepository.findAll()
                 .stream()
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
-                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(1)))
+                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusMinutes(55)))
                 .forEachOrdered(user -> {
                     try {
                         Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
