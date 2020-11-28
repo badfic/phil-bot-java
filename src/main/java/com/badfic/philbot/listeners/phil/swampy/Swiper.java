@@ -58,6 +58,14 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                     "The Simps Escaped!",
                     "https://cdn.discordapp.com/attachments/707453916882665552/779844165433163776/99784902-50610880-2ad1-11eb-937c-6e768aa4f5db.png"
             ))
+            .put("Shrimper No Shrimping", new TheSwiper(
+                    "Shrimper No Shrimping",
+                    "Shrimp Spotted Nearby",
+                    "https://cdn.discordapp.com/attachments/323666308107599872/782162173395861504/83585dee533fb9cb2e3e4e28e675a911.png",
+                    "https://cdn.discordapp.com/attachments/323666308107599872/782164940042928158/18aa30d62c66eb2ca17b2817c3de5a2b.png",
+                    "The Shrimp Escaped!",
+                    "https://cdn.discordapp.com/attachments/323666308107599872/782166177345961994/ssrcoclassic_teewomensfafafaca443f4786front_altsquare_product600x600.png"
+            ))
             .build();
 
     private static final String SPIDERMAN_PNG = "https://cdn.discordapp.com/attachments/707453916882665552/769837667617079316/spiderman.png";
