@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -361,6 +362,60 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         }
 
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
+
+        if (StringUtils.startsWithIgnoreCase(split[1], "house")) {
+            long dryBastards = 0;
+            long dryCinnamons = 0;
+            long swampyBastards = 0;
+            long swampyCinnamons = 0;
+
+            for (DiscordUser swampyUser : swampyUsers) {
+                Member memberById = event.getGuild().getMemberById(swampyUser.getId());
+
+                if (memberById != null) {
+                    if (hasRole(memberById, Constants.DRY_BASTARDS_ROLE)) {
+                        dryBastards += swampyUser.getXp();
+                    } else if (hasRole(memberById, Constants.DRY_CINNAMON_ROLE)) {
+                        dryCinnamons += swampyUser.getXp();
+                    } else if (hasRole(memberById, Constants.SWAMPY_BASTARDS_ROLE)) {
+                        swampyBastards += swampyUser.getXp();
+                    } else if (hasRole(memberById, Constants.SWAMPY_CINNAMON_ROLE)) {
+                        swampyCinnamons += swampyUser.getXp();
+                    }
+                }
+            }
+
+            String title = null;
+            String thumbnail = null;
+            if (dryBastards >= dryCinnamons && dryBastards >= swampyBastards && dryBastards >= swampyCinnamons) {
+                title = "Dry Bastards Are Leading";
+                thumbnail = DRY_BASTARDS_CREST;
+            } else if (dryCinnamons >= dryBastards && dryCinnamons >= swampyBastards && dryCinnamons >= swampyCinnamons) {
+                title = "Dry Cinnamon Rolls Are Leading";
+                thumbnail = DRY_CINNAMON_CREST;
+            } else if (swampyBastards >= dryBastards && swampyBastards >= dryCinnamons && swampyBastards >= swampyCinnamons) {
+                title = "Swampy Bastards Are Leading";
+                thumbnail = SWAMPY_BASTARDS_CREST;
+            } else {
+                title = "Swampy Cinnamon Rolls Are Leading";
+                thumbnail = SWAMPY_CINNAMON_CREST;
+            }
+
+            MessageEmbed message = new EmbedBuilder()
+                    .addField("Dry Bastards", NumberFormat.getIntegerInstance().format(dryBastards), true)
+                    .addField("Dry Cinnamon Rolls", NumberFormat.getIntegerInstance().format(dryCinnamons), true)
+                    .addBlankField(true)
+                    .addField("Swampy Bastards", NumberFormat.getIntegerInstance().format(swampyBastards), true)
+                    .addField("Swampy Cinnamon Rolls", NumberFormat.getIntegerInstance().format(swampyCinnamons), true)
+                    .addBlankField(true)
+                    .setTitle(title)
+                    .setThumbnail(thumbnail)
+                    .setColor(Constants.COLOR_OF_THE_MONTH)
+                    .build();
+
+            event.reply(message);
+            return;
+        }
 
         if ("full".equalsIgnoreCase(split[1])) {
             AtomicInteger place = new AtomicInteger(1);
