@@ -33,7 +33,7 @@ public class CommandsController extends BaseController {
         checkSession(httpSession, false);
 
         List<SimpleCommand> simpleCommandsList = commands.stream()
-                .filter(c -> !c.isOwnerCommand())
+                .filter(c -> !c.isOwnerCommand() && !c.getName().equalsIgnoreCase("fireDrill") && !c.getName().endsWith("Talk"))
                 .map(command -> {
             String modHelp = null;
             try {

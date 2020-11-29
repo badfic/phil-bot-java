@@ -19,6 +19,11 @@ public interface Constants {
     String MEGA_HELL_ROLE = "in mega hell";
     String TEST_CHANNEL = "test-channel";
 
+    String DRY_BASTARDS_ROLE = "Dry Bastards";
+    String DRY_CINNAMON_ROLE = "Dry Cinnamon Rolls";
+    String SWAMPY_BASTARDS_ROLE = "Swampy Bastards";
+    String SWAMPY_CINNAMON_ROLE = "Swampy Cinnamon Rolls";
+
     String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
 
     Color COLOR_OF_THE_MONTH = new Color(225, 168, 0);
