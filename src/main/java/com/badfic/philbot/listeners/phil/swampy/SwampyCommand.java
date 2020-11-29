@@ -91,7 +91,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         name = "swampy";
         aliases = new String[] {
                 "swamp", "bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simp", "simpy", "shrimp", "shrimpy", "shremp",
-                "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek"};
+                "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek", "billy"};
         help =
                 "`!!swampy` aka... `" + Arrays.toString(aliases) + "` HELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
