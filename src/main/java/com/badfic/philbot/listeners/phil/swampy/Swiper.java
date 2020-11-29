@@ -23,8 +23,6 @@ import org.springframework.stereotype.Component;
 public class Swiper extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final long SWIPER_POINTS_TO_STEAL = 1_500;
-
     private static final Map<String, TheSwiper> SWIPERS = ImmutableMap.<String, TheSwiper>builder()
             .put("Swiper No Swiping", new TheSwiper(
                     "Swiper No Swiping",
@@ -145,9 +143,9 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                         Member memberById = philJda.getGuilds().get(0).getMemberById(victim.get().getId());
 
                         if (memberById != null) {
-                            takePointsFromMember(SWIPER_POINTS_TO_STEAL, memberById);
+                            takePointsFromMember(swampyGamesConfig.getSwiperPoints(), memberById);
                             message = Constants.simpleEmbed(theSwiper.getSwiperWonPhrase(),
-                                    "You didn't save <@!" + victim.get().getId() + "> in time, they lost " + SWIPER_POINTS_TO_STEAL + " points",
+                                    "You didn't save <@!" + victim.get().getId() + "> in time, they lost " + swampyGamesConfig.getSwiperPoints() + " points",
                                     theSwiper.getSwiperWonImage());
                         }
                     } catch (Exception e) {
@@ -174,7 +172,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                 Member memberById = philJda.getGuilds().get(0).getMemberById(winningUser.getId());
                 if (memberById != null
                         && !memberById.getUser().isBot()
-                        && winningUser.getXp() > SWIPER_POINTS_TO_STEAL
+                        && winningUser.getXp() > swampyGamesConfig.getSwiperPoints()
                         && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(23))) {
                     member = memberById;
                 }

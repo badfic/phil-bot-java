@@ -5,6 +5,7 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.phil.Rank;
+import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.badfic.philbot.data.phil.SwampyGamesConfigRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
@@ -35,7 +36,7 @@ public abstract class BaseSwampy extends Command {
 
     // sweepstakes, taxes, robinhood
     public static final BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");
-    public static final long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 99;
+    public static final long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 999;
     public static final long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 999;
     public static final String DRY_BASTARDS_CREST = "https://cdn.discordapp.com/attachments/741053845098201099/782478360491196416/dry_bastard.png";
     public static final String DRY_CINNAMON_CREST = "https://cdn.discordapp.com/attachments/741053845098201099/782478362391478322/dry_cinnamon_roll.png";
@@ -159,6 +160,10 @@ public abstract class BaseSwampy extends Command {
 
     protected boolean hasRole(Member member, String role) {
         return member.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
+    }
+
+    protected SwampyGamesConfig getSwampyGamesConfig() {
+        return swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElse(null);
     }
 
 }

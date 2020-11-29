@@ -35,7 +35,6 @@ public class Stonks extends BaseSwampy implements PhilMarker {
             "https://cdn.discordapp.com/attachments/741053845098201099/771917366660694036/image0.jpg",
             "https://cdn.discordapp.com/attachments/741053845098201099/771917366904750160/image1.jpg"
     );
-    private static final long THEORETICAL_MAX = 4_000L;
 
     public Stonks() {
         name = "stonks";
@@ -78,7 +77,7 @@ public class Stonks extends BaseSwampy implements PhilMarker {
         for (DiscordUser user : filteredUsers) {
             try {
                 long mostRecentTaxes = swampyGamesConfig.getMostRecentTaxes();
-                long pointsToGive = Math.min(THEORETICAL_MAX, Math.max(500, mostRecentTaxes / totalBastards));
+                long pointsToGive = Math.min(swampyGamesConfig.getStonksMaxPoints(), Math.max(500, mostRecentTaxes / totalBastards));
 
                 Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                 if (memberById != null) {

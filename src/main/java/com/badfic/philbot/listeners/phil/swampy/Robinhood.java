@@ -3,6 +3,7 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
+import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
@@ -15,8 +16,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,8 +25,6 @@ import org.springframework.stereotype.Component;
 public class Robinhood extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final Pair<Integer, Integer> ROBINHOOD_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
-    private static final long PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN = 30;
     private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/587078427400732682/772345794418180107/robinhood_tg.png";
     private static final String PERSON_WHO_STOPS_ROBINHOOD = "https://cdn.discordapp.com/attachments/587078427400732682/772345791636307978/no_robinhood_tg.png";
 
@@ -48,7 +45,12 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
     }
 
     private void doRobinhood(boolean force) {
-        if (!force && ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_ROBINHOOD_DOESNT_HAPPEN) {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        if (swampyGamesConfig == null) {
+            return;
+        }
+
+        if (!force && ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceRobinhoodNotHappen()) {
             MessageEmbed message = Constants.simpleEmbed("I NEED TO SPEAK TO THE MANAGER!!!",
                     "Saundra Lee caught Guy while he was trying to return taxes to the swamp.",
                     PERSON_WHO_STOPS_ROBINHOOD);
@@ -69,7 +71,8 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
         for (DiscordUser user : allUsers) {
             if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD && user.getUpdateTime().isAfter(LocalDateTime.now().minusHours(23))) {
                 try {
-                    long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current().nextInt(ROBINHOOD_PERCENTAGE_MIN_MAX.getLeft(), ROBINHOOD_PERCENTAGE_MIN_MAX.getRight());
+                    long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current()
+                            .nextInt(swampyGamesConfig.getRobinhoodMinPercent(), swampyGamesConfig.getRobinhoodMaxPercent());
                     if (user.getFamily() != null && CollectionUtils.isNotEmpty(user.getFamily().getSpouses())) {
                         taxRateRecoveryAmountPercentage -= 2;
                     }

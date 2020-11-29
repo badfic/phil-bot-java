@@ -3,6 +3,7 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
+import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Component;
 public class TrickOrTreat extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final int TRICK_OR_TREAT_POINTS = 500;
     private static final String TRICK_OR_TREAT = "https://cdn.discordapp.com/attachments/587078427400732682/772345787027816458/checkedout_ortrampled_tg.png";
 
     public TrickOrTreat() {
@@ -38,6 +38,11 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
 
     @Scheduled(cron = "0 3 19 * * ?", zone = "GMT")
     public void trickOrTreat() {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        if (swampyGamesConfig == null) {
+            return;
+        }
+
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
@@ -51,22 +56,22 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                     Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                     if (memberById != null && !memberById.getUser().isBot()) {
                         if (ThreadLocalRandom.current().nextInt() % 2 == 0) {
-                            futures.add(givePointsToMember(TRICK_OR_TREAT_POINTS, memberById));
-                            totalGiven += TRICK_OR_TREAT_POINTS;
+                            futures.add(givePointsToMember(swampyGamesConfig.getTrickOrTreatPoints(), memberById));
+                            totalGiven += swampyGamesConfig.getTrickOrTreatPoints();
 
                             description
                                     .append("\uD83D\uDED2 got the deal ")
-                                    .append(NumberFormat.getIntegerInstance().format(TRICK_OR_TREAT_POINTS))
+                                    .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getTrickOrTreatPoints()))
                                     .append(" points to <@!")
                                     .append(user.getId())
                                     .append(">\n");
                         } else {
-                            futures.add(takePointsFromMember(TRICK_OR_TREAT_POINTS, memberById));
-                            totalTaken += TRICK_OR_TREAT_POINTS;
+                            futures.add(takePointsFromMember(swampyGamesConfig.getTrickOrTreatPoints(), memberById));
+                            totalTaken += swampyGamesConfig.getTrickOrTreatPoints();
 
                             description
                                     .append("\uD83D\uDEA7 got trampled ")
-                                    .append(NumberFormat.getIntegerInstance().format(TRICK_OR_TREAT_POINTS))
+                                    .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getTrickOrTreatPoints()))
                                     .append(" points from <@!")
                                     .append(user.getId())
                                     .append(">\n");

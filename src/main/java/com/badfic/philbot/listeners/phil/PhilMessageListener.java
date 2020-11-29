@@ -194,7 +194,7 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
 
     private void begone(User user, GenericGuildEvent event) {
         swampyCommand.removeFromGames(user.getId());
-        Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("announcements", false).stream().findFirst();
+        Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("event-reminders", false).stream().findFirst();
         announcementsChannel.ifPresent(channel -> channel.sendMessage("Begone Bot " + user.getAsMention()).queue());
     }
 

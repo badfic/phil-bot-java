@@ -16,8 +16,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,8 +25,6 @@ import org.springframework.stereotype.Component;
 public class Taxes extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final Pair<Integer, Integer> TAX_PERCENTAGE_MIN_MAX = ImmutablePair.of(5, 16);
-    private static final long PERCENT_CHANCE_TAXES_DOESNT_HAPPEN = 30;
     private static final String TAXES = "https://cdn.discordapp.com/attachments/587078427400732682/772345794593685524/taxes_tg.png";
     private static final String PERSON_WHO_STOPS_TAXES = "https://cdn.discordapp.com/attachments/587078427400732682/772345792676495371/no_tax_tg.png";
 
@@ -55,7 +51,7 @@ public class Taxes extends BaseSwampy implements PhilMarker {
         }
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
 
-        if (!force && ThreadLocalRandom.current().nextInt(100) < PERCENT_CHANCE_TAXES_DOESNT_HAPPEN) {
+        if (!force && ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceTaxesNotHappen()) {
             MessageEmbed message = Constants.simpleEmbed("No taxes today!", "Snoop Dogg caught Paula Deen before she could take taxes from the swamp.",
                     PERSON_WHO_STOPS_TAXES);
 
@@ -75,7 +71,7 @@ public class Taxes extends BaseSwampy implements PhilMarker {
         for (DiscordUser user : allUsers) {
             if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD) {
                 try {
-                    long taxRate = ThreadLocalRandom.current().nextInt(TAX_PERCENTAGE_MIN_MAX.getLeft(), TAX_PERCENTAGE_MIN_MAX.getRight());
+                    long taxRate = ThreadLocalRandom.current().nextInt(swampyGamesConfig.getTaxesMinPercent(), swampyGamesConfig.getTaxesMaxPercent());
                     if (user.getFamily() != null && CollectionUtils.isNotEmpty(user.getFamily().getSpouses())) {
                         taxRate -= 2;
                     }

@@ -3,14 +3,13 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
-import com.google.common.collect.ImmutableSet;
+import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.entities.Member;
@@ -25,8 +24,6 @@ import org.springframework.stereotype.Component;
 public class Shrekoning extends BaseSwampy implements PhilMarker {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final Set<Long> COMMON_POINTS = ImmutableSet.of(500L, 1_000L);
-    private static final Set<Long> RARE_POINTS = ImmutableSet.of(2_000L, 4_000L);
     private static final String SHREKONING = "https://cdn.discordapp.com/attachments/741053845098201099/763280555793580042/the_shrekoning.png";
 
     public Shrekoning() {
@@ -42,6 +39,11 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
 
     @Scheduled(cron = "0 47 4 * * ?", zone = "GMT")
     public void shrekoning() {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        if (swampyGamesConfig == null) {
+            return;
+        }
+
         List<DiscordUser> allUsers = discordUserRepository.findAll();
 
         MutableLong totalPointsGiven = new MutableLong(0);
@@ -61,12 +63,8 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
                     try {
                         Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                         if (memberById != null) {
-                            long points;
-                            if (ThreadLocalRandom.current().nextInt(100) < 25) {
-                                points = Constants.pickRandom(RARE_POINTS);
-                            } else {
-                                points = Constants.pickRandom(COMMON_POINTS);
-                            }
+                            long points = ThreadLocalRandom.current()
+                                    .nextLong(swampyGamesConfig.getShrekoningMinPoints(), swampyGamesConfig.getShrekoningMaxPoints());
 
                             futures.add(givePointsToMember(points, memberById));
                             totalPointsGiven.add(points);

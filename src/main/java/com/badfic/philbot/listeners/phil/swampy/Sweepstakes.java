@@ -3,6 +3,7 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
+import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class Sweepstakes extends BaseSwampy implements PhilMarker {
 
-    private static final long SWEEPSTAKES_WIN_POINTS = 4_000;
     private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/752665408770801737/775602510395736104/sweepstakes_tg.png";
 
     public Sweepstakes() {
@@ -61,6 +61,11 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
     }
 
     private void doSweepstakes(String role) {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        if (swampyGamesConfig == null) {
+            return;
+        }
+
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         Collections.shuffle(allUsers);
 
@@ -86,10 +91,10 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        givePointsToMember(SWEEPSTAKES_WIN_POINTS, member);
+        givePointsToMember(swampyGamesConfig.getSweepstakesPoints(), member);
 
         MessageEmbed message = Constants.simpleEmbed(role + " Sweepstakes Results",
-                String.format("Congratulations %s you won today's sweepstakes worth %d points!", member.getAsMention(), SWEEPSTAKES_WIN_POINTS),
+                String.format("Congratulations %s you won today's sweepstakes worth %d points!", member.getAsMention(), swampyGamesConfig.getSweepstakesPoints()),
                 SWEEPSTAKES);
 
         philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)

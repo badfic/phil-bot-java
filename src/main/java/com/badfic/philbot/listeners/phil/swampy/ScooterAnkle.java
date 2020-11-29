@@ -3,6 +3,7 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
+import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Component;
 public class ScooterAnkle extends BaseSwampy implements PhilMarker {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final int SCOOTER_ANKLE_POINTS = 25_000;
     private static final String SCOOTER_IMAGE = "https://cdn.discordapp.com/attachments/752665380182425677/780324301311049728/scooter_ankle.png";
 
     public ScooterAnkle() {
@@ -32,6 +32,11 @@ public class ScooterAnkle extends BaseSwampy implements PhilMarker {
 
     @Override
     protected void execute(CommandEvent event) {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        if (swampyGamesConfig == null) {
+            return;
+        }
+
         TextChannel swampysChannel = event.getJDA().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
         DiscordUser scooterUser = getDiscordUserByMember(event.getMember());
 
@@ -40,8 +45,8 @@ public class ScooterAnkle extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        if (scooterUser.getXp() < SCOOTER_ANKLE_POINTS) {
-            event.replyError("You can only scooter ankle if you have " + SCOOTER_ANKLE_POINTS + " points or more.");
+        if (scooterUser.getXp() < swampyGamesConfig.getScooterAnklePoints()) {
+            event.replyError("You can only scooter ankle if you have " + swampyGamesConfig.getScooterAnklePoints() + " points or more.");
             return;
         }
 
@@ -53,15 +58,15 @@ public class ScooterAnkle extends BaseSwampy implements PhilMarker {
                 .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getXp() < scooterUser.getXp())
                 .collect(Collectors.toList());
 
-        long pointsToGive = SCOOTER_ANKLE_POINTS / filteredUsers.size();
+        long pointsToGive = swampyGamesConfig.getScooterAnklePoints() / filteredUsers.size();
 
         List<CompletableFuture<?>> futures = new ArrayList<>();
-        futures.add(takePointsFromMember(SCOOTER_ANKLE_POINTS, event.getMember()));
+        futures.add(takePointsFromMember(swampyGamesConfig.getScooterAnklePoints(), event.getMember()));
 
         StringBuilder description = new StringBuilder()
                 .append(event.getMember().getAsMention())
                 .append(" has \uD83D\uDEF4 scooter ankle'd \uD83D\uDEF4 and given ")
-                .append(NumberFormat.getIntegerInstance().format(SCOOTER_ANKLE_POINTS))
+                .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getScooterAnklePoints()))
                 .append(" of their points to everyone below them on the leaderboard.\n\n");
 
         for (DiscordUser user : filteredUsers) {
