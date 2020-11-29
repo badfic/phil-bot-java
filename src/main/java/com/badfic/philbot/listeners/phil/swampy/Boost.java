@@ -25,8 +25,6 @@ import org.springframework.stereotype.Component;
 public class Boost extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final long BOOST_POINTS_TO_GIVE = 1_000;
-    private static final long PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR = 15;
     private static final String BOOST_START = "https://cdn.discordapp.com/attachments/587078427400732682/772345771885985842/booawoost_tg.png";
     private static final String BOOST_END = "https://cdn.discordapp.com/attachments/587078427400732682/772345775556132864/boostend_tg.png";
     private static final Set<String> BOOST_WORDS = ImmutableSet.of(
@@ -80,8 +78,8 @@ public class Boost extends BaseSwampy implements PhilMarker {
                                 throw new RuntimeException("member not found");
                             }
 
-                            futures.add(givePointsToMember(BOOST_POINTS_TO_GIVE, memberLookedUp));
-                            description.append("Gave " + BOOST_POINTS_TO_GIVE + " points to <@!")
+                            futures.add(givePointsToMember(swampyGamesConfig.getBoostEventPoints(), memberLookedUp));
+                            description.append("Gave " + swampyGamesConfig.getBoostEventPoints() + " points to <@!")
                                     .append(u.getId())
                                     .append(">\n");
                         } catch (Exception e) {
@@ -99,14 +97,14 @@ public class Boost extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        if (force || ThreadLocalRandom.current().nextInt(100) < PERCENTAGE_CHANCE_BOOST_HAPPENS_ON_THE_HOUR) {
+        if (force || ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceBoostHappensOnHour()) {
             String boostPhrase = Constants.pickRandom(BOOST_WORDS);
             swampyGamesConfig.setBoostPhrase(boostPhrase);
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
             MessageEmbed message = Constants.simpleEmbed("BOOST BLITZ",
                     "Type `" + boostPhrase + "` in this channel before the top of the hour to be boosted by "
-                            + BOOST_POINTS_TO_GIVE + " points",
+                            + swampyGamesConfig.getBoostEventPoints() + " points",
                     BOOST_START);
 
             swampysChannel.sendMessage(message).queue();

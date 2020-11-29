@@ -137,14 +137,17 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
                 return;
             }
 
+            long correctPoints = swampyGamesConfig.getTriviaEventPoints();
+            long wrongPoints = swampyGamesConfig.getTriviaEventPoints() * -1;
+
             List<User> users = msg.retrieveReactionUsers("\uD83C\uDDE6").complete();
-            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 0 ? 100 : -100);
+            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 0 ? correctPoints : wrongPoints);
 
             users = msg.retrieveReactionUsers("\uD83C\uDDE7").complete();
-            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 1 ? 100 : -100);
+            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 1 ? correctPoints : wrongPoints);
 
             users = msg.retrieveReactionUsers("\uD83C\uDDE8").complete();
-            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 2 ? 100 : -100);
+            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 2 ? correctPoints : wrongPoints);
 
             msg.clearReactions().queue();
 

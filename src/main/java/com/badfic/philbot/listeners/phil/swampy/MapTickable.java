@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 public class MapTickable extends NonCommandSwampy implements MinuteTickable {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final long POINTS_TO_GIVE = 100;
 
     @Resource
     private DiscordUserRepository discordUserRepository;
@@ -67,8 +66,8 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
                                 throw new RuntimeException("member not found");
                             }
 
-                            futures.add(givePointsToMember(POINTS_TO_GIVE, memberLookedUp));
-                            description.append("Gave " + POINTS_TO_GIVE + " points to <@!")
+                            futures.add(givePointsToMember(swampyGamesConfig.getMapEventPoints(), memberLookedUp));
+                            description.append("Gave " + swampyGamesConfig.getMapEventPoints() + " points to <@!")
                                     .append(u.getId())
                                     .append(">\n");
                         } catch (Exception e) {

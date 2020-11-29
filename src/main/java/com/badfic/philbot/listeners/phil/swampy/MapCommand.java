@@ -88,7 +88,7 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
                 break;
         }
 
-        description += "\n\nType your answer here in this channel within the next 15 minutes.";
+        description += "\n\nType your answer here in this channel within the next 15 minutes for " + swampyGamesConfig.getMapEventPoints() + " points.";
 
         String imageExtension = StringUtils.substring(image, -3);
 

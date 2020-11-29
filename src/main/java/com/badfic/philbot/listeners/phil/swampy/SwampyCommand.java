@@ -38,29 +38,6 @@ import org.springframework.stereotype.Component;
 public class SwampyCommand extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    // message/vc/emote points
-    private static final long NORMAL_MSG_POINTS = 5;
-    private static final long PICTURE_MSG_POINTS = 250;
-    private static final long REACTION_POINTS = 7;
-    private static final long VOICE_CHAT_POINTS_PER_MINUTE = 5;
-    private static final int NO_NO_WORDS_TAKE_POINTS = 100;
-
-    // upvote/downvote points
-    private static final long UPVOTE_TIMEOUT_MINUTES = 1;
-    private static final long DOWNVOTE_TIMEOUT_MINUTES = 1;
-    private static final long UPVOTE_POINTS_TO_UPVOTEE = 500;
-    private static final long UPVOTE_POINTS_TO_UPVOTER = 125;
-    private static final long DOWNVOTE_POINTS_FROM_DOWNVOTEE = 100;
-    private static final long DOWNVOTE_POINTS_TO_DOWNVOTER = 50;
-
-    // slots
-    public static final long SLOTS_WIN_POINTS = 10_000;
-    public static final long SLOTS_TWO_OUT_OF_THREE_POINTS = 50;
-
-    // Timeouts
-    private static final long PICTURE_MSG_BONUS_TIMEOUT_MINUTES = 3;
-    private static final long SLOTS_TIMEOUT_MINUTES = 3;
-
     // soft point bans
     private static final Pattern NO_NO_WORDS = Pattern.compile("\\b(nut|nice|simp|rep|daddy)\\b", Pattern.CASE_INSENSITIVE);
 
@@ -173,13 +150,12 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         } else if (msgContent.startsWith("!!")) {
             event.replyError("Unrecognized command");
         } else {
-            if (Constants.SWAMPYS_CHANNEL.equals(event.getChannel().getName())) {
-                Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
-                if (!optionalConfig.isPresent()) {
-                    return;
-                }
-                SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
+            SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+            if (swampyGamesConfig == null) {
+                return;
+            }
 
+            if (Constants.SWAMPYS_CHANNEL.equals(event.getChannel().getName())) {
                 if (swampyGamesConfig.getBoostPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getBoostPhrase())) {
                     acceptedBoost(event.getMember());
                     return;
@@ -198,7 +174,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             }
 
             if (NO_NO_WORDS.matcher(msgContent).find()) {
-                takePointsFromMember(NO_NO_WORDS_TAKE_POINTS, event.getMember());
+                takePointsFromMember(swampyGamesConfig.getNoNoWordsPoints(), event.getMember());
                 return;
             }
 
@@ -206,15 +182,15 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
             DiscordUser discordUser = getDiscordUserByMember(event.getMember());
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(PICTURE_MSG_BONUS_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
+            LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(swampyGamesConfig.getPictureMsgTimeoutMinutes(), ChronoUnit.MINUTES);
 
             boolean bonus = CollectionUtils.isNotEmpty(message.getAttachments()) || CollectionUtils.isNotEmpty(message.getEmbeds());
 
-            long pointsToGive = NORMAL_MSG_POINTS;
+            long pointsToGive = swampyGamesConfig.getNormalMsgPoints();
             if ("bot-space".equals(event.getChannel().getName()) || "sim-games".equals(event.getChannel().getName())) {
                 pointsToGive = 1;
             } else if (bonus && now.isAfter(nextMsgBonusTime)) {
-                pointsToGive = PICTURE_MSG_POINTS;
+                pointsToGive = swampyGamesConfig.getPictureMsgPoints();
                 discordUser.setLastMessageBonus(now);
             }
 
@@ -244,8 +220,13 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        if (swampyGamesConfig == null) {
+            return;
+        }
+
         long minutes = ChronoUnit.MINUTES.between(timeTheyJoinedVoice, LocalDateTime.now());
-        long points = minutes * VOICE_CHAT_POINTS_PER_MINUTE;
+        long points = minutes * swampyGamesConfig.getVcPointsPerMinute();
         user.setVoiceJoined(null);
         discordUserRepository.save(user);
 
@@ -253,12 +234,17 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     }
 
     public void emote(GuildMessageReactionAddEvent event) {
-        givePointsToMember(REACTION_POINTS, event.getMember());
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        if (swampyGamesConfig == null) {
+            return;
+        }
+
+        givePointsToMember(swampyGamesConfig.getReactionPoints(), event.getMember());
         long messageId = event.getMessageIdLong();
         long reactionGiverId = event.getMember().getIdLong();
         event.getChannel().retrieveMessageById(messageId).queue(msg -> {
             if (msg != null && msg.getMember() != null && msg.getMember().getIdLong() != reactionGiverId) {
-                givePointsToMember(REACTION_POINTS, msg.getMember());
+                givePointsToMember(swampyGamesConfig.getReactionPoints(), msg.getMember());
             }
         });
     }
@@ -285,8 +271,13 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         Member member = event.getMember();
         DiscordUser discordUser = getDiscordUserByMember(member);
 
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        if (swampyGamesConfig == null) {
+            return;
+        }
+
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextSlotsTime = discordUser.getLastSlots().plus(SLOTS_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
+        LocalDateTime nextSlotsTime = discordUser.getLastSlots().plus(swampyGamesConfig.getSlotsTimeoutMinutes(), ChronoUnit.MINUTES);
         if (now.isBefore(nextSlotsTime)) {
             Duration duration = Duration.between(now, nextSlotsTime);
 
@@ -305,13 +296,13 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         String three = Constants.pickRandom(TURKEY_SLOTS);
 
         if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
-            givePointsToMember(SLOTS_WIN_POINTS, member, discordUser);
-            event.reply(Constants.simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou won " + SLOTS_WIN_POINTS + " points!",
-                    member.getAsMention(), one, two, three)));
+            givePointsToMember(swampyGamesConfig.getSlotsWinPoints(), member, discordUser);
+            event.reply(Constants.simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou won "
+                            + swampyGamesConfig.getSlotsWinPoints() + " points!", member.getAsMention(), one, two, three)));
         } else if (one.equalsIgnoreCase(two) || one.equalsIgnoreCase(three) || two.equalsIgnoreCase(three)) {
-            givePointsToMember(SLOTS_TWO_OUT_OF_THREE_POINTS, member, discordUser);
-            event.reply(Constants.simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou got 2 out of 3! You won " + SLOTS_TWO_OUT_OF_THREE_POINTS + " points!",
-                    member.getAsMention(), one, two, three)));
+            givePointsToMember(swampyGamesConfig.getSlotsTwoOfThreePoints(), member, discordUser);
+            event.reply(Constants.simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou got 2 out of 3! You won "
+                            + swampyGamesConfig.getSlotsTwoOfThreePoints() + " points!", member.getAsMention(), one, two, three)));
         } else {
             event.reply(Constants.simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, String.format("%s\n%s%s%s",
                     member.getAsMention(), one, two, three)));
@@ -540,8 +531,14 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         }
 
         DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        if (swampyGamesConfig == null) {
+            return;
+        }
+
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(UPVOTE_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
+        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getUpvoteTimeoutMinutes(), ChronoUnit.MINUTES);
         if (now.isBefore(nextVoteTime)) {
             Duration duration = Duration.between(now, nextVoteTime);
 
@@ -555,8 +552,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         discordUser.setLastVote(now);
         discordUserRepository.save(discordUser);
 
-        givePointsToMember(UPVOTE_POINTS_TO_UPVOTEE, mentionedMember);
-        givePointsToMember(UPVOTE_POINTS_TO_UPVOTER, event.getMember());
+        givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvotee(), mentionedMember);
+        givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvoter(), event.getMember());
 
         event.replySuccess("Successfully upvoted " + mentionedMember.getEffectiveName());
     }
@@ -581,8 +578,14 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         }
 
         DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        if (swampyGamesConfig == null) {
+            return;
+        }
+
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(DOWNVOTE_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
+        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getDownvoteTimeoutMinutes(), ChronoUnit.MINUTES);
         if (now.isBefore(nextVoteTime)) {
             Duration duration = Duration.between(now, nextVoteTime);
 
@@ -596,8 +599,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         discordUser.setLastVote(now);
         discordUserRepository.save(discordUser);
 
-        takePointsFromMember(DOWNVOTE_POINTS_FROM_DOWNVOTEE, mentionedMember);
-        givePointsToMember(DOWNVOTE_POINTS_TO_DOWNVOTER, event.getMember());
+        takePointsFromMember(swampyGamesConfig.getDownvotePointsFromDownvotee(), mentionedMember);
+        givePointsToMember(swampyGamesConfig.getDownvotePointsToDownvoter(), event.getMember());
 
         event.replySuccess("Successfully downvoted " + mentionedMember.getEffectiveName());
     }
