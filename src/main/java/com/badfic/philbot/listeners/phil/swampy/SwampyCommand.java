@@ -699,6 +699,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             discordUser.setSwiperParticipations(0);
             discordUser.setBoostParticipations(0);
             discordUser.setScooterAnkleParticipant(false);
+            discordUser.setAdventCounter(0);
             discordUser = discordUserRepository.save(discordUser);
 
             try {

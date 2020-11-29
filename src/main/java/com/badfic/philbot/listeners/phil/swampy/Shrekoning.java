@@ -51,7 +51,7 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
 
         allUsers.stream()
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
-                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24)))
+                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(23)))
                 .filter(u -> {
                     Member m = philJda.getGuilds().get(0).getMemberById(u.getId());
                     return m != null && !m.getUser().isBot() && hasRole(m, Constants.CHAOS_CHILDREN_ROLE);

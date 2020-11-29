@@ -175,7 +175,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                 if (memberById != null
                         && !memberById.getUser().isBot()
                         && winningUser.getXp() > SWIPER_POINTS_TO_STEAL
-                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24))) {
+                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(23))) {
                     member = memberById;
                 }
             } catch (Exception ignored) {}
