@@ -77,7 +77,7 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
                         && !memberById.getUser().isBot()
                         && hasRole(memberById, role)
                         && winningUser.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD
-                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(23))) {
+                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22))) {
                     member = memberById;
                 }
             } catch (Exception ignored) {}

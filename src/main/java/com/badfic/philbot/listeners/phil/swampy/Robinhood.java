@@ -69,7 +69,7 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
-            if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD && user.getUpdateTime().isAfter(LocalDateTime.now().minusHours(23))) {
+            if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD && user.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22))) {
                 try {
                     long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current()
                             .nextInt(swampyGamesConfig.getRobinhoodMinPercent(), swampyGamesConfig.getRobinhoodMaxPercent());
