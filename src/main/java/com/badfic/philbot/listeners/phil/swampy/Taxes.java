@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 public class Taxes extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final String TAXES = "https://cdn.discordapp.com/attachments/587078427400732682/772345794593685524/taxes_tg.png";
-    private static final String PERSON_WHO_STOPS_TAXES = "https://cdn.discordapp.com/attachments/587078427400732682/772345792676495371/no_tax_tg.png";
+    private static final String TAXES = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+    private static final String PERSON_WHO_STOPS_TAXES = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     public Taxes() {
         requiredRole = Constants.ADMIN_ROLE;

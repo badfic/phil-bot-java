@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 public class Boost extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final String BOOST_START = "https://cdn.discordapp.com/attachments/587078427400732682/772345771885985842/booawoost_tg.png";
-    private static final String BOOST_END = "https://cdn.discordapp.com/attachments/587078427400732682/772345775556132864/boostend_tg.png";
+    private static final String BOOST_START = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+    private static final String BOOST_END = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
     private static final Set<String> BOOST_WORDS = ImmutableSet.of(
             "butter", "shortening", "lard", "ghee", "oleo", "spread", "thanks", "giving", "family", "turkey", "feet", "foot", "stuffing", "cranberry",
             "cornbread", "bird", "greenbean", "stringbean", "rice", "pumpkin", "pie", "apple", "gravy", "potato", "corn", "maze", "maize", "stonks",

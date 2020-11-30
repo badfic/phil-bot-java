@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 public class Robinhood extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/587078427400732682/772345794418180107/robinhood_tg.png";
-    private static final String PERSON_WHO_STOPS_ROBINHOOD = "https://cdn.discordapp.com/attachments/587078427400732682/772345791636307978/no_robinhood_tg.png";
+    private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+    private static final String PERSON_WHO_STOPS_ROBINHOOD = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     public Robinhood() {
         requiredRole = Constants.ADMIN_ROLE;
