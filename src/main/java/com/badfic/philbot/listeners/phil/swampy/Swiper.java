@@ -23,14 +23,15 @@ import org.springframework.stereotype.Component;
 public class Swiper extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    // TODO: Investigate putting these in SwampyGamesConfig table
     private static final Map<String, TheSwiper> SWIPERS = ImmutableMap.<String, TheSwiper>builder()
             .put("Swiper No Swiping", new TheSwiper(
                     "Swiper No Swiping",
                     "Swiper Was Spotted Nearby",
-                    "https://cdn.discordapp.com/attachments/752665380182425677/772352670769741824/images.png",
-                    "https://cdn.discordapp.com/attachments/752665380182425677/772352107042701352/ddf.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/782824147780632576/maxresdefault.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/782823673526616114/swiper.png",
                     "Swiper Escaped!",
-                    "https://cdn.discordapp.com/attachments/761398315119280158/765049616412180500/stephen-molyneaux-dora-swiper-1001.png"
+                    "https://cdn.discordapp.com/attachments/707453916882665552/782824264989802526/1383968722_4.png"
             ))
             .put("Snarter No Snarting", new TheSwiper(
                     "Snarter No Snarting",

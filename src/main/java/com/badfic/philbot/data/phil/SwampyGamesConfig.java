@@ -44,132 +44,212 @@ public class SwampyGamesConfig {
     private UUID triviaGuid;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int normalMsgPoints = 5;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int pictureMsgPoints = 250;
 
     @Column
-    @ControllerConfigurable
-    private int reactionPoints = 7;
-
-    @Column
-    @ControllerConfigurable
-    private int vcPointsPerMinute = 5;
-
-    @Column
-    @ControllerConfigurable
-    private int noNoWordsPoints = 100;
-
-    @Column
-    @ControllerConfigurable
-    private int upvoteTimeoutMinutes = 1;
-
-    @Column
-    @ControllerConfigurable
-    private int downvoteTimeoutMinutes = 1;
-
-    @Column
-    @ControllerConfigurable
-    private int upvotePointsToUpvotee = 500;
-
-    @Column
-    @ControllerConfigurable
-    private int upvotePointsToUpvoter = 125;
-
-    @Column
-    @ControllerConfigurable
-    private int downvotePointsFromDownvotee = 100;
-
-    @Column
-    @ControllerConfigurable
-    private int downvotePointsToDownvoter = 50;
-
-    @Column
-    @ControllerConfigurable
-    private int slotsWinPoints = 10000;
-
-    @Column
-    @ControllerConfigurable
-    private int slotsTwoOfThreePoints = 50;
-
-    @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int pictureMsgTimeoutMinutes = 3;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int reactionPoints = 7;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int vcPointsPerMinute = 5;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int noNoWordsPoints = 100;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int upvotePointsToUpvotee = 500;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int upvotePointsToUpvoter = 125;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int upvoteTimeoutMinutes = 1;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int downvotePointsFromDownvotee = 100;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int downvotePointsToDownvoter = 50;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int downvoteTimeoutMinutes = 1;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int slotsWinPoints = 10000;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int slotsTwoOfThreePoints = 50;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int slotsTimeoutMinutes = 3;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int boostEventPoints = 1000;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int percentChanceBoostHappensOnHour = 15;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String boostStartImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String boostEndImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int mapEventPoints = 100;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int triviaEventPoints = 100;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int robinhoodMinPercent = 5;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int robinhoodMaxPercent = 16;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int percentChanceRobinhoodNotHappen = 30;
 
     @Column
-    @ControllerConfigurable
-    private int taxesMinPercent = 5;
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String robinhoodPerson = "Guy Fieri";
 
     @Column
-    @ControllerConfigurable
-    private int taxesMaxPercent = 16;
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String robinhoodStopperPerson = "Saundra Lee";
 
     @Column
-    @ControllerConfigurable
-    private int percentChanceTaxesNotHappen = 30;
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String robinhoodStopperPhrase = "I NEED TO SPEAK TO THE MANAGER!!!";
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String robinhoodImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String robinhoodStoppedImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int scooterAnklePoints = 25000;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String scooterAnkleImg = "https://cdn.discordapp.com/attachments/752665380182425677/780324301311049728/scooter_ankle.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int shrekoningMinPoints = 200;
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int shrekoningMaxPoints = 4000;
 
     @Column
-    @ControllerConfigurable
-    private int stonksMaxPoints = 4000;
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String shrekoningImg = "https://cdn.discordapp.com/attachments/741053845098201099/763280555793580042/the_shrekoning.png";
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int stonksMaxPoints = 4000;
+
+    // TODO: Stonks image list
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int sweepstakesPoints = 4000;
 
     @Column
-    @ControllerConfigurable
-    private int swiperPoints = 1500;
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String sweepstakesImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int swiperPoints = 1500;
+
+    // TODO: Add the various swiper personas here too?
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int taxesMinPercent = 5;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int taxesMaxPercent = 16;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int percentChanceTaxesNotHappen = 30;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String taxesPerson = "Guy Fieri";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String taxesStopperPerson = "Saundra Lee";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String taxesStopperPhrase = "I NEED TO SPEAK TO THE MANAGER!!!";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String taxesImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String taxesStoppedImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int trickOrTreatPoints = 500;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String trickOrTreatImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String trickOrTreatName = "Checkout or Trampled";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String trickOrTreatTreatEmoji = "\uD83D\uDED2";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String trickOrTreatTrickEmoji = "\uD83D\uDEA7";
 
     public Short getId() {
         return id;
@@ -235,12 +315,12 @@ public class SwampyGamesConfig {
         this.mostRecentTaxes = mostRecentTaxes;
     }
 
-    public void setTriviaMsgId(String triviaMsgId) {
-        this.triviaMsgId = triviaMsgId;
-    }
-
     public String getTriviaMsgId() {
         return triviaMsgId;
+    }
+
+    public void setTriviaMsgId(String triviaMsgId) {
+        this.triviaMsgId = triviaMsgId;
     }
 
     public UUID getTriviaGuid() {
@@ -267,6 +347,14 @@ public class SwampyGamesConfig {
         this.pictureMsgPoints = pictureMsgPoints;
     }
 
+    public int getPictureMsgTimeoutMinutes() {
+        return pictureMsgTimeoutMinutes;
+    }
+
+    public void setPictureMsgTimeoutMinutes(int pictureMsgTimeoutMinutes) {
+        this.pictureMsgTimeoutMinutes = pictureMsgTimeoutMinutes;
+    }
+
     public int getReactionPoints() {
         return reactionPoints;
     }
@@ -291,22 +379,6 @@ public class SwampyGamesConfig {
         this.noNoWordsPoints = noNoWordsPoints;
     }
 
-    public int getUpvoteTimeoutMinutes() {
-        return upvoteTimeoutMinutes;
-    }
-
-    public void setUpvoteTimeoutMinutes(int upvoteTimeoutMinutes) {
-        this.upvoteTimeoutMinutes = upvoteTimeoutMinutes;
-    }
-
-    public int getDownvoteTimeoutMinutes() {
-        return downvoteTimeoutMinutes;
-    }
-
-    public void setDownvoteTimeoutMinutes(int downvoteTimeoutMinutes) {
-        this.downvoteTimeoutMinutes = downvoteTimeoutMinutes;
-    }
-
     public int getUpvotePointsToUpvotee() {
         return upvotePointsToUpvotee;
     }
@@ -321,6 +393,14 @@ public class SwampyGamesConfig {
 
     public void setUpvotePointsToUpvoter(int upvotePointsToUpvoter) {
         this.upvotePointsToUpvoter = upvotePointsToUpvoter;
+    }
+
+    public int getUpvoteTimeoutMinutes() {
+        return upvoteTimeoutMinutes;
+    }
+
+    public void setUpvoteTimeoutMinutes(int upvoteTimeoutMinutes) {
+        this.upvoteTimeoutMinutes = upvoteTimeoutMinutes;
     }
 
     public int getDownvotePointsFromDownvotee() {
@@ -339,6 +419,14 @@ public class SwampyGamesConfig {
         this.downvotePointsToDownvoter = downvotePointsToDownvoter;
     }
 
+    public int getDownvoteTimeoutMinutes() {
+        return downvoteTimeoutMinutes;
+    }
+
+    public void setDownvoteTimeoutMinutes(int downvoteTimeoutMinutes) {
+        this.downvoteTimeoutMinutes = downvoteTimeoutMinutes;
+    }
+
     public int getSlotsWinPoints() {
         return slotsWinPoints;
     }
@@ -353,14 +441,6 @@ public class SwampyGamesConfig {
 
     public void setSlotsTwoOfThreePoints(int slotsTwoOfThreePoints) {
         this.slotsTwoOfThreePoints = slotsTwoOfThreePoints;
-    }
-
-    public int getPictureMsgTimeoutMinutes() {
-        return pictureMsgTimeoutMinutes;
-    }
-
-    public void setPictureMsgTimeoutMinutes(int pictureMsgTimeoutMinutes) {
-        this.pictureMsgTimeoutMinutes = pictureMsgTimeoutMinutes;
     }
 
     public int getSlotsTimeoutMinutes() {
@@ -385,6 +465,22 @@ public class SwampyGamesConfig {
 
     public void setPercentChanceBoostHappensOnHour(int percentChanceBoostHappensOnHour) {
         this.percentChanceBoostHappensOnHour = percentChanceBoostHappensOnHour;
+    }
+
+    public String getBoostStartImg() {
+        return boostStartImg;
+    }
+
+    public void setBoostStartImg(String boostStartImg) {
+        this.boostStartImg = boostStartImg;
+    }
+
+    public String getBoostEndImg() {
+        return boostEndImg;
+    }
+
+    public void setBoostEndImg(String boostEndImg) {
+        this.boostEndImg = boostEndImg;
     }
 
     public int getMapEventPoints() {
@@ -427,6 +523,118 @@ public class SwampyGamesConfig {
         this.percentChanceRobinhoodNotHappen = percentChanceRobinhoodNotHappen;
     }
 
+    public String getRobinhoodPerson() {
+        return robinhoodPerson;
+    }
+
+    public void setRobinhoodPerson(String robinhoodPerson) {
+        this.robinhoodPerson = robinhoodPerson;
+    }
+
+    public String getRobinhoodStopperPerson() {
+        return robinhoodStopperPerson;
+    }
+
+    public void setRobinhoodStopperPerson(String robinhoodStopperPerson) {
+        this.robinhoodStopperPerson = robinhoodStopperPerson;
+    }
+
+    public String getRobinhoodStopperPhrase() {
+        return robinhoodStopperPhrase;
+    }
+
+    public void setRobinhoodStopperPhrase(String robinhoodStopperPhrase) {
+        this.robinhoodStopperPhrase = robinhoodStopperPhrase;
+    }
+
+    public String getRobinhoodImg() {
+        return robinhoodImg;
+    }
+
+    public void setRobinhoodImg(String robinhoodImg) {
+        this.robinhoodImg = robinhoodImg;
+    }
+
+    public String getRobinhoodStoppedImg() {
+        return robinhoodStoppedImg;
+    }
+
+    public void setRobinhoodStoppedImg(String robinhoodStoppedImg) {
+        this.robinhoodStoppedImg = robinhoodStoppedImg;
+    }
+
+    public int getScooterAnklePoints() {
+        return scooterAnklePoints;
+    }
+
+    public void setScooterAnklePoints(int scooterAnklePoints) {
+        this.scooterAnklePoints = scooterAnklePoints;
+    }
+
+    public String getScooterAnkleImg() {
+        return scooterAnkleImg;
+    }
+
+    public void setScooterAnkleImg(String scooterAnkleImg) {
+        this.scooterAnkleImg = scooterAnkleImg;
+    }
+
+    public int getShrekoningMinPoints() {
+        return shrekoningMinPoints;
+    }
+
+    public void setShrekoningMinPoints(int shrekoningMinPoints) {
+        this.shrekoningMinPoints = shrekoningMinPoints;
+    }
+
+    public int getShrekoningMaxPoints() {
+        return shrekoningMaxPoints;
+    }
+
+    public void setShrekoningMaxPoints(int shrekoningMaxPoints) {
+        this.shrekoningMaxPoints = shrekoningMaxPoints;
+    }
+
+    public String getShrekoningImg() {
+        return shrekoningImg;
+    }
+
+    public void setShrekoningImg(String shrekoningImg) {
+        this.shrekoningImg = shrekoningImg;
+    }
+
+    public int getStonksMaxPoints() {
+        return stonksMaxPoints;
+    }
+
+    public void setStonksMaxPoints(int stonksMaxPoints) {
+        this.stonksMaxPoints = stonksMaxPoints;
+    }
+
+    public int getSweepstakesPoints() {
+        return sweepstakesPoints;
+    }
+
+    public void setSweepstakesPoints(int sweepstakesPoints) {
+        this.sweepstakesPoints = sweepstakesPoints;
+    }
+
+    public String getSweepstakesImg() {
+        return sweepstakesImg;
+    }
+
+    public void setSweepstakesImg(String sweepstakesImg) {
+        this.sweepstakesImg = sweepstakesImg;
+    }
+
+    public int getSwiperPoints() {
+        return swiperPoints;
+    }
+
+    public void setSwiperPoints(int swiperPoints) {
+        this.swiperPoints = swiperPoints;
+    }
+
     public int getTaxesMinPercent() {
         return taxesMinPercent;
     }
@@ -451,52 +659,44 @@ public class SwampyGamesConfig {
         this.percentChanceTaxesNotHappen = percentChanceTaxesNotHappen;
     }
 
-    public int getScooterAnklePoints() {
-        return scooterAnklePoints;
+    public String getTaxesPerson() {
+        return taxesPerson;
     }
 
-    public void setScooterAnklePoints(int scooterAnklePoints) {
-        this.scooterAnklePoints = scooterAnklePoints;
+    public void setTaxesPerson(String taxesPerson) {
+        this.taxesPerson = taxesPerson;
     }
 
-    public int getShrekoningMinPoints() {
-        return shrekoningMinPoints;
+    public String getTaxesStopperPerson() {
+        return taxesStopperPerson;
     }
 
-    public void setShrekoningMinPoints(int shrekoningMinPoints) {
-        this.shrekoningMinPoints = shrekoningMinPoints;
+    public void setTaxesStopperPerson(String taxesStopperPerson) {
+        this.taxesStopperPerson = taxesStopperPerson;
     }
 
-    public int getShrekoningMaxPoints() {
-        return shrekoningMaxPoints;
+    public String getTaxesStopperPhrase() {
+        return taxesStopperPhrase;
     }
 
-    public void setShrekoningMaxPoints(int shrekoningMaxPoints) {
-        this.shrekoningMaxPoints = shrekoningMaxPoints;
+    public void setTaxesStopperPhrase(String taxesStopperPhrase) {
+        this.taxesStopperPhrase = taxesStopperPhrase;
     }
 
-    public int getStonksMaxPoints() {
-        return stonksMaxPoints;
+    public String getTaxesImg() {
+        return taxesImg;
     }
 
-    public void setStonksMaxPoints(int stonksMaxPoints) {
-        this.stonksMaxPoints = stonksMaxPoints;
+    public void setTaxesImg(String taxesImg) {
+        this.taxesImg = taxesImg;
     }
 
-    public int getSweepstakesPoints() {
-        return sweepstakesPoints;
+    public String getTaxesStoppedImg() {
+        return taxesStoppedImg;
     }
 
-    public void setSweepstakesPoints(int sweepstakesPoints) {
-        this.sweepstakesPoints = sweepstakesPoints;
-    }
-
-    public int getSwiperPoints() {
-        return swiperPoints;
-    }
-
-    public void setSwiperPoints(int swiperPoints) {
-        this.swiperPoints = swiperPoints;
+    public void setTaxesStoppedImg(String taxesStoppedImg) {
+        this.taxesStoppedImg = taxesStoppedImg;
     }
 
     public int getTrickOrTreatPoints() {
@@ -505,5 +705,37 @@ public class SwampyGamesConfig {
 
     public void setTrickOrTreatPoints(int trickOrTreatPoints) {
         this.trickOrTreatPoints = trickOrTreatPoints;
+    }
+
+    public String getTrickOrTreatImg() {
+        return trickOrTreatImg;
+    }
+
+    public void setTrickOrTreatImg(String trickOrTreatImg) {
+        this.trickOrTreatImg = trickOrTreatImg;
+    }
+
+    public String getTrickOrTreatName() {
+        return trickOrTreatName;
+    }
+
+    public void setTrickOrTreatName(String trickOrTreatName) {
+        this.trickOrTreatName = trickOrTreatName;
+    }
+
+    public String getTrickOrTreatTreatEmoji() {
+        return trickOrTreatTreatEmoji;
+    }
+
+    public void setTrickOrTreatTreatEmoji(String trickOrTreatTreatEmoji) {
+        this.trickOrTreatTreatEmoji = trickOrTreatTreatEmoji;
+    }
+
+    public String getTrickOrTreatTrickEmoji() {
+        return trickOrTreatTrickEmoji;
+    }
+
+    public void setTrickOrTreatTrickEmoji(String trickOrTreatTrickEmoji) {
+        this.trickOrTreatTrickEmoji = trickOrTreatTrickEmoji;
     }
 }

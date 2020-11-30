@@ -25,9 +25,6 @@ import org.springframework.stereotype.Component;
 public class Taxes extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final String TAXES = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-    private static final String PERSON_WHO_STOPS_TAXES = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
     public Taxes() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "taxes";
@@ -52,8 +49,10 @@ public class Taxes extends BaseSwampy implements PhilMarker {
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
 
         if (!force && ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceTaxesNotHappen()) {
-            MessageEmbed message = Constants.simpleEmbed("No taxes today!", "Snoop Dogg caught Paula Deen before she could take taxes from the swamp.",
-                    PERSON_WHO_STOPS_TAXES);
+            MessageEmbed message = Constants.simpleEmbed(
+                    swampyGamesConfig.getTaxesStopperPhrase(), swampyGamesConfig.getTaxesStopperPerson() + " caught "
+                            + swampyGamesConfig.getTaxesPerson() + " before they could take taxes from the swamp.",
+                    swampyGamesConfig.getTaxesStoppedImg());
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
@@ -101,9 +100,9 @@ public class Taxes extends BaseSwampy implements PhilMarker {
         swampyGamesConfig.setMostRecentTaxes(totalTaxes);
         swampyGamesConfigRepository.save(swampyGamesConfig);
 
-        MessageEmbed message = Constants.simpleEmbed(
-                "Tax time! " + NumberFormat.getIntegerInstance().format(totalTaxes) + " points in taxes have been paid to Paula Deen",
-                description.toString(), TAXES);
+        MessageEmbed message = Constants.simpleEmbed("Tax time! " + NumberFormat.getIntegerInstance().format(totalTaxes)
+                        + " points in taxes have been paid to " + swampyGamesConfig.getTaxesPerson(),
+                description.toString(), swampyGamesConfig.getTaxesImg());
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)

@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 public class ScooterAnkle extends BaseSwampy implements PhilMarker {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final String SCOOTER_IMAGE = "https://cdn.discordapp.com/attachments/752665380182425677/780324301311049728/scooter_ankle.png";
 
     public ScooterAnkle() {
         name = "scooterankle";
@@ -93,8 +92,8 @@ public class ScooterAnkle extends BaseSwampy implements PhilMarker {
         }
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                .thenRun(() -> swampysChannel.sendMessage(
-                        Constants.simpleEmbed("\uD83D\uDEF4 Scooter Ankle \uD83D\uDEF4", description.toString(), SCOOTER_IMAGE)).queue());
+                .thenRun(() -> swampysChannel.sendMessage(Constants.simpleEmbed(
+                        "\uD83D\uDEF4 Scooter Ankle \uD83D\uDEF4", description.toString(), swampyGamesConfig.getScooterAnkleImg())).queue());
     }
 
 }
