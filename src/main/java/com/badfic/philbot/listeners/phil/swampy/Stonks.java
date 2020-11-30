@@ -27,13 +27,13 @@ public class Stonks extends BaseSwampy implements PhilMarker {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    // TODO: Put in SwampyGamesConfig table
     private static final Set<String> STONKS = ImmutableSet.of(
-            "https://cdn.discordapp.com/attachments/741053845098201099/771913890731655188/image0.jpg",
-            "https://cdn.discordapp.com/attachments/741053845098201099/771913707403083836/image0.jpg",
-            "https://cdn.discordapp.com/attachments/741053845098201099/771914968701599744/image0.jpg",
             "https://cdn.discordapp.com/attachments/741053845098201099/771916094091952138/image0.jpg",
             "https://cdn.discordapp.com/attachments/741053845098201099/771917366660694036/image0.jpg",
-            "https://cdn.discordapp.com/attachments/741053845098201099/771917366904750160/image1.jpg"
+            "https://cdn.discordapp.com/attachments/741053845098201099/771917366904750160/image1.jpg",
+            "https://cdn.discordapp.com/attachments/741053845098201099/780575961958711326/image0.jpg",
+            "https://cdn.discordapp.com/attachments/741053845098201099/780576653298237440/image0.jpg"
     );
 
     public Stonks() {

@@ -23,8 +23,6 @@ import org.springframework.stereotype.Component;
 public class TrickOrTreat extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final String TRICK_OR_TREAT = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
     public TrickOrTreat() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "trickortreat";
@@ -60,7 +58,8 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                             totalGiven += swampyGamesConfig.getTrickOrTreatPoints();
 
                             description
-                                    .append("\uD83D\uDED2 got the deal ")
+                                    .append(swampyGamesConfig.getTrickOrTreatTreatEmoji())
+                                    .append(" got the deal ")
                                     .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getTrickOrTreatPoints()))
                                     .append(" points to <@!")
                                     .append(user.getId())
@@ -70,7 +69,8 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                             totalTaken += swampyGamesConfig.getTrickOrTreatPoints();
 
                             description
-                                    .append("\uD83D\uDEA7 got trampled ")
+                                    .append(swampyGamesConfig.getTrickOrTreatTrickEmoji())
+                                    .append(" got trampled ")
                                     .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getTrickOrTreatPoints()))
                                     .append(" points from <@!")
                                     .append(user.getId())
@@ -84,13 +84,14 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
             }
         }
 
-        description.append("\n\nI gave ")
-                .append(NumberFormat.getIntegerInstance().format(totalGiven))
-                .append(" points and took ")
-                .append(NumberFormat.getIntegerInstance().format(totalTaken));
+        String footer = "I gave " + NumberFormat.getIntegerInstance().format(totalGiven) + " points and took "
+                + NumberFormat.getIntegerInstance().format(totalTaken);
 
-        String title = "\uD83D\uDED2 Checkout or Trampled! \uD83D\uDEA7";
-        MessageEmbed message = Constants.simpleEmbed(title, description.toString(), TRICK_OR_TREAT);
+        String title = swampyGamesConfig.getTrickOrTreatTreatEmoji() + " "
+                + swampyGamesConfig.getTrickOrTreatName() + " "
+                + swampyGamesConfig.getTrickOrTreatTrickEmoji();
+
+        MessageEmbed message = Constants.simpleEmbed(title, description.toString(), swampyGamesConfig.getTrickOrTreatImg(), footer);
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)

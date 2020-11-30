@@ -18,8 +18,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class Sweepstakes extends BaseSwampy implements PhilMarker {
 
-    private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
     public Sweepstakes() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "sweepstakes";
@@ -95,7 +93,7 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
 
         MessageEmbed message = Constants.simpleEmbed(role + " Sweepstakes Results",
                 String.format("Congratulations %s you won today's sweepstakes worth %d points!", member.getAsMention(), swampyGamesConfig.getSweepstakesPoints()),
-                SWEEPSTAKES);
+                swampyGamesConfig.getSweepstakesImg());
 
         philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0)

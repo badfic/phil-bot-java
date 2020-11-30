@@ -49,7 +49,8 @@ public class GamesConfigController extends BaseController {
             ControllerConfigurable annotation = declaredField.getAnnotation(ControllerConfigurable.class);
             if (annotation != null) {
                 declaredField.setAccessible(true);
-                configEntries.add(new ConfigEntry(declaredField.getName(), declaredField.get(swampyGamesConfig).toString()));
+                configEntries.add(new ConfigEntry(declaredField.getName(), declaredField.get(swampyGamesConfig).toString(),
+                        annotation.type() == ControllerConfigurable.Type.IMG));
             }
         }
 
@@ -82,19 +83,21 @@ public class GamesConfigController extends BaseController {
             swampyGamesConfigRepository.save(swampyGamesConfig);
         }
 
-        return ResponseEntity.ok("Saved. Refresh to see new value.");
+        return ResponseEntity.ok("Saved. If it was an image you'll have to refresh to see the new image.");
     }
 
     private static class ConfigEntry {
         private String fieldName;
         private String fieldValue;
+        private Boolean valueIsImg;
 
         public ConfigEntry() {
         }
 
-        public ConfigEntry(String fieldName, String fieldValue) {
+        public ConfigEntry(String fieldName, String fieldValue, Boolean valueIsImg) {
             this.fieldName = fieldName;
             this.fieldValue = fieldValue;
+            this.valueIsImg = valueIsImg;
         }
 
         public String getFieldName() {
@@ -111,6 +114,14 @@ public class GamesConfigController extends BaseController {
 
         public void setFieldValue(String fieldValue) {
             this.fieldValue = fieldValue;
+        }
+
+        public Boolean getValueIsImg() {
+            return valueIsImg;
+        }
+
+        public void setValueIsImg(Boolean valueIsImg) {
+            this.valueIsImg = valueIsImg;
         }
     }
 

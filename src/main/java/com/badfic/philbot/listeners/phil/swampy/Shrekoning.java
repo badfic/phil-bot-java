@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 public class Shrekoning extends BaseSwampy implements PhilMarker {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final String SHREKONING = "https://cdn.discordapp.com/attachments/741053845098201099/763280555793580042/the_shrekoning.png";
 
     public Shrekoning() {
         requiredRole = Constants.ADMIN_ROLE;
@@ -85,7 +84,7 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
                 .append(NumberFormat.getIntegerInstance().format(totalPointsGiven.getValue()))
                 .append(" \uD83E\uDDC5 to the chaos children!");
 
-        MessageEmbed message = Constants.simpleEmbed("The Shrekoning", description.toString(), SHREKONING);
+        MessageEmbed message = Constants.simpleEmbed("The Shrekoning", description.toString(), swampyGamesConfig.getShrekoningImg());
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)

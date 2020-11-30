@@ -25,8 +25,6 @@ import org.springframework.stereotype.Component;
 public class Boost extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final String BOOST_START = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-    private static final String BOOST_END = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
     private static final Set<String> BOOST_WORDS = ImmutableSet.of(
             "butter", "shortening", "lard", "ghee", "oleo", "spread", "thanks", "giving", "family", "turkey", "feet", "foot", "stuffing", "cranberry",
             "cornbread", "bird", "greenbean", "stringbean", "rice", "pumpkin", "pie", "apple", "gravy", "potato", "corn", "maze", "maize", "stonks",
@@ -79,7 +77,9 @@ public class Boost extends BaseSwampy implements PhilMarker {
                             }
 
                             futures.add(givePointsToMember(swampyGamesConfig.getBoostEventPoints(), memberLookedUp));
-                            description.append("Gave " + swampyGamesConfig.getBoostEventPoints() + " points to <@!")
+                            description.append("Gave ")
+                                    .append(swampyGamesConfig.getBoostEventPoints())
+                                    .append(" points to <@!")
                                     .append(u.getId())
                                     .append(">\n");
                         } catch (Exception e) {
@@ -90,7 +90,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
                         }
                     });
 
-            MessageEmbed messageEmbed = Constants.simpleEmbed("Boost Blitz Complete", description.toString(), BOOST_END);
+            MessageEmbed messageEmbed = Constants.simpleEmbed("Boost Blitz Complete", description.toString(), swampyGamesConfig.getBoostEndImg());
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                     .thenRun(() -> swampysChannel.sendMessage(messageEmbed).queue());
@@ -105,7 +105,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
             MessageEmbed message = Constants.simpleEmbed("BOOST BLITZ",
                     "Type `" + boostPhrase + "` in this channel before the top of the hour to be boosted by "
                             + swampyGamesConfig.getBoostEventPoints() + " points",
-                    BOOST_START);
+                    swampyGamesConfig.getBoostStartImg());
 
             swampysChannel.sendMessage(message).queue();
         }

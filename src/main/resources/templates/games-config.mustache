@@ -7,6 +7,10 @@
             <div class="form-group mx-sm-3 mb-2">
                 <span>{{fieldName}}&nbsp;&nbsp;</span>
                 <input type="text" class="form-control" id="{{fieldName}}-value" value="{{fieldValue}}">
+                {{#valueIsImg}}
+                    &nbsp;&nbsp;<img src="{{fieldValue}}" height="70" width="70"/>
+                {{/valueIsImg}}
+                <span></span>
             </div>
             <button type="submit" class="btn btn-dark mb-2">Save</button>
         </form>

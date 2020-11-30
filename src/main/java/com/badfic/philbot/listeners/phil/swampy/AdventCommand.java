@@ -25,7 +25,6 @@ public class AdventCommand extends BaseSwampy implements PhilMarker {
     public AdventCommand() throws Exception {
         name = "advent";
         help = "`!!advent` to do your daily advent calendar.";
-        ownerCommand = true; // TODO: remove on December 1
 
         List<String> lines = IOUtils.readLines(Objects.requireNonNull(Rank.class.getClassLoader().getResourceAsStream("swampmas.tsv")), StandardCharsets.UTF_8);
 

@@ -25,9 +25,6 @@ import org.springframework.stereotype.Component;
 public class Robinhood extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final String ROBINHOOD = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-    private static final String PERSON_WHO_STOPS_ROBINHOOD = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
     public Robinhood() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "robinhood";
@@ -51,9 +48,10 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
         }
 
         if (!force && ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceRobinhoodNotHappen()) {
-            MessageEmbed message = Constants.simpleEmbed("I NEED TO SPEAK TO THE MANAGER!!!",
-                    "Saundra Lee caught Guy while he was trying to return taxes to the swamp.",
-                    PERSON_WHO_STOPS_ROBINHOOD);
+            MessageEmbed message = Constants.simpleEmbed(swampyGamesConfig.getRobinhoodStopperPhrase(),
+                    swampyGamesConfig.getRobinhoodStopperPerson() + " caught " + swampyGamesConfig.getRobinhoodPerson()
+                            + " while they were trying to return taxes to the swamp.",
+                    swampyGamesConfig.getRobinhoodStoppedImg());
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
@@ -98,12 +96,13 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
             }
         }
 
-        description.append("\nI recovered a total of ")
-                .append(NumberFormat.getIntegerInstance().format(totalRecovered))
-                .append(" points and gave them back to the swamp!");
+        String footer = swampyGamesConfig.getRobinhoodPerson() +
+                " recovered a total of " +
+                NumberFormat.getIntegerInstance().format(totalRecovered) +
+                " points and gave them back to the swamp!";
 
         String title = "Robinhood! The following taxes have been returned";
-        MessageEmbed message = Constants.simpleEmbed(title, description.toString(), ROBINHOOD);
+        MessageEmbed message = Constants.simpleEmbed(title, description.toString(), swampyGamesConfig.getRobinhoodImg(), footer);
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
