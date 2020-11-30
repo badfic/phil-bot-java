@@ -91,7 +91,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         }
     }
 
-    @Scheduled(cron = "0 20,35 0,2,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 20,35 0,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
     public void swiper() {
         doSwiper();
     }
@@ -173,7 +173,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                 if (memberById != null
                         && !memberById.getUser().isBot()
                         && winningUser.getXp() > swampyGamesConfig.getSwiperPoints()
-                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(23))) {
+                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22))) {
                     member = memberById;
                 }
             } catch (Exception ignored) {}
