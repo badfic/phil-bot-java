@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Sweepstakes extends BaseSwampy implements PhilMarker {
 
-    private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/752665408770801737/775602510395736104/sweepstakes_tg.png";
+    private static final String SWEEPSTAKES = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     public Sweepstakes() {
         requiredRole = Constants.ADMIN_ROLE;

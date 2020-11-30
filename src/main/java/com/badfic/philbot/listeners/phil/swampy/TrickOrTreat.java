@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class TrickOrTreat extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final String TRICK_OR_TREAT = "https://cdn.discordapp.com/attachments/587078427400732682/772345787027816458/checkedout_ortrampled_tg.png";
+    private static final String TRICK_OR_TREAT = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     public TrickOrTreat() {
         requiredRole = Constants.ADMIN_ROLE;

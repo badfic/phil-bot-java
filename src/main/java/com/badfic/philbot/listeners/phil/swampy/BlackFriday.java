@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,7 +33,6 @@ public class BlackFriday extends BaseSwampy implements PhilMarker {
         event.replyError("blackFriday can't be triggered manually.");
     }
 
-    @Scheduled(cron = "0 59 * * * ?", zone = "GMT")
     private void blackFriday() {
         MutableLong totalPoints = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
