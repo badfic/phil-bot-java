@@ -239,7 +239,7 @@ public class BaseConfig implements TaskSchedulerCustomizer {
                 .useHelpBuilder(false)
                 .addCommands(commands.stream().filter(c -> c instanceof PhilMarker).toArray(Command[]::new))
                 .setActivity(Activity.playing("with our feelings"))
-                .setEmojis("\uD83D\uDED2", "⚠️", "\uD83D\uDEA7")
+                .setEmojis("\uD83C\uDF81", "⚠️", "❌")
                 .setListener(new CommandListener() {
                     @Override
                     public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
