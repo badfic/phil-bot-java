@@ -157,22 +157,20 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 return;
             }
 
-            if (Constants.SWAMPYS_CHANNEL.equals(event.getChannel().getName())) {
-                if (swampyGamesConfig.getBoostPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getBoostPhrase())) {
-                    acceptedBoost(event.getMember());
-                    return;
-                }
+            if (swampyGamesConfig.getBoostPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getBoostPhrase())) {
+                acceptedBoost(event.getMember());
+                return;
+            }
 
-                if (swampyGamesConfig.getMapPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getMapPhrase())) {
-                    acceptedMap(event.getMember());
-                    return;
-                }
+            if (swampyGamesConfig.getMapPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getMapPhrase())) {
+                acceptedMap(event.getMember());
+                return;
+            }
 
-                if (swampyGamesConfig.getSwiperAwaiting() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getNoSwipingPhrase())) {
-                    swampyGamesConfig.setSwiperSavior(event.getMember().getId());
-                    swampyGamesConfigRepository.save(swampyGamesConfig);
-                    return;
-                }
+            if (swampyGamesConfig.getSwiperAwaiting() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getNoSwipingPhrase())) {
+                swampyGamesConfig.setSwiperSavior(event.getMember().getId());
+                swampyGamesConfigRepository.save(swampyGamesConfig);
+                return;
             }
 
             if (NO_NO_WORDS.matcher(msgContent).find()) {

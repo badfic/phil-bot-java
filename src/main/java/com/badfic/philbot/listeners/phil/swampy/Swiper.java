@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -104,6 +105,13 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         }
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
 
+        TextChannel[] channels = new TextChannel[] {
+                philJda.getTextChannelsByName(Constants.DRY_BASTARDS_CHANNEL, false).get(0),
+                philJda.getTextChannelsByName(Constants.DRY_CINNAMON_CHANNEL, false).get(0),
+                philJda.getTextChannelsByName(Constants.SWAMPY_BASTARD_CHANNEL, false).get(0),
+                philJda.getTextChannelsByName(Constants.SWAMPY_CINNAMON_CHANNEL, false).get(0)
+        };
+
         if (swampyGamesConfig.getSwiperAwaiting() != null) {
             TheSwiper theSwiper = SWIPERS.get(swampyGamesConfig.getNoSwipingPhrase());
 
@@ -157,10 +165,11 @@ public class Swiper extends BaseSwampy implements PhilMarker {
             }
 
             swampyGamesConfigRepository.save(swampyGamesConfig);
-            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
-                    .get(0)
-                    .sendMessage(message)
-                    .queue();
+
+            for (TextChannel channel : channels) {
+                channel.sendMessage(message).queue();
+            }
+
             return;
         }
 
@@ -196,10 +205,9 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
         MessageEmbed message = Constants.simpleEmbed(theSwiper.getSpottedPhrase(), description, theSwiper.getSpottedImage());
 
-        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
-                .get(0)
-                .sendMessage(message)
-                .queue();
+        for (TextChannel channel : channels) {
+            channel.sendMessage(message).queue();
+        }
     }
 
     private static class TheSwiper {
