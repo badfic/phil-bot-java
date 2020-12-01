@@ -81,12 +81,18 @@ public class Boost extends BaseSwampy implements PhilMarker {
                                 throw new RuntimeException("member not found");
                             }
 
-                            futures.add(givePointsToMember(swampyGamesConfig.getBoostEventPoints(), memberLookedUp));
-                            description.append("Gave ")
-                                    .append(swampyGamesConfig.getBoostEventPoints())
-                                    .append(" points to <@!")
-                                    .append(u.getId())
-                                    .append(">\n");
+                            if (isNotParticipating(memberLookedUp)) {
+                                description.append("<@!")
+                                        .append(u.getId())
+                                        .append("> Please get sorted into a house to participate\n");
+                            } else {
+                                futures.add(givePointsToMember(swampyGamesConfig.getBoostEventPoints(), memberLookedUp));
+                                description.append("Gave ")
+                                        .append(swampyGamesConfig.getBoostEventPoints())
+                                        .append(" points to <@!")
+                                        .append(u.getId())
+                                        .append(">\n");
+                            }
                         } catch (Exception e) {
                             logger.error("Failed to give boost points to user [id={}]", u.getId(), e);
                             description.append("OOPS: Unable to give points to <@!")

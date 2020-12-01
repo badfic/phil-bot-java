@@ -62,17 +62,23 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
                     try {
                         Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                         if (memberById != null) {
-                            long points = ThreadLocalRandom.current()
-                                    .nextLong(swampyGamesConfig.getShrekoningMinPoints(), swampyGamesConfig.getShrekoningMaxPoints());
+                            if (isNotParticipating(memberById)) {
+                                description.append("<@!")
+                                        .append(user.getId())
+                                        .append("> Please get sorted into a house to participate\n");
+                            } else {
+                                long points = ThreadLocalRandom.current()
+                                        .nextLong(swampyGamesConfig.getShrekoningMinPoints(), swampyGamesConfig.getShrekoningMaxPoints());
 
-                            futures.add(givePointsToMember(points, memberById));
-                            totalPointsGiven.add(points);
-                            description
-                                    .append(NumberFormat.getIntegerInstance().format(points))
-                                    .append(" \uD83E\uDDC5")
-                                    .append(" for <@!")
-                                    .append(user.getId())
-                                    .append(">\n");
+                                futures.add(givePointsToMember(points, memberById));
+                                totalPointsGiven.add(points);
+                                description
+                                        .append(NumberFormat.getIntegerInstance().format(points))
+                                        .append(" \uD83E\uDDC5")
+                                        .append(" for <@!")
+                                        .append(user.getId())
+                                        .append(">\n");
+                            }
                         }
                     } catch (Exception e) {
                         logger.error("Failed to shrekoning user [id={}]", user.getId(), e);

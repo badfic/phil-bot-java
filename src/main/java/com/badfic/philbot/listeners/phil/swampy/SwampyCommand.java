@@ -102,12 +102,17 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
     @Override
     public void execute(CommandEvent event) {
-        if (isNotParticipating(event.getMember())) {
+        String args = event.getArgs();
+        String msgContent = event.getMessage().getContentRaw();
+
+        if (msgContent.startsWith("!!") && isNotParticipating(event.getMember())) {
+            event.replyError("Please get sorted into a house to participate");
             return;
         }
 
-        String args = event.getArgs();
-        String msgContent = event.getMessage().getContentRaw();
+        if (isNotParticipating(event.getMember())) {
+            return;
+        }
 
         if (args.startsWith("help")) {
             if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
@@ -317,7 +322,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         }
 
         if (isNotParticipating(member)) {
-            event.reply(Constants.simpleEmbed("Your Rank", "You can't see rank because it appears you are a newbie or a bot"));
+            event.reply(Constants.simpleEmbed("Your Rank", "Is not participating in the games"));
             return;
         }
 

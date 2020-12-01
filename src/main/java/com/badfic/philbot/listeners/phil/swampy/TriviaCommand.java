@@ -195,11 +195,17 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
                         .append(user.getId())
                         .append(">\n");
             } else {
-                description.append("Awarded ")
-                        .append(points)
-                        .append(" points to <@!")
-                        .append(user.getId())
-                        .append(">\n");
+                if (isNotParticipating(memberById)) {
+                    description.append("<@!")
+                            .append(user.getId())
+                            .append("> Please get sorted into a house to participate\n");
+                } else {
+                    description.append("Awarded ")
+                            .append(points)
+                            .append(" points to <@!")
+                            .append(user.getId())
+                            .append(">\n");
+                }
                 if (points < 1) {
                     takePointsFromMember(points * -1, memberById);
                 } else {
