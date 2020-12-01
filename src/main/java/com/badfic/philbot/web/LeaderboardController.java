@@ -7,7 +7,6 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.entities.Member;
@@ -36,68 +35,38 @@ public class LeaderboardController extends BaseController {
     private String leaderboard(HttpSession httpSession) {
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
 
-        List<SimpleMember> bastards = swampyUsers.stream()
-                .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
-                .filter(user -> {
-                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
-                    return member != null && hasRole(member, Constants.EIGHTEEN_PLUS_ROLE);
-                })
-                .map(user -> {
-                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
-                    return new SimpleMember(member.getUser().getEffectiveAvatarUrl(), member.getEffectiveName(), member.getId(), user.getXp());
-                })
-                .collect(Collectors.toList());
+        long dryBastards = 0;
+        long dryCinnamons = 0;
+        long swampyBastards = 0;
+        long swampyCinnamons = 0;
 
-        List<SimpleMember> children = swampyUsers.stream()
-                .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
-                .filter(user -> {
-                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
-                    return member != null && hasRole(member, Constants.CHAOS_CHILDREN_ROLE);
-                })
-                .map(user -> {
-                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
-                    return new SimpleMember(member.getUser().getEffectiveAvatarUrl(), member.getEffectiveName(), member.getId(), user.getXp());
-                })
-                .collect(Collectors.toList());
+        for (DiscordUser swampyUser : swampyUsers) {
+            Member memberById = philJda.getGuilds().get(0).getMemberById(swampyUser.getId());
+
+            if (memberById != null) {
+                if (hasRole(memberById, Constants.DRY_BASTARDS_ROLE)) {
+                    dryBastards += swampyUser.getXp();
+                } else if (hasRole(memberById, Constants.DRY_CINNAMON_ROLE)) {
+                    dryCinnamons += swampyUser.getXp();
+                } else if (hasRole(memberById, Constants.SWAMPY_BASTARDS_ROLE)) {
+                    swampyBastards += swampyUser.getXp();
+                } else if (hasRole(memberById, Constants.SWAMPY_CINNAMON_ROLE)) {
+                    swampyCinnamons += swampyUser.getXp();
+                }
+            }
+        }
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Leaderboard");
         props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
-        props.put("bastards", bastards);
-        props.put("children", children);
+        props.put("dry-bastards", NumberFormat.getIntegerInstance().format(dryBastards));
+        props.put("dry-cinnamon-rolls", NumberFormat.getIntegerInstance().format(dryCinnamons));
+        props.put("swampy-bastards", NumberFormat.getIntegerInstance().format(swampyBastards));
+        props.put("swampy-cinnamon-rolls", NumberFormat.getIntegerInstance().format(swampyCinnamons));
         try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
             mustache.execute(stringWriter, props);
             return stringWriter.toString();
         }
     }
 
-    public static class SimpleMember {
-        private final String image;
-        private final String name;
-        private final String id;
-        private final String xp;
-
-        public SimpleMember(String image, String name, String id, long xp) {
-            this.image = image;
-            this.name = name;
-            this.id = id;
-            this.xp = NumberFormat.getIntegerInstance().format(xp);
-        }
-
-        public String getImage() {
-            return image;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getXp() {
-            return xp;
-        }
-    }
 }
