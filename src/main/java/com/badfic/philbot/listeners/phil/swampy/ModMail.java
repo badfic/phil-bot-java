@@ -22,6 +22,7 @@ public class ModMail extends Command implements PhilMarker {
 
     public ModMail() {
         name = "mods";
+        aliases = new String[] {"modMail"};
         guildOnly = false;
         help = "!!mods\nSend a message to the mods.\nYou can DM phil to ask a question anonymously.\n" +
                 "Example: !!mods Hey mods I have a question about swampy stuff\n" +
