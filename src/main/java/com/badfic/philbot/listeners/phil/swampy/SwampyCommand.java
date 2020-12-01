@@ -376,16 +376,16 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         String thumbnail;
         if (dryBastards >= dryCinnamons && dryBastards >= swampyBastards && dryBastards >= swampyCinnamons) {
             title = "Dry Bastards Are Leading";
-            thumbnail = DRY_BASTARDS_CREST;
+            thumbnail = Constants.DRY_BASTARDS_CREST;
         } else if (dryCinnamons >= dryBastards && dryCinnamons >= swampyBastards && dryCinnamons >= swampyCinnamons) {
             title = "Dry Cinnamon Rolls Are Leading";
-            thumbnail = DRY_CINNAMON_CREST;
+            thumbnail = Constants.DRY_CINNAMON_CREST;
         } else if (swampyBastards >= dryBastards && swampyBastards >= dryCinnamons && swampyBastards >= swampyCinnamons) {
             title = "Swampy Bastards Are Leading";
-            thumbnail = SWAMPY_BASTARDS_CREST;
+            thumbnail = Constants.SWAMPY_BASTARDS_CREST;
         } else {
             title = "Swampy Cinnamon Rolls Are Leading";
-            thumbnail = SWAMPY_CINNAMON_CREST;
+            thumbnail = Constants.SWAMPY_CINNAMON_CREST;
         }
 
         MessageEmbed message = new EmbedBuilder()
