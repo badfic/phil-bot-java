@@ -326,7 +326,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
         Rank[] allRanks = Rank.getAllRanks();
         Rank rank = Rank.byXp(user.getXp());
-        Rank nextRank = (rank.ordinal() > allRanks.length - 1) ? rank : allRanks[rank.ordinal() + 1];
+        Rank nextRank = (rank.ordinal() >= allRanks.length - 1) ? rank : allRanks[rank.ordinal() + 1];
 
         String description = rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
                 "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total points.\n\n" +
@@ -334,8 +334,10 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 (rank == nextRank
                         ? " LOL NVM YOU'RE THE TOP LEVEL."
                         : nextRank.getLevel() + ": " + nextRank.getRoleName() + ".") +
-                "\n You have " + NumberFormat.getIntegerInstance().format((nextRank.getLevel() * Rank.LVL_MULTIPLIER) - user.getXp()) + " points to go." +
-                "\n\nBest of Luck in the Swampys!";
+                "\n You have " + (rank == nextRank
+                ? "LOL NVM YOU'RE THE TOP LEVEL"
+                : NumberFormat.getIntegerInstance().format((nextRank.getLevel() * Rank.LVL_MULTIPLIER) - user.getXp()))
+                + " points to go.\n\nBest of Luck in the Swampys!";
 
         MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + rank.getLevel() + ": " + rank.getRoleName(),
                 description,
