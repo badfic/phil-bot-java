@@ -44,7 +44,13 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
             return;
         }
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+
+        TextChannel[] channels = new TextChannel[] {
+                philJda.getTextChannelsByName(Constants.DRY_BASTARDS_CHANNEL, false).get(0),
+                philJda.getTextChannelsByName(Constants.DRY_CINNAMON_CHANNEL, false).get(0),
+                philJda.getTextChannelsByName(Constants.SWAMPY_BASTARD_CHANNEL, false).get(0),
+                philJda.getTextChannelsByName(Constants.SWAMPY_CINNAMON_CHANNEL, false).get(0)
+        };
 
         if (Objects.nonNull(swampyGamesConfig.getMapPhrase())
                 && Objects.nonNull(swampyGamesConfig.getMapTriviaExpiration())
@@ -81,7 +87,11 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
             MessageEmbed messageEmbed = Constants.simpleEmbed("Map Trivia Complete", description.toString());
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                    .thenRun(() -> swampysChannel.sendMessage(messageEmbed).queue());
+                    .thenRun(() -> {
+                        for (TextChannel channel : channels) {
+                            channel.sendMessage(messageEmbed).queue();
+                        }
+                    });
         }
     }
 }

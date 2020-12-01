@@ -24,6 +24,11 @@ public interface Constants {
     String SWAMPY_BASTARDS_ROLE = "Swampy Bastards";
     String SWAMPY_CINNAMON_ROLE = "Swampy Cinnamon Rolls";
 
+    String DRY_CINNAMON_CHANNEL = "the-dry-cinnamon-rolls";
+    String DRY_BASTARDS_CHANNEL = "the-dry-bastards";
+    String SWAMPY_CINNAMON_CHANNEL = "the-swampy-cinnamon-rolls";
+    String SWAMPY_BASTARD_CHANNEL = "the-swampy-bastards";
+
     String DRY_BASTARDS_CREST = "https://cdn.discordapp.com/attachments/741053845098201099/782478360491196416/dry_bastard.png";
     String DRY_CINNAMON_CREST = "https://cdn.discordapp.com/attachments/741053845098201099/782478362391478322/dry_cinnamon_roll.png";
     String SWAMPY_BASTARDS_CREST = "https://cdn.discordapp.com/attachments/741053845098201099/782478365411377193/swampy_bastard.png";
