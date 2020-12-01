@@ -59,6 +59,10 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             "\uD83E\uDD83", "\uD83C\uDF57", "\uD83E\uDD54", "\uD83C\uDF60", "\uD83E\uDD24",
             "\uD83D\uDC6A", "\uD83E\uDD55", "\uD83C\uDF3D", "\uD83E\uDD67", "\uD83C\uDFC8"
     );
+    public static final Set<String> CHRISTMAS_SLOTS = ImmutableSet.of(
+            "\uD83C\uDF84", "\uD83C\uDF85", "\uD83E\uDD36", "\uD83C\uDF81", "\uD83D\uDD4E",
+            "\uD83C\uDF80", "\uD83E\uDDE8", "\uD83E\uDDC8", "\uD83C\uDF6A", "\uD83E\uDD5B"
+    );
 
     // volatile state
     private volatile boolean awaitingResetConfirmation = false;
@@ -291,9 +295,9 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
         discordUser.setLastSlots(now);
 
-        String one = Constants.pickRandom(TURKEY_SLOTS);
-        String two = Constants.pickRandom(TURKEY_SLOTS);
-        String three = Constants.pickRandom(TURKEY_SLOTS);
+        String one = Constants.pickRandom(CHRISTMAS_SLOTS);
+        String two = Constants.pickRandom(CHRISTMAS_SLOTS);
+        String three = Constants.pickRandom(CHRISTMAS_SLOTS);
 
         if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
             givePointsToMember(swampyGamesConfig.getSlotsWinPoints(), member, discordUser);
