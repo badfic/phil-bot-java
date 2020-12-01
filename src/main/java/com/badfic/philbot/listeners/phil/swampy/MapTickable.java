@@ -72,10 +72,18 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
                                 throw new RuntimeException("member not found");
                             }
 
-                            futures.add(givePointsToMember(swampyGamesConfig.getMapEventPoints(), memberLookedUp));
-                            description.append("Gave " + swampyGamesConfig.getMapEventPoints() + " points to <@!")
-                                    .append(u.getId())
-                                    .append(">\n");
+                            if (isNotParticipating(memberLookedUp)) {
+                                description.append("<@!")
+                                        .append(u.getId())
+                                        .append("> Please get sorted into a house to participate\n");
+                            } else {
+                                futures.add(givePointsToMember(swampyGamesConfig.getMapEventPoints(), memberLookedUp));
+                                description.append("Gave ")
+                                        .append(swampyGamesConfig.getMapEventPoints())
+                                        .append(" points to <@!")
+                                        .append(u.getId())
+                                        .append(">\n");
+                            }
                         } catch (Exception e) {
                             logger.error("Failed to give map trivia points to user [id={}]", u.getId(), e);
                             description.append("OOPS: Unable to give points to <@!")

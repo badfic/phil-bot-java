@@ -181,7 +181,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
             try {
                 Member memberById = philJda.getGuilds().get(0).getMemberById(winningUser.getId());
                 if (memberById != null
-                        && !memberById.getUser().isBot()
+                        && !isNotParticipating(memberById)
                         && winningUser.getXp() > swampyGamesConfig.getSwiperPoints()
                         && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22))) {
                     member = memberById;

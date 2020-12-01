@@ -52,7 +52,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
             if (user.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && user.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22))) {
                 try {
                     Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
-                    if (memberById != null && !memberById.getUser().isBot()) {
+                    if (memberById != null && !isNotParticipating(memberById)) {
                         if (ThreadLocalRandom.current().nextInt() % 2 == 0) {
                             futures.add(givePointsToMember(swampyGamesConfig.getTrickOrTreatPoints(), memberById));
                             totalGiven += swampyGamesConfig.getTrickOrTreatPoints();

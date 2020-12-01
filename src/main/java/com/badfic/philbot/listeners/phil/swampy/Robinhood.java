@@ -75,10 +75,10 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
                         taxRateRecoveryAmountPercentage -= 2;
                     }
                     long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRateRecoveryAmountPercentage)).longValue();
-                    totalRecovered += recoveredTaxes;
                     Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
-                    if (memberById != null && !memberById.getUser().isBot() && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
+                    if (memberById != null && !isNotParticipating(memberById) && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
                         futures.add(givePointsToMember(recoveredTaxes, memberById));
+                        totalRecovered += recoveredTaxes;
 
                         description
                                 .append("Recovered ")

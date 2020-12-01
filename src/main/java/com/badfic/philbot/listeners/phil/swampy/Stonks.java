@@ -81,14 +81,20 @@ public class Stonks extends BaseSwampy implements PhilMarker {
 
                 Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                 if (memberById != null) {
-                    futures.add(givePointsToMember(pointsToGive, memberById));
-                    totalPointsGiven.add(pointsToGive);
-                    description
-                            .append(NumberFormat.getIntegerInstance().format(pointsToGive))
-                            .append(" \uD83D\uDCC8")
-                            .append(" for <@!")
-                            .append(user.getId())
-                            .append(">\n");
+                    if (isNotParticipating(memberById)) {
+                        description.append("<@!")
+                                .append(user.getId())
+                                .append("> Please get sorted into a house to participate\n");
+                    } else {
+                        futures.add(givePointsToMember(pointsToGive, memberById));
+                        totalPointsGiven.add(pointsToGive);
+                        description
+                                .append(NumberFormat.getIntegerInstance().format(pointsToGive))
+                                .append(" \uD83D\uDCC8")
+                                .append(" for <@!")
+                                .append(user.getId())
+                                .append(">\n");
+                    }
                 }
             } catch (Exception e) {
                 logger.error("Failed to stonks user [id={}]", user.getId(), e);
