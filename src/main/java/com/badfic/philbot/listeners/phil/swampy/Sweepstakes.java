@@ -6,6 +6,7 @@ import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import net.dv8tion.jda.api.entities.Member;
@@ -19,9 +20,9 @@ import org.springframework.stereotype.Component;
 public class Sweepstakes extends BaseSwampy implements PhilMarker {
 
     public Sweepstakes() {
-        requiredRole = Constants.ADMIN_ROLE;
         name = "sweepstakes";
         help = "!!sweepstakes\nTrigger a sweepstakes for the given role, you must specify a role\nExample: !!sweepstakes @18+";
+        ownerCommand = true;
     }
 
     @Override
@@ -34,31 +35,20 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
         }
 
         Role role = mentionedRoles.get(0);
-
-        switch (role.getName()) {
-            case Constants.EIGHTEEN_PLUS_ROLE:
-                doSweepstakes(Constants.EIGHTEEN_PLUS_ROLE);
-                break;
-            case Constants.CHAOS_CHILDREN_ROLE:
-                doSweepstakes(Constants.CHAOS_CHILDREN_ROLE);
-                break;
-            default:
-                event.replyError("Please mention either chaos children role or 18+ role");
-                break;
-        }
+        doSweepstakes(role.getName(), role.getName());
     }
 
     @Scheduled(cron = "0 3 2 * * ?", zone = "GMT")
-    public void sweepstakes18() {
-        doSweepstakes(Constants.EIGHTEEN_PLUS_ROLE);
+    public void sweepstakesDry() {
+        doSweepstakes(Constants.pickRandom(Arrays.asList(Constants.DRY_BASTARDS_ROLE, Constants.DRY_CINNAMON_ROLE)), "Dry");
     }
 
     @Scheduled(cron = "0 7 2 * * ?", zone = "GMT")
-    public void sweepstakesChaos() {
-        doSweepstakes(Constants.CHAOS_CHILDREN_ROLE);
+    public void sweepstakesSwampy() {
+        doSweepstakes(Constants.pickRandom(Arrays.asList(Constants.SWAMPY_BASTARDS_ROLE, Constants.SWAMPY_CINNAMON_ROLE)), "Swampy");
     }
 
-    private void doSweepstakes(String role) {
+    private void doSweepstakes(String role, String dryOrSwampy) {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         if (swampyGamesConfig == null) {
             return;
@@ -84,14 +74,14 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
         if (member == null) {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(Constants.simpleEmbed(role + " Sweepstakes Results", "Unable to choose a winner, nobody wins"))
+                    .sendMessage(Constants.simpleEmbed(dryOrSwampy + " Sweepstakes Results", "Unable to choose a winner, nobody wins"))
                     .queue();
             return;
         }
 
         givePointsToMember(swampyGamesConfig.getSweepstakesPoints(), member);
 
-        MessageEmbed message = Constants.simpleEmbed(role + " Sweepstakes Results",
+        MessageEmbed message = Constants.simpleEmbed(dryOrSwampy + " Sweepstakes Results",
                 String.format("Congratulations %s you won today's sweepstakes worth %d points!", member.getAsMention(), swampyGamesConfig.getSweepstakesPoints()),
                 swampyGamesConfig.getSweepstakesImg());
 

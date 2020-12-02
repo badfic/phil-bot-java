@@ -8,13 +8,11 @@ import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.slf4j.Logger;
@@ -39,7 +37,7 @@ public class Stonks extends BaseSwampy implements PhilMarker {
     public Stonks() {
         name = "stonks";
         requiredRole = Constants.ADMIN_ROLE;
-        help = "!!stonks\nTrigger a stonks for all the non-top-10 bastards";
+        help = "!!stonks\nTrigger a stonks for the losing house";
     }
 
     @Override
@@ -55,56 +53,82 @@ public class Stonks extends BaseSwampy implements PhilMarker {
         }
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
 
-        List<DiscordUser> allUsers = discordUserRepository.findAll();
+        List<DiscordUser> swampyUsers = discordUserRepository.findAll();
+        long totalEighteenPlus = 0;
+        long dryBastards = 0;
+        long dryCinnamons = 0;
+        long swampyBastards = 0;
+        long swampyCinnamons = 0;
+
+        for (DiscordUser swampyUser : swampyUsers) {
+            Member memberById = philJda.getGuilds().get(0).getMemberById(swampyUser.getId());
+
+            if (memberById != null && !isNotParticipating(memberById)) {
+                if (hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
+                    totalEighteenPlus++;
+                }
+
+                if (hasRole(memberById, Constants.DRY_BASTARDS_ROLE)) {
+                    dryBastards += swampyUser.getXp();
+                }
+                if (hasRole(memberById, Constants.DRY_CINNAMON_ROLE)) {
+                    dryCinnamons += swampyUser.getXp();
+                }
+                if (hasRole(memberById, Constants.SWAMPY_BASTARDS_ROLE)) {
+                    swampyBastards += swampyUser.getXp();
+                }
+                if (hasRole(memberById, Constants.SWAMPY_CINNAMON_ROLE)) {
+                    swampyCinnamons += swampyUser.getXp();
+                }
+            }
+        }
+
+        String losingRole;
+        if (dryBastards <= dryCinnamons && dryBastards <= swampyBastards && dryBastards <= swampyCinnamons) {
+            losingRole = Constants.DRY_BASTARDS_ROLE;
+        } else if (dryCinnamons <= dryBastards && dryCinnamons <= swampyBastards && dryCinnamons <= swampyCinnamons) {
+            losingRole = Constants.DRY_CINNAMON_ROLE;
+        } else if (swampyBastards <= dryBastards && swampyBastards <= dryCinnamons && swampyBastards <= swampyCinnamons) {
+            losingRole = Constants.SWAMPY_BASTARDS_ROLE;
+        } else {
+            losingRole = Constants.SWAMPY_CINNAMON_ROLE;
+        }
+
+        StringBuilder description = new StringBuilder("Stonky? has infiltrated the swamp, giving \uD83D\uDCC8 \uD83D\uDCC8 \uD83D\uDCC8 " +
+                "to the bastards of the house with the least points!\n" +
+                "There's a very complicated formula involving how many taxes were paid, but the min per user is 500 and the max is 4,000\n\n");
 
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
-        StringBuilder description = new StringBuilder("Stonky? has infiltrated the swamp, giving \uD83D\uDCC8 \uD83D\uDCC8 \uD83D\uDCC8 " +
-                "to all of the not-top-10 bastards!\n" +
-                "There's a very complicated formula involving how many taxes were paid, but the min per user is 500 and the max is 4,000\n\n");
 
-        List<DiscordUser> filteredUsers = allUsers.stream()
-                .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
-                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22)))
-                .filter(u -> {
-                    Member m = philJda.getGuilds().get(0).getMemberById(u.getId());
-                    return m != null && !m.getUser().isBot() && hasRole(m, Constants.EIGHTEEN_PLUS_ROLE);
-                })
-                .skip(10)
-                .collect(Collectors.toList());
+        for (DiscordUser user : swampyUsers) {
+            Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
 
-        int totalBastards = filteredUsers.size();
-        for (DiscordUser user : filteredUsers) {
-            try {
-                long mostRecentTaxes = swampyGamesConfig.getMostRecentTaxes();
-                long pointsToGive = Math.min(swampyGamesConfig.getStonksMaxPoints(), Math.max(500, mostRecentTaxes / totalBastards));
+            if (memberById != null && !isNotParticipating(memberById) && hasRole(memberById, losingRole) && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
+                try {
+                    long mostRecentTaxes = swampyGamesConfig.getMostRecentTaxes();
+                    long pointsToGive = Math.min(swampyGamesConfig.getStonksMaxPoints(), Math.max(500, mostRecentTaxes / totalEighteenPlus));
 
-                Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
-                if (memberById != null) {
-                    if (isNotParticipating(memberById)) {
-                        description.append("<@!")
-                                .append(user.getId())
-                                .append("> Please get sorted into a house to participate\n");
-                    } else {
-                        futures.add(givePointsToMember(pointsToGive, memberById));
-                        totalPointsGiven.add(pointsToGive);
-                        description
-                                .append(NumberFormat.getIntegerInstance().format(pointsToGive))
-                                .append(" \uD83D\uDCC8")
-                                .append(" for <@!")
-                                .append(user.getId())
-                                .append(">\n");
-                    }
+                    futures.add(givePointsToMember(pointsToGive, memberById));
+                    totalPointsGiven.add(pointsToGive);
+                    description
+                            .append(NumberFormat.getIntegerInstance().format(pointsToGive))
+                            .append(" \uD83D\uDCC8")
+                            .append(" for <@!")
+                            .append(user.getId())
+                            .append(">\n");
+                } catch (Exception e) {
+                    logger.error("Failed to stonks user [id={}]", user.getId(), e);
+                    honeybadgerReporter.reportError(e, "Failed to stonks user: " + user.getId());
                 }
-            } catch (Exception e) {
-                logger.error("Failed to stonks user [id={}]", user.getId(), e);
-                honeybadgerReporter.reportError(e, "Failed to stonks user: " + user.getId());
             }
         }
 
         description.append("\nStonky? gave a total of ")
                 .append(NumberFormat.getIntegerInstance().format(totalPointsGiven.getValue()))
-                .append(" \uD83D\uDCC8 to the bastards!");
+                .append(" \uD83D\uDCC8 to the ")
+                .append(losingRole)
+                .append('!');
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)

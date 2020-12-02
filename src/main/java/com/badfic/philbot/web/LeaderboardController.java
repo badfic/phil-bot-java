@@ -46,11 +46,14 @@ public class LeaderboardController extends BaseController {
             if (memberById != null) {
                 if (hasRole(memberById, Constants.DRY_BASTARDS_ROLE)) {
                     dryBastards += swampyUser.getXp();
-                } else if (hasRole(memberById, Constants.DRY_CINNAMON_ROLE)) {
+                }
+                if (hasRole(memberById, Constants.DRY_CINNAMON_ROLE)) {
                     dryCinnamons += swampyUser.getXp();
-                } else if (hasRole(memberById, Constants.SWAMPY_BASTARDS_ROLE)) {
+                }
+                if (hasRole(memberById, Constants.SWAMPY_BASTARDS_ROLE)) {
                     swampyBastards += swampyUser.getXp();
-                } else if (hasRole(memberById, Constants.SWAMPY_CINNAMON_ROLE)) {
+                }
+                if (hasRole(memberById, Constants.SWAMPY_CINNAMON_ROLE)) {
                     swampyCinnamons += swampyUser.getXp();
                 }
             }

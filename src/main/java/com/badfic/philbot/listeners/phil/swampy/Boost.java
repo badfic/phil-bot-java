@@ -54,12 +54,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
         }
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
 
-        TextChannel[] channels = new TextChannel[] {
-                philJda.getTextChannelsByName(Constants.DRY_BASTARDS_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.DRY_CINNAMON_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.SWAMPY_BASTARD_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.SWAMPY_CINNAMON_CHANNEL, false).get(0)
-        };
+        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
         if (swampyGamesConfig.getBoostPhrase() != null) {
             swampyGamesConfig.setBoostPhrase(null);
@@ -103,12 +98,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
 
             MessageEmbed messageEmbed = Constants.simpleEmbed("Boost Blitz Complete", description.toString(), swampyGamesConfig.getBoostEndImg());
 
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                    .thenRun(() -> {
-                        for (TextChannel channel : channels) {
-                            channel.sendMessage(messageEmbed).queue();
-                        }
-                    });
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> swampysChannel.sendMessage(messageEmbed).queue());
             return;
         }
 
@@ -122,9 +112,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
                             + swampyGamesConfig.getBoostEventPoints() + " points",
                     swampyGamesConfig.getBoostStartImg());
 
-            for (TextChannel channel : channels) {
-                channel.sendMessage(message).queue();
-            }
+            swampysChannel.sendMessage(message).queue();
         }
     }
 
