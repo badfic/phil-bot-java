@@ -105,12 +105,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         }
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
 
-        TextChannel[] channels = new TextChannel[] {
-                philJda.getTextChannelsByName(Constants.DRY_BASTARDS_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.DRY_CINNAMON_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.SWAMPY_BASTARD_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.SWAMPY_CINNAMON_CHANNEL, false).get(0)
-        };
+        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
         if (swampyGamesConfig.getSwiperAwaiting() != null) {
             TheSwiper theSwiper = SWIPERS.get(swampyGamesConfig.getNoSwipingPhrase());
@@ -166,9 +161,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
-            for (TextChannel channel : channels) {
-                channel.sendMessage(message).queue();
-            }
+            swampysChannel.sendMessage(message).queue();
 
             return;
         }
@@ -205,9 +198,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
         MessageEmbed message = Constants.simpleEmbed(theSwiper.getSpottedPhrase(), description, theSwiper.getSpottedImage());
 
-        for (TextChannel channel : channels) {
-            channel.sendMessage(message).queue();
-        }
+        swampysChannel.sendMessage(message).queue();
     }
 
     private static class TheSwiper {

@@ -27,7 +27,10 @@ public class QuoteCommand extends BaseSwampy implements PhilMarker {
 
     public QuoteCommand() {
         name = "quote";
-        help = "!!quote\n`!!quote` to get a random quote\n`!!quote 23` to get quote number 23";
+        help = "!!quote\n" +
+                "React to any message with the \uD83D\uDCAC emoji to save a Quote\n" +
+                "`!!quote` to get a random quote\n" +
+                "`!!quote 23` to get quote number 23";
     }
 
     @Override
