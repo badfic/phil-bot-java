@@ -58,10 +58,10 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                             totalGiven += swampyGamesConfig.getTrickOrTreatPoints();
 
                             description
-                                    .append(swampyGamesConfig.getTrickOrTreatTreatEmoji())
-                                    .append(" got the deal ")
                                     .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getTrickOrTreatPoints()))
-                                    .append(" points to <@!")
+                                    .append(' ')
+                                    .append(swampyGamesConfig.getTrickOrTreatTreatEmoji())
+                                    .append(" given to <@!")
                                     .append(user.getId())
                                     .append(">\n");
                         } else {
@@ -69,10 +69,10 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                             totalTaken += swampyGamesConfig.getTrickOrTreatPoints();
 
                             description
-                                    .append(swampyGamesConfig.getTrickOrTreatTrickEmoji())
-                                    .append(" got trampled ")
                                     .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getTrickOrTreatPoints()))
-                                    .append(" points from <@!")
+                                    .append(' ')
+                                    .append(swampyGamesConfig.getTrickOrTreatTrickEmoji())
+                                    .append(" taken from <@!")
                                     .append(user.getId())
                                     .append(">\n");
                         }
