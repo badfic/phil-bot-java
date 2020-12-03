@@ -47,7 +47,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                     "Squidward Was Spotted Nearby",
                     "https://cdn.discordapp.com/attachments/707453916882665552/779842927655780372/99784025-0c213880-2ad0-11eb-832e-a07fd430914a.png",
                     "https://cdn.discordapp.com/attachments/707453916882665552/779843093448097852/99784075-1ba08180-2ad0-11eb-91a4-8f72a43df4db.png",
-                    "Squidward Escaped!",
+                    "Squidward Squidded Away With Yo Points!",
                     "https://cdn.discordapp.com/attachments/707453916882665552/779843213808238642/99784155-3d016d80-2ad0-11eb-862e-bccfec33eb9f.png"
             ))
             .put("Simper No Simping", new TheSwiper(
@@ -55,7 +55,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                     "Simps Spotted Nearby",
                     "https://cdn.discordapp.com/attachments/761398315119280158/772926342945570836/gobblesimp.png",
                     "https://cdn.discordapp.com/attachments/707453916882665552/779844003855204393/99784554-d6308400-2ad0-11eb-8645-ae51bc4785df.png",
-                    "The Simps Escaped!",
+                    "The Simps Prospered!",
                     "https://cdn.discordapp.com/attachments/707453916882665552/779844165433163776/99784902-50610880-2ad1-11eb-937c-6e768aa4f5db.png"
             ))
             .put("Shrimper No Shrimping", new TheSwiper(
@@ -63,7 +63,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                     "Shrimp Spotted Nearby",
                     "https://cdn.discordapp.com/attachments/323666308107599872/782162173395861504/83585dee533fb9cb2e3e4e28e675a911.png",
                     "https://cdn.discordapp.com/attachments/323666308107599872/782164940042928158/18aa30d62c66eb2ca17b2817c3de5a2b.png",
-                    "The Shrimp Escaped!",
+                    "The Shrimp Shrimped Away!",
                     "https://cdn.discordapp.com/attachments/323666308107599872/782166177345961994/ssrcoclassic_teewomensfafafaca443f4786front_altsquare_product600x600.png"
             ))
             .put("Schuester No Schuesting", new TheSwiper(
@@ -71,8 +71,16 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                     "Schuester Spotted Nearby",
                     "https://cdn.discordapp.com/attachments/741025219346563073/782100623352397845/image0.png",
                     "https://cdn.discordapp.com/attachments/741025219346563073/782079649021689886/image0.png",
-                    "Schuester Escaped!",
+                    "The Grinch Stole Swampmas!",
                     "https://cdn.discordapp.com/attachments/741025219346563073/782406865601822750/image0.png"
+            ))
+            .put("Chooster No Choosting", new TheSwiper(
+                    "Chooster No Choosting",
+                    "Thomas The Tank Engine Spotted",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/783971752857436170/450.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/783971521113882674/Thomas.png",
+                    "Sweet Sweet Murder",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/783971471486615552/254c4699bb69c12a21714605beebd3f4.png"
             ))
             .build();
 
