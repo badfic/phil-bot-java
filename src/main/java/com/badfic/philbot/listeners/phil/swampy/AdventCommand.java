@@ -31,7 +31,7 @@ public class AdventCommand extends BaseSwampy implements PhilMarker {
         ImmutableMap.Builder<Integer, AdventDay> builder = ImmutableMap.builder();
         for (int i = 1; i < lines.size(); i++) {
             String line = lines.get(i);
-            String[] values = StringUtils.split(line, '\t');
+            String[] values = line.split("\t");
             String thumbnail = values[1];
             long points = Long.parseLong(values[2]);
             String largeImage = values.length > 3 ? values[3] : null;
@@ -77,7 +77,7 @@ public class AdventCommand extends BaseSwampy implements PhilMarker {
                 event.replyError("Failed to give " + member.getAsMention() + " points, ask a " + Constants.ADMIN_ROLE + " for assistance.");
             } else {
                 String description = "Congratulations, " + member.getAsMention()
-                        + "your point prize today is " + NumberFormat.getIntegerInstance().format(adventDay.points) + " points!\n\n";
+                        + " your point prize today is " + NumberFormat.getIntegerInstance().format(adventDay.points) + " points!\n\n";
 
                 if (adventDay.special != null) {
                     description += "Special Present: " + adventDay.special + "\n\n";
@@ -102,10 +102,10 @@ public class AdventCommand extends BaseSwampy implements PhilMarker {
 
         public AdventDay(int day, String thumbnail, long points, String largeImage, String special) {
             this.day = day;
-            this.thumbnail = thumbnail;
+            this.thumbnail = StringUtils.defaultIfBlank(thumbnail, null);
             this.points = points;
-            this.largeImage = largeImage;
-            this.special = special;
+            this.largeImage = StringUtils.defaultIfBlank(largeImage, null);
+            this.special = StringUtils.defaultIfBlank(special, null);
         }
     }
 }
