@@ -44,7 +44,7 @@ public class TriviaCommand extends BaseSwampy implements PhilMarker {
             Optional<DiscordUser> optionalDiscordUser = discordUserRepository.findById(userId);
             if (!optionalDiscordUser.isPresent()) {
                 event.replyError("You are not present in the swampy database. Do you not have an 18+ or chaos children role? " +
-                        "Maybe ask santiago, you shouldn't ever get this error");
+                        "Maybe ask Santiago, you shouldn't ever get this error");
                 return;
             }
 

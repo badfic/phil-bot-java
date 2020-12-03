@@ -35,7 +35,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
                 "Note for all the propose/divorce/adopt/disown commands,\n" +
                 "You can @ somebody or you can just type in any name if they are not on this server\n\n" +
                 "`!!fam`: Show your fam\n" +
-                "`!!fam show @incogmeato`: Show somebody else's fam\n" +
+                "`!!fam show @Santiago`: Show somebody else's fam\n" +
                 "`!!fam tag there's a boost`: Tags all your fam, telling them \"there's a boost\"\n" +
                 "`!!fam propose Somebody`: Add a spouse\n" +
                 "`!!fam divorce Somebody`: Remove a spouse\n" +
@@ -55,7 +55,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
                 "`!!fam disown sibling Somebody`: Remove a sibling\n";
         modHelp = help +
                 "\n**MOD ONLY COMMANDS**\n" +
-                "`!!fam nuke @incogmeato`: Delete someone's family tree if they are misbehaving or not getting consent";
+                "`!!fam nuke @Santiago`: Delete someone's family tree if they are misbehaving or not getting consent";
     }
 
     @Override
@@ -148,7 +148,7 @@ public class Fam extends BaseSwampy implements PhilMarker {
         }
 
         if (CollectionUtils.size(event.getMessage().getMentionedMembers()) != 1) {
-            event.replyError("Please mention a user to nuke. Example `!!fam nuke @incogmeato`");
+            event.replyError("Please mention a user to nuke. Example `!!fam nuke @Santiago`");
             return;
         }
 
