@@ -78,13 +78,13 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 "`!!swampy rank` show your swampy rank\n" +
                 "`!!swampy leaderboard bastard` show the 18+ leaderboard\n" +
                 "`!!swampy leaderboard chaos` show the chaos children leaderboard\n" +
-                "`!!swampy up @incogmeato` upvote a user for the swampys\n" +
-                "`!!swampy down @incogmeato` downvote a user for the swampys\n" +
+                "`!!swampy up @Santiago` upvote a user for the swampys\n" +
+                "`!!swampy down @Santiago` downvote a user for the swampys\n" +
                 "`!!swampy slots` Play slots. Winners for 2 out of 3 matches or 3 out of 3 matches.";
         modHelp = help + "\n\nMODS ONLY COMMANDS:\n" +
-                "`!!swampy give 120 @incogmeato` give 120 points to incogmeato\n" +
-                "`!!swampy take 120 @incogmeato` remove 120 points from incogmeato\n" +
-                "`!!swampy set 120 @incogmeato` set incogmeato to 120 points\n" +
+                "`!!swampy give 120 @Santiago` give 120 points to Santiago\n" +
+                "`!!swampy take 120 @Santiago` remove 120 points from Santiago\n" +
+                "`!!swampy set 120 @Santiago` set Santiago to 120 points\n" +
                 "`!!swampy reset` reset everyone back to level 0";
     }
 
@@ -414,7 +414,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
-            event.replyError("Please mention one user to upvote. Example `!!swampy up @incogmeato`");
+            event.replyError("Please mention one user to upvote. Example `!!swampy up @Santiago`");
             return;
         }
 
@@ -461,7 +461,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
-            event.replyError("Please mention one user to downvote. Example `!!swampy down @incogmeato`");
+            event.replyError("Please mention one user to downvote. Example `!!swampy down @Santiago`");
             return;
         }
 
@@ -512,7 +512,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
         String[] split = event.getArgs().split("\\s+");
         if (split.length != 3) {
-            event.replyError("Badly formatted command. Example `!!swampy give 100 @incogmeato`");
+            event.replyError("Badly formatted command. Example `!!swampy give 100 @Santiago`");
             return;
         }
 
@@ -532,7 +532,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
-            event.replyError("Please specify only one user. Example `!!swampy give 100 @incogmeato`");
+            event.replyError("Please specify only one user. Example `!!swampy give 100 @Santiago`");
             return;
         }
 
@@ -555,7 +555,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
         String[] split = event.getArgs().split("\\s+");
         if (split.length != 3) {
-            event.replyError("Badly formatted command. Example `!!swampy take 100 @incogmeato`");
+            event.replyError("Badly formatted command. Example `!!swampy take 100 @Santiago`");
             return;
         }
 
@@ -575,7 +575,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
-            event.replyError("Please specify only one user. Example `!!swampy take 100 @incogmeato`");
+            event.replyError("Please specify only one user. Example `!!swampy take 100 @Santiago`");
             return;
         }
 
@@ -598,7 +598,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
         String[] split = event.getArgs().split("\\s+");
         if (split.length != 3) {
-            event.replyError("Badly formatted command. Example `!!swampy set 100 @incogmeato`");
+            event.replyError("Badly formatted command. Example `!!swampy set 100 @Santiago`");
             return;
         }
 
@@ -618,7 +618,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
-            event.replyError("Please specify only one user. Example `!!swampy set 100 @incogmeato`");
+            event.replyError("Please specify only one user. Example `!!swampy set 100 @Santiago`");
             return;
         }
 
