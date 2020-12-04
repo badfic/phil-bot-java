@@ -45,21 +45,10 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
-    public static final Set<String> PLAIN_SLOTS = ImmutableSet.of(
-            "\uD83E\uDD5D", "\uD83C\uDF53", "\uD83C\uDF4B", "\uD83E\uDD6D", "\uD83C\uDF51",
-            "\uD83C\uDF48", "\uD83C\uDF4A", "\uD83C\uDF4D", "\uD83C\uDF50", "\uD83C\uDF47"
-    );
-    public static final Set<String> SPOOKY_SLOTS = ImmutableSet.of(
-            "\uD83C\uDF83", "\uD83D\uDC7B", "\uD83D\uDC80", "\uD83C\uDF42", "\uD83C\uDF15",
-            "\uD83E\uDDDB", "\uD83E\uDDDF", "\uD83D\uDD77️", "\uD83E\uDD87", "\uD83C\uDF6C"
-    );
-    public static final Set<String> TURKEY_SLOTS = ImmutableSet.of(
-            "\uD83E\uDD83", "\uD83C\uDF57", "\uD83E\uDD54", "\uD83C\uDF60", "\uD83E\uDD24",
-            "\uD83D\uDC6A", "\uD83E\uDD55", "\uD83C\uDF3D", "\uD83E\uDD67", "\uD83C\uDFC8"
-    );
     public static final Set<String> CHRISTMAS_SLOTS = ImmutableSet.of(
-            "\uD83C\uDF84", "\uD83C\uDF85", "\uD83E\uDD36", "\uD83C\uDF81", "\uD83D\uDD4E",
-            "\uD83C\uDF80", "\uD83E\uDDE8", "\uD83E\uDDC8", "\uD83C\uDF6A", "\uD83E\uDD5B"
+            "\uD83C\uDF84", "\uD83C\uDF85", "\uD83E\uDD36", "\uD83C\uDF81",
+            "\uD83D\uDD4E", "\uD83C\uDF80", "\uD83E\uDDE8", "\uD83E\uDDC8",
+            "\uD83C\uDF6A", "\uD83E\uDD5B", "⛄", "❄️"
     );
 
     // volatile state
@@ -72,7 +61,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         aliases = new String[] {
                 "swamp", "bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simp", "simpy", "shrimp", "shrimpy", "shremp",
                 "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek", "billy",
-                "deer", "hot", "frosty"};
+                "deer", "hot", "frosty", "glogg"};
         help =
                 "`!!swampy` aka... `" + Arrays.toString(aliases) + "` HELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
