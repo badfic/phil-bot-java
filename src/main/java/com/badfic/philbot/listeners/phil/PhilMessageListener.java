@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -144,7 +145,16 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
                 event.getChannel().retrieveMessageById(event.getMessageId()).queue(msg -> {
                     long msgId = msg.getIdLong();
                     long channelId = msg.getChannel().getIdLong();
-                    Quote savedQuote = quoteRepository.save(new Quote(msgId, channelId, msg.getContentRaw(),
+
+                    String image = null;
+                    if (CollectionUtils.isNotEmpty(msg.getEmbeds())) {
+                        image = msg.getEmbeds().get(0).getUrl();
+                    }
+                    if (CollectionUtils.isNotEmpty(msg.getAttachments())) {
+                        image = msg.getAttachments().get(0).getUrl();
+                    }
+
+                    Quote savedQuote = quoteRepository.save(new Quote(msgId, channelId, msg.getContentRaw(), image,
                             msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
 
                     msg.addReaction("\uD83D\uDCAC").queue();

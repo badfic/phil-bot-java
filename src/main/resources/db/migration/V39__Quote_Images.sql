@@ -1,0 +1,4 @@
+ALTER TABLE quote
+    ADD COLUMN image TEXT;
+
+DELETE FROM quote WHERE id=534;
