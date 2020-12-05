@@ -71,7 +71,8 @@ public class QuoteCommand extends BaseSwampy implements PhilMarker {
                 .append("> ")
                 .append(msgLink);
         johnJda.getTextChannelById(event.getChannel().getIdLong())
-                .sendMessage(Constants.simpleEmbed("Quote #" + quote.getId(), description.toString(), null, TIMESTAMP_FORMAT.format(quote.getCreated()))).queue();
+                .sendMessage(Constants.simpleEmbed("Quote #" + quote.getId(), description.toString(), quote.getImage(),
+                        TIMESTAMP_FORMAT.format(quote.getCreated()))).queue();
     }
 
 }

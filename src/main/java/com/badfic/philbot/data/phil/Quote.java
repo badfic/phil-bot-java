@@ -26,6 +26,9 @@ public class Quote {
     private String quote;
 
     @Column
+    private String image;
+
+    @Column
     private long userId;
 
     @Column
@@ -34,10 +37,11 @@ public class Quote {
     public Quote() {
     }
 
-    public Quote(long messageId, long channelId, String quote, long userId, LocalDateTime created) {
+    public Quote(long messageId, long channelId, String quote, String image, long userId, LocalDateTime created) {
         this.messageId = messageId;
         this.channelId = channelId;
         this.quote = quote;
+        this.image = image;
         this.userId = userId;
         this.created = created;
     }
@@ -68,6 +72,14 @@ public class Quote {
 
     public void setQuote(String quote) {
         this.quote = quote;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public long getUserId() {
