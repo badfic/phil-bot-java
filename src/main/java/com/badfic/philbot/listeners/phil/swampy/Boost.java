@@ -29,7 +29,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
             "butter", "shortening", "lard", "ghee", "oleo", "olio", "spread", "family", "feet", "foot", "cranberry", "bird", "pie", "stonks", "butters",
             "jingle", "jolly", "festivus", "santa", "grinch", "scrooge", "hanukkah", "latkes", "dreidel", "festival", "presents", "menorah", "pajamas",
             "pyjamas", "jimjams", "crackers", "bauble", "buble", "advent", "druid", "shrekmas", "swampmas", "snoopmas", "holly", "krampus", "mittens",
-            "yuletide", "naughty", "nice", "nutcracker", "sleigh", "solstice", "yule", "yeet", "merry", "chrysler");
+            "yuletide", "naughty", "nice", "nutcracker", "sleigh", "solstice", "yule", "yeet", "merry", "chrysler", "missouri");
 
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;
