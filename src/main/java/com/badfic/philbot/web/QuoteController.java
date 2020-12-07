@@ -2,6 +2,7 @@ package com.badfic.philbot.web;
 
 import com.badfic.philbot.data.phil.QuoteRepository;
 import com.github.mustachejava.Mustache;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,7 +37,12 @@ public class QuoteController extends BaseController {
         props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
         props.put("quotes", quoteRepository.findAll().stream().map(q -> {
             Member memberById = philJda.getGuilds().get(0).getMemberById(q.getUserId());
-            return new SimpleQuote(memberById != null ? memberById.getEffectiveName() : Long.toString(q.getUserId()), q.getId(), q.getQuote(), q.getChannelId(), q.getMessageId());
+            return new SimpleQuote(memberById != null ? memberById.getEffectiveName() : Long.toString(q.getUserId()),
+                    q.getId(),
+                    q.getQuote(),
+                    q.getChannelId(),
+                    q.getMessageId(),
+                    q.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         }).collect(Collectors.toList()));
 
         try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
@@ -51,13 +57,15 @@ public class QuoteController extends BaseController {
         private final String quote;
         private final long channelId;
         private final long messageId;
+        private final long timestamp;
 
-        public SimpleQuote(String name, long id, String quote, long channelId, long messageId) {
+        public SimpleQuote(String name, long id, String quote, long channelId, long messageId, long timestamp) {
             this.name = name;
             this.id = id;
             this.quote = quote;
             this.channelId = channelId;
             this.messageId = messageId;
+            this.timestamp = timestamp;
         }
 
         public String getName() {
@@ -78,6 +86,10 @@ public class QuoteController extends BaseController {
 
         public long getMessageId() {
             return messageId;
+        }
+
+        public long getTimestamp() {
+            return timestamp;
         }
     }
 
