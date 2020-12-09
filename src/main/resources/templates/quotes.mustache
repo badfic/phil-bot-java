@@ -16,7 +16,7 @@
         <tr>
             <th scope="row">{{id}}</th>
             <td>{{name}}</td>
-            <td>{{quote}}</td>
+            <td>{{#quote}}{{quote}}{{#image}}<br/>{{/image}}{{/quote}}{{#image}}<img src="{{image}}" height="50" width="50">{{/image}}</td>
             <td class="dateable">{{timestamp}}</td>
             <td><a href="https://discordapp.com/channels/740999022340341791/{{channelId}}/{{messageId}}">jump</a></td>
         </tr>
