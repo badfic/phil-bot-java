@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.entities.Member;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +36,7 @@ public class QuoteController extends BaseController {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Quotes");
         props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
-        props.put("quotes", quoteRepository.findAll().stream().map(q -> {
+        props.put("quotes", quoteRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream().map(q -> {
             Member memberById = philJda.getGuilds().get(0).getMemberById(q.getUserId());
             return new SimpleQuote(memberById != null ? memberById.getEffectiveName() : Long.toString(q.getUserId()),
                     q.getId(),
