@@ -40,6 +40,7 @@ public class QuoteController extends BaseController {
             return new SimpleQuote(memberById != null ? memberById.getEffectiveName() : Long.toString(q.getUserId()),
                     q.getId(),
                     q.getQuote(),
+                    q.getImage(),
                     q.getChannelId(),
                     q.getMessageId(),
                     q.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
@@ -55,14 +56,16 @@ public class QuoteController extends BaseController {
         private final String name;
         private final long id;
         private final String quote;
+        private final String image;
         private final long channelId;
         private final long messageId;
         private final long timestamp;
 
-        public SimpleQuote(String name, long id, String quote, long channelId, long messageId, long timestamp) {
+        public SimpleQuote(String name, long id, String quote, String image, long channelId, long messageId, long timestamp) {
             this.name = name;
             this.id = id;
             this.quote = quote;
+            this.image = image;
             this.channelId = channelId;
             this.messageId = messageId;
             this.timestamp = timestamp;
@@ -78,6 +81,10 @@ public class QuoteController extends BaseController {
 
         public String getQuote() {
             return quote;
+        }
+
+        public String getImage() {
+            return image;
         }
 
         public long getChannelId() {
