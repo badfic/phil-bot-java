@@ -1,9 +1,13 @@
 package com.badfic.philbot.data.phil;
 
 import com.badfic.philbot.config.ControllerConfigurable;
+import com.badfic.philbot.data.JsonSetConverter;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -250,6 +254,13 @@ public class SwampyGamesConfig {
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
     private String trickOrTreatTrickEmoji = "\uD83D\uDEA7";
+
+    @Column
+    private long giveawayMsgId;
+
+    @Column
+    @Convert(converter = JsonSetConverter.class)
+    private Set<String> pastGiveawayWinners = new HashSet<>();
 
     public Short getId() {
         return id;
@@ -737,5 +748,21 @@ public class SwampyGamesConfig {
 
     public void setTrickOrTreatTrickEmoji(String trickOrTreatTrickEmoji) {
         this.trickOrTreatTrickEmoji = trickOrTreatTrickEmoji;
+    }
+
+    public long getGiveawayMsgId() {
+        return giveawayMsgId;
+    }
+
+    public void setGiveawayMsgId(long jigsawMessageId) {
+        this.giveawayMsgId = jigsawMessageId;
+    }
+
+    public Set<String> getPastGiveawayWinners() {
+        return pastGiveawayWinners;
+    }
+
+    public void setPastGiveawayWinners(Set<String> pastVictims) {
+        this.pastGiveawayWinners = pastVictims;
     }
 }
