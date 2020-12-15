@@ -97,7 +97,7 @@ public interface Constants {
                 .setDescription(finalDesc)
                 .setImage(image)
                 .setColor(color)
-                .setFooter(footer)
+                .setFooter(footer != null ? footer + "\n777" : "777")
                 .setThumbnail(thumbnail)
                 .build();
     }
