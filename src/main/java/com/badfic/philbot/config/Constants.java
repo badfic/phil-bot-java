@@ -211,7 +211,7 @@ public interface Constants {
             "powered by 777 buffalo",
             "powered by 777 taps",
             "powered by 777 hissy fits",
-            "powered by 777 electricity",
+            "powered by 777 units of electricity",
             "powered by 777 daddys",
             "powered by 777 \uD83D\uDC40",
             "powered by 777 eggs",
