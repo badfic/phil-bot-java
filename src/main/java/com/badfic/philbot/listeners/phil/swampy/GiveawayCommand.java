@@ -131,11 +131,19 @@ public class GiveawayCommand extends BaseSwampy implements PhilMarker {
         }
 
         MessageEmbed message = Constants.simpleEmbed("Giveaway!",
-                "Please react with " + PRIZE_EMOJI + " to be entered in today's giveaway. Today's prize is a $20 Amazon Gift Card " +
-                        "(or equivalent gift for non-US swamplings)",
+                "Please react with " + PRIZE_EMOJI + " to be entered in today's giveaway.\n" +
+                        "Today's prize is a $20 USD Amazon.com Gift Card\n\n" +
+                        "Alternatives:\n" +
+                        "• $20 USD equivalent Amazon.insert-your-country-here Gift Card\n\n" +
+                        "• $20 USD equivalent in cryptocurrency (please choose one of the following: BTC/BCH/ETH/LTC)\n\n" +
+                        "• $20 USD equivalent in Paypal/CashApp/Venmo\n\n" +
+                        "• Login information to a US netflix account that is preloaded with a $15 USD netflix gift card",
                 IMAGE,
-                "This giveaway will run for approximately 23 hours and the winner will be announced after. " +
-                        "The winner has 24 hours to claim their prize or they forfeit the prize");
+                "Must be 13 years or older to enter. No Purchase Necessary. This is a sweepstakes, the winner will be chosen at random. " +
+                        "You cannot win more than once. If you are declared winner by a logical/programming error and you have already won a previous " +
+                        "sweepstakes or you are not 13 years of age or older you must forfeit your prize. " +
+                        "This sweepstakes will run for 23 hours from the posting time of this message and the winner will be announced after. " +
+                        "Any winner then has 24 hours to claim their prize or they must forfeit the prize.");
 
         philJda.getTextChannelsByName(Constants.GIVEAWAY_CHANNEL, false)
                 .get(0)
