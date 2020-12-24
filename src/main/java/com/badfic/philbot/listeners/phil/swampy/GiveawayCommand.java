@@ -37,7 +37,7 @@ public class GiveawayCommand extends BaseSwampy implements PhilMarker {
         doGiveaway();
     }
 
-    @Scheduled(cron = "0 0 21,22 14,15,16,17,18,19,20,21,22,23,24,25 * ?")
+    @Scheduled(cron = "0 0 21 14,15,16,17,18,19,20,21,22,23,24,25 * ?")
     public void doGiveaway() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
