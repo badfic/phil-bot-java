@@ -71,7 +71,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                     "Schuester Spotted Nearby",
                     "https://cdn.discordapp.com/attachments/741025219346563073/782100623352397845/image0.png",
                     "https://cdn.discordapp.com/attachments/741025219346563073/782079649021689886/image0.png",
-                    "The Grinch Stole Swampmas!",
+                    "The Grinch Stole Your Soul!",
                     "https://cdn.discordapp.com/attachments/741025219346563073/782406865601822750/image0.png"
             ))
             .put("Chooster No Choosting", new TheSwiper(

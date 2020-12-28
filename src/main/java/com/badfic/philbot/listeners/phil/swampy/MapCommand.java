@@ -48,12 +48,8 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
         }
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
 
-        TextChannel[] channels = new TextChannel[] {
-                philJda.getTextChannelsByName(Constants.DRY_BASTARDS_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.DRY_CINNAMON_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.SWAMPY_BASTARD_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.SWAMPY_CINNAMON_CHANNEL, false).get(0)
-        };
+        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
+                .get(0);
 
         if (swampyGamesConfig.getMapPhrase() != null) {
             event.replyError("There is currently a map trivia running, you can't trigger another.");
@@ -102,20 +98,16 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
                 headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
                 ResponseEntity<byte[]> imageResponse = restTemplate.exchange(image, HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
 
-                for (TextChannel channel : channels) {
-                    channel.sendMessage(Constants.simpleEmbed("Map Trivia", description))
-                            .addFile(imageResponse.getBody(), "image." + imageExtension)
-                            .queue();
-                }
+                swampysChannel.sendMessage(Constants.simpleEmbed("Map Trivia", description))
+                        .addFile(imageResponse.getBody(), "image." + imageExtension)
+                        .queue();
             } catch (Exception e) {
                 logger.error("Failed to load [image={}] for map trivia", image, e);
                 honeybadgerReporter.reportError(e, null, "Failed to load image for map trivia: " + image);
                 event.replyError("Failed to load image for map trivia");
             }
         } else {
-            for (TextChannel channel : channels) {
-                channel.sendMessage(Constants.simpleEmbed("Map Trivia", description)).queue();
-            }
+            swampysChannel.sendMessage(Constants.simpleEmbed("Map Trivia", description)).queue();
         }
     }
 }

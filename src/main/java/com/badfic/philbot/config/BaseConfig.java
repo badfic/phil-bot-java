@@ -150,9 +150,6 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     @Value("${TUMBLR_OAUTH_SECRET}")
     public String tumblrOauthSecret;
 
-    @Value("${FIRE_DRILL_CHANNEL_ID}")
-    public String fireDrillChannelId;
-
     @Bean
     public ScheduledExecutorService childBotExecutor() {
         return Executors.newSingleThreadScheduledExecutor();

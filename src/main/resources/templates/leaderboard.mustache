@@ -1,29 +1,51 @@
 {{> header}}
 <div class="container">
-    <div class="card-deck" style="margin-top: 1em; margin-bottom: 1em;">
-        <div class="card">
-            <img src="https://cdn.discordapp.com/attachments/741053845098201099/782478360491196416/dry_bastard.png">
-            <div class="card-body">
-                <h5 class="card-title text-center">{{dry-bastards}}</h5>
-            </div>
+    <div class="row">
+        <div class="col-lg">
+            <h2>Bastards</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Profile</th>
+                    <th scope="col">XP</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#bastards}}
+                    <tr>
+                        <td><img src="{{image}}" width="50" height="50"></td>
+                        <td>{{xp}}</td>
+                        <td>{{name}}</td>
+                        <td>{{id}}</td>
+                    </tr>
+                {{/bastards}}
+                </tbody>
+            </table>
         </div>
-        <div class="card">
-            <img src="https://cdn.discordapp.com/attachments/741053845098201099/782478362391478322/dry_cinnamon_roll.png">
-            <div class="card-body">
-                <h5 class="card-title text-center">{{dry-cinnamon-rolls}}</h5>
-            </div>
-        </div>
-        <div class="card">
-            <img src="https://cdn.discordapp.com/attachments/741053845098201099/782478365411377193/swampy_bastard.png">
-            <div class="card-body">
-                <h5 class="card-title text-center">{{swampy-bastards}}</h5>
-            </div>
-        </div>
-        <div class="card">
-            <img src="https://cdn.discordapp.com/attachments/741053845098201099/782478367324635207/swampy_cinnamon_roll.png">
-            <div class="card-body">
-                <h5 class="card-title text-center">{{swampy-cinnamon-rolls}}</h5>
-            </div>
+        <div class="col-lg">
+            <h2>Children</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Profile</th>
+                    <th scope="col">XP</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#children}}
+                    <tr>
+                        <td><img src="{{image}}" width="50" height="50"></td>
+                        <td>{{xp}}</td>
+                        <td>{{name}}</td>
+                        <td>{{id}}</td>
+                    </tr>
+                {{/children}}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

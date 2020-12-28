@@ -31,7 +31,7 @@ public class ScooterAnkle extends BaseSwampy implements PhilMarker {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.replyError("Scooter Ankle has been disabled for Swampmas");
+        scooterAnkle(event);
     }
 
     private void scooterAnkle(CommandEvent event) {
