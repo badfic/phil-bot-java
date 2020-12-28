@@ -2,19 +2,14 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Video Player -->
-        <div class="col-8">
-            <script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
-            <video-js id=vid1 class="vjs-default-skin" controls>
-                <source
-                    src="{{hlsStreamLocation}}"
-                    type="application/x-mpegURL">
-            </video-js>
-            <script>
-                var player = videojs('vid1');
-                player.aspectRatio('16:9');
-                // player.fluid(true);
-                player.play();
-            </script>
+        <div class="col-8 embed-responsive embed-responsive-16by9">
+            <iframe
+                src="{{hlsStreamLocation}}"
+                title="The Swamp Live"
+                referrerpolicy="origin"
+                scrolling="no"
+                allowfullscreen>
+            </iframe>
         </div>
 
         <!-- Chat -->
