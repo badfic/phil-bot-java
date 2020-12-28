@@ -356,28 +356,6 @@ public class Fam extends BaseSwampy implements PhilMarker {
 
         StringBuilder description = new StringBuilder();
 
-        boolean hasHouse = false;
-        if (hasRole(member, Constants.DRY_CINNAMON_ROLE)) {
-            description.append("**Dry Cinnamon Rolls House Member**\n");
-            hasHouse = true;
-        }
-        if (hasRole(member, Constants.SWAMPY_CINNAMON_ROLE)) {
-            description.append("**Swampy Cinnamon Rolls House Member**\n");
-            hasHouse = true;
-        }
-        if (hasRole(member, Constants.DRY_BASTARDS_ROLE)) {
-            description.append("**Dry Bastards House Member**\n");
-            hasHouse = true;
-        }
-        if (hasRole(member, Constants.SWAMPY_BASTARDS_ROLE)) {
-            description.append("**Swampy Bastards House Member**\n");
-            hasHouse = true;
-        }
-
-        if (hasHouse) {
-            description.append('\n');
-        }
-
         if (family.getIntro() != null) {
             description.append("**Introduction**\n")
                     .append(family.getIntro())

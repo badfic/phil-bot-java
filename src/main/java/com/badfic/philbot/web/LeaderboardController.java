@@ -3,11 +3,14 @@ package com.badfic.philbot.web;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
@@ -18,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LeaderboardController extends BaseController {
 
+    @Resource
+    private MustacheFactory mustacheFactory;
+
     private Mustache mustache;
 
     @PostConstruct
@@ -26,7 +32,7 @@ public class LeaderboardController extends BaseController {
     }
 
     @GetMapping(value = "/leaderboard", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> get(HttpSession httpSession) throws Exception {
+    public ResponseEntity<String> getRanks(HttpSession httpSession) throws Exception {
         checkSession(httpSession, false);
 
         return ResponseEntity.ok(leaderboard(httpSession));
@@ -35,41 +41,70 @@ public class LeaderboardController extends BaseController {
     private String leaderboard(HttpSession httpSession) {
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
 
-        long dryBastards = 0;
-        long dryCinnamons = 0;
-        long swampyBastards = 0;
-        long swampyCinnamons = 0;
+        List<SimpleMember> bastards = swampyUsers.stream()
+                .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
+                .filter(user -> {
+                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
+                    return member != null && hasRole(member, Constants.EIGHTEEN_PLUS_ROLE);
+                })
+                .map(user -> {
+                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
+                    return new SimpleMember(member.getUser().getEffectiveAvatarUrl(), member.getEffectiveName(), member.getId(),
+                            NumberFormat.getIntegerInstance().format(user.getXp()));
+                })
+                .collect(Collectors.toList());
 
-        for (DiscordUser swampyUser : swampyUsers) {
-            Member memberById = philJda.getGuilds().get(0).getMemberById(swampyUser.getId());
-
-            if (memberById != null) {
-                if (hasRole(memberById, Constants.DRY_BASTARDS_ROLE)) {
-                    dryBastards += swampyUser.getXp();
-                }
-                if (hasRole(memberById, Constants.DRY_CINNAMON_ROLE)) {
-                    dryCinnamons += swampyUser.getXp();
-                }
-                if (hasRole(memberById, Constants.SWAMPY_BASTARDS_ROLE)) {
-                    swampyBastards += swampyUser.getXp();
-                }
-                if (hasRole(memberById, Constants.SWAMPY_CINNAMON_ROLE)) {
-                    swampyCinnamons += swampyUser.getXp();
-                }
-            }
-        }
+        List<SimpleMember> children = swampyUsers.stream()
+                .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
+                .filter(user -> {
+                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
+                    return member != null && hasRole(member, Constants.CHAOS_CHILDREN_ROLE);
+                })
+                .map(user -> {
+                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
+                    return new SimpleMember(member.getUser().getEffectiveAvatarUrl(), member.getEffectiveName(), member.getId(),
+                            NumberFormat.getIntegerInstance().format(user.getXp()));
+                })
+                .collect(Collectors.toList());
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Leaderboard");
         props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
-        props.put("dry-bastards", NumberFormat.getIntegerInstance().format(dryBastards));
-        props.put("dry-cinnamon-rolls", NumberFormat.getIntegerInstance().format(dryCinnamons));
-        props.put("swampy-bastards", NumberFormat.getIntegerInstance().format(swampyBastards));
-        props.put("swampy-cinnamon-rolls", NumberFormat.getIntegerInstance().format(swampyCinnamons));
+        props.put("bastards", bastards);
+        props.put("children", children);
         try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
             mustache.execute(stringWriter, props);
             return stringWriter.toString();
         }
     }
 
+    public static class SimpleMember {
+        private final String image;
+        private final String name;
+        private final String id;
+        private final String xp;
+
+        public SimpleMember(String image, String name, String id, String xp) {
+            this.image = image;
+            this.name = name;
+            this.id = id;
+            this.xp = xp;
+        }
+
+        public String getImage() {
+            return image;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getXp() {
+            return xp;
+        }
+    }
 }

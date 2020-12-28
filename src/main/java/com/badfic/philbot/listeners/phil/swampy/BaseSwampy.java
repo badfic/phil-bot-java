@@ -152,13 +152,7 @@ public abstract class BaseSwampy extends Command {
             return Constants.CHAOS_CHILDREN_ROLE.equalsIgnoreCase(roleName) || Constants.EIGHTEEN_PLUS_ROLE.equalsIgnoreCase(roleName);
         });
 
-        boolean notHouseParticipant = member.getRoles().stream().noneMatch(r -> {
-            String roleName = r.getName();
-            return Constants.DRY_CINNAMON_ROLE.equalsIgnoreCase(roleName) || Constants.SWAMPY_CINNAMON_ROLE.equalsIgnoreCase(roleName)
-                    || Constants.DRY_BASTARDS_ROLE.equalsIgnoreCase(roleName) || Constants.SWAMPY_BASTARDS_ROLE.equalsIgnoreCase(roleName);
-        });
-
-        return member.getUser().isBot() || notEighteenOrChaos || notHouseParticipant;
+        return member.getUser().isBot() || notEighteenOrChaos;
     }
 
     protected boolean hasRole(Member member, Rank rank) {

@@ -15,12 +15,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -343,60 +344,115 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     }
 
     private void leaderboard(CommandEvent event) {
+        String[] split = event.getArgs().split("\\s+");
+        if (split.length != 2) {
+            event.replyError("Badly formatted command. Example `!!swampy leaderboard bastard`, `!!swampy leaderboard chaos`, or `!!swampy leaderboard full`");
+            return;
+        }
+
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
-        long dryBastards = 0;
-        long dryCinnamons = 0;
-        long swampyBastards = 0;
-        long swampyCinnamons = 0;
 
-        for (DiscordUser swampyUser : swampyUsers) {
-            Member memberById = event.getGuild().getMemberById(swampyUser.getId());
+        if ("full".equalsIgnoreCase(split[1])) {
+            AtomicInteger place = new AtomicInteger(1);
+            StringBuilder description = new StringBuilder();
+            swampyUsers.stream()
+                    .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
+                    .forEachOrdered(swampyUser -> {
+                        Member memberById = event.getGuild().getMemberById(swampyUser.getId());
 
-            if (memberById != null) {
-                if (hasRole(memberById, Constants.DRY_BASTARDS_ROLE)) {
-                    dryBastards += swampyUser.getXp();
-                }
-                if (hasRole(memberById, Constants.DRY_CINNAMON_ROLE)) {
-                    dryCinnamons += swampyUser.getXp();
-                }
-                if (hasRole(memberById, Constants.SWAMPY_BASTARDS_ROLE)) {
-                    swampyBastards += swampyUser.getXp();
-                }
-                if (hasRole(memberById, Constants.SWAMPY_CINNAMON_ROLE)) {
-                    swampyCinnamons += swampyUser.getXp();
-                }
+                        description.append(place.getAndIncrement());
+                        if (memberById != null) {
+                            description
+                                    .append(": <@!")
+                                    .append(swampyUser.getId())
+                                    .append(">, name: \"")
+                                    .append(memberById.getEffectiveName())
+                                    .append("\", role: \"")
+                                    .append(hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE) ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE)
+                                    .append("\", xp: ")
+                                    .append(NumberFormat.getIntegerInstance().format(swampyUser.getXp()))
+                                    .append('\n');
+                        } else {
+                            description
+                                    .append(": <@!")
+                                    .append(swampyUser.getId())
+                                    .append(">, could not find user in member cache!, xp: ")
+                                    .append(NumberFormat.getIntegerInstance().format(swampyUser.getXp()))
+                                    .append('\n');
+                        }
+                    });
+
+            event.getChannel().sendFile(description.toString().getBytes(), "leaderboard.txt").queue();
+            return;
+        }
+
+        if ("swiper".equalsIgnoreCase(split[1])) {
+            AtomicInteger place = new AtomicInteger(0);
+            StringBuilder description = new StringBuilder();
+
+            swampyUsers.stream()
+                    .sorted((u1, u2) -> Long.compare(u2.getSwiperParticipations(), u1.getSwiperParticipations()))
+                    .limit(10)
+                    .forEachOrdered(swampyUser -> {
+                        description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
+                                .append(": <@!")
+                                .append(swampyUser.getId())
+                                .append("> - ")
+                                .append(NumberFormat.getIntegerInstance().format(swampyUser.getSwiperParticipations()))
+                                .append('\n');
+                    });
+            MessageEmbed messageEmbed = Constants.simpleEmbed("Swiper Leaderboard", description.toString());
+
+            event.reply(messageEmbed);
+            return;
+        }
+
+        if ("boost".equalsIgnoreCase(split[1])) {
+            AtomicInteger place = new AtomicInteger(0);
+            StringBuilder description = new StringBuilder();
+
+            swampyUsers.stream()
+                    .sorted((u1, u2) -> Long.compare(u2.getBoostParticipations(), u1.getBoostParticipations()))
+                    .limit(10)
+                    .forEachOrdered(swampyUser -> {
+                        description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
+                                .append(": <@!")
+                                .append(swampyUser.getId())
+                                .append("> - ")
+                                .append(NumberFormat.getIntegerInstance().format(swampyUser.getBoostParticipations()))
+                                .append('\n');
+                    });
+            MessageEmbed messageEmbed = Constants.simpleEmbed("Boost Leaderboard", description.toString());
+
+            event.reply(messageEmbed);
+            return;
+        }
+
+        AtomicInteger place = new AtomicInteger(0);
+        StringBuilder description = new StringBuilder();
+        swampyUsers.stream().filter(u -> {
+            try {
+                Member member = Objects.requireNonNull(event.getGuild().getMemberById(u.getId()));
+
+                return hasRole(member, StringUtils.containsIgnoreCase(split[1], "bastard") ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE);
+            } catch (Exception e) {
+                logger.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);
+                honeybadgerReporter.reportError(e, "unable to lookup user for leaderboard: " + u.getId());
+                return false;
             }
-        }
+        }).sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())).limit(10).forEachOrdered(swampyUser -> {
+            description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
+                    .append(": <@!")
+                    .append(swampyUser.getId())
+                    .append("> - ")
+                    .append(NumberFormat.getIntegerInstance().format(swampyUser.getXp()))
+                    .append('\n');
+        });
 
-        String title;
-        String thumbnail;
-        if (dryBastards >= dryCinnamons && dryBastards >= swampyBastards && dryBastards >= swampyCinnamons) {
-            title = "Dry Bastards Are Leading";
-            thumbnail = Constants.DRY_BASTARDS_CREST;
-        } else if (dryCinnamons >= dryBastards && dryCinnamons >= swampyBastards && dryCinnamons >= swampyCinnamons) {
-            title = "Dry Cinnamon Rolls Are Leading";
-            thumbnail = Constants.DRY_CINNAMON_CREST;
-        } else if (swampyBastards >= dryBastards && swampyBastards >= dryCinnamons && swampyBastards >= swampyCinnamons) {
-            title = "Swampy Bastards Are Leading";
-            thumbnail = Constants.SWAMPY_BASTARDS_CREST;
-        } else {
-            title = "Swampy Cinnamon Rolls Are Leading";
-            thumbnail = Constants.SWAMPY_CINNAMON_CREST;
-        }
+        MessageEmbed messageEmbed = Constants.simpleEmbed(StringUtils.containsIgnoreCase(split[1], "bastard") ? "Bastard Leaderboard" : "Chaos Leaderboard",
+                description.toString());
 
-        MessageEmbed message = new EmbedBuilder()
-                .addField("Dry Bastards", NumberFormat.getIntegerInstance().format(dryBastards), true)
-                .addField("Dry Cinnamon Rolls", NumberFormat.getIntegerInstance().format(dryCinnamons), true)
-                .addBlankField(true)
-                .addField("Swampy Bastards", NumberFormat.getIntegerInstance().format(swampyBastards), true)
-                .addField("Swampy Cinnamon Rolls", NumberFormat.getIntegerInstance().format(swampyCinnamons), true)
-                .addBlankField(true)
-                .setTitle(title)
-                .setThumbnail(thumbnail)
-                .setColor(Constants.COLOR_OF_THE_MONTH)
-                .build();
-
-        event.reply(message);
+        event.reply(messageEmbed);
     }
 
     private void upvote(CommandEvent event) {
@@ -645,7 +701,6 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             discordUser.setSwiperParticipations(0);
             discordUser.setBoostParticipations(0);
             discordUser.setScooterAnkleParticipant(false);
-            discordUser.setAdventCounter(0);
             discordUser = discordUserRepository.save(discordUser);
 
             try {

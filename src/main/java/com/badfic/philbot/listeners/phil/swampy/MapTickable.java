@@ -44,13 +44,7 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
             return;
         }
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
-
-        TextChannel[] channels = new TextChannel[] {
-                philJda.getTextChannelsByName(Constants.DRY_BASTARDS_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.DRY_CINNAMON_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.SWAMPY_BASTARD_CHANNEL, false).get(0),
-                philJda.getTextChannelsByName(Constants.SWAMPY_CINNAMON_CHANNEL, false).get(0)
-        };
+        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
         if (Objects.nonNull(swampyGamesConfig.getMapPhrase())
                 && Objects.nonNull(swampyGamesConfig.getMapTriviaExpiration())
@@ -72,18 +66,10 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
                                 throw new RuntimeException("member not found");
                             }
 
-                            if (isNotParticipating(memberLookedUp)) {
-                                description.append("<@!")
-                                        .append(u.getId())
-                                        .append("> Please get sorted into a house to participate\n");
-                            } else {
-                                futures.add(givePointsToMember(swampyGamesConfig.getMapEventPoints(), memberLookedUp));
-                                description.append("Gave ")
-                                        .append(swampyGamesConfig.getMapEventPoints())
-                                        .append(" points to <@!")
-                                        .append(u.getId())
-                                        .append(">\n");
-                            }
+                            futures.add(givePointsToMember(swampyGamesConfig.getMapEventPoints(), memberLookedUp));
+                            description.append("Gave " + swampyGamesConfig.getMapEventPoints() + " points to <@!")
+                                    .append(u.getId())
+                                    .append(">\n");
                         } catch (Exception e) {
                             logger.error("Failed to give map trivia points to user [id={}]", u.getId(), e);
                             description.append("OOPS: Unable to give points to <@!")
@@ -95,11 +81,7 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
             MessageEmbed messageEmbed = Constants.simpleEmbed("Map Trivia Complete", description.toString());
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                    .thenRun(() -> {
-                        for (TextChannel channel : channels) {
-                            channel.sendMessage(messageEmbed).queue();
-                        }
-                    });
+                    .thenRun(() -> swampysChannel.sendMessage(messageEmbed).queue());
         }
     }
 }
