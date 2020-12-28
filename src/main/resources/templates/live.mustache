@@ -1,0 +1,21 @@
+{{> header}}
+<div class="container">
+  <p>If the player below is not loading, go to <a href="https://live.desdemonawren.com" target="_blank">https://live.desdemonawren.com</a><br/>
+  user: shrek<br/>
+  pass: theswamp</p>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <video id="video"></video>
+  <script>
+    var video = document.getElementById('video');
+    var videoSrc = 'https://live.desdemonawren.com/hls/stream.m3u8';
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = videoSrc;
+    } else if (Hls.isSupported()) {
+        var hls = new Hls();
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+    }
+  </script>
+</div>
+{{> footer}}
