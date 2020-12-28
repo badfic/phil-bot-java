@@ -62,7 +62,9 @@
     var userAvatar = '{{userAvatar}}';
 
     function connect() {
-        var socket = new SockJS('/ws');
+        var socket = new SockJS('/ws', null, {
+            transports: ["xhr-streaming", "xhr-polling"]
+        });
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, onConnected, onError);
