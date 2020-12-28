@@ -1,21 +1,135 @@
 {{> header}}
-<div class="container">
-  <p>If the player below is not loading, go to <a href="https://live.desdemonawren.com" target="_blank">https://live.desdemonawren.com</a><br/>
-  user: shrek<br/>
-  pass: theswamp</p>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Video Player -->
+        <div class="col-8">
+            <script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
+            <video-js id=vid1 class="vjs-default-skin" controls>
+                <source
+                    src="{{hlsStreamLocation}}"
+                    type="application/x-mpegURL">
+            </video-js>
+            <script>
+                var player = videojs('vid1');
+                player.aspectRatio('16:9');
+                // player.fluid(true);
+                player.play();
+            </script>
+        </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <video id="video"></video>
-  <script>
-    var video = document.getElementById('video');
-    var videoSrc = 'https://live.desdemonawren.com/hls/stream.m3u8';
-    if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = videoSrc;
-    } else if (Hls.isSupported()) {
-        var hls = new Hls();
-        hls.loadSource(videoSrc);
-        hls.attachMedia(video);
-    }
-  </script>
+        <!-- Chat -->
+        <div class="col-4" id="chatApp">
+            <div class="alert alert-secondary">
+                [[ status ]]
+            </div>
+            <ul id="messageArea" class="list-unstyled" style="max-height: 65vh; overflow:auto">
+                <li v-for="message in messages" class="media my-4">
+                    <img class="mr-3" :src="message.avatar" width=64 height=64 alt="Avatar">
+                    <div class="media-body">
+                        <h5 class="mt-0 mb-1">[[ message.sender ]]</h5>
+                        [[ message.content ]]
+                    </div>
+                </li>
+            </ul>
+            <form id="messageForm" name="messageForm" nameForm="messageForm">
+                <div class="form-group">
+                    <div class="input-group clearfix">
+                        <input type="text" width="100%" id="message" placeholder="Type a message..." autocomplete="off" class="form-control"/>
+                        <button type="submit" class="primary">Send</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+    var chatApp = new Vue({
+        el: '#chatApp',
+        delimiters: ['[[', ']]'],
+        data: {
+            messages: [],
+            status: "Connecting"
+        },
+        updated: function() {
+            $("#messageArea").scrollTop($("#messageArea")[0].scrollHeight);
+        }
+    });
+
+    var messageForm = document.querySelector('#messageForm');
+    var messageInput = document.querySelector('#message');
+
+    var stompClient = null;
+    var username = '{{username}}';
+    var userAvatar = '{{userAvatar}}';
+
+    function connect() {
+        var socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, onConnected, onError);
+    }
+
+    function onConnected() {
+        stompClient.subscribe('/topic/public', onMessageReceived);
+
+        stompClient.send("/app/chat.addUser",
+            {},
+            JSON.stringify({sender: username, avatar: userAvatar, type: 'JOIN'})
+        );
+
+        chatApp.status = 'Connected!';
+    }
+
+    function onError(error) {
+        chatApp.status = 'Could not connect to chat server. Please refresh this page to try again!';
+    }
+
+    function sendMessage(event) {
+        var messageContent = messageInput.value.trim();
+
+        if (messageContent && stompClient) {
+            var chatMessage = {
+                sender: username,
+                avatar: userAvatar,
+                content: messageInput.value,
+                type: 'CHAT'
+            };
+
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+            messageInput.value = '';
+        }
+        event.preventDefault();
+    }
+
+    function onMessageReceived(payload) {
+        var inboundMessage = JSON.parse(payload.body);
+
+        if (inboundMessage.type === 'JOIN') {
+            chatApp.messages.push({
+                sender: inboundMessage.sender,
+                avatar: inboundMessage.avatar,
+                content: ' just connected'
+            });
+        } else if (inboundMessage.type === 'LEAVE') {
+            chatApp.messages.push({
+                sender: inboundMessage.sender,
+                avatar: inboundMessage.avatar,
+                content: ' just disconnected'
+            });
+        } else {
+            chatApp.messages.push({
+                sender: inboundMessage.sender,
+                avatar: inboundMessage.avatar,
+                content: inboundMessage.content
+            });
+        }
+    }
+
+    messageForm.addEventListener('submit', sendMessage, true);
+    connect();
+</script>
 {{> footer}}

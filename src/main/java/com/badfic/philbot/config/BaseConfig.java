@@ -150,6 +150,9 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     @Value("${TUMBLR_OAUTH_SECRET}")
     public String tumblrOauthSecret;
 
+    @Value("${HLS_STREAM_LOCATION}")
+    public String hlsStreamLocation;
+
     @Bean
     public ScheduledExecutorService childBotExecutor() {
         return Executors.newSingleThreadScheduledExecutor();
