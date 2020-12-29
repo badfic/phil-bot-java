@@ -64,7 +64,11 @@ public class JohnMessageListener extends ListenerAdapter {
             "https://emoji.gg/assets/emoji/8569_ablobmeltsoblove.gif",
             "https://emoji.gg/assets/emoji/2231_ablobhearteyes.gif",
             "https://emoji.gg/assets/emoji/2171_ablobaww.gif",
-            "https://emoji.gg/assets/emoji/1279_Flying_Hearts_Red.gif");
+            "https://emoji.gg/assets/emoji/1279_Flying_Hearts_Red.gif",
+            "https://cdn.discordapp.com/attachments/707453916882665552/793431107289743370/giphy.gif",
+            "https://cdn.discordapp.com/attachments/707453916882665552/793431132963733514/giphy2.gif",
+            "https://cdn.discordapp.com/attachments/707453916882665552/793431157717991464/chimmy.gif",
+            "https://cdn.discordapp.com/attachments/707453916882665552/793431180099452948/tata.gif");
     private static final Set<String> GOOD_BOT = ImmutableSet.of(
             ":D!!!",
             "I know",
