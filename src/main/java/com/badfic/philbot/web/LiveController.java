@@ -27,7 +27,6 @@ public class LiveController extends BaseController {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "The Swamp Live");
         props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
-        props.put("hlsStreamLocation", baseConfig.hlsStreamLocation);
 
         try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
             mustache.execute(stringWriter, props);

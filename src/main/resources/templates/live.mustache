@@ -1,22 +1,33 @@
 {{> header}}
+<style>
+    body {
+      background-color: #000;
+    }
+</style>
 <div class="container-fluid">
-    <div class="row">
+    <div class="row mt-2 ml-1">
         <!-- Video Player -->
         <div class="col-8 embed-responsive embed-responsive-16by9">
-            <iframe
-                src="{{hlsStreamLocation}}"
-                title="The Swamp Live"
-                referrerpolicy="origin"
-                scrolling="no"
-                allowfullscreen>
-            </iframe>
+            <video id="video" controls></video>
         </div>
 
         <!-- Chat -->
         <div class="col-4" id="chatApp">
-            <script id="cid0020000270191618864" data-cfasync="false" async src="//st.chatango.com/js/gz/emb.js" style="width: 100%;height: 100%;">{"handle":"swampwatchparty","arch":"js","styles":{"a":"599111","b":100,"c":"FFFFFF","d":"FFFFFF","k":"599111","l":"599111","m":"599111","n":"FFFFFF","p":"10","q":"599111","r":100,"t":0,"surl":0,"allowpm":0,"cnrs":"0.35","fwtickm":1}}</script>
+            <script id="cid0020000270215810013" data-cfasync="false" async src="//st.chatango.com/js/gz/emb.js" style="width: 100%;height: 100%;">{"handle":"swampwatchparty","arch":"js","styles":{"a":"444444","b":100,"c":"FFFFFF","d":"FFFFFF","e":"000000","g":"ffffff","h":"000000","j":"ffffff","k":"ffffff","l":"222222","m":"000000","n":"FFFFFF","p":"10","q":"333333","r":100,"t":0,"allowpm":0,"cnrs":"0.35"}}</script>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+    var video = document.getElementById('video');
+    var videoSrc = window.location.origin + '/hls/stream.m3u8';
+    if (Hls.isSupported()) {
+        var hls = new Hls();
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = videoSrc;
+    }
+</script>
 {{> footer}}
