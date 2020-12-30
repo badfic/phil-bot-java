@@ -251,6 +251,9 @@ public class SwampyGamesConfig {
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
     private String trickOrTreatTrickEmoji = "\uD83D\uDEA7";
 
+    @Column
+    private long memberCountChannel;
+
     public Short getId() {
         return id;
     }
@@ -737,5 +740,13 @@ public class SwampyGamesConfig {
 
     public void setTrickOrTreatTrickEmoji(String trickOrTreatTrickEmoji) {
         this.trickOrTreatTrickEmoji = trickOrTreatTrickEmoji;
+    }
+
+    public void setMemberCountChannel(long memberCountChannel) {
+        this.memberCountChannel = memberCountChannel;
+    }
+
+    public long getMemberCountChannel() {
+        return memberCountChannel;
     }
 }

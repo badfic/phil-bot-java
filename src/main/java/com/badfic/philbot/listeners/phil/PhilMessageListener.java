@@ -8,6 +8,7 @@ import com.badfic.philbot.listeners.antonia.AntoniaMessageListener;
 import com.badfic.philbot.listeners.behrad.BehradMessageListener;
 import com.badfic.philbot.listeners.john.JohnMessageListener;
 import com.badfic.philbot.listeners.keanu.KeanuMessageListener;
+import com.badfic.philbot.listeners.phil.swampy.MemberCount;
 import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -25,6 +26,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
@@ -91,6 +93,10 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     @Resource
     @Lazy
     private Ao3MetadataParser ao3MetadataParser;
+
+    @Resource
+    @Lazy
+    private MemberCount memberCount;
 
     @Resource(name = "philCommandClient")
     private CommandClient philCommandClient;
@@ -193,6 +199,11 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
     }
 
     @Override
+    public void onGuildJoin(@NotNull GuildJoinEvent event) {
+        memberCount.updateCount();
+    }
+
+    @Override
     public void onGuildBan(@NotNull GuildBanEvent event) {
         begone(event.getUser(), event);
     }
@@ -206,6 +217,7 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
         swampyCommand.removeFromGames(user.getId());
         Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("event-reminders", false).stream().findFirst();
         announcementsChannel.ifPresent(channel -> channel.sendMessage("Begone Bot " + user.getAsMention()).queue());
+        memberCount.updateCount();
     }
 
 }

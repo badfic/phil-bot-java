@@ -29,6 +29,10 @@ public class UpdateIntroCache extends Command implements PhilMarker {
     @Lazy
     private JDA philJda;
 
+    @Resource
+    @Lazy
+    private MemberCount memberCount;
+
     private final DiscordUserRepository discordUserRepository;
 
     @Autowired
@@ -93,7 +97,11 @@ public class UpdateIntroCache extends Command implements PhilMarker {
             }
         }
 
-        debug("Successfully updated member introductions cache");
+        if (memberCount.updateCount()) {
+            debug("Successfully updated member introductions cache and updated member count channel");
+        } else {
+            debug("Successfully updated member introductions cache, failed to update member count channel");
+        }
     }
 
     private void debug(String msg) {
