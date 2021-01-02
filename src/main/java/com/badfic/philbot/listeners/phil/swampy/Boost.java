@@ -26,10 +26,10 @@ public class Boost extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final Set<String> BOOST_WORDS = ImmutableSet.of(
-            "butter", "shortening", "lard", "ghee", "oleo", "olio", "spread", "family", "feet", "foot", "cranberry", "bird", "pie", "stonks", "butters",
-            "jingle", "jolly", "festivus", "santa", "grinch", "scrooge", "hanukkah", "latkes", "dreidel", "festival", "presents", "menorah", "pajamas",
-            "pyjamas", "jimjams", "crackers", "bauble", "buble", "advent", "druid", "shrekmas", "swampmas", "snoopmas", "holly", "krampus", "mittens",
-            "yuletide", "naughty", "nice", "nutcracker", "sleigh", "solstice", "yule", "yeet", "merry", "chrysler", "missouri", "rat");
+            "butter", "computer", "victoria", "oleo", "olio", "books", "reading", "possum", "foot", "food", "bird", "pie", "stonks",
+            "glee", "robot", "birthday", "lena", "santiago", "grinch", "pasta", "riverdale", "memes", "shrimp", "snoop", "boost", "pajamas",
+            "pyjamas", "jimjams", "word", "kitten", "popcorn", "lasagna", "rigatoni", "swampmas", "mittens", "cold", "winter",
+            "naughty", "nice", "nut", "laugh", "happy", "yeet", "missouri", "rat", "kermit");
 
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;

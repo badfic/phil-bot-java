@@ -17,14 +17,13 @@ public interface Constants {
     String EIGHTEEN_PLUS_ROLE = "18+";
     String CHAOS_CHILDREN_ROLE = "Chaos Children";
     String SWAMPYS_CHANNEL = "the-swampys";
-    String GIVEAWAY_CHANNEL = "giveaways";
     String MEGA_HELL_CHANNEL = "mega-hell";
     String MEGA_HELL_ROLE = "in mega hell";
     String TEST_CHANNEL = "test-channel";
 
     String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
 
-    Color COLOR_OF_THE_MONTH = new Color(225, 168, 0);
+    Color COLOR_OF_THE_MONTH = new Color(67, 177, 245);
     Color SWAMP_GREEN = new Color(89, 145, 17);
 
     static <T> T pickRandom(Collection<T> collection) {

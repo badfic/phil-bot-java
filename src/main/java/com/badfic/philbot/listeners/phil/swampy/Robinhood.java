@@ -36,7 +36,7 @@ public class Robinhood extends BaseSwampy implements PhilMarker {
         doRobinhood(true);
     }
 
-    @Scheduled(cron = "0 15 2 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 9 2 * * ?", zone = "GMT")
     public void robinhood() {
         doRobinhood(false);
     }
