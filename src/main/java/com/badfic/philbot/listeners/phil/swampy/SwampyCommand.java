@@ -47,9 +47,9 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> CHRISTMAS_SLOTS = ImmutableSet.of(
-            "\uD83C\uDF84", "\uD83C\uDF85", "\uD83E\uDD36", "\uD83C\uDF81",
-            "\uD83D\uDD4E", "\uD83C\uDF80", "\uD83E\uDDE8", "\uD83E\uDDC8",
-            "\uD83C\uDF6A", "\uD83E\uDD5B", "⛄", "❄️"
+            "\uD83D\uDC2E", "\uD83D\uDC37", "\uD83E\uDD99", "\uD83D\uDC39",
+            "\uD83D\uDC3F️", "\uD83D\uDC22", "\uD83D\uDC38", "\uD83D\uDC00",
+            "\uD83E\uDD92", "\uD83D\uDC36", "\uD83D\uDC2F", "\uD83D\uDC31"
     );
 
     // volatile state
@@ -62,7 +62,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         aliases = new String[] {
                 "swamp", "bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simp", "simpy", "shrimp", "shrimpy", "shremp",
                 "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek", "billy",
-                "deer", "hot", "frosty", "glogg", "beam", "oof", "booty", "love", "chuck", "farm", "nut"};
+                "deer", "hot", "frosty", "glogg", "beam", "oof", "booty", "love", "chuck", "farm", "nut", "rat", "giraffe", "possum", "lena", "santiago",
+                "riverdale"};
         help =
                 "`!!swampy` aka... `" + Arrays.toString(aliases) + "` HELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +

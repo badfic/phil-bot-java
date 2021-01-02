@@ -36,7 +36,7 @@ public class Taxes extends BaseSwampy implements PhilMarker {
         doTaxes(true);
     }
 
-    @Scheduled(cron = "0 9 2 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 15 2 * * ?", zone = "GMT")
     public void taxes() {
         doTaxes(false);
     }
