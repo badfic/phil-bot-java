@@ -25,6 +25,9 @@ public class SwampyGamesConfig {
     @Column
     private String noSwipingPhrase;
 
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime swiperExpiration;
+
     @Column
     private String boostPhrase;
 
@@ -42,6 +45,9 @@ public class SwampyGamesConfig {
 
     @Column
     private UUID triviaGuid;
+
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime triviaExpiration;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
@@ -286,6 +292,14 @@ public class SwampyGamesConfig {
         this.noSwipingPhrase = noSwipingPhrase;
     }
 
+    public LocalDateTime getSwiperExpiration() {
+        return swiperExpiration;
+    }
+
+    public void setSwiperExpiration(LocalDateTime swiperExpiration) {
+        this.swiperExpiration = swiperExpiration;
+    }
+
     public String getBoostPhrase() {
         return boostPhrase;
     }
@@ -332,6 +346,14 @@ public class SwampyGamesConfig {
 
     public void setTriviaGuid(UUID triviaGuid) {
         this.triviaGuid = triviaGuid;
+    }
+
+    public LocalDateTime getTriviaExpiration() {
+        return triviaExpiration;
+    }
+
+    public void setTriviaExpiration(LocalDateTime triviaExpiration) {
+        this.triviaExpiration = triviaExpiration;
     }
 
     public int getNormalMsgPoints() {

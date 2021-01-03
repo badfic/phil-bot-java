@@ -8,10 +8,10 @@ import com.google.common.collect.ImmutableMap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -25,7 +25,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // TODO: Investigate putting these in SwampyGamesConfig table
-    private static final Map<String, TheSwiper> SWIPERS = ImmutableMap.<String, TheSwiper>builder()
+    public static final Map<String, TheSwiper> SWIPERS = ImmutableMap.<String, TheSwiper>builder()
             .put("Swiper No Swiping", new TheSwiper(
                     "Swiper No Swiping",
                     "Swiper Was Spotted Nearby",
@@ -84,7 +84,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
             ))
             .build();
 
-    private static final String SPIDERMAN_PNG = "https://cdn.discordapp.com/attachments/707453916882665552/769837667617079316/spiderman.png";
+    public static final String SPIDERMAN_PNG = "https://cdn.discordapp.com/attachments/707453916882665552/769837667617079316/spiderman.png";
 
     public Swiper() {
         requiredRole = Constants.ADMIN_ROLE;
@@ -94,83 +94,21 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
     @Override
     public void execute(CommandEvent event) {
-        if (baseConfig.ownerId.equalsIgnoreCase(event.getAuthor().getId())) {
-            doSwiper();
-        } else {
-            event.replyError("Manually triggering swiper has been disabled.");
-        }
+        doSwiper();
     }
 
-    @Scheduled(cron = "0 20,35 0,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 20 0,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
     public void swiper() {
         doSwiper();
     }
 
     private void doSwiper() {
-        Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
-        if (!optionalConfig.isPresent()) {
-            return;
-        }
-        SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
         if (swampyGamesConfig.getSwiperAwaiting() != null) {
-            TheSwiper theSwiper = SWIPERS.get(swampyGamesConfig.getNoSwipingPhrase());
-
-            swampyGamesConfig.setNoSwipingPhrase(null);
-
-            Optional<DiscordUser> victim = discordUserRepository.findById(swampyGamesConfig.getSwiperAwaiting());
-            swampyGamesConfig.setSwiperAwaiting(null);
-
-            MessageEmbed message = Constants.simpleEmbed(theSwiper.getNoSwipingPhrase(),
-                    "Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points",
-                    theSwiper.getSwiperLostImage());
-
-            if (victim.isPresent()) {
-                if (swampyGamesConfig.getSwiperSavior() != null) {
-                    try {
-                        Optional<DiscordUser> savior = discordUserRepository.findById(swampyGamesConfig.getSwiperSavior());
-                        swampyGamesConfig.setSwiperSavior(null);
-
-                        String image = savior.isPresent() && savior.get().getId().equalsIgnoreCase(victim.get().getId())
-                                ? SPIDERMAN_PNG
-                                : theSwiper.getSwiperLostImage();
-
-                        message = Constants.simpleEmbed(theSwiper.getNoSwipingPhrase(),
-                                "Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
-                                        + "> scared them away from <@!" + victim.get().getId() + ">",
-                                image);
-
-                        if (savior.isPresent()) {
-                            savior.get().setSwiperParticipations(savior.get().getSwiperParticipations() + 1);
-                            discordUserRepository.save(savior.get());
-                        }
-                    } catch (Exception e) {
-                        logger.error("Exception with swiper savior branch", e);
-                        honeybadgerReporter.reportError(e, "Exception during swiper savior logic");
-                    }
-                } else {
-                    try {
-                        Member memberById = philJda.getGuilds().get(0).getMemberById(victim.get().getId());
-
-                        if (memberById != null) {
-                            takePointsFromMember(swampyGamesConfig.getSwiperPoints(), memberById);
-                            message = Constants.simpleEmbed(theSwiper.getSwiperWonPhrase(),
-                                    "You didn't save <@!" + victim.get().getId() + "> in time, they lost " + swampyGamesConfig.getSwiperPoints() + " points",
-                                    theSwiper.getSwiperWonImage());
-                        }
-                    } catch (Exception e) {
-                        logger.error("Exception looking up swiper victim [id={}] after they were not saved", victim.get().getId(), e);
-                        honeybadgerReporter.reportError(e, "Exception looking up swiper victim after they were not saved: " + victim.get().getId());
-                    }
-                }
-            }
-
-            swampyGamesConfigRepository.save(swampyGamesConfig);
-
-            swampysChannel.sendMessage(message).queue();
-
+            swampysChannel.sendMessage("There is currently a swiper running, you cannot trigger another").queue();
             return;
         }
 
@@ -199,6 +137,8 @@ public class Swiper extends BaseSwampy implements PhilMarker {
 
         swampyGamesConfig.setSwiperAwaiting(member.getId());
         swampyGamesConfig.setNoSwipingPhrase(theSwiper.getNoSwipingPhrase());
+        swampyGamesConfig.setSwiperSavior(null);
+        swampyGamesConfig.setSwiperExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
         swampyGamesConfig = swampyGamesConfigRepository.save(swampyGamesConfig);
 
         String description = "They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
@@ -209,7 +149,7 @@ public class Swiper extends BaseSwampy implements PhilMarker {
         swampysChannel.sendMessage(message).queue();
     }
 
-    private static class TheSwiper {
+    public static class TheSwiper {
         private final String noSwipingPhrase;
         private final String spottedPhrase;
         private final String spottedImage;

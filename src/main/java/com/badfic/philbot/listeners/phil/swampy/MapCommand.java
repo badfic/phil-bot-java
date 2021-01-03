@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.PostConstruct;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -21,6 +20,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 
@@ -29,7 +29,7 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private List<MapQuestionJson> questions;
 
-    public MapCommand() throws Exception {
+    public MapCommand() {
         name = "map";
         help = "!!map\nTo trigger a Map trivia question that will last 15 minutes";
         requiredRole = Constants.ADMIN_ROLE;
@@ -42,17 +42,18 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
 
     @Override
     protected void execute(CommandEvent event) {
-        Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
-        if (!optionalConfig.isPresent()) {
-            return;
-        }
-        SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
+        doMap();
+    }
+
+    @Scheduled(cron = "0 37 1,5,9,13,17,21 * * ?", zone = "GMT")
+    public void doMap() {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0);
 
         if (swampyGamesConfig.getMapPhrase() != null) {
-            event.replyError("There is currently a map trivia running, you can't trigger another.");
+            swampysChannel.sendMessage("There is currently a map trivia running, you can't trigger another.").queue();
             return;
         }
 
@@ -104,7 +105,7 @@ public class MapCommand extends BaseSwampy implements PhilMarker {
             } catch (Exception e) {
                 logger.error("Failed to load [image={}] for map trivia", image, e);
                 honeybadgerReporter.reportError(e, null, "Failed to load image for map trivia: " + image);
-                event.replyError("Failed to load image for map trivia");
+                swampysChannel.sendMessage("Failed to load image for map trivia").queue();
             }
         } else {
             swampysChannel.sendMessage(Constants.simpleEmbed("Map Trivia", description)).queue();
