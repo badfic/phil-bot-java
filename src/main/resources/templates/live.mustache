@@ -22,16 +22,16 @@
 <div class="container-fluid">
     <div class="row mt-2 ml-1">
         <!-- Video Player -->
-        <div class="col-8">
+        <div class="col-12 col-sm-8">
             <div id="player"></div>
         </div>
 
         <!-- Chat -->
-        <div class="col-4" id="chatApp">
+        <div class="col-12 col-sm-4" id="chatApp">
             <div class="alert alert-secondary bg-dark text-light">
                 [[ status ]] <a href="/chat-popout" target="_blank"><svg class="icon icon-external-link float-right"><use xlink:href="#icon-external-link"></use></svg></a>
             </div>
-            <ul id="messageArea" class="list-unstyled bg-dark text-light vh-100" style="max-height: 64vh; overflow:auto">
+            <ul id="messageArea" class="list-unstyled bg-dark text-light vh-100" style="max-height: 51vh; overflow:auto">
                 <li v-for="message in messages" class="media my-3 ml-1 bg-dark text-light">
                     <img class="mr-3" :src="message.avatar" width=50 height=50 alt="Avatar">
                     <div class="media-body bg-dark text-light text-break">

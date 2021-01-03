@@ -10,7 +10,7 @@
         delimiters: ['[[', ']]'],
         data: {
             messages: [],
-            status: "Connecting"
+            status: "Chat Connecting..."
         },
         updated: function() {
             $("#messageArea").scrollTop($("#messageArea")[0].scrollHeight);
@@ -42,13 +42,13 @@
     };
 
     stompClient.onStompError = function(frame) {
-        chatApp.status = 'Received error from chat server. ' + frame.headers['message'] + '. If chat appears broken, try refreshing the page';
+        chatApp.status = 'Chat Reconnecting...';
         console.log('Broker reported error: ' + frame.headers['message']);
         console.log('Additional error details: ' + frame.body);
     };
 
     stompClient.onWebSocketClose = function(frame) {
-        chatApp.status = 'Chat server has disconnected. It should attempt to reconnect automatically. If chat remains broken, try refreshing the page';
+        chatApp.status = 'Chat Reconnecting...';
     };
 
     function onMessageReceived(payload) {
