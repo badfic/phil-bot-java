@@ -1,52 +1,9 @@
-{{> header}}
-<style>
-    body {
-      background-color: #000;
-    }
-</style>
-<div class="container-fluid">
-    <div class="row mt-2 ml-1">
-        <!-- Video Player -->
-        <div class="col-8">
-            <div id="player"></div>
-        </div>
-
-        <!-- Chat -->
-        <div class="col-4" id="chatApp">
-            <div class="alert alert-secondary bg-dark text-light">
-                [[ status ]]
-            </div>
-            <ul id="messageArea" class="list-unstyled bg-dark text-light vh-100" style="max-height: 64vh; overflow:auto">
-                <li v-for="message in messages" class="media my-3 ml-1 bg-dark text-light">
-                    <img class="mr-3" :src="message.avatar" width=50 height=50 alt="Avatar">
-                    <div class="media-body bg-dark text-light text-break">
-                        <h5 class="mt-0 mb-1 text-light font-weight-bold">[[ message.sender ]]</h5>
-                        [[ message.content ]]
-                    </div>
-                </li>
-            </ul>
-            <form id="messageForm" name="messageForm" nameForm="messageForm">
-                <div class="form-group bg-dark text-light">
-                    <div class="input-group clearfix  bg-dark text-light">
-                        <input type="text" width="100%" id="message" placeholder="Type a message..." autocomplete="off" class="form-control  bg-dark text-light"/>
-                        <button type="submit" class="primary">Send</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-{{> playerjs}}
-
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.0.0/bundles/stomp.umd.min.js" integrity="sha256-03r1vLBsGLVOOrIHV+MpvueI7ULQABO9d2hWhEFgwD4=" crossorigin="anonymous"></script>
 
 <script>
     var username = '{{nickname}}';
     var userAvatar = '{{userAvatar}}';
-
-    var player = new Playerjs({id: "player", file: window.location.origin + '/hls/stream.m3u8', poster: "https://cdn.discordapp.com/attachments/323666308107599872/793416821826519070/swampy_watch_party.png"});
 
     var chatApp = new Vue({
         el: '#chatApp',
@@ -138,5 +95,3 @@
     messageForm.addEventListener('submit', sendMessage, true);
     stompClient.activate();
 </script>
-
-{{> footer}}

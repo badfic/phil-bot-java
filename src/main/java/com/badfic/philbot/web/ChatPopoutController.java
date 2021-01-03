@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class LiveBetaController extends BaseController {
+public class ChatPopoutController extends BaseController {
 
     private Mustache mustache;
 
     @PostConstruct
     public void init() {
-        mustache = mustacheFactory.compile("live-beta.mustache");
+        mustache = mustacheFactory.compile("chat-popout.mustache");
     }
 
-    @GetMapping(value = "/live-beta", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/chat-popout", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> get(HttpSession httpSession) throws Exception {
         checkSession(httpSession, false);
 
@@ -36,8 +36,7 @@ public class LiveBetaController extends BaseController {
         String userAvatar = member.getUser().getEffectiveAvatarUrl();
 
         Map<String, Object> props = new HashMap<>();
-        props.put("pageTitle", "The Swamp Live");
-        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
+        props.put("pageTitle", "The Swamp Live Chat");
         props.put("nickname", member.getEffectiveName());
         props.put("userAvatar", userAvatar);
 

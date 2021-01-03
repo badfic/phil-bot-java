@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{pageTitle}}</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="col-12" id="chatApp">
+        <div class="alert alert-secondary bg-dark text-light">
+            [[ status ]]
+        </div>
+        <ul id="messageArea" class="list-unstyled bg-dark text-light vh-100" style="max-height: 64vh; overflow:auto">
+            <li v-for="message in messages" class="media my-3 ml-1 bg-dark text-light">
+                <img class="mr-3" :src="message.avatar" width=50 height=50 alt="Avatar">
+                <div class="media-body bg-dark text-light text-break">
+                    <h5 class="mt-0 mb-1 text-light font-weight-bold">[[ message.sender ]]</h5>
+                    [[ message.content ]]
+                </div>
+            </li>
+        </ul>
+        <form id="messageForm" name="messageForm" nameForm="messageForm">
+            <div class="form-group bg-dark text-light">
+                <div class="input-group clearfix  bg-dark text-light">
+                    <input type="text" width="100%" id="message" placeholder="Type a message..." autocomplete="off" class="form-control  bg-dark text-light"/>
+                    <button type="submit" class="primary">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{> chatappjs}}
+{{> footer}}
