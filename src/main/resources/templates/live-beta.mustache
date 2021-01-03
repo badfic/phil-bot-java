@@ -39,6 +39,7 @@
 
 {{> playerjs}}
 
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js" integrity="sha256-FqcTDrWjDCeZk5r2hLGz4OWjwrWV3ERI5+kWR1DokZA=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.0.0/bundles/stomp.umd.min.js" integrity="sha256-03r1vLBsGLVOOrIHV+MpvueI7ULQABO9d2hWhEFgwD4=" crossorigin="anonymous"></script>
 
@@ -64,7 +65,11 @@
     var messageInput = document.querySelector('#message');
 
     var stompClient = new StompJs.Client({
-        brokerURL: (window.location.protocol.includes('s') ? 'wss://' : 'ws://') + window.location.host + '/ws',
+        webSocketFactory: function() {
+            return new SockJS(window.location.origin + '/ws', null, {
+                transports: ["xhr-streaming", "xhr-polling"]
+            });
+        },
         debug: function(str) {
             console.log(str);
         },
