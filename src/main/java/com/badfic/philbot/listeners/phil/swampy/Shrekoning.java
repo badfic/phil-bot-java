@@ -36,7 +36,7 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
         shrekoning();
     }
 
-    @Scheduled(cron = "0 47 4 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 47 2 * * ?", zone = "GMT")
     public void shrekoning() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         if (swampyGamesConfig == null) {

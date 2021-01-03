@@ -1,25 +1,19 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
-import com.badfic.philbot.data.phil.SwampyGamesConfigRepository;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import javax.annotation.Resource;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,23 +21,9 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Resource
-    private DiscordUserRepository discordUserRepository;
-
-    @Resource
-    private SwampyGamesConfigRepository swampyGamesConfigRepository;
-
-    @Resource(name = "philJda")
-    @Lazy
-    private JDA philJda;
-
     @Override
     public void tick() throws Exception {
-        Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
-        if (!optionalConfig.isPresent()) {
-            return;
-        }
-        SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
         if (Objects.nonNull(swampyGamesConfig.getMapPhrase())

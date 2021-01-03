@@ -11,7 +11,6 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -49,11 +48,7 @@ public class Stonks extends BaseSwampy implements PhilMarker {
 
     @Scheduled(cron = "0 36 2 * * ?", zone = "GMT")
     public void stonks() {
-        Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
-        if (!optionalConfig.isPresent()) {
-            return;
-        }
-        SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         List<DiscordUser> allUsers = discordUserRepository.findAll();
 

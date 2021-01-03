@@ -9,7 +9,6 @@ import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
@@ -48,11 +47,7 @@ public class Boost extends BaseSwampy implements PhilMarker {
     }
 
     private void doBoost(boolean force) {
-        Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
-        if (!optionalConfig.isPresent()) {
-            return;
-        }
-        SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
