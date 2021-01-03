@@ -1,0 +1,142 @@
+{{> header}}
+<style>
+    body {
+      background-color: #000;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row mt-2 ml-1">
+        <!-- Video Player -->
+        <div class="col-8">
+            <div id="player"></div>
+        </div>
+
+        <!-- Chat -->
+        <div class="col-4" id="chatApp">
+            <div class="alert alert-secondary bg-dark text-light">
+                [[ status ]]
+            </div>
+            <ul id="messageArea" class="list-unstyled bg-dark text-light vh-100" style="max-height: 64vh; overflow:auto">
+                <li v-for="message in messages" class="media my-4 bg-dark text-light">
+                    <img class="mr-3" :src="message.avatar" width=64 height=64 alt="Avatar">
+                    <div class="media-body bg-dark text-light">
+                        <h5 class="mt-0 mb-1 text-light font-weight-bold">[[ message.sender ]]</h5>
+                        [[ message.content ]]
+                    </div>
+                </li>
+            </ul>
+            <form id="messageForm" name="messageForm" nameForm="messageForm">
+                <div class="form-group bg-dark text-light">
+                    <div class="input-group clearfix  bg-dark text-light">
+                        <input type="text" width="100%" id="message" placeholder="Type a message..." autocomplete="off" class="form-control  bg-dark text-light"/>
+                        <button type="submit" class="primary">Send</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{> playerjs}}
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js" integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.0.0/bundles/stomp.umd.min.js" integrity="sha256-03r1vLBsGLVOOrIHV+MpvueI7ULQABO9d2hWhEFgwD4=" crossorigin="anonymous"></script>
+
+<script>
+    var username = '{{username}}';
+    var userAvatar = '{{userAvatar}}';
+
+    var player = new Playerjs({id: "player", file: window.location.origin + '/hls/stream.m3u8', poster: "https://cdn.discordapp.com/attachments/323666308107599872/793416821826519070/swampy_watch_party.png"});
+
+    var chatApp = new Vue({
+        el: '#chatApp',
+        delimiters: ['[[', ']]'],
+        data: {
+            messages: [],
+            status: "Connecting"
+        },
+        updated: function() {
+            $("#messageArea").scrollTop($("#messageArea")[0].scrollHeight);
+        }
+    });
+
+    var messageForm = document.querySelector('#messageForm');
+    var messageInput = document.querySelector('#message');
+
+    var stompClient = new StompJs.Client({
+        brokerURL: (window.location.protocol.includes('s') ? 'wss://' : 'ws://') + window.location.host + '/ws',
+        debug: function(str) {
+            console.log(str);
+        },
+        reconnectDelay: 4000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000
+    });
+
+    stompClient.onConnect = function(frame) {
+        stompClient.subscribe('/topic/public', onMessageReceived);
+
+        stompClient.publish({
+            destination: "/app/chat.addUser",
+            body: JSON.stringify({sender: username, avatar: userAvatar, type: 'JOIN'})
+        });
+
+        chatApp.status = 'Chat Connected!';
+    };
+
+    stompClient.onStompError = function(frame) {
+        chatApp.status = 'Received error from chat server. ' + frame.headers['message'] + '. If chat appears broken, try refreshing the page';
+        console.log('Broker reported error: ' + frame.headers['message']);
+        console.log('Additional error details: ' + frame.body);
+    };
+
+    stompClient.onWebSocketClose = function(frame) {
+        chatApp.status = 'Chat server has disconnected. It should attempt to reconnect automatically. If chat remains broken, try refreshing the page';
+    };
+
+    function onMessageReceived(payload) {
+        var inboundMessage = JSON.parse(payload.body);
+        if (inboundMessage.type === 'JOIN') {
+            chatApp.messages.push({
+                sender: inboundMessage.sender,
+                avatar: inboundMessage.avatar,
+                content: ' just connected'
+            });
+        } else if (inboundMessage.type === 'LEAVE') {
+            chatApp.messages.push({
+                sender: inboundMessage.sender,
+                avatar: inboundMessage.avatar,
+                content: ' just disconnected'
+            });
+        } else {
+            chatApp.messages.push({
+                sender: inboundMessage.sender,
+                avatar: inboundMessage.avatar,
+                content: inboundMessage.content
+            });
+        }
+    }
+
+    function sendMessage(event) {
+        var messageContent = messageInput.value.trim();
+        if (messageContent) {
+            var chatMessage = {
+                sender: username,
+                avatar: userAvatar,
+                content: messageInput.value,
+                type: 'CHAT'
+            };
+            stompClient.publish({
+                destination: "/app/chat.sendMessage",
+                body: JSON.stringify(chatMessage)
+            });
+            messageInput.value = '';
+        }
+        event.preventDefault();
+    }
+
+    messageForm.addEventListener('submit', sendMessage, true);
+    stompClient.activate();
+</script>
+
+{{> footer}}
