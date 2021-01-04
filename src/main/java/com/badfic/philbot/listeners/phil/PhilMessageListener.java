@@ -12,6 +12,8 @@ import com.badfic.philbot.listeners.phil.swampy.MemberCount;
 import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Optional;
@@ -35,6 +37,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -46,8 +50,12 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
             .maximumSize(200)
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .build();
-    private static final Pattern PHIL_PATTERN = Pattern.compile("\\b(phil|klemmer|phellen|cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PHIL_PATTERN = Constants.compileWords("phil|klemmer|phellen|cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam");
     private static final Pattern AO3_PATTERN = Pattern.compile("^(?:http(s)?://)?(archiveofourown\\.org/works/)([0-9]+).*$", Pattern.CASE_INSENSITIVE);
+    private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
+            .put("594740276568784906", ImmutablePair.of(Constants.compileWords("hubby"), "Hi boo"))
+            .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
+            .build();
 
     @Resource
     @Lazy
@@ -121,6 +129,8 @@ public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
         if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {
             return;
         }
+
+        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
 
         if (AO3_PATTERN.matcher(msgContent).find()) {
             ao3MetadataParser.parseLink(msgContent, event.getChannel().getName());

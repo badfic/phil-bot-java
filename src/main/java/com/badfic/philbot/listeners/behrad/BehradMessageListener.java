@@ -1,10 +1,15 @@
 package com.badfic.philbot.listeners.behrad;
 
+import com.badfic.philbot.config.Constants;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +17,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class BehradMessageListener extends ListenerAdapter {
 
-    private static final Pattern BEHRAD_PATTERN = Pattern.compile("\\b(behrad|shayan|sobhian|marijuana|weed|420|stoned|stoner|kush|hey b|sup sloth)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern BEHRAD_PATTERN = Constants.compileWords("behrad|shayan|sobhian|marijuana|weed|420|stoned|stoner|kush|hey b|sup sloth");
+    private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
+            .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
+            .build();
 
     private final BehradCommand behradCommand;
 
@@ -28,6 +36,8 @@ public class BehradMessageListener extends ListenerAdapter {
         if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {
             return;
         }
+
+        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
 
         if (BEHRAD_PATTERN.matcher(msgContent).find()) {
             behradCommand.execute(new CommandEvent(event, null, null));

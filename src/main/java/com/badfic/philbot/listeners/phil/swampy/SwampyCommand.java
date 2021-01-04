@@ -38,7 +38,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // soft point bans
-    private static final Pattern NO_NO_WORDS = Pattern.compile("\\b(nut|nice|simp|rep|daddy)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NO_NO_WORDS = Constants.compileWords("nut|nice|simp|rep|daddy");
 
     // emoji
     public static final String[] LEADERBOARD_MEDALS = {

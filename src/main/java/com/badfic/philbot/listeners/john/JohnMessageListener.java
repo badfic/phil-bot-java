@@ -5,7 +5,9 @@ import com.badfic.philbot.data.phil.Reminder;
 import com.badfic.philbot.data.phil.ReminderRepository;
 import com.badfic.philbot.data.phil.SnarkyReminderResponse;
 import com.badfic.philbot.data.phil.SnarkyReminderResponseRepository;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.lang.invoke.MethodHandles;
@@ -33,7 +35,7 @@ import org.springframework.stereotype.Service;
 public class JohnMessageListener extends ListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final Pattern JOHN_PATTERN = Pattern.compile("\\b(john|constantine|johnno|johnny|hellblazer)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern JOHN_PATTERN = Constants.compileWords("john|constantine|johnno|johnny|hellblazer");
     private static final Pattern REMINDER_PATTER = Pattern.compile("\\b(remind me in |remind <@![0-9]+> in )[0-9]+\\b", Pattern.CASE_INSENSITIVE);
     private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
     private static final Set<String> UWU = ImmutableSet.of(
@@ -93,6 +95,9 @@ public class JohnMessageListener extends ListenerAdapter {
             "https://emoji.gg/assets/emoji/1554_ablobderpyhappy.gif",
             "https://emoji.gg/assets/emoji/8783_ablobhop.gif"
     );
+    private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
+            .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
+            .build();
 
     @Resource
     private JohnCommand johnCommand;
@@ -135,6 +140,8 @@ public class JohnMessageListener extends ListenerAdapter {
             addReminder(event.getMessage());
             return;
         }
+
+        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
 
         if ("ayy".equalsIgnoreCase(msgContent)) {
             johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage("lmao").queue();

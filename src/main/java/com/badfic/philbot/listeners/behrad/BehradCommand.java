@@ -46,9 +46,9 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> impl
             "https://gfycat.com/flatgraveharborporpoise-sloth",
             "https://gfycat.com/accomplishedinstructivefish"
     );
-    private static final Pattern NAME_PATTERN = Pattern.compile("\\b(shayan|sobhian)\\b", Pattern.CASE_INSENSITIVE);
-    private static final Pattern WEED_PATTERN = Pattern.compile("\\b(marijuana|weed|420|stoned|high|stoner|kush)\\b", Pattern.CASE_INSENSITIVE);
-    private static final Pattern SLOTH_PATTERN = Pattern.compile("\\b(sup sloth)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NAME_PATTERN = Constants.compileWords("shayan|sobhian");
+    private static final Pattern WEED_PATTERN = Constants.compileWords("marijuana|weed|420|stoned|high|stoner|kush");
+    private static final Pattern SLOTH_PATTERN = Constants.compileWords("sup sloth");
 
     @Resource(name = "behradJda")
     @Lazy
