@@ -1,15 +1,21 @@
 package com.badfic.philbot.config;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import java.awt.Color;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Pattern;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 public interface Constants {
     String ADMIN_ROLE = "Queens of the Castle";
@@ -40,6 +46,22 @@ public interface Constants {
                 .substring(2)
                 .replaceAll("(\\d[HMS])(?!$)", "$1 ")
                 .toLowerCase();
+    }
+
+    static Pattern compileWords(String s) {
+        return Pattern.compile("\\b(" + s + ")\\b", Pattern.CASE_INSENSITIVE);
+    }
+
+    static void checkUserTriggerWords(MessageReceivedEvent event, Multimap<String, Pair<Pattern, String>> userTriggerWords) {
+        Collection<Pair<Pattern, String>> userTriggers = userTriggerWords.get(event.getAuthor().getId());
+        if (CollectionUtils.isNotEmpty(userTriggers)) {
+            Optional<String> match = userTriggers.stream().filter(t -> t.getLeft().matcher(event.getMessage().getContentRaw()).find()).map(Pair::getRight).findAny();
+
+            if (match.isPresent()) {
+                event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                        .sendMessage(match.get()).queue();
+            }
+        }
     }
 
     static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {

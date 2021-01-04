@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> implements PhilMarker {
 
-    private static final Pattern PUPPY_PATTERN = Pattern.compile("\\b(puppy|puppies|pupper|doggo|doge)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PUPPY_PATTERN = Constants.compileWords("puppy|puppies|pupper|doggo|doge");
     private static final String HELLO_GIF = "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves";
     private static final String PUPPIES_GIF = "https://media.giphy.com/media/8rFNes6jllJQRnHTsF/giphy.gif";
     private static final Set<String> GOOD_MORNING_GIFS = ImmutableSet.of(

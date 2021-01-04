@@ -1,16 +1,14 @@
 package com.badfic.philbot.listeners.antonia;
 
+import com.badfic.philbot.config.Constants;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.util.Collection;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -21,10 +19,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class AntoniaMessageListener extends ListenerAdapter {
 
-    private static final Pattern ANTONIA_PATTERN = Pattern.compile("\\b(antonia|toni|tony|stark|tash|iron man|tin can)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern ANTONIA_PATTERN = Constants.compileWords("antonia|toni|tony|stark|tash|iron man|tin can");
     private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
-            .put("307611036134146080", ImmutablePair.of(compile("I love you"), "I know"))
-            .put("323520695550083074", ImmutablePair.of(compile("togna"), "bologna"))
+            .put("307611036134146080", ImmutablePair.of(Constants.compileWords("I love you"), "I know"))
+            .put("323520695550083074", ImmutablePair.of(Constants.compileWords("togna"), "bologna"))
+            .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
             .build();
     private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
 
@@ -66,25 +65,12 @@ public class AntoniaMessageListener extends ListenerAdapter {
             return;
         }
 
-        Collection<Pair<Pattern, String>> userTriggers = USER_TRIGGER_WORDS.get(event.getAuthor().getId());
-        if (CollectionUtils.isNotEmpty(userTriggers)) {
-            Optional<String> match = userTriggers.stream().filter(t -> t.getLeft().matcher(msgContent).find()).map(Pair::getRight).findAny();
-
-            if (match.isPresent()) {
-                event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
-                        .sendMessage(event.getAuthor().getAsMention() + ", " + match.get()).queue();
-                return;
-            }
-        }
+        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
 
         if (ANTONIA_PATTERN.matcher(msgContent).find()) {
             antoniaCommand.execute(new CommandEvent(event, null, null));
             return;
         }
-    }
-
-    private static Pattern compile(String s) {
-        return Pattern.compile("\\b(" + s + ")\\b", Pattern.CASE_INSENSITIVE);
     }
 
 }
