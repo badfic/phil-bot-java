@@ -4,14 +4,12 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.CourtCase;
 import com.badfic.philbot.data.phil.CourtCaseRepository;
 import com.google.common.collect.ImmutableMap;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
@@ -20,22 +18,14 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JudgeTickable implements MinuteTickable {
+public class JudgeTickable extends NonCommandSwampy implements MinuteTickable {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-    @Resource(name = "philJda")
-    @Lazy
-    private JDA philJda;
 
     @Resource
     private CourtCaseRepository courtCaseRepository;
-
-    @Resource
-    private HoneybadgerReporter honeybadgerReporter;
 
     @Override
     public void tick() throws Exception {

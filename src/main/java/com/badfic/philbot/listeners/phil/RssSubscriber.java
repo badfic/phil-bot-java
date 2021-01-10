@@ -4,12 +4,12 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.RssEntry;
 import com.badfic.philbot.data.phil.RssEntryRepository;
 import com.badfic.philbot.listeners.phil.swampy.MinuteTickable;
+import com.badfic.philbot.listeners.phil.swampy.NonCommandSwampy;
 import com.google.common.collect.ImmutableSet;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.Set;
@@ -17,22 +17,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Resource;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 @Component
-public class RssSubscriber implements MinuteTickable {
+public class RssSubscriber extends NonCommandSwampy implements MinuteTickable {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private static final int MINUTE_REFRESH_INTERVAL = 30;
@@ -43,20 +40,10 @@ public class RssSubscriber implements MinuteTickable {
     );
 
     @Resource
-    private RestTemplate restTemplate;
-
-    @Resource
     private RssEntryRepository rssEntryRepository;
 
     @Resource
-    private HoneybadgerReporter honeybadgerReporter;
-
-    @Resource
     private Ao3MetadataParser ao3MetadataParser;
-
-    @Resource(name = "philJda")
-    @Lazy
-    private JDA philJda;
 
     @Override
     public void tick() throws Exception {
