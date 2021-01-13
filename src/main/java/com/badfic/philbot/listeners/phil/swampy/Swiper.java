@@ -29,10 +29,10 @@ public class Swiper extends BaseSwampy implements PhilMarker {
             .put("Swiper No Swiping", new TheSwiper(
                     "Swiper No Swiping",
                     "Swiper Was Spotted Nearby",
-                    "https://cdn.discordapp.com/attachments/707453916882665552/782824147780632576/maxresdefault.png",
-                    "https://cdn.discordapp.com/attachments/707453916882665552/782823673526616114/swiper.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/798774215813627944/419DS5921XL.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/798774612036026388/d95dfb7216c107d4b1411aafbd7c8abf.png",
                     "Swiper Escaped!",
-                    "https://cdn.discordapp.com/attachments/707453916882665552/782824264989802526/1383968722_4.png"
+                    "https://cdn.discordapp.com/attachments/707453916882665552/798774612036026388/d95dfb7216c107d4b1411aafbd7c8abf.png"
             ))
             .put("Snarter No Snarting", new TheSwiper(
                     "Snarter No Snarting",
