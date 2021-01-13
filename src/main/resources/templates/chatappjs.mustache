@@ -95,3 +95,23 @@
     messageForm.addEventListener('submit', sendMessage, true);
     stompClient.activate();
 </script>
+
+<script type="module">
+    import { EmojiButton } from 'https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.0/dist/index.js';
+
+    var emojiPicker = new EmojiButton({
+        theme: 'dark',
+        showVariants: false
+    });
+    var emojiDiv = document.querySelector('.emoji-trigger');
+
+    emojiPicker.on('emoji', function(selection) {
+        var messageInputField = document.querySelector('#message');
+        messageInputField.value = messageInputField.value + selection.emoji;
+    });
+
+    emojiDiv.addEventListener('click', function(e) {
+        emojiPicker.togglePicker(emojiDiv);
+        e.preventDefault();
+    });
+</script>
