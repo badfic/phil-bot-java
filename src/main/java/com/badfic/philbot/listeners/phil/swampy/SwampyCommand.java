@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -46,10 +47,10 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
-    public static final Set<String> CHRISTMAS_SLOTS = ImmutableSet.of(
+    public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
             "\uD83D\uDC2E", "\uD83D\uDC37", "\uD83E\uDD99", "\uD83D\uDC39",
             "\uD83D\uDC3F️", "\uD83D\uDC22", "\uD83D\uDC38", "\uD83D\uDC00",
-            "\uD83E\uDD92", "\uD83D\uDC36", "\uD83D\uDC2F", "\uD83D\uDC31"
+            "\uD83E\uDD92", "\uD83D\uDC36"
     );
 
     // volatile state
@@ -63,9 +64,9 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 "swamp", "bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simp", "simpy", "shrimp", "shrimpy", "shremp",
                 "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek", "billy",
                 "deer", "hot", "frosty", "glogg", "beam", "oof", "booty", "love", "chuck", "farm", "nut", "rat", "giraffe", "possum", "lena", "santiago",
-                "riverdale", "matthew", "murder", "book", "salami", "spicy", "spice", "salt", "yeet", "wah", "crafty"};
+                "riverdale", "matthew", "murder", "book", "salami", "spicy", "spice", "salt", "yeet", "wah", "crafty", "bingus"};
         help =
-                "`!!swampy` aka... `" + Arrays.toString(aliases) + "` HELP:\n" +
+                "`!!swampy` aka...\n" + Arrays.stream(aliases).sorted().collect(Collectors.joining(", ")) + "\nHELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
                 "`!!swampy leaderboard bastard` show the 18+ leaderboard\n" +
                 "`!!swampy leaderboard chaos` show the chaos children leaderboard\n" +
@@ -288,21 +289,25 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
         discordUser.setLastSlots(now);
 
-        String one = Constants.pickRandom(CHRISTMAS_SLOTS);
-        String two = Constants.pickRandom(CHRISTMAS_SLOTS);
-        String three = Constants.pickRandom(CHRISTMAS_SLOTS);
+        double oddsClosEnough = ((1.0 / SLOTS_EMOJIS.size()) * (1.0 / SLOTS_EMOJIS.size())) * 100.0;
+        double oddsWinnerWinner = ((1.0 / SLOTS_EMOJIS.size()) * (1.0 / SLOTS_EMOJIS.size()) * (1.0 / SLOTS_EMOJIS.size())) * 100.0;
+        String footer = String.format("Odds of a WINNER WINNER: %.3f%%\nOdds of a CLOSE ENOUGH: %.3f%%", oddsWinnerWinner, oddsClosEnough);
+
+        String one = Constants.pickRandom(SLOTS_EMOJIS);
+        String two = Constants.pickRandom(SLOTS_EMOJIS);
+        String three = Constants.pickRandom(SLOTS_EMOJIS);
 
         if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
             givePointsToMember(swampyGamesConfig.getSlotsWinPoints(), member, discordUser);
             event.reply(Constants.simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou won "
-                            + swampyGamesConfig.getSlotsWinPoints() + " points!", member.getAsMention(), one, two, three)));
+                            + swampyGamesConfig.getSlotsWinPoints() + " points!", member.getAsMention(), one, two, three), null, footer));
         } else if (one.equalsIgnoreCase(two) || one.equalsIgnoreCase(three) || two.equalsIgnoreCase(three)) {
             givePointsToMember(swampyGamesConfig.getSlotsTwoOfThreePoints(), member, discordUser);
             event.reply(Constants.simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou got 2 out of 3! You won "
-                            + swampyGamesConfig.getSlotsTwoOfThreePoints() + " points!", member.getAsMention(), one, two, three)));
+                            + swampyGamesConfig.getSlotsTwoOfThreePoints() + " points!", member.getAsMention(), one, two, three), null, footer));
         } else {
             event.reply(Constants.simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, String.format("%s\n%s%s%s",
-                    member.getAsMention(), one, two, three)));
+                    member.getAsMention(), one, two, three), null, footer));
             discordUserRepository.save(discordUser);
         }
     }
