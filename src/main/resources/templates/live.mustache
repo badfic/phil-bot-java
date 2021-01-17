@@ -29,7 +29,16 @@
         <!-- Chat -->
         <div class="col-12 col-sm-4" id="chatApp">
             <div class="alert alert-secondary bg-dark text-light">
-                [[ status ]] <a href="/chat-popout" target="_blank"><svg class="icon icon-external-link float-right"><use xlink:href="#icon-external-link"></use></svg></a>
+                [[ status ]]
+                <a href="/chat-popout" target="_blank"><svg class="icon icon-external-link float-right"><use xlink:href="#icon-external-link"></use></svg></a>
+                <div class="dropdown float-right mr-1">
+                    <button class="btn btn-dark btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Online Users
+                    </button>
+                    <ul class="dropdown-menu bg-dark" aria-labelledby="dropdownMenuButton">
+                        <li v-for="user in onlineUsers" class="dropdown-item disabled text-light">[[ user ]]</li>
+                    </ul>
+                </div>
             </div>
             <ul id="messageArea" class="list-unstyled bg-dark text-light vh-100" style="max-height: 50vh; overflow:auto">
                 <li v-for="message in messages" class="media my-3 ml-1 bg-dark text-light">

@@ -10,6 +10,7 @@
         delimiters: ['[[', ']]'],
         data: {
             messages: [],
+            onlineUsers: [],
             status: "Chat Connecting..."
         },
         updated: function() {
@@ -32,6 +33,7 @@
 
     stompClient.onConnect = function(frame) {
         stompClient.subscribe('/topic/public', onMessageReceived);
+        stompClient.subscribe('/topic/online', onOnlineUsers);
 
         stompClient.publish({
             destination: "/app/chat.addUser",
@@ -50,6 +52,10 @@
     stompClient.onWebSocketClose = function(frame) {
         chatApp.status = 'Chat Reconnecting...';
     };
+
+    function onOnlineUsers(payload) {
+        chatApp.onlineUsers = JSON.parse(payload.body);
+    }
 
     function onMessageReceived(payload) {
         var inboundMessage = JSON.parse(payload.body);
