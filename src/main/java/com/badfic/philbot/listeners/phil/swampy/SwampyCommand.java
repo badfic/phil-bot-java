@@ -64,7 +64,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 "swamp", "bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simp", "simpy", "shrimp", "shrimpy", "shremp",
                 "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek", "billy",
                 "deer", "hot", "frosty", "glogg", "beam", "oof", "booty", "love", "chuck", "farm", "nut", "rat", "giraffe", "possum", "lena", "santiago",
-                "riverdale", "matthew", "murder", "book", "salami", "spicy", "spice", "salt", "yeet", "wah", "crafty", "bingus", "snarky", "duck", "crisco"};
+                "riverdale", "matthew", "murder", "book", "salami", "spicy", "spice", "salt", "yeet", "wah", "crafty", "bingus", "snarky", "duck", "crisco",
+                "mint"};
         help =
                 "`!!swampy` aka...\n" + Arrays.stream(aliases).sorted().collect(Collectors.joining(", ")) + "\nHELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
