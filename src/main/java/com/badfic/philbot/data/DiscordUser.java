@@ -1,11 +1,13 @@
 package com.badfic.philbot.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
@@ -13,7 +15,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class DiscordUser {
 
     @Id
+    @JsonIgnore
     private String id;
+
+    @Transient
+    private String profileUrl;
+
+    @Transient
+    private String nickname;
 
     @Column
     private long xp;
@@ -23,28 +32,36 @@ public class DiscordUser {
 
     @Column
     @Convert(converter = FamilyJsonConverter.class)
+    @JsonIgnore
     private Family family;
 
     @Column(columnDefinition = "TIMESTAMP")
     @UpdateTimestamp
+    @JsonIgnore
     private LocalDateTime updateTime = LocalDateTime.now();
 
     @Column(columnDefinition = "TIMESTAMP")
+    @JsonIgnore
     private LocalDateTime voiceJoined;
 
     @Column(columnDefinition = "TIMESTAMP")
+    @JsonIgnore
     private LocalDateTime lastSlots = LocalDateTime.now();
 
     @Column(columnDefinition = "TIMESTAMP")
+    @JsonIgnore
     private LocalDateTime lastMessageBonus = LocalDateTime.now();
 
     @Column(columnDefinition = "TIMESTAMP")
+    @JsonIgnore
     private LocalDateTime lastVote = LocalDateTime.now();
 
     @Column(columnDefinition = "TIMESTAMP")
+    @JsonIgnore
     private LocalDateTime acceptedBoost = LocalDateTime.now();
 
     @Column(columnDefinition = "TIMESTAMP")
+    @JsonIgnore
     private LocalDateTime acceptedMapTrivia = LocalDateTime.now();
 
     @Column
@@ -134,6 +151,22 @@ public class DiscordUser {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getProfileUrl() {
+        return profileUrl;
+    }
+
+    public void setProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public long getXp() {

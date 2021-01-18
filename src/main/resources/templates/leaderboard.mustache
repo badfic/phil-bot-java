@@ -1,52 +1,180 @@
 {{> header}}
-<div class="container">
-    <div class="row">
-        <div class="col-lg">
+<div class="container-fluid">
+    <div class="row my-4">
+        <div class="col-12">
             <h2>Bastards</h2>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th scope="col">Profile</th>
-                    <th scope="col">XP</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">ID</th>
-                </tr>
-                </thead>
-                <tbody>
-                {{#bastards}}
-                    <tr>
-                        <td><img src="{{image}}" width="50" height="50"></td>
-                        <td>{{xp}}</td>
-                        <td>{{name}}</td>
-                        <td>{{id}}</td>
-                    </tr>
-                {{/bastards}}
-                </tbody>
-            </table>
+            <table id="bastards-board"></table>
         </div>
-        <div class="col-lg">
+    </div>
+    <div class="row my-4">
+        <div class="col-12">
             <h2>Children</h2>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th scope="col">Profile</th>
-                    <th scope="col">XP</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">ID</th>
-                </tr>
-                </thead>
-                <tbody>
-                {{#children}}
-                    <tr>
-                        <td><img src="{{image}}" width="50" height="50"></td>
-                        <td>{{xp}}</td>
-                        <td>{{name}}</td>
-                        <td>{{id}}</td>
-                    </tr>
-                {{/children}}
-                </tbody>
-            </table>
+            <table id="children-board"></table>
         </div>
     </div>
 </div>
+
+<script>
+{{#tables}}
+    $('#{{.}}-board').bootstrapTable({
+        url: '/leaderboard/{{.}}',
+        sortName: 'xp',
+        sortOrder: 'desc',
+        columns: [
+            {
+                field: 'profileUrl',
+                title: 'Profile',
+                formatter: function(value) {
+                    return '<img src="' + value + '" width="50" height="50">';
+                }
+            },
+            {
+                field: 'nickname',
+                title: 'Name',
+                sortable: true
+            },
+            {
+                field: 'xp',
+                title: 'Points',
+                sortable: true
+            },
+            {
+                field: 'taxesPoints',
+                title: 'Taxes',
+                sortable: true
+            },
+            {
+                field: 'robinhoodPoints',
+                title: 'R.hood',
+                sortable: true
+            },
+            {
+                field: 'trickOrTreatPoints',
+                title: '🦄/😭',
+                sortable: true
+            },
+            {
+                field: 'sweepstakesPoints',
+                title: '🧹🥩',
+                sortable: true
+            },
+            {
+                field: 'boostPoints',
+                title: 'Boost',
+                sortable: true
+            },
+            {
+                field: 'shrekoningPoints',
+                title: 'Shronk',
+                sortable: true
+            },
+            {
+                field: 'stonksPoints',
+                title: 'Stonk',
+                sortable: true
+            },
+            {
+                field: 'upvotedPoints',
+                title: 'Upvoted',
+                sortable: true
+            },
+            {
+                field: 'upvoterPoints',
+                title: 'Upvoter',
+                sortable: true
+            },
+            {
+                field: 'mapsPoints',
+                title: 'Map',
+                sortable: true
+            },
+            {
+                field: 'triviaPoints',
+                title: 'Trivia',
+                sortable: true
+            },
+            {
+                field: 'swiperPoints',
+                title: 'Swiper\'d',
+                sortable: true
+            },
+            {
+                field: 'scooterPoints',
+                title: '🛴',
+                sortable: true
+            },
+            {
+                field: 'noNoPoints',
+                title: 'No No',
+                sortable: true
+            },
+            {
+                field: 'messagePoints',
+                title: 'Msg',
+                sortable: true
+            },
+            {
+                field: 'pictureMessagePoints',
+                title: 'Pic Msg',
+                sortable: true
+            },
+            {
+                field: 'voiceChatPoints',
+                title: 'Voice',
+                sortable: true
+            },
+            {
+                field: 'reactPoints',
+                title: 'Give React',
+                sortable: true
+            },
+            {
+                field: 'reactedPoints',
+                title: 'Rcv React',
+                sortable: true
+            },
+            {
+                field: 'downvotedPoints',
+                title: 'Downvoted',
+                sortable: true
+            },
+            {
+                field: 'downvoterPoints',
+                title: 'Downvoter',
+                sortable: true
+            },
+            {
+                field: 'slotsLosses',
+                title: '🎰 Loss',
+                sortable: true
+            },
+            {
+                field: 'slotsCloseEnoughPoints',
+                title: '🎰 Close',
+                sortable: true
+            },
+            {
+                field: 'slotsWinnerWinnerPoints',
+                title: '🎰 Win',
+                sortable: true
+            },
+            {
+                field: 'swiperParticipations',
+                title: 'Swiper Participant',
+                sortable: true
+            },
+            {
+                field: 'modGavePoints',
+                title: 'Mod +',
+                sortable: true
+            },
+            {
+                field: 'modTookPoints',
+                title: 'Mod -',
+                sortable: true
+            }
+        ]
+    });
+{{/tables}}
+</script>
 {{> footer}}
