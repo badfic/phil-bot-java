@@ -9,16 +9,16 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class Ao3MetadataParserTest {
 
     @Mock
@@ -35,7 +35,7 @@ public class Ao3MetadataParserTest {
 
     private String work;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         work = IOUtils.toString(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("ao3-test.html")), StandardCharsets.UTF_8);
     }
