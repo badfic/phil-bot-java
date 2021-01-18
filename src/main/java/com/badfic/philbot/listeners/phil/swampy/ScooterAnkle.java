@@ -43,7 +43,7 @@ public class ScooterAnkle extends BaseSwampy implements PhilMarker {
         TextChannel swampysChannel = event.getJDA().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
         DiscordUser scooterUser = getDiscordUserByMember(event.getMember());
 
-        if (scooterUser.isScooterAnkleParticipant()) {
+        if (scooterUser.getScooterParticipant() != 0) {
             event.replyError("You have already participated in scooter ankle, you can only do it once per swampy cycle.");
             return;
         }
@@ -53,18 +53,21 @@ public class ScooterAnkle extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        scooterUser.setScooterAnkleParticipant(true);
-        discordUserRepository.save(scooterUser);
-
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         List<DiscordUser> filteredUsers = allUsers.stream()
                 .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getXp() < scooterUser.getXp())
                 .collect(Collectors.toList());
 
+        if (filteredUsers.size() < 1) {
+            event.replyError("There were not enough people eligible to receive your scooter ankle points so you can't scooter ankle right now.");
+            return;
+        }
+
         long pointsToGive = swampyGamesConfig.getScooterAnklePoints() / filteredUsers.size();
 
         List<CompletableFuture<?>> futures = new ArrayList<>();
-        futures.add(takePointsFromMember(swampyGamesConfig.getScooterAnklePoints(), event.getMember()));
+        futures.add(takePointsFromMember(swampyGamesConfig.getScooterAnklePoints(), event.getMember(), PointsStat.SCOOTER));
+        futures.add(givePointsToMember(1, event.getMember(), PointsStat.SCOOTER_PARTICIPANT));
 
         StringBuilder description = new StringBuilder()
                 .append(event.getMember().getAsMention())
@@ -77,7 +80,7 @@ public class ScooterAnkle extends BaseSwampy implements PhilMarker {
                 Member memberById = event.getGuild().getMemberById(user.getId());
 
                 if (memberById != null) {
-                    futures.add(givePointsToMember(pointsToGive, memberById));
+                    futures.add(givePointsToMember(pointsToGive, memberById, PointsStat.SCOOTER));
                     description.append("Gave ")
                             .append(NumberFormat.getIntegerInstance().format(pointsToGive))
                             .append(" \uD83D\uDEF4 to ")

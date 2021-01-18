@@ -65,7 +65,7 @@ public class Shrekoning extends BaseSwampy implements PhilMarker {
                             long points = ThreadLocalRandom.current()
                                     .nextLong(swampyGamesConfig.getShrekoningMinPoints(), swampyGamesConfig.getShrekoningMaxPoints());
 
-                            futures.add(givePointsToMember(points, memberById));
+                            futures.add(givePointsToMember(points, memberById, PointsStat.SHREKONING));
                             totalPointsGiven.add(points);
                             description
                                     .append(NumberFormat.getIntegerInstance().format(points))

@@ -71,13 +71,14 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
                 "`!!swampy rank` show your swampy rank\n" +
                 "`!!swampy leaderboard bastard` show the 18+ leaderboard\n" +
                 "`!!swampy leaderboard chaos` show the chaos children leaderboard\n" +
+                "`!!swampy leaderboard [" + Arrays.stream(PointsStat.values()).map(Enum::name).collect(Collectors.joining(", ")) +
+                        "]` show specific stat leaderboard\n" +
                 "`!!swampy up @Santiago` upvote a user for the swampys\n" +
                 "`!!swampy down @Santiago` downvote a user for the swampys\n" +
                 "`!!swampy slots` Play slots. Winners for 2 out of 3 matches or 3 out of 3 matches.";
         modHelp = help + "\n\nMODS ONLY COMMANDS:\n" +
                 "`!!swampy give 120 @Santiago` give 120 points to Santiago\n" +
                 "`!!swampy take 120 @Santiago` remove 120 points from Santiago\n" +
-                "`!!swampy set 120 @Santiago` set Santiago to 120 points\n" +
                 "`!!swampy reset` reset everyone back to level 0";
     }
 
@@ -100,7 +101,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         String msgContent = event.getMessage().getContentRaw();
 
         if (msgContent.startsWith("!!") && isNotParticipating(event.getMember())) {
-            event.replyError("Please get sorted into a house to participate");
+            event.replyError("Please ask a mod to check your roles to participate in the swampys");
             return;
         }
 
@@ -124,8 +125,6 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             give(event);
         } else if (args.startsWith("take")) {
             take(event);
-        } else if (args.startsWith("set")) {
-            set(event);
         } else if (args.startsWith("leaderboard")) {
             leaderboard(event);
         } else if (args.startsWith("slots")) {
@@ -167,13 +166,14 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             }
 
             if (swampyGamesConfig.getSwiperAwaiting() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getNoSwipingPhrase())) {
+                givePointsToMember(1, event.getMember(), PointsStat.SWIPER_PARTICIPATIONS);
                 swampyGamesConfig.setSwiperSavior(event.getMember().getId());
                 swampyGamesConfigRepository.save(swampyGamesConfig);
                 return;
             }
 
             if (NO_NO_WORDS.matcher(msgContent).find()) {
-                takePointsFromMember(swampyGamesConfig.getNoNoWordsPoints(), event.getMember());
+                takePointsFromMember(swampyGamesConfig.getNoNoWordsPoints(), event.getMember(), PointsStat.NO_NO);
                 return;
             }
 
@@ -185,15 +185,17 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
 
             boolean bonus = CollectionUtils.isNotEmpty(message.getAttachments()) || CollectionUtils.isNotEmpty(message.getEmbeds());
 
+            PointsStat pointsStat = PointsStat.MESSAGE;
             long pointsToGive = swampyGamesConfig.getNormalMsgPoints();
             if ("bot-space".equals(event.getChannel().getName()) || "sim-games".equals(event.getChannel().getName())) {
                 pointsToGive = 1;
             } else if (bonus && now.isAfter(nextMsgBonusTime)) {
+                pointsStat = PointsStat.PICTURE_MESSAGE;
                 pointsToGive = swampyGamesConfig.getPictureMsgPoints();
                 discordUser.setLastMessageBonus(now);
             }
 
-            givePointsToMember(pointsToGive, event.getMember(), discordUser);
+            givePointsToMember(pointsToGive, event.getMember(), discordUser, pointsStat);
         }
     }
 
@@ -229,7 +231,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         user.setVoiceJoined(null);
         discordUserRepository.save(user);
 
-        givePointsToMember(points, member);
+        givePointsToMember(points, member, PointsStat.VOICE_CHAT);
     }
 
     public void emote(GuildMessageReactionAddEvent event) {
@@ -238,12 +240,12 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        givePointsToMember(swampyGamesConfig.getReactionPoints(), event.getMember());
+        givePointsToMember(swampyGamesConfig.getReactionPoints(), event.getMember(), PointsStat.REACTOR_POINTS);
         long messageId = event.getMessageIdLong();
         long reactionGiverId = event.getMember().getIdLong();
         event.getChannel().retrieveMessageById(messageId).queue(msg -> {
             if (msg != null && msg.getMember() != null && msg.getMember().getIdLong() != reactionGiverId) {
-                givePointsToMember(swampyGamesConfig.getReactionPoints(), msg.getMember());
+                givePointsToMember(swampyGamesConfig.getReactionPoints(), msg.getMember(), PointsStat.REACTED_POINTS);
             }
         });
     }
@@ -299,17 +301,17 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         String three = Constants.pickRandom(SLOTS_EMOJIS);
 
         if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
-            givePointsToMember(swampyGamesConfig.getSlotsWinPoints(), member, discordUser);
+            givePointsToMember(swampyGamesConfig.getSlotsWinPoints(), member, discordUser, PointsStat.SLOTS_WINNER_WINNER);
             event.reply(Constants.simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou won "
                             + swampyGamesConfig.getSlotsWinPoints() + " points!", member.getAsMention(), one, two, three), null, footer));
         } else if (one.equalsIgnoreCase(two) || one.equalsIgnoreCase(three) || two.equalsIgnoreCase(three)) {
-            givePointsToMember(swampyGamesConfig.getSlotsTwoOfThreePoints(), member, discordUser);
+            givePointsToMember(swampyGamesConfig.getSlotsTwoOfThreePoints(), member, discordUser, PointsStat.SLOTS_CLOSE_ENOUGH);
             event.reply(Constants.simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou got 2 out of 3! You won "
                             + swampyGamesConfig.getSlotsTwoOfThreePoints() + " points!", member.getAsMention(), one, two, three), null, footer));
         } else {
             event.reply(Constants.simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, String.format("%s\n%s%s%s",
                     member.getAsMention(), one, two, three), null, footer));
-            discordUserRepository.save(discordUser);
+            givePointsToMember(1, member, discordUser, PointsStat.SLOTS_LOSSES);
         }
     }
 
@@ -393,43 +395,25 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        if ("swiper".equalsIgnoreCase(split[1])) {
-            AtomicInteger place = new AtomicInteger(0);
+        Optional<PointsStat> optionalPointsStat = Arrays.stream(PointsStat.values())
+                .filter(stat -> split[1].trim().equalsIgnoreCase(stat.name()))
+                .findAny();
+
+        if (optionalPointsStat.isPresent()) {
+            PointsStat stat = optionalPointsStat.get();
             StringBuilder description = new StringBuilder();
 
             swampyUsers.stream()
-                    .sorted((u1, u2) -> Long.compare(u2.getSwiperParticipations(), u1.getSwiperParticipations()))
-                    .limit(10)
+                    .sorted((u1, u2) -> Long.compare(stat.getter().applyAsLong(u2), stat.getter().applyAsLong(u1)))
                     .forEachOrdered(swampyUser -> {
-                        description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
-                                .append(": <@!")
+                        description
+                                .append("<@!")
                                 .append(swampyUser.getId())
                                 .append("> - ")
-                                .append(NumberFormat.getIntegerInstance().format(swampyUser.getSwiperParticipations()))
+                                .append(NumberFormat.getIntegerInstance().format(stat.getter().applyAsLong(swampyUser)))
                                 .append('\n');
                     });
-            MessageEmbed messageEmbed = Constants.simpleEmbed("Swiper Leaderboard", description.toString());
-
-            event.reply(messageEmbed);
-            return;
-        }
-
-        if ("boost".equalsIgnoreCase(split[1])) {
-            AtomicInteger place = new AtomicInteger(0);
-            StringBuilder description = new StringBuilder();
-
-            swampyUsers.stream()
-                    .sorted((u1, u2) -> Long.compare(u2.getBoostParticipations(), u1.getBoostParticipations()))
-                    .limit(10)
-                    .forEachOrdered(swampyUser -> {
-                        description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
-                                .append(": <@!")
-                                .append(swampyUser.getId())
-                                .append("> - ")
-                                .append(NumberFormat.getIntegerInstance().format(swampyUser.getBoostParticipations()))
-                                .append('\n');
-                    });
-            MessageEmbed messageEmbed = Constants.simpleEmbed("Boost Leaderboard", description.toString());
+            MessageEmbed messageEmbed = Constants.simpleEmbed(stat.name() + " Leaderboard", description.toString());
 
             event.reply(messageEmbed);
             return;
@@ -503,8 +487,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         discordUser.setLastVote(now);
         discordUserRepository.save(discordUser);
 
-        givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvotee(), mentionedMember);
-        givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvoter(), event.getMember());
+        givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvotee(), mentionedMember, PointsStat.UPVOTED);
+        givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvoter(), event.getMember(), PointsStat.UPVOTER);
 
         event.replySuccess("Successfully upvoted " + mentionedMember.getEffectiveName());
     }
@@ -550,8 +534,8 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         discordUser.setLastVote(now);
         discordUserRepository.save(discordUser);
 
-        takePointsFromMember(swampyGamesConfig.getDownvotePointsFromDownvotee(), mentionedMember);
-        givePointsToMember(swampyGamesConfig.getDownvotePointsToDownvoter(), event.getMember());
+        takePointsFromMember(swampyGamesConfig.getDownvotePointsFromDownvotee(), mentionedMember, PointsStat.DOWNVOTED);
+        givePointsToMember(swampyGamesConfig.getDownvotePointsToDownvoter(), event.getMember(), PointsStat.DOWNVOTER);
 
         event.replySuccess("Successfully downvoted " + mentionedMember.getEffectiveName());
     }
@@ -594,7 +578,7 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        givePointsToMember(pointsToGive, mentionedMember);
+        givePointsToMember(pointsToGive, mentionedMember, PointsStat.MOD_GIVE);
 
         event.replyFormatted("Added %s xp to %s", NumberFormat.getIntegerInstance().format(pointsToGive), mentionedMember.getEffectiveName());
     }
@@ -637,55 +621,9 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        takePointsFromMember(pointsToTake, mentionedMember);
+        takePointsFromMember(pointsToTake, mentionedMember, PointsStat.MOD_TAKE);
 
         event.replyFormatted("Removed %s xp from %s", NumberFormat.getIntegerInstance().format(pointsToTake), mentionedMember.getEffectiveName());
-    }
-
-    private void set(CommandEvent event) {
-        if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
-            event.replyError("You do not have permission to use this command");
-            return;
-        }
-
-        String[] split = event.getArgs().split("\\s+");
-        if (split.length != 3) {
-            event.replyError("Badly formatted command. Example `!!swampy set 100 @Santiago`");
-            return;
-        }
-
-        long pointsToSet;
-        try {
-            pointsToSet = Long.parseLong(split[1]);
-        } catch (NumberFormatException e) {
-            event.replyError("Failed to parse the number you provided.");
-            return;
-        }
-
-        if (pointsToSet < 0) {
-            event.replyError("Please provide a positive number");
-            return;
-        }
-
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
-
-        if (CollectionUtils.size(mentionedMembers) != 1) {
-            event.replyError("Please specify only one user. Example `!!swampy set 100 @Santiago`");
-            return;
-        }
-
-        Member mentionedMember = mentionedMembers.get(0);
-        if (isNotParticipating(mentionedMember)) {
-            event.replyError(mentionedMember.getEffectiveName() + " is not participating in the swampys");
-            return;
-        }
-
-        DiscordUser user = getDiscordUserByMember(mentionedMember);
-        user.setXp(pointsToSet);
-        user = discordUserRepository.save(user);
-        assignRolesIfNeeded(mentionedMember, user);
-
-        event.replyFormatted("Set xp to %s for %s", NumberFormat.getIntegerInstance().format(pointsToSet), mentionedMember.getEffectiveName());
     }
 
     private void reset(CommandEvent event) {
@@ -705,9 +643,11 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         for (DiscordUser discordUser : discordUserRepository.findAll()) {
             discordUser.setXp(0);
-            discordUser.setSwiperParticipations(0);
-            discordUser.setBoostParticipations(0);
-            discordUser.setScooterAnkleParticipant(false);
+
+            for (PointsStat stat : PointsStat.values()) {
+                stat.setter().accept(discordUser, 0L);
+            }
+
             discordUser = discordUserRepository.save(discordUser);
 
             try {
