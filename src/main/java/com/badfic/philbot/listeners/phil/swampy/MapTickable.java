@@ -46,7 +46,7 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
                                 throw new RuntimeException("member not found");
                             }
 
-                            futures.add(givePointsToMember(swampyGamesConfig.getMapEventPoints(), memberLookedUp));
+                            futures.add(givePointsToMember(swampyGamesConfig.getMapEventPoints(), memberLookedUp, PointsStat.MAP));
                             description.append("Gave " + swampyGamesConfig.getMapEventPoints() + " points to <@!")
                                     .append(u.getId())
                                     .append(">\n");

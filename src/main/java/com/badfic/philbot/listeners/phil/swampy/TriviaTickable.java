@@ -88,7 +88,7 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
                 if (isNotParticipating(memberById)) {
                     description.append("<@!")
                             .append(user.getId())
-                            .append("> Please get sorted into a house to participate\n");
+                            .append("> Please ask a mod to check your roles to participate in the swampys\n");
                 } else {
                     description.append("Awarded ")
                             .append(points)
@@ -97,9 +97,9 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
                             .append(">\n");
                 }
                 if (points < 1) {
-                    takePointsFromMember(points * -1, memberById);
+                    takePointsFromMember(points * -1, memberById, PointsStat.TRIVIA);
                 } else {
-                    givePointsToMember(points, memberById);
+                    givePointsToMember(points, memberById, PointsStat.TRIVIA);
                 }
             }
         }

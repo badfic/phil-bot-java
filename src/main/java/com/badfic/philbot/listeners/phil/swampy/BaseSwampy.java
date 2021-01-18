@@ -74,31 +74,37 @@ public abstract class BaseSwampy extends Command {
         return optionalUserEntity.get();
     }
 
-    protected CompletableFuture<Void> givePointsToMember(long pointsToGive, Member member, DiscordUser user) {
+    protected CompletableFuture<Void> givePointsToMember(long pointsToGive, Member member, DiscordUser user, PointsStat pointsStat) {
         if (isNotParticipating(member)) {
             return CompletableFuture.completedFuture(null);
         }
 
         user.setXp(user.getXp() + pointsToGive);
+        long pointsStatsCurrent = pointsStat.getter().applyAsLong(user);
+        pointsStatsCurrent += pointsToGive;
+        pointsStat.setter().accept(user, pointsStatsCurrent);
         user = discordUserRepository.save(user);
         return assignRolesIfNeeded(member, user).getRight();
     }
 
-    protected CompletableFuture<Void> givePointsToMember(long pointsToGive, Member member) {
+    protected CompletableFuture<Void> givePointsToMember(long pointsToGive, Member member, PointsStat pointsStat) {
         if (isNotParticipating(member)) {
             return CompletableFuture.completedFuture(null);
         }
 
-        return givePointsToMember(pointsToGive, member, getDiscordUserByMember(member));
+        return givePointsToMember(pointsToGive, member, getDiscordUserByMember(member), pointsStat);
     }
 
-    protected CompletableFuture<Void> takePointsFromMember(long pointsToTake, Member member) {
+    protected CompletableFuture<Void> takePointsFromMember(long pointsToTake, Member member, PointsStat pointsStat) {
         if (isNotParticipating(member)) {
             return CompletableFuture.completedFuture(null);
         }
 
         DiscordUser user = getDiscordUserByMember(member);
         user.setXp(Math.max(0, user.getXp() - pointsToTake));
+        long pointsStatsCurrent = pointsStat.getter().applyAsLong(user);
+        pointsStatsCurrent -= pointsToTake;
+        pointsStat.setter().accept(user, pointsStatsCurrent);
         user = discordUserRepository.save(user);
         return assignRolesIfNeeded(member, user).getRight();
     }

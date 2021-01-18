@@ -19,9 +19,6 @@ public class DiscordUser {
     private long xp;
 
     @Column
-    private long boostParticipations;
-
-    @Column
     private long swiperParticipations;
 
     @Column
@@ -51,7 +48,85 @@ public class DiscordUser {
     private LocalDateTime acceptedMapTrivia = LocalDateTime.now();
 
     @Column
-    private boolean scooterAnkleParticipant;
+    private long modGavePoints;
+
+    @Column
+    private long modTookPoints;
+
+    @Column
+    private long upvotedPoints;
+
+    @Column
+    private long upvoterPoints;
+
+    @Column
+    private long downvotedPoints;
+
+    @Column
+    private long downvoterPoints;
+
+    @Column
+    private long swiperPoints;
+
+    @Column
+    private long slotsCloseEnoughPoints;
+
+    @Column
+    private long slotsWinnerWinnerPoints;
+
+    @Column
+    private long slotsLosses;
+
+    @Column
+    private long mapsPoints;
+
+    @Column
+    private long triviaPoints;
+
+    @Column
+    private long trickOrTreatPoints;
+
+    @Column
+    private long scooterPoints;
+
+    @Column
+    private long sweepstakesPoints;
+
+    @Column
+    private long noNoPoints;
+
+    @Column
+    private long messagePoints;
+
+    @Column
+    private long pictureMessagePoints;
+
+    @Column
+    private long boostPoints;
+
+    @Column
+    private long voiceChatPoints;
+
+    @Column
+    private long reactPoints;
+
+    @Column
+    private long reactedPoints;
+
+    @Column
+    private long shrekoningPoints;
+
+    @Column
+    private long stonksPoints;
+
+    @Column
+    private long taxesPoints;
+
+    @Column
+    private long robinhoodPoints;
+
+    @Column
+    private long scooterParticipant;
 
     public String getId() {
         return id;
@@ -67,14 +142,6 @@ public class DiscordUser {
 
     public void setXp(long xp) {
         this.xp = xp;
-    }
-
-    public long getBoostParticipations() {
-        return boostParticipations;
-    }
-
-    public void setBoostParticipations(long boostParticipations) {
-        this.boostParticipations = boostParticipations;
     }
 
     public long getSwiperParticipations() {
@@ -149,12 +216,219 @@ public class DiscordUser {
         this.acceptedMapTrivia = acceptedMapTrivia;
     }
 
-    public boolean isScooterAnkleParticipant() {
-        return scooterAnkleParticipant;
+    public long getModGavePoints() {
+        return modGavePoints;
     }
 
-    public void setScooterAnkleParticipant(boolean scooterAnkleParticipant) {
-        this.scooterAnkleParticipant = scooterAnkleParticipant;
+    public void setModGavePoints(long modPoints) {
+        this.modGavePoints = modPoints;
     }
 
+    public long getModTookPoints() {
+        return modTookPoints;
+    }
+
+    public void setModTookPoints(long modTookPoints) {
+        this.modTookPoints = modTookPoints;
+    }
+
+    public long getUpvotedPoints() {
+        return upvotedPoints;
+    }
+
+    public void setUpvotedPoints(long upvotedPoints) {
+        this.upvotedPoints = upvotedPoints;
+    }
+
+    public long getUpvoterPoints() {
+        return upvoterPoints;
+    }
+
+    public void setUpvoterPoints(long upvoterPoints) {
+        this.upvoterPoints = upvoterPoints;
+    }
+
+    public long getDownvotedPoints() {
+        return downvotedPoints;
+    }
+
+    public void setDownvotedPoints(long downvotedPoints) {
+        this.downvotedPoints = downvotedPoints;
+    }
+
+    public long getDownvoterPoints() {
+        return downvoterPoints;
+    }
+
+    public void setDownvoterPoints(long downvoterPoints) {
+        this.downvoterPoints = downvoterPoints;
+    }
+
+    public long getSwiperPoints() {
+        return swiperPoints;
+    }
+
+    public void setSwiperPoints(long swiperPoints) {
+        this.swiperPoints = swiperPoints;
+    }
+
+    public long getSlotsCloseEnoughPoints() {
+        return slotsCloseEnoughPoints;
+    }
+
+    public void setSlotsCloseEnoughPoints(long slotsPoints) {
+        this.slotsCloseEnoughPoints = slotsPoints;
+    }
+
+    public long getSlotsWinnerWinnerPoints() {
+        return slotsWinnerWinnerPoints;
+    }
+
+    public void setSlotsWinnerWinnerPoints(long slotsWinnerWinnerPoints) {
+        this.slotsWinnerWinnerPoints = slotsWinnerWinnerPoints;
+    }
+
+    public long getSlotsLosses() {
+        return slotsLosses;
+    }
+
+    public void setSlotsLosses(long slotsLosses) {
+        this.slotsLosses = slotsLosses;
+    }
+
+    public long getMapsPoints() {
+        return mapsPoints;
+    }
+
+    public void setMapsPoints(long mapsPoints) {
+        this.mapsPoints = mapsPoints;
+    }
+
+    public long getTriviaPoints() {
+        return triviaPoints;
+    }
+
+    public void setTriviaPoints(long triviaPoints) {
+        this.triviaPoints = triviaPoints;
+    }
+
+    public long getTrickOrTreatPoints() {
+        return trickOrTreatPoints;
+    }
+
+    public void setTrickOrTreatPoints(long trickOrTreatPoints) {
+        this.trickOrTreatPoints = trickOrTreatPoints;
+    }
+
+    public long getScooterPoints() {
+        return scooterPoints;
+    }
+
+    public void setScooterPoints(long scooterPoints) {
+        this.scooterPoints = scooterPoints;
+    }
+
+    public long getSweepstakesPoints() {
+        return sweepstakesPoints;
+    }
+
+    public void setSweepstakesPoints(long sweepstakesPoints) {
+        this.sweepstakesPoints = sweepstakesPoints;
+    }
+
+    public long getNoNoPoints() {
+        return noNoPoints;
+    }
+
+    public void setNoNoPoints(long noNoPoints) {
+        this.noNoPoints = noNoPoints;
+    }
+
+    public long getMessagePoints() {
+        return messagePoints;
+    }
+
+    public void setMessagePoints(long messagePoints) {
+        this.messagePoints = messagePoints;
+    }
+
+    public long getPictureMessagePoints() {
+        return pictureMessagePoints;
+    }
+
+    public void setPictureMessagePoints(long pictureMessagePoints) {
+        this.pictureMessagePoints = pictureMessagePoints;
+    }
+
+    public long getBoostPoints() {
+        return boostPoints;
+    }
+
+    public void setBoostPoints(long boostPoints) {
+        this.boostPoints = boostPoints;
+    }
+
+    public long getVoiceChatPoints() {
+        return voiceChatPoints;
+    }
+
+    public void setVoiceChatPoints(long voiceChatPoints) {
+        this.voiceChatPoints = voiceChatPoints;
+    }
+
+    public long getReactPoints() {
+        return reactPoints;
+    }
+
+    public void setReactPoints(long reactPoints) {
+        this.reactPoints = reactPoints;
+    }
+
+    public long getReactedPoints() {
+        return reactedPoints;
+    }
+
+    public void setReactedPoints(long reactedPoints) {
+        this.reactedPoints = reactedPoints;
+    }
+
+    public long getShrekoningPoints() {
+        return shrekoningPoints;
+    }
+
+    public void setShrekoningPoints(long shrekoningPoints) {
+        this.shrekoningPoints = shrekoningPoints;
+    }
+
+    public long getStonksPoints() {
+        return stonksPoints;
+    }
+
+    public void setStonksPoints(long stonksPoints) {
+        this.stonksPoints = stonksPoints;
+    }
+
+    public long getTaxesPoints() {
+        return taxesPoints;
+    }
+
+    public void setTaxesPoints(long taxesPoints) {
+        this.taxesPoints = taxesPoints;
+    }
+
+    public long getRobinhoodPoints() {
+        return robinhoodPoints;
+    }
+
+    public void setRobinhoodPoints(long robinhoodPoints) {
+        this.robinhoodPoints = robinhoodPoints;
+    }
+
+    public long getScooterParticipant() {
+        return scooterParticipant;
+    }
+
+    public void setScooterParticipant(long scooterParticipation) {
+        this.scooterParticipant = scooterParticipation;
+    }
 }

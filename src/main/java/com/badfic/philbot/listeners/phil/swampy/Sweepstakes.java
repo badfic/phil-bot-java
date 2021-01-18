@@ -89,7 +89,7 @@ public class Sweepstakes extends BaseSwampy implements PhilMarker {
             return;
         }
 
-        givePointsToMember(swampyGamesConfig.getSweepstakesPoints(), member);
+        givePointsToMember(swampyGamesConfig.getSweepstakesPoints(), member, PointsStat.SWEEPSTAKES);
 
         MessageEmbed message = Constants.simpleEmbed(role + " Sweepstakes Results",
                 String.format("Congratulations %s you won today's sweepstakes worth %d points!", member.getAsMention(), swampyGamesConfig.getSweepstakesPoints()),

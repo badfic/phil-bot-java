@@ -70,7 +70,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                         Member memberById = philJda.getGuilds().get(0).getMemberById(victim.get().getId());
 
                         if (memberById != null) {
-                            takePointsFromMember(swiperPoints, memberById);
+                            takePointsFromMember(swiperPoints, memberById, PointsStat.SWIPER);
                             message = Constants.simpleEmbed(theSwiper.getSwiperWonPhrase(),
                                     "You didn't save <@!" + victim.get().getId() + "> in time, they lost " + swiperPoints + " points",
                                     theSwiper.getSwiperWonImage());

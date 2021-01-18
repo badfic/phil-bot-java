@@ -63,9 +63,6 @@ public class Boost extends BaseSwampy implements PhilMarker {
                     .filter(u -> u.getAcceptedBoost().isAfter(oneHourAgo))
                     .forEach(u -> {
                         try {
-                            u.setBoostParticipations(u.getBoostParticipations() + 1);
-                            discordUserRepository.save(u);
-
                             Member memberLookedUp = philJda.getGuilds().get(0).getMemberById(u.getId());
                             if (memberLookedUp == null) {
                                 throw new RuntimeException("member not found");
@@ -74,9 +71,9 @@ public class Boost extends BaseSwampy implements PhilMarker {
                             if (isNotParticipating(memberLookedUp)) {
                                 description.append("<@!")
                                         .append(u.getId())
-                                        .append("> Please get sorted into a house to participate\n");
+                                        .append("> Please ask a mod to check your roles to participate in the swampys\n");
                             } else {
-                                futures.add(givePointsToMember(swampyGamesConfig.getBoostEventPoints(), memberLookedUp));
+                                futures.add(givePointsToMember(swampyGamesConfig.getBoostEventPoints(), memberLookedUp, PointsStat.BOOST));
                                 description.append("Gave ")
                                         .append(swampyGamesConfig.getBoostEventPoints())
                                         .append(" points to <@!")

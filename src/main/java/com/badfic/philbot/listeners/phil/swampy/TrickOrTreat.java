@@ -54,7 +54,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                     Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                     if (memberById != null && !isNotParticipating(memberById)) {
                         if (ThreadLocalRandom.current().nextInt() % 2 == 0) {
-                            futures.add(givePointsToMember(swampyGamesConfig.getTrickOrTreatPoints(), memberById));
+                            futures.add(givePointsToMember(swampyGamesConfig.getTrickOrTreatPoints(), memberById, PointsStat.TRICK_OR_TREAT));
                             totalGiven += swampyGamesConfig.getTrickOrTreatPoints();
 
                             description
@@ -65,7 +65,7 @@ public class TrickOrTreat extends BaseSwampy implements PhilMarker {
                                     .append(user.getId())
                                     .append(">\n");
                         } else {
-                            futures.add(takePointsFromMember(swampyGamesConfig.getTrickOrTreatPoints(), memberById));
+                            futures.add(takePointsFromMember(swampyGamesConfig.getTrickOrTreatPoints(), memberById, PointsStat.TRICK_OR_TREAT));
                             totalTaken += swampyGamesConfig.getTrickOrTreatPoints();
 
                             description

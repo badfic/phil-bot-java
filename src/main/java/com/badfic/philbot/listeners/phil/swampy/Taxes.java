@@ -78,7 +78,7 @@ public class Taxes extends BaseSwampy implements PhilMarker {
                     long taxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRate)).longValue();
                     Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                     if (memberById != null && !isNotParticipating(memberById) && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
-                        futures.add(takePointsFromMember(taxes, memberById));
+                        futures.add(takePointsFromMember(taxes, memberById, PointsStat.TAXES));
                         totalTaxes += taxes;
 
                         description
