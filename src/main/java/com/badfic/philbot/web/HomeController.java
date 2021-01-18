@@ -4,13 +4,11 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.UnauthorizedException;
 import com.badfic.philbot.data.DiscordApiIdentityResponse;
 import com.badfic.philbot.data.DiscordApiLoginResponse;
-import com.github.mustachejava.Mustache;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.HttpEntity;
@@ -22,19 +20,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 public class HomeController extends BaseController {
 
-    private Mustache mustache;
-
-    @PostConstruct
-    public void init() {
-        mustache = mustacheFactory.compile("index.mustache");
-    }
-
     @GetMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> home(
+    public ModelAndView home(
             @RequestParam(value = "code") Optional<String> code,
             HttpSession httpSession) throws Exception {
         if (code.isPresent() && httpSession.getAttribute(DISCORD_TOKEN) == null) {
@@ -79,9 +71,7 @@ public class HomeController extends BaseController {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Phil's Swamp");
         props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
-        try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
-            mustache.execute(stringWriter, props);
-            return ResponseEntity.ok(stringWriter.toString());
-        }
+
+        return new ModelAndView("index", props);
     }
 }

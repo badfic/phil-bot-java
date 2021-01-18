@@ -1,19 +1,17 @@
 package com.badfic.philbot.web;
 
-import com.github.mustachejava.Mustache;
 import com.jagrosh.jdautilities.command.Command;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 public class CommandsController extends BaseController {
@@ -21,15 +19,8 @@ public class CommandsController extends BaseController {
     @Resource
     private List<Command> commands;
 
-    private Mustache mustache;
-
-    @PostConstruct
-    public void init() {
-        mustache = mustacheFactory.compile("commands.mustache");
-    }
-
     @GetMapping(value = "/commands", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> get(HttpSession httpSession) throws Exception {
+    public ModelAndView get(HttpSession httpSession) throws Exception {
         checkSession(httpSession, false);
 
         List<SimpleCommand> simpleCommandsList = commands.stream()
@@ -57,10 +48,8 @@ public class CommandsController extends BaseController {
         props.put("pageTitle", "Commands");
         props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
         props.put("commands", simpleCommandsList);
-        try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
-            mustache.execute(stringWriter, props);
-            return ResponseEntity.ok(stringWriter.toString());
-        }
+
+        return new ModelAndView("commands", props);
     }
 
     public static class SimpleCommand {

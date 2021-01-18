@@ -3,13 +3,11 @@ package com.badfic.philbot.web;
 import com.badfic.philbot.config.ControllerConfigurable;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.badfic.philbot.data.phil.SwampyGamesConfigRepository;
-import com.github.mustachejava.Mustache;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 public class GamesConfigController extends BaseController {
@@ -26,15 +25,8 @@ public class GamesConfigController extends BaseController {
     @Resource
     private SwampyGamesConfigRepository swampyGamesConfigRepository;
 
-    private Mustache mustache;
-
-    @PostConstruct
-    public void init() {
-        mustache = mustacheFactory.compile("games-config.mustache");
-    }
-
     @GetMapping(value = "/games-config", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> get(HttpSession httpSession) throws Exception {
+    public ModelAndView get(HttpSession httpSession) throws Exception {
         checkSession(httpSession, true);
 
         SwampyGamesConfig swampyGamesConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
@@ -56,10 +48,7 @@ public class GamesConfigController extends BaseController {
 
         props.put("configEntries", configEntries);
 
-        try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
-            mustache.execute(stringWriter, props);
-            return ResponseEntity.ok(stringWriter.toString());
-        }
+        return new ModelAndView("games-config", props);
     }
 
     @PostMapping(value = "/games-config", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)

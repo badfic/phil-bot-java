@@ -3,14 +3,12 @@ package com.badfic.philbot.web;
 import com.badfic.philbot.data.TriviaForm;
 import com.badfic.philbot.data.phil.Trivia;
 import com.badfic.philbot.data.phil.TriviaRepository;
-import com.github.mustachejava.Mustache;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 public class TriviaController extends BaseController {
@@ -27,15 +26,8 @@ public class TriviaController extends BaseController {
     @Resource
     private TriviaRepository triviaRepository;
 
-    private Mustache mustache;
-
-    @PostConstruct
-    public void init() {
-        mustache = mustacheFactory.compile("trivia-form.mustache");
-    }
-
     @GetMapping(value = "/trivia", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> getTriviaForm(HttpSession httpSession) throws Exception {
+    public ModelAndView getTriviaForm(HttpSession httpSession) throws Exception {
         checkSession(httpSession, true);
 
         List<TriviaForm> triviaList = triviaRepository.findAll().stream().map(t -> {
@@ -54,10 +46,7 @@ public class TriviaController extends BaseController {
         props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
         props.put("trivia", triviaList);
 
-        try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
-            mustache.execute(stringWriter, props);
-            return ResponseEntity.ok(stringWriter.toString());
-        }
+        return new ModelAndView("trivia", props);
     }
 
     @PostMapping(value = "/trivia", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)

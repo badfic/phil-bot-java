@@ -19,7 +19,6 @@
 		<jda.version>4.2.0_214</jda.version>
 		<jda-utilities.version>3.0.4</jda-utilities.version>
 		<guava.version>30.1-jre</guava.version>
-		<mustache.version>0.9.7</mustache.version>
 		<honeybadger.version>2.0.2</honeybadger.version>
 		<jumblr.version>0.0.13</jumblr.version>
 		<rome.version>1.15.0</rome.version>
@@ -51,9 +50,8 @@
 			<version>${spring-cloud-starter-netflix-zuul.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.spullara.mustache.java</groupId>
-			<artifactId>compiler</artifactId>
-			<version>${mustache.version}</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mustache</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
