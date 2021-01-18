@@ -1,20 +1,18 @@
 package com.badfic.philbot.web;
 
 import com.badfic.philbot.data.phil.ReminderRepository;
-import com.github.mustachejava.Mustache;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 public class RemindersController extends BaseController {
@@ -22,15 +20,8 @@ public class RemindersController extends BaseController {
     @Resource
     private ReminderRepository reminderRepository;
 
-    private Mustache mustache;
-
-    @PostConstruct
-    public void init() {
-        mustache = mustacheFactory.compile("reminders.mustache");
-    }
-
     @GetMapping(value = "/reminders", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> get(HttpSession httpSession) throws Exception {
+    public ModelAndView get(HttpSession httpSession) throws Exception {
         checkSession(httpSession, false);
 
         List<SimpleReminder> simpleReminderList = reminderRepository.findAll()
@@ -47,10 +38,8 @@ public class RemindersController extends BaseController {
         props.put("pageTitle", "Reminders");
         props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
         props.put("reminders", simpleReminderList);
-        try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
-            mustache.execute(stringWriter, props);
-            return ResponseEntity.ok(stringWriter.toString());
-        }
+
+        return new ModelAndView("reminders", props);
     }
 
     private static class SimpleReminder {

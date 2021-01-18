@@ -8,9 +8,6 @@ import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGE_REACTIONS
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.MustacheFactory;
-import com.github.mustachejava.resolver.ClasspathResolver;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
@@ -258,11 +255,6 @@ public class BaseConfig implements TaskSchedulerCustomizer {
                 .addEventListeners(philCommandClient)
                 .setActivity(Activity.playing("with our feelings"))
                 .build();
-    }
-
-    @Bean
-    public MustacheFactory mustacheFactory() {
-        return new DefaultMustacheFactory(new ClasspathResolver("templates"));
     }
 
     @Bean

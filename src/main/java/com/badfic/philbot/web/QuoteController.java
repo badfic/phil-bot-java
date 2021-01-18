@@ -1,20 +1,18 @@
 package com.badfic.philbot.web;
 
 import com.badfic.philbot.data.phil.QuoteRepository;
-import com.github.mustachejava.Mustache;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 public class QuoteController extends BaseController {
@@ -22,15 +20,8 @@ public class QuoteController extends BaseController {
     @Resource
     private QuoteRepository quoteRepository;
 
-    private Mustache mustache;
-
-    @PostConstruct
-    public void init() {
-        mustache = mustacheFactory.compile("quotes.mustache");
-    }
-
     @GetMapping(value = "/quotes", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> get(HttpSession httpSession) throws Exception {
+    public ModelAndView get(HttpSession httpSession) throws Exception {
         checkSession(httpSession, false);
 
         Map<String, Object> props = new HashMap<>();
@@ -47,10 +38,7 @@ public class QuoteController extends BaseController {
                     q.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         }).collect(Collectors.toList()));
 
-        try (ReusableStringWriter stringWriter = ReusableStringWriter.getCurrent()) {
-            mustache.execute(stringWriter, props);
-            return ResponseEntity.ok(stringWriter.toString());
-        }
+        return new ModelAndView("quotes", props);
     }
 
     public static class SimpleQuote {
