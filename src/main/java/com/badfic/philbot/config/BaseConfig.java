@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.utils.IOUtil;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
@@ -150,6 +152,9 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     @Value("${TIMEOUT_CHANNEL_ID}")
     public String timeoutChannelId;
 
+    @Value("${OWNCAST_INSTANCE}")
+    public String owncastInstance;
+
     @Bean
     public ScheduledExecutorService childBotExecutor() {
         return Executors.newSingleThreadScheduledExecutor();
@@ -167,7 +172,7 @@ public class BaseConfig implements TaskSchedulerCustomizer {
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        return new RestTemplate(new OkHttp3ClientHttpRequestFactory());
     }
 
     @Bean
@@ -251,6 +256,7 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     public JDA philJda(List<EventListener> eventListeners,
                        @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
         return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES))
+                .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS)
                 .addEventListeners(eventListeners.stream().filter(e -> e instanceof PhilMarker).toArray(EventListener[]::new))
                 .addEventListeners(philCommandClient)
                 .setActivity(Activity.playing("with our feelings"))
