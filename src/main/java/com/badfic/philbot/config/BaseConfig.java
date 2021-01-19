@@ -19,31 +19,28 @@ import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import net.dv8tion.jda.internal.utils.IOUtil;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.task.TaskSchedulerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class BaseConfig implements TaskSchedulerCustomizer {
+public class BaseConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -156,13 +153,26 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     public String owncastInstance;
 
     @Bean
-    public ScheduledExecutorService childBotExecutor() {
-        return Executors.newSingleThreadScheduledExecutor();
+    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.setMaxPoolSize(4);
+        return threadPoolTaskExecutor;
     }
 
     @Bean
-    public OkHttpClient childBotOkHttpClient() {
-        return IOUtil.newHttpClientBuilder().build();
+    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+        threadPoolTaskScheduler.setPoolSize(2);
+        threadPoolTaskScheduler.setErrorHandler(t -> {
+            logger.error("Error in scheduled task", t);
+            honeybadgerReporter().reportError(t, null, "Error in scheduled task");
+        });
+        return threadPoolTaskScheduler;
+    }
+
+    @Bean
+    public OkHttpClient okHttpClient() {
+        return new OkHttpClient.Builder().build();
     }
 
     @Bean
@@ -172,7 +182,7 @@ public class BaseConfig implements TaskSchedulerCustomizer {
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate(new OkHttp3ClientHttpRequestFactory());
+        return new RestTemplate(new OkHttp3ClientHttpRequestFactory(okHttpClient()));
     }
 
     @Bean
@@ -188,11 +198,11 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     @Bean(name = "antoniaJda")
     public JDA antoniaJda() throws Exception {
         return JDABuilder.createLight(antoniaBotToken, Collections.emptyList())
-                .setRateLimitPool(childBotExecutor(), false)
-                .setCallbackPool(childBotExecutor(), false)
-                .setEventPool(childBotExecutor(), false)
-                .setGatewayPool(childBotExecutor(), false)
-                .setHttpClient(childBotOkHttpClient())
+                .setRateLimitPool(threadPoolTaskScheduler().getScheduledExecutor(), false)
+                .setCallbackPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
+                .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
+                .setGatewayPool(threadPoolTaskScheduler().getScheduledExecutor(), false)
+                .setHttpClient(okHttpClient())
                 .setActivity(Activity.listening(ANTONIA_STATUS_LIST[ThreadLocalRandom.current().nextInt(ANTONIA_STATUS_LIST.length)]))
                 .build();
     }
@@ -200,11 +210,11 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     @Bean(name = "johnJda")
     public JDA johnJda() throws Exception {
         return JDABuilder.createLight(johnBotToken, Collections.emptyList())
-                .setRateLimitPool(childBotExecutor(), false)
-                .setCallbackPool(childBotExecutor(), false)
-                .setEventPool(childBotExecutor(), false)
-                .setGatewayPool(childBotExecutor(), false)
-                .setHttpClient(childBotOkHttpClient())
+                .setRateLimitPool(threadPoolTaskScheduler().getScheduledExecutor(), false)
+                .setCallbackPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
+                .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
+                .setGatewayPool(threadPoolTaskScheduler().getScheduledExecutor(), false)
+                .setHttpClient(okHttpClient())
                 .setActivity(Activity.watching("Constantine"))
                 .build();
     }
@@ -212,11 +222,11 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     @Bean(name = "behradJda")
     public JDA behradJda() throws Exception {
         return JDABuilder.createLight(behradBotToken, Collections.emptyList())
-                .setRateLimitPool(childBotExecutor(), false)
-                .setCallbackPool(childBotExecutor(), false)
-                .setEventPool(childBotExecutor(), false)
-                .setGatewayPool(childBotExecutor(), false)
-                .setHttpClient(childBotOkHttpClient())
+                .setRateLimitPool(threadPoolTaskScheduler().getScheduledExecutor(), false)
+                .setCallbackPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
+                .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
+                .setGatewayPool(threadPoolTaskScheduler().getScheduledExecutor(), false)
+                .setHttpClient(okHttpClient())
                 .setActivity(Activity.playing(BEHRAD_STATUS_LIST[ThreadLocalRandom.current().nextInt(BEHRAD_STATUS_LIST.length)]))
                 .build();
     }
@@ -224,11 +234,11 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     @Bean(name = "keanuJda")
     public JDA keanuJda() throws Exception {
         return JDABuilder.createLight(keanuBotToken, Collections.emptyList())
-                .setRateLimitPool(childBotExecutor(), false)
-                .setCallbackPool(childBotExecutor(), false)
-                .setEventPool(childBotExecutor(), false)
-                .setGatewayPool(childBotExecutor(), false)
-                .setHttpClient(childBotOkHttpClient())
+                .setRateLimitPool(threadPoolTaskScheduler().getScheduledExecutor(), false)
+                .setCallbackPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
+                .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
+                .setGatewayPool(threadPoolTaskScheduler().getScheduledExecutor(), false)
+                .setHttpClient(okHttpClient())
                 .setActivity(Activity.watching(KEANU_STATUS_LIST[ThreadLocalRandom.current().nextInt(KEANU_STATUS_LIST.length)]))
                 .build();
     }
@@ -257,6 +267,11 @@ public class BaseConfig implements TaskSchedulerCustomizer {
                        @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
         return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES))
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS)
+                .setRateLimitPool(threadPoolTaskScheduler().getScheduledExecutor(), false)
+                .setCallbackPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
+                .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
+                .setGatewayPool(threadPoolTaskScheduler().getScheduledExecutor(), false)
+                .setHttpClient(okHttpClient())
                 .addEventListeners(eventListeners.stream().filter(e -> e instanceof PhilMarker).toArray(EventListener[]::new))
                 .addEventListeners(philCommandClient)
                 .setActivity(Activity.playing("with our feelings"))
@@ -271,14 +286,6 @@ public class BaseConfig implements TaskSchedulerCustomizer {
     @Bean
     public JumblrClient jumblrClient() {
         return new JumblrClient(tumblrConsumerKey, tumblrConsumerSecret, tumblrOauthToken, tumblrOauthSecret);
-    }
-
-    @Override
-    public void customize(ThreadPoolTaskScheduler taskScheduler) {
-        taskScheduler.setErrorHandler(t -> {
-            logger.error("Error in scheduled task", t);
-            honeybadgerReporter().reportError(t, null, "Error in scheduled task");
-        });
     }
 
 }
