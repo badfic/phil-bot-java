@@ -17,8 +17,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Resource
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-    @Resource
-    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+    @Resource(name = "taskScheduler")
+    private ThreadPoolTaskScheduler taskScheduler;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -29,7 +29,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
         registry.enableSimpleBroker("/topic")
-                .setTaskScheduler(threadPoolTaskScheduler); // in-memory broker
+                .setTaskScheduler(taskScheduler); // in-memory broker
         registry.configureBrokerChannel()
                 .taskExecutor(threadPoolTaskExecutor);
     }
