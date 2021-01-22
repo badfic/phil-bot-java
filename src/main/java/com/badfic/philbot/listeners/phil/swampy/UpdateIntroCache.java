@@ -66,9 +66,9 @@ public class UpdateIntroCache extends Command implements PhilMarker {
         while (lastMsgId != -1) {
             MessageHistory history;
             if (lastMsgId == 0) {
-                history = introChannel.getHistoryFromBeginning(25).complete();
+                history = introChannel.getHistoryFromBeginning(100).complete();
             } else {
-                history = introChannel.getHistoryAfter(lastMsgId, 25).complete();
+                history = introChannel.getHistoryAfter(lastMsgId, 100).complete();
             }
 
             lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())
