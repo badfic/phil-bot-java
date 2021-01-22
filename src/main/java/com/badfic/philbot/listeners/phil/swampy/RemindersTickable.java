@@ -2,6 +2,7 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.data.phil.Reminder;
 import com.badfic.philbot.data.phil.ReminderRepository;
+import com.badfic.philbot.service.MinuteTickable;
 import java.time.LocalDateTime;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;

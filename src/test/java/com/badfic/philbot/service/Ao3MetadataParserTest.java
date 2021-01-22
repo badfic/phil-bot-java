@@ -1,4 +1,4 @@
-package com.badfic.philbot.listeners.phil;
+package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
 import io.honeybadger.reporter.HoneybadgerReporter;

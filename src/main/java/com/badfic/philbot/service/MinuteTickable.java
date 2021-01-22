@@ -1,4 +1,4 @@
-package com.badfic.philbot.listeners.phil.swampy;
+package com.badfic.philbot.service;
 
 public interface MinuteTickable {
 

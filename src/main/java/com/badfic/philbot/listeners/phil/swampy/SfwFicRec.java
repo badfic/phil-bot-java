@@ -1,7 +1,7 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.PhilMarker;
-import com.badfic.philbot.listeners.phil.Ao3MetadataParser;
+import com.badfic.philbot.service.Ao3MetadataParser;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;

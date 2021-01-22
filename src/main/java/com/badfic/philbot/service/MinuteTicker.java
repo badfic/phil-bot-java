@@ -1,6 +1,5 @@
-package com.badfic.philbot.listeners.phil.swampy;
+package com.badfic.philbot.service;
 
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import javax.annotation.Resource;
@@ -10,11 +9,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MinuteTicker {
+public class MinuteTicker extends BaseService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-    @Resource
-    private HoneybadgerReporter honeybadgerReporter;
 
     @Resource
     private List<MinuteTickable> minuteTickables;

@@ -2,6 +2,7 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
+import com.badfic.philbot.service.MinuteTickable;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
