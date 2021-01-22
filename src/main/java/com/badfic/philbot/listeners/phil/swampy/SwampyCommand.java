@@ -48,9 +48,9 @@ public class SwampyCommand extends BaseSwampy implements PhilMarker {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83D\uDC2E", "\uD83D\uDC37", "\uD83E\uDD99", "\uD83D\uDC39",
-            "\uD83D\uDC3F️", "\uD83D\uDC22", "\uD83D\uDC38", "\uD83D\uDC00",
-            "\uD83E\uDD92", "\uD83D\uDC36"
+            "\uD83D\uDC2E", "\uD83D\uDC37", "\uD83E\uDD99",
+            "\uD83D\uDC3F️", "\uD83D\uDC22", "\uD83D\uDC38",
+            "\uD83D\uDC00", "\uD83E\uDD92", "\uD83D\uDC39"
     );
 
     // volatile state
