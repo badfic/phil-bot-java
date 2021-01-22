@@ -50,7 +50,6 @@ public class HowWeBecameCursedService extends BaseService implements MinuteTicka
     }
 
     private void refresh() {
-        howWeBecameCursedRepository.deleteAll();
         Optional<TextChannel> optionalChannel = philJda.getGuilds().get(0).getTextChannelsByName("how-we-became-cursed", false).stream().findFirst();
 
         if (!optionalChannel.isPresent()) {
@@ -64,9 +63,9 @@ public class HowWeBecameCursedService extends BaseService implements MinuteTicka
         while (lastMsgId != -1) {
             MessageHistory history;
             if (lastMsgId == 0) {
-                history = channel.getHistoryFromBeginning(25).complete();
+                history = channel.getHistoryFromBeginning(100).complete();
             } else {
-                history = channel.getHistoryAfter(lastMsgId, 25).complete();
+                history = channel.getHistoryAfter(lastMsgId, 100).complete();
             }
 
             lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())
