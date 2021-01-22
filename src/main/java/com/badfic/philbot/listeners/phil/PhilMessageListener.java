@@ -10,6 +10,7 @@ import com.badfic.philbot.listeners.john.JohnMessageListener;
 import com.badfic.philbot.listeners.keanu.KeanuMessageListener;
 import com.badfic.philbot.listeners.phil.swampy.MemberCount;
 import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
+import com.badfic.philbot.service.Ao3MetadataParser;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMultimap;

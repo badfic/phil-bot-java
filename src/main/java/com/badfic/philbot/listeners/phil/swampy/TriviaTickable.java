@@ -4,6 +4,7 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.badfic.philbot.data.phil.Trivia;
 import com.badfic.philbot.data.phil.TriviaRepository;
+import com.badfic.philbot.service.MinuteTickable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;

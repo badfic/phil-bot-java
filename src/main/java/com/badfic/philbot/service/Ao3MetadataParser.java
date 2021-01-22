@@ -1,12 +1,9 @@
-package com.badfic.philbot.listeners.phil;
+package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
 import com.google.common.annotations.VisibleForTesting;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.awt.Color;
 import java.lang.invoke.MethodHandles;
-import javax.annotation.Resource;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +14,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,21 +21,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 @Component
-public class Ao3MetadataParser {
+public class Ao3MetadataParser extends BaseService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-    @Resource
-    private HoneybadgerReporter honeybadgerReporter;
-
-    @Resource(name = "philJda")
-    @Lazy
-    private JDA philJda;
-
-    @Resource
-    private RestTemplate restTemplate;
 
     public boolean parseLink(String link, String channelName) {
         try {

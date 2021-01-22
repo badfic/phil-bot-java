@@ -3,6 +3,7 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.TimeoutCase;
 import com.badfic.philbot.data.phil.TimeoutCaseRepository;
+import com.badfic.philbot.service.MinuteTickable;
 import java.time.LocalDateTime;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.ChannelType;

@@ -1,10 +1,8 @@
-package com.badfic.philbot.listeners.phil;
+package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.RssEntry;
 import com.badfic.philbot.data.phil.RssEntryRepository;
-import com.badfic.philbot.listeners.phil.swampy.MinuteTickable;
-import com.badfic.philbot.listeners.phil.swampy.NonCommandSwampy;
 import com.google.common.collect.ImmutableSet;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -13,8 +11,6 @@ import com.rometools.rome.io.XmlReader;
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -29,9 +25,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 
 @Component
-public class RssSubscriber extends NonCommandSwampy implements MinuteTickable {
+public class RssSubscriber extends BaseService implements MinuteTickable {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private static final int MINUTE_REFRESH_INTERVAL = 30;
     private static final AtomicInteger REFRESH_COUNT = new AtomicInteger(-1);
     private static final Set<String> FEEDS = ImmutableSet.of(
@@ -48,7 +43,7 @@ public class RssSubscriber extends NonCommandSwampy implements MinuteTickable {
     @Override
     public void tick() throws Exception {
         if (REFRESH_COUNT.compareAndSet(-1, 0) || REFRESH_COUNT.compareAndSet(MINUTE_REFRESH_INTERVAL, 0)) {
-            EXECUTOR.submit(this::refresh);
+            threadPoolTaskExecutor.submit(this::refresh);
             return;
         }
 
