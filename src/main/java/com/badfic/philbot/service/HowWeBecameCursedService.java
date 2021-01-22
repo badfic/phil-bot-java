@@ -109,6 +109,11 @@ public class HowWeBecameCursedService extends BaseService implements MinuteTicka
                                         .append("\" target=\"_blank\"/>");
                             }
                         }
+                        if (embed.getImage() != null) {
+                            contentBuilder.append("\n<img src=\"")
+                                    .append(embed.getImage().getUrl())
+                                    .append("\" class=\"img-fluid\">");
+                        }
                     }
                 }
 
