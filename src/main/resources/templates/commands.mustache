@@ -1,5 +1,5 @@
 {{> header}}
-<div class="container">
+<div class="container-fluid">
     {{#commands}}
     <div class="card">
         <div class="card-body">
@@ -14,10 +14,10 @@
                 Help:
             </p>
             {{#modHelp}}
-                <pre>{{modHelp}}</pre>
+                <pre style="white-space: pre-wrap;">{{modHelp}}</pre>
             {{/modHelp}}
             {{^modHelp}}
-                <pre>{{help}}</pre>
+                <pre style="white-space: pre-wrap;">{{help}}</pre>
             {{/modHelp}}
         </div>
     </div>
