@@ -82,6 +82,30 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                     "Sweet Sweet Murder",
                     "https://cdn.discordapp.com/attachments/707453916882665552/783971471486615552/254c4699bb69c12a21714605beebd3f4.png"
             ))
+            .put("Crisco No Criscoing", new TheSwiper(
+                    "Crisco No Criscoing",
+                    "A Tub Of Crisco Has Been Spotted",
+                    "https://cdn.discordapp.com/attachments/741030569307275436/799730936765087794/PicsArt_01-15-10.03.48.jpg",
+                    "https://cdn.discordapp.com/attachments/741027502528659458/799683247042854932/image0.jpg",
+                    "Crisco Prevails",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/802674091773263882/20077.png"
+            ))
+            .put("Panic No Discoing", new TheSwiper(
+                    "Panic No Discoing",
+                    "Brendon Urie Spotted",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/802675259303526490/iu.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/802675392665878528/iu.png",
+                    "Panic! At The Crisco",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/802673454163296256/12panicatthecrisco2.png"
+            ))
+            .put("Doofen No Shrmirtzing", new TheSwiper(
+                    "Doofen No Shrmirtzing",
+                    "Dr. Doofenshmirtz Spotted Nearby!",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/802675752503214090/Heinz_Doofenshmirtz.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/802676338216927232/Perry2Bvs2BDoof2B1.png",
+                    "Doofenshmirtz Evil Incorporated",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/802676528759570452/a5663531c7b804c93fe2f4ca1c9c4a0b.gif"
+            ))
             .build();
 
     public static final String SPIDERMAN_PNG = "https://cdn.discordapp.com/attachments/707453916882665552/769837667617079316/spiderman.png";
