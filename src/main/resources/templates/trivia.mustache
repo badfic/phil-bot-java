@@ -63,30 +63,46 @@
 </div>
 
 <script>
-    $("#triviaForm").submit(function(e) {
+    function formSubmit(e) {
         e.preventDefault();
-        var postData = {
-            question: $("#question").val(),
-            answerA: $("#answerA").val(),
-            answerB: $("#answerB").val(),
-            answerC: $("#answerC").val(),
-            correctAnswer: $("#correctAnswer").val()
+
+        const cardAlert = document.querySelector("#cardAlert");
+        const question = document.querySelector("#question");
+        const answerA = document.querySelector("#answerA");
+        const answerB = document.querySelector("#answerB");
+        const answerC = document.querySelector("#answerC");
+        const correctAnswer = document.querySelector("#correctAnswer");
+
+        const postData = {
+            question: question.value,
+            answerA: answerA.value,
+            answerB: answerB.value,
+            answerC: answerC.value,
+            correctAnswer: correctAnswer.value
         };
 
-        $("#question").val("");
-        $("#answerA").val("");
-        $("#answerB").val("");
-        $("#answerC").val("");
+        question.value = "";
+        answerA.value = "";
+        answerB.value = "";
+        answerC.value = "";
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", window.location.href, true);
-        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-        xhr.send(JSON.stringify(postData));
+        fetch(window.location.href, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(postData)
+        }).then(response => response.text())
+                .then(result => {
+                    cardAlert.classList.remove("d-none");
+                    cardAlert.innerHTML = result;
+                })
+                .catch(result => {
+                    cardAlert.classList.remove("d-none");
+                    cardAlert.innerHTML = result;
+                });
+    }
 
-        xhr.onloadend = function(e) {
-            $("#cardAlert").removeClass("d-none");
-            $("#cardAlert").html(xhr.response);
-        };
-    });
+    document.querySelector("#triviaForm").addEventListener("submit", formSubmit);
 </script>
 {{> footer}}

@@ -1,9 +1,7 @@
 <script>
-    $(document).ready(function() {
-        $(".dateable").each(function(i, d) {
-            var epochMillis = d.innerHTML;
-            var date = new Date(+epochMillis);
-            d.innerHTML = date.toLocaleString();
-        });
+    document.querySelectorAll(".dateable").forEach(function(d) {
+        const epochMillis = d.innerHTML;
+        const date = new Date(+epochMillis);
+        d.innerHTML = date.toLocaleString();
     });
 </script>
