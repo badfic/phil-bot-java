@@ -1,26 +1,28 @@
 {{> header}}
 <div class="container-fluid">
     <h1>Reminders</h1>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">Number</th>
-            <th scope="col">Author</th>
-            <th scope="col">Reminder</th>
-            <th scope="col">Date</th>
-        </tr>
-        </thead>
-        <tbody>
-    {{#reminders}}
-        <tr>
-            <th scope="row">{{id}}</th>
-            <td>{{name}}</td>
-            <td>{{reminder}}</td>
-            <td class="dateable">{{dueDate}}</td>
-        </tr>
-    {{/reminders}}
-        </tbody>
-    </table>
+    <div class="table-responsive-sm">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Number</th>
+                <th scope="col">Author</th>
+                <th scope="col">Reminder</th>
+                <th scope="col">Date</th>
+            </tr>
+            </thead>
+            <tbody>
+        {{#reminders}}
+            <tr>
+                <th scope="row">{{id}}</th>
+                <td>{{name}}</td>
+                <td style="word-break:break-all;">{{reminder}}</td>
+                <td class="dateable">{{dueDate}}</td>
+            </tr>
+        {{/reminders}}
+            </tbody>
+        </table>
+    </div>
 </div>
 {{> dateable}}
 {{> footer}}
