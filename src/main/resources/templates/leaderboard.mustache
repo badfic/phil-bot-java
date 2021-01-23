@@ -32,147 +32,186 @@
             {
                 field: 'nickname',
                 title: 'Name',
-                sortable: true
+                sortable: true,
+                formatter: function(value) {
+                    return value.toLocaleString();
+                }
             },
             {
                 field: 'xp',
                 title: 'Points',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'taxesPoints',
                 title: 'Taxes',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'robinhoodPoints',
                 title: 'R.hood',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
+            },
+            {
+                field: 'taxesRobinhoodDiff',
+                title: 'T/R ±',
+                sortable: true,
+                formatter: function(value, row) {
+                    return (row.robinhoodPoints + row.taxesPoints).toLocaleString();
+                }
             },
             {
                 field: 'trickOrTreatPoints',
                 title: '🦄/😭',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'sweepstakesPoints',
                 title: '🧹🥩',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'boostPoints',
                 title: 'Boost',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'shrekoningPoints',
                 title: 'Shronk',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'stonksPoints',
                 title: 'Stonk',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'upvotedPoints',
                 title: 'Upvoted',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'upvoterPoints',
                 title: 'Upvoter',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'mapsPoints',
                 title: 'Map',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'triviaPoints',
                 title: 'Trivia',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'swiperPoints',
                 title: 'Swiper\'d',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'scooterPoints',
                 title: '🛴',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'noNoPoints',
                 title: 'No No',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'messagePoints',
                 title: 'Msg',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'pictureMessagePoints',
                 title: 'Pic Msg',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'voiceChatPoints',
                 title: 'Voice',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'reactPoints',
                 title: 'Give React',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'reactedPoints',
                 title: 'Rcv React',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'downvotedPoints',
                 title: 'Downvoted',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'downvoterPoints',
                 title: 'Downvoter',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'slotsLosses',
                 title: '🎰 Loss',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'slotsCloseEnoughPoints',
                 title: '🎰 Close',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'slotsWinnerWinnerPoints',
                 title: '🎰 Win',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'swiperParticipations',
                 title: 'Swiper Participant',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'modGavePoints',
                 title: 'Mod +',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             },
             {
                 field: 'modTookPoints',
                 title: 'Mod -',
-                sortable: true
+                sortable: true,
+                formatter: value => value.toLocaleString()
             }
         ]
     });
