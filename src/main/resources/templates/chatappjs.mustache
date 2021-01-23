@@ -1,25 +1,23 @@
 <script>
-    var username = '{{nickname}}';
-    var userAvatar = '{{userAvatar}}';
+    const username = "{{nickname}}";
+    const userAvatar = "{{userAvatar}}";
 
-    var chatApp = new Vue({
-        el: '#chatApp',
-        delimiters: ['[[', ']]'],
+    const chatApp = new Vue({
+        el: "#chatApp",
+        delimiters: ["[[", "]]"],
         data: {
             messages: [],
             onlineUsers: [],
             status: "Chat Connecting..."
         },
         updated: function() {
-            $("#messageArea").scrollTop($("#messageArea")[0].scrollHeight);
+            const messageArea = document.querySelector("#messageArea");
+            messageArea.scrollTop = messageArea.scrollHeight;
         }
     });
 
-    var messageForm = document.querySelector('#messageForm');
-    var messageInput = document.querySelector('#message');
-
-    var stompClient = new StompJs.Client({
-        brokerURL: (window.location.protocol.includes('s') ? 'wss://' : 'ws://') + window.location.host + '/ws',
+    const stompClient = new StompJs.Client({
+        brokerURL: (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws",
         debug: function(str) {
             console.log(str);
         },
@@ -29,25 +27,25 @@
     });
 
     stompClient.onConnect = function(frame) {
-        stompClient.subscribe('/topic/public', onMessageReceived);
-        stompClient.subscribe('/topic/online', onOnlineUsers);
+        stompClient.subscribe("/topic/public", onMessageReceived);
+        stompClient.subscribe("/topic/online", onOnlineUsers);
 
         stompClient.publish({
             destination: "/app/chat.addUser",
-            body: JSON.stringify({sender: username, avatar: userAvatar, type: 'JOIN'})
+            body: JSON.stringify({sender: username, avatar: userAvatar, type: "JOIN"})
         });
 
-        chatApp.status = 'Chat Connected!';
+        chatApp.status = "Chat Connected!";
     };
 
     stompClient.onStompError = function(frame) {
-        chatApp.status = 'Chat Reconnecting...';
-        console.log('Broker reported error: ' + frame.headers['message']);
-        console.log('Additional error details: ' + frame.body);
+        chatApp.status = "Chat Reconnecting...";
+        console.log("Broker reported error: " + frame.headers["message"]);
+        console.log("Additional error details: " + frame.body);
     };
 
     stompClient.onWebSocketClose = function(frame) {
-        chatApp.status = 'Chat Reconnecting...';
+        chatApp.status = "Chat Reconnecting...";
     };
 
     function onOnlineUsers(payload) {
@@ -55,18 +53,18 @@
     }
 
     function onMessageReceived(payload) {
-        var inboundMessage = JSON.parse(payload.body);
-        if (inboundMessage.type === 'JOIN') {
+        const inboundMessage = JSON.parse(payload.body);
+        if (inboundMessage.type === "JOIN") {
             chatApp.messages.push({
                 sender: inboundMessage.sender,
                 avatar: inboundMessage.avatar,
-                content: ' just connected'
+                content: " just connected"
             });
-        } else if (inboundMessage.type === 'LEAVE') {
+        } else if (inboundMessage.type === "LEAVE") {
             chatApp.messages.push({
                 sender: inboundMessage.sender,
                 avatar: inboundMessage.avatar,
-                content: ' just disconnected'
+                content: " just disconnected"
             });
         } else {
             chatApp.messages.push({
@@ -78,42 +76,43 @@
     }
 
     function sendMessage(event) {
-        var messageContent = messageInput.value.trim();
+        const messageInput = document.querySelector("#message");
+        const messageContent = messageInput.value.trim();
         if (messageContent) {
-            var chatMessage = {
+            const chatMessage = {
                 sender: username,
                 avatar: userAvatar,
                 content: messageInput.value,
-                type: 'CHAT'
+                type: "CHAT"
             };
             stompClient.publish({
                 destination: "/app/chat.sendMessage",
                 body: JSON.stringify(chatMessage)
             });
-            messageInput.value = '';
+            messageInput.value = "";
         }
         event.preventDefault();
     }
 
-    messageForm.addEventListener('submit', sendMessage, true);
+    document.querySelector("#messageForm").addEventListener("submit", sendMessage);
     stompClient.activate();
 </script>
 
 <script type="module">
-    import { EmojiButton } from 'https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.0/dist/index.js';
+    import { EmojiButton } from "https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.0/dist/index.js";
 
-    var emojiPicker = new EmojiButton({
-        theme: 'dark',
+    const emojiPicker = new EmojiButton({
+        theme: "dark",
         showVariants: false
     });
-    var emojiDiv = document.querySelector('.emoji-trigger');
 
-    emojiPicker.on('emoji', function(selection) {
-        var messageInputField = document.querySelector('#message');
-        messageInputField.value = messageInputField.value + selection.emoji;
+    emojiPicker.on("emoji", function(selection) {
+        const messageInput = document.querySelector("#message");
+        messageInput.value = messageInput.value + selection.emoji;
     });
 
-    emojiDiv.addEventListener('click', function(e) {
+    const emojiDiv = document.querySelector(".emoji-trigger");
+    emojiDiv.addEventListener("click", function(e) {
         emojiPicker.togglePicker(emojiDiv);
         e.preventDefault();
     });
