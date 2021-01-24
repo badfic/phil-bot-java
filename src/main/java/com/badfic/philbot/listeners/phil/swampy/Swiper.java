@@ -98,8 +98,8 @@ public class Swiper extends BaseSwampy implements PhilMarker {
                     "Panic! At The Crisco",
                     "https://cdn.discordapp.com/attachments/707453916882665552/802673454163296256/12panicatthecrisco2.png"
             ))
-            .put("Doofen No Shrmirtzing", new TheSwiper(
-                    "Doofen No Shrmirtzing",
+            .put("Doofen No Shmirtzing", new TheSwiper(
+                    "Doofen No Shmirtzing",
                     "Dr. Doofenshmirtz Spotted Nearby!",
                     "https://cdn.discordapp.com/attachments/707453916882665552/802675752503214090/Heinz_Doofenshmirtz.png",
                     "https://cdn.discordapp.com/attachments/707453916882665552/802676338216927232/Perry2Bvs2BDoof2B1.png",
