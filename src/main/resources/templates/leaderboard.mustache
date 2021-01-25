@@ -56,22 +56,10 @@
                 formatter: value => value.toLocaleString()
             },
             {
-                field: "taxesRobinhoodDiff",
+                field: "taxesRobinhoodNet",
                 title: "T/R ±",
                 sortable: true,
-                formatter: function(value, row) {
-                    return (row.robinhoodPoints + row.taxesPoints).toLocaleString();
-                },
-                sorter: function(fieldA, fieldB, rowA, rowB) {
-                    const difference = (rowA.robinhoodPoints + rowA.taxesPoints) - (rowB.robinhoodPoints + rowB.taxesPoints);
-                    if (difference > 0) {
-                        return 1;
-                    } else if (difference < 0) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
+                formatter: value => value.toLocaleString()
             },
             {
                 field: "trickOrTreatPoints",
