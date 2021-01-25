@@ -28,36 +28,36 @@
                     <thead>
                         <tr>
                             <th>Profile</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('nickname')" v-bind:class="{ asc: {{.}}SortKey === 'nickname' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'nickname' && {{.}}Order === 'desc'}">Name</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('xp')" v-bind:class="{ asc: {{.}}SortKey === 'xp' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'xp' && {{.}}Order === 'desc'}">Points</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('taxesPoints')" v-bind:class="{ asc: {{.}}SortKey === 'taxesPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'taxesPoints' && {{.}}Order === 'desc'}">Taxes</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('robinhoodPoints')" v-bind:class="{ asc: {{.}}SortKey === 'robinhoodPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'robinhoodPoints' && {{.}}Order === 'desc'}">R.hood</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('taxesRobinhoodNet')" v-bind:class="{ asc: {{.}}SortKey === 'taxesRobinhoodNet' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'taxesRobinhoodNet' && {{.}}Order === 'desc'}">T/R ±</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('trickOrTreatPoints')" v-bind:class="{ asc: {{.}}SortKey === 'trickOrTreatPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'trickOrTreatPoints' && {{.}}Order === 'desc'}">🦄/😭</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('sweepstakesPoints')" v-bind:class="{ asc: {{.}}SortKey === 'sweepstakesPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'sweepstakesPoints' && {{.}}Order === 'desc'}">🧹🥩</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('boostPoints')" v-bind:class="{ asc: {{.}}SortKey === 'boostPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'boostPoints' && {{.}}Order === 'desc'}">Boost</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('shrekoningPoints')" v-bind:class="{ asc: {{.}}SortKey === 'shrekoningPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'shrekoningPoints' && {{.}}Order === 'desc'}">Shronk</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('stonksPoints')" v-bind:class="{ asc: {{.}}SortKey === 'stonksPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'stonksPoints' && {{.}}Order === 'desc'}">Stonk</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('upvotedPoints')" v-bind:class="{ asc: {{.}}SortKey === 'upvotedPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'upvotedPoints' && {{.}}Order === 'desc'}">Upvoted</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('upvoterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'upvoterPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'upvoterPoints' && {{.}}Order === 'desc'}">Upvoter</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('mapsPoints')" v-bind:class="{ asc: {{.}}SortKey === 'mapsPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'mapsPoints' && {{.}}Order === 'desc'}">Map</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('triviaPoints')" v-bind:class="{ asc: {{.}}SortKey === 'triviaPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'triviaPoints' && {{.}}Order === 'desc'}">Trivia</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('swiperPoints')" v-bind:class="{ asc: {{.}}SortKey === 'swiperPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'swiperPoints' && {{.}}Order === 'desc'}">Swiper'd</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('scooterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'scooterPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'scooterPoints' && {{.}}Order === 'desc'}">🛴</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('noNoPoints')" v-bind:class="{ asc: {{.}}SortKey === 'noNoPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'noNoPoints' && {{.}}Order === 'desc'}">No No</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('messagePoints')" v-bind:class="{ asc: {{.}}SortKey === 'messagePoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'messagePoints' && {{.}}Order === 'desc'}">Msg</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('pictureMessagePoints')" v-bind:class="{ asc: {{.}}SortKey === 'pictureMessagePoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'pictureMessagePoints' && {{.}}Order === 'desc'}">Pic Msg</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('voiceChatPoints')" v-bind:class="{ asc: {{.}}SortKey === 'voiceChatPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'voiceChatPoints' && {{.}}Order === 'desc'}">Voice</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('reactPoints')" v-bind:class="{ asc: {{.}}SortKey === 'reactPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'reactPoints' && {{.}}Order === 'desc'}">Give React</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('reactedPoints')" v-bind:class="{ asc: {{.}}SortKey === 'reactedPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'reactedPoints' && {{.}}Order === 'desc'}">Rcv React</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('downvotedPoints')" v-bind:class="{ asc: {{.}}SortKey === 'downvotedPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'downvotedPoints' && {{.}}Order === 'desc'}">Downvoted</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('downvoterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'downvoterPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'downvoterPoints' && {{.}}Order === 'desc'}">Downvoter</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('slotsLosses')" v-bind:class="{ asc: {{.}}SortKey === 'slotsLosses' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'slotsLosses' && {{.}}Order === 'desc'}">🎰 Loss</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('slotsCloseEnoughPoints')" v-bind:class="{ asc: {{.}}SortKey === 'slotsCloseEnoughPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'slotsCloseEnoughPoints' && {{.}}Order === 'desc'}">🎰 Close</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('slotsWinnerWinnerPoints')" v-bind:class="{ asc: {{.}}SortKey === 'slotsWinnerWinnerPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'slotsWinnerWinnerPoints' && {{.}}Order === 'desc'}">🎰 Win</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('swiperParticipations')" v-bind:class="{ asc: {{.}}SortKey === 'swiperParticipations' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'swiperParticipations' && {{.}}Order === 'desc'}">Swiper Participant</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('modGavePoints')" v-bind:class="{ asc: {{.}}SortKey === 'modGavePoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'modGavePoints' && {{.}}Order === 'desc'}">Mod +</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('modTookPoints')" v-bind:class="{ asc: {{.}}SortKey === 'modTookPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'modTookPoints' && {{.}}Order === 'desc'}">Mod -</th>
+                            <th>Name</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('xp')" v-bind:class="{ asc: {{.}}SortKey === 'xp' && {{.}}Order, desc: {{.}}SortKey === 'xp' && !{{.}}Order}">Points</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('taxesPoints')" v-bind:class="{ asc: {{.}}SortKey === 'taxesPoints' && {{.}}Order, desc: {{.}}SortKey === 'taxesPoints' && !{{.}}Order}">Taxes</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('robinhoodPoints')" v-bind:class="{ asc: {{.}}SortKey === 'robinhoodPoints' && {{.}}Order, desc: {{.}}SortKey === 'robinhoodPoints' && !{{.}}Order}">R.hood</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('taxesRobinhoodNet')" v-bind:class="{ asc: {{.}}SortKey === 'taxesRobinhoodNet' && {{.}}Order, desc: {{.}}SortKey === 'taxesRobinhoodNet' && !{{.}}Order}">T/R ±</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('trickOrTreatPoints')" v-bind:class="{ asc: {{.}}SortKey === 'trickOrTreatPoints' && {{.}}Order, desc: {{.}}SortKey === 'trickOrTreatPoints' && !{{.}}Order}">🦄/😭</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('sweepstakesPoints')" v-bind:class="{ asc: {{.}}SortKey === 'sweepstakesPoints' && {{.}}Order, desc: {{.}}SortKey === 'sweepstakesPoints' && !{{.}}Order}">🧹🥩</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('boostPoints')" v-bind:class="{ asc: {{.}}SortKey === 'boostPoints' && {{.}}Order, desc: {{.}}SortKey === 'boostPoints' && !{{.}}Order}">Boost</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('shrekoningPoints')" v-bind:class="{ asc: {{.}}SortKey === 'shrekoningPoints' && {{.}}Order, desc: {{.}}SortKey === 'shrekoningPoints' && !{{.}}Order}">Shronk</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('stonksPoints')" v-bind:class="{ asc: {{.}}SortKey === 'stonksPoints' && {{.}}Order, desc: {{.}}SortKey === 'stonksPoints' && !{{.}}Order}">Stonk</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('upvotedPoints')" v-bind:class="{ asc: {{.}}SortKey === 'upvotedPoints' && {{.}}Order, desc: {{.}}SortKey === 'upvotedPoints' && !{{.}}Order}">Up voted</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('upvoterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'upvoterPoints' && {{.}}Order, desc: {{.}}SortKey === 'upvoterPoints' && !{{.}}Order}">Up voter</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('mapsPoints')" v-bind:class="{ asc: {{.}}SortKey === 'mapsPoints' && {{.}}Order, desc: {{.}}SortKey === 'mapsPoints' && !{{.}}Order}">Map</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('triviaPoints')" v-bind:class="{ asc: {{.}}SortKey === 'triviaPoints' && {{.}}Order, desc: {{.}}SortKey === 'triviaPoints' && !{{.}}Order}">Trivia</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('swiperPoints')" v-bind:class="{ asc: {{.}}SortKey === 'swiperPoints' && {{.}}Order, desc: {{.}}SortKey === 'swiperPoints' && !{{.}}Order}">Swiper'd</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('scooterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'scooterPoints' && {{.}}Order, desc: {{.}}SortKey === 'scooterPoints' && !{{.}}Order}">🛴</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('noNoPoints')" v-bind:class="{ asc: {{.}}SortKey === 'noNoPoints' && {{.}}Order, desc: {{.}}SortKey === 'noNoPoints' && !{{.}}Order}">No No</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('messagePoints')" v-bind:class="{ asc: {{.}}SortKey === 'messagePoints' && {{.}}Order, desc: {{.}}SortKey === 'messagePoints' && !{{.}}Order}">Msg</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('pictureMessagePoints')" v-bind:class="{ asc: {{.}}SortKey === 'pictureMessagePoints' && {{.}}Order, desc: {{.}}SortKey === 'pictureMessagePoints' && !{{.}}Order}">Pic Msg</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('voiceChatPoints')" v-bind:class="{ asc: {{.}}SortKey === 'voiceChatPoints' && {{.}}Order, desc: {{.}}SortKey === 'voiceChatPoints' && !{{.}}Order}">Voice</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('reactPoints')" v-bind:class="{ asc: {{.}}SortKey === 'reactPoints' && {{.}}Order, desc: {{.}}SortKey === 'reactPoints' && !{{.}}Order}">Give React</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('reactedPoints')" v-bind:class="{ asc: {{.}}SortKey === 'reactedPoints' && {{.}}Order, desc: {{.}}SortKey === 'reactedPoints' && !{{.}}Order}">Rcv React</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('downvotedPoints')" v-bind:class="{ asc: {{.}}SortKey === 'downvotedPoints' && {{.}}Order, desc: {{.}}SortKey === 'downvotedPoints' && !{{.}}Order}">Down voted</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('downvoterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'downvoterPoints' && {{.}}Order, desc: {{.}}SortKey === 'downvoterPoints' && !{{.}}Order}">Down voter</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('slotsLosses')" v-bind:class="{ asc: {{.}}SortKey === 'slotsLosses' && {{.}}Order, desc: {{.}}SortKey === 'slotsLosses' && !{{.}}Order}">🎰 Loss</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('slotsCloseEnoughPoints')" v-bind:class="{ asc: {{.}}SortKey === 'slotsCloseEnoughPoints' && {{.}}Order, desc: {{.}}SortKey === 'slotsCloseEnoughPoints' && !{{.}}Order}">🎰 Close</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('slotsWinnerWinnerPoints')" v-bind:class="{ asc: {{.}}SortKey === 'slotsWinnerWinnerPoints' && {{.}}Order, desc: {{.}}SortKey === 'slotsWinnerWinnerPoints' && !{{.}}Order}">🎰 Win</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('swiperParticipations')" v-bind:class="{ asc: {{.}}SortKey === 'swiperParticipations' && {{.}}Order, desc: {{.}}SortKey === 'swiperParticipations' && !{{.}}Order}">Swiper Participant</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('modGavePoints')" v-bind:class="{ asc: {{.}}SortKey === 'modGavePoints' && {{.}}Order, desc: {{.}}SortKey === 'modGavePoints' && !{{.}}Order}">Mod +</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('modTookPoints')" v-bind:class="{ asc: {{.}}SortKey === 'modTookPoints' && {{.}}Order, desc: {{.}}SortKey === 'modTookPoints' && !{{.}}Order}">Mod -</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -109,15 +109,15 @@
         data: {
             bastards: [],
             bastardsSortKey: "xp",
-            bastardsOrder: "desc",
+            bastardsOrder: false,
             children: [],
             childrenSortKey: "xp",
-            childrenOrder: "desc"
+            childrenOrder: false
         },
         computed: {
             sortedbastards: function() {
                 return this.bastards.sort((a, b) => {
-                    if (this.bastardsOrder === "asc") {
+                    if (this.bastardsOrder) {
                         return a[this.bastardsSortKey] - b[this.bastardsSortKey];
                     }
                     return b[this.bastardsSortKey] - a[this.bastardsSortKey];
@@ -125,7 +125,7 @@
             },
             sortedchildren: function() {
                 return this.children.sort((a, b) => {
-                    if (this.childrenOrder === "asc") {
+                    if (this.childrenOrder) {
                         return a[this.childrenSortKey] - b[this.childrenSortKey];
                     }
                     return b[this.childrenSortKey] - a[this.childrenSortKey];
@@ -134,20 +134,12 @@
         },
         methods: {
             bastardsSort: function(column) {
+                this.bastardsOrder = this.bastardsSortKey === column ? !this.bastardsOrder : false;
                 this.bastardsSortKey = column;
-                if (this.bastardsOrder === "desc") {
-                    this.bastardsOrder = "asc";
-                } else {
-                    this.bastardsOrder = "desc";
-                }
             },
             childrenSort: function(column) {
+                this.childrenOrder = this.childrenSortKey === column ? !this.childrenOrder : false;
                 this.childrenSortKey = column;
-                if (this.childrenOrder === "desc") {
-                    this.childrenOrder = "asc";
-                } else {
-                    this.childrenOrder = "desc";
-                }
             }
         },
         created: function() {
