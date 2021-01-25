@@ -142,6 +142,9 @@ public class DiscordUser {
     @Column
     private long robinhoodPoints;
 
+    @Transient
+    private long taxesRobinhoodNet;
+
     @Column
     private long scooterParticipant;
 
@@ -455,6 +458,10 @@ public class DiscordUser {
 
     public void setRobinhoodPoints(long robinhoodPoints) {
         this.robinhoodPoints = robinhoodPoints;
+    }
+
+    public long getTaxesRobinhoodNet() {
+        return taxesPoints + robinhoodPoints;
     }
 
     public long getScooterParticipant() {
