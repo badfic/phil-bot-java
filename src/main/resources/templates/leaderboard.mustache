@@ -116,10 +116,20 @@
         },
         computed: {
             sortedbastards: function() {
-                return _.orderBy(this.bastards, this.bastardsSortKey, this.bastardsOrder);
+                return this.bastards.sort((a, b) => {
+                    if (this.bastardsOrder === "asc") {
+                        return a[this.bastardsSortKey] - b[this.bastardsSortKey];
+                    }
+                    return b[this.bastardsSortKey] - a[this.bastardsSortKey];
+                });
             },
             sortedchildren: function() {
-                return _.orderBy(this.children, this.childrenSortKey, this.childrenOrder);
+                return this.children.sort((a, b) => {
+                    if (this.childrenOrder === "asc") {
+                        return a[this.childrenSortKey] - b[this.childrenSortKey];
+                    }
+                    return b[this.childrenSortKey] - a[this.childrenSortKey];
+                });
             }
         },
         methods: {
