@@ -1,218 +1,154 @@
 {{> header}}
-<div class="container-fluid">
-    <div class="row my-4">
+
+<style>
+    .both {
+        background-repeat: no-repeat;
+        background-position: 100% 100%;
+        background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAAAkElEQVQoz7XQMQ5AQBCF4dWQSJxC5wwax1Cq1e7BAdxD5SL+Tq/QCM1oNiJidwox0355mXnG/DrEtIQ6azioNZQxI0ykPhTQIwhCR+BmBYtlK7kLJYwWCcJA9M4qdrZrd8pPjZWPtOqdRQy320YSV17OatFC4euts6z39GYMKRPCTKY9UnPQ6P+GtMRfGtPnBCiqhAeJPmkqAAAAAElFTkSuQmCC");
+    }
+    .asc {
+        background-repeat: no-repeat;
+        background-position: 100% 100%;
+        background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAZ0lEQVQ4y2NgGLKgquEuFxBPAGI2ahhWCsS/gDibUoO0gPgxEP8H4ttArEyuQYxAPBdqEAxPBImTY5gjEL9DM+wTENuQahAvEO9DMwiGdwAxOymGJQLxTyD+jgWDxCMZRsEoGAVoAADeemwtPcZI2wAAAABJRU5ErkJggg==");
+    }
+    .desc {
+        background-repeat: no-repeat;
+        background-position: 100% 100%;
+        background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAZUlEQVQ4y2NgGAWjYBSggaqGu5FA/BOIv2PBIPFEUgxjB+IdQPwfC94HxLykus4GiD+hGfQOiB3J8SojEE9EM2wuSJzcsFMG4ttQgx4DsRalkZENxL+AuJQaMcsGxBOAmGvopk8AVz1sLZgg0bsAAAAASUVORK5CYII=");
+    }
+</style>
+
+<div class="container-fluid" id="app">
+    {{#tables}}
+    <div class="row my-4 mw-100">
         <div class="col-12">
-            <h2>Bastards</h2>
-            <table id="bastards-board"></table>
+            <h2 class="text-capitalize">{{.}}</h2>
+            <div class="table-responsive vh-100" style="max-height: 50vh; overflow:auto">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Profile</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('nickname')" v-bind:class="{ asc: {{.}}SortKey === 'nickname' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'nickname' && {{.}}Order === 'desc'}">Name</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('xp')" v-bind:class="{ asc: {{.}}SortKey === 'xp' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'xp' && {{.}}Order === 'desc'}">Points</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('taxesPoints')" v-bind:class="{ asc: {{.}}SortKey === 'taxesPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'taxesPoints' && {{.}}Order === 'desc'}">Taxes</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('robinhoodPoints')" v-bind:class="{ asc: {{.}}SortKey === 'robinhoodPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'robinhoodPoints' && {{.}}Order === 'desc'}">R.hood</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('taxesRobinhoodNet')" v-bind:class="{ asc: {{.}}SortKey === 'taxesRobinhoodNet' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'taxesRobinhoodNet' && {{.}}Order === 'desc'}">T/R ±</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('trickOrTreatPoints')" v-bind:class="{ asc: {{.}}SortKey === 'trickOrTreatPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'trickOrTreatPoints' && {{.}}Order === 'desc'}">🦄/😭</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('sweepstakesPoints')" v-bind:class="{ asc: {{.}}SortKey === 'sweepstakesPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'sweepstakesPoints' && {{.}}Order === 'desc'}">🧹🥩</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('boostPoints')" v-bind:class="{ asc: {{.}}SortKey === 'boostPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'boostPoints' && {{.}}Order === 'desc'}">Boost</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('shrekoningPoints')" v-bind:class="{ asc: {{.}}SortKey === 'shrekoningPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'shrekoningPoints' && {{.}}Order === 'desc'}">Shronk</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('stonksPoints')" v-bind:class="{ asc: {{.}}SortKey === 'stonksPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'stonksPoints' && {{.}}Order === 'desc'}">Stonk</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('upvotedPoints')" v-bind:class="{ asc: {{.}}SortKey === 'upvotedPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'upvotedPoints' && {{.}}Order === 'desc'}">Upvoted</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('upvoterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'upvoterPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'upvoterPoints' && {{.}}Order === 'desc'}">Upvoter</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('mapsPoints')" v-bind:class="{ asc: {{.}}SortKey === 'mapsPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'mapsPoints' && {{.}}Order === 'desc'}">Map</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('triviaPoints')" v-bind:class="{ asc: {{.}}SortKey === 'triviaPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'triviaPoints' && {{.}}Order === 'desc'}">Trivia</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('swiperPoints')" v-bind:class="{ asc: {{.}}SortKey === 'swiperPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'swiperPoints' && {{.}}Order === 'desc'}">Swiper'd</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('scooterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'scooterPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'scooterPoints' && {{.}}Order === 'desc'}">🛴</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('noNoPoints')" v-bind:class="{ asc: {{.}}SortKey === 'noNoPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'noNoPoints' && {{.}}Order === 'desc'}">No No</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('messagePoints')" v-bind:class="{ asc: {{.}}SortKey === 'messagePoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'messagePoints' && {{.}}Order === 'desc'}">Msg</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('pictureMessagePoints')" v-bind:class="{ asc: {{.}}SortKey === 'pictureMessagePoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'pictureMessagePoints' && {{.}}Order === 'desc'}">Pic Msg</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('voiceChatPoints')" v-bind:class="{ asc: {{.}}SortKey === 'voiceChatPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'voiceChatPoints' && {{.}}Order === 'desc'}">Voice</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('reactPoints')" v-bind:class="{ asc: {{.}}SortKey === 'reactPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'reactPoints' && {{.}}Order === 'desc'}">Give React</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('reactedPoints')" v-bind:class="{ asc: {{.}}SortKey === 'reactedPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'reactedPoints' && {{.}}Order === 'desc'}">Rcv React</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('downvotedPoints')" v-bind:class="{ asc: {{.}}SortKey === 'downvotedPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'downvotedPoints' && {{.}}Order === 'desc'}">Downvoted</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('downvoterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'downvoterPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'downvoterPoints' && {{.}}Order === 'desc'}">Downvoter</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('slotsLosses')" v-bind:class="{ asc: {{.}}SortKey === 'slotsLosses' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'slotsLosses' && {{.}}Order === 'desc'}">🎰 Loss</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('slotsCloseEnoughPoints')" v-bind:class="{ asc: {{.}}SortKey === 'slotsCloseEnoughPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'slotsCloseEnoughPoints' && {{.}}Order === 'desc'}">🎰 Close</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('slotsWinnerWinnerPoints')" v-bind:class="{ asc: {{.}}SortKey === 'slotsWinnerWinnerPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'slotsWinnerWinnerPoints' && {{.}}Order === 'desc'}">🎰 Win</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('swiperParticipations')" v-bind:class="{ asc: {{.}}SortKey === 'swiperParticipations' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'swiperParticipations' && {{.}}Order === 'desc'}">Swiper Participant</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('modGavePoints')" v-bind:class="{ asc: {{.}}SortKey === 'modGavePoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'modGavePoints' && {{.}}Order === 'desc'}">Mod +</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('modTookPoints')" v-bind:class="{ asc: {{.}}SortKey === 'modTookPoints' && {{.}}Order === 'asc', desc: {{.}}SortKey === 'modTookPoints' && {{.}}Order === 'desc'}">Mod -</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in sorted{{.}}">
+                            <td><img :src="item.profileUrl" width="50" height="50"></td>
+                            <td>[[ item.nickname ]]</td>
+                            <td>[[ item.xp ]]</td>
+                            <td>[[ item.taxesPoints ]]</td>
+                            <td>[[ item.robinhoodPoints ]]</td>
+                            <td>[[ item.taxesRobinhoodNet ]]</td>
+                            <td>[[ item.trickOrTreatPoints ]]</td>
+                            <td>[[ item.sweepstakesPoints ]]</td>
+                            <td>[[ item.boostPoints ]]</td>
+                            <td>[[ item.shrekoningPoints ]]</td>
+                            <td>[[ item.stonksPoints ]]</td>
+                            <td>[[ item.upvotedPoints ]]</td>
+                            <td>[[ item.upvoterPoints ]]</td>
+                            <td>[[ item.mapsPoints ]]</td>
+                            <td>[[ item.triviaPoints ]]</td>
+                            <td>[[ item.swiperPoints ]]</td>
+                            <td>[[ item.scooterPoints ]]</td>
+                            <td>[[ item.noNoPoints ]]</td>
+                            <td>[[ item.messagePoints ]]</td>
+                            <td>[[ item.pictureMessagePoints ]]</td>
+                            <td>[[ item.voiceChatPoints ]]</td>
+                            <td>[[ item.reactPoints ]]</td>
+                            <td>[[ item.reactedPoints ]]</td>
+                            <td>[[ item.downvotedPoints ]]</td>
+                            <td>[[ item.downvoterPoints ]]</td>
+                            <td>[[ item.slotsLosses ]]</td>
+                            <td>[[ item.slotsCloseEnoughPoints ]]</td>
+                            <td>[[ item.slotsWinnerWinnerPoints ]]</td>
+                            <td>[[ item.swiperParticipations ]]</td>
+                            <td>[[ item.modGavePoints ]]</td>
+                            <td>[[ item.modTookPoints ]]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="row my-4">
-        <div class="col-12">
-            <h2>Children</h2>
-            <table id="children-board"></table>
-        </div>
-    </div>
+    {{/tables}}
 </div>
 
 <script>
-{{#tables}}
-    $("#{{.}}-board").bootstrapTable({
-        url: "/leaderboard/{{.}}",
-        sortName: "xp",
-        sortOrder: "desc",
-        height: 440,
-        columns: [
-            {
-                field: "profileUrl",
-                title: "Profile",
-                formatter: function(value) {
-                    return `<img src="${value}" width="50" height="50">`;
-                }
+    new Vue({
+        el: "#app",
+        delimiters: ["[[", "]]"],
+        data: {
+            bastards: [],
+            bastardsSortKey: "xp",
+            bastardsOrder: "desc",
+            children: [],
+            childrenSortKey: "xp",
+            childrenOrder: "desc"
+        },
+        computed: {
+            sortedbastards: function() {
+                return _.orderBy(this.bastards, this.bastardsSortKey, this.bastardsOrder);
             },
-            {
-                field: "nickname",
-                title: "Name",
-                sortable: true,
-                formatter: function(value) {
-                    return value.toLocaleString();
-                }
-            },
-            {
-                field: "xp",
-                title: "Points",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "taxesPoints",
-                title: "Taxes",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "robinhoodPoints",
-                title: "R.hood",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "taxesRobinhoodNet",
-                title: "T/R ±",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "trickOrTreatPoints",
-                title: "🦄/😭",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "sweepstakesPoints",
-                title: "🧹🥩",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "boostPoints",
-                title: "Boost",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "shrekoningPoints",
-                title: "Shronk",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "stonksPoints",
-                title: "Stonk",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "upvotedPoints",
-                title: "Upvoted",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "upvoterPoints",
-                title: "Upvoter",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "mapsPoints",
-                title: "Map",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "triviaPoints",
-                title: "Trivia",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "swiperPoints",
-                title: "Swiper'd",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "scooterPoints",
-                title: "🛴",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "noNoPoints",
-                title: "No No",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "messagePoints",
-                title: "Msg",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "pictureMessagePoints",
-                title: "Pic Msg",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "voiceChatPoints",
-                title: "Voice",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "reactPoints",
-                title: "Give React",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "reactedPoints",
-                title: "Rcv React",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "downvotedPoints",
-                title: "Downvoted",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "downvoterPoints",
-                title: "Downvoter",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "slotsLosses",
-                title: "🎰 Loss",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "slotsCloseEnoughPoints",
-                title: "🎰 Close",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "slotsWinnerWinnerPoints",
-                title: "🎰 Win",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "swiperParticipations",
-                title: "Swiper Participant",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "modGavePoints",
-                title: "Mod +",
-                sortable: true,
-                formatter: value => value.toLocaleString()
-            },
-            {
-                field: "modTookPoints",
-                title: "Mod -",
-                sortable: true,
-                formatter: value => value.toLocaleString()
+            sortedchildren: function() {
+                return _.orderBy(this.children, this.childrenSortKey, this.childrenOrder);
             }
-        ]
+        },
+        methods: {
+            bastardsSort: function(column) {
+                this.bastardsSortKey = column;
+                if (this.bastardsOrder === "desc") {
+                    this.bastardsOrder = "asc";
+                } else {
+                    this.bastardsOrder = "desc";
+                }
+            },
+            childrenSort: function(column) {
+                this.childrenSortKey = column;
+                if (this.childrenOrder === "desc") {
+                    this.childrenOrder = "asc";
+                } else {
+                    this.childrenOrder = "desc";
+                }
+            }
+        },
+        created: function() {
+            fetch("/leaderboard/bastards")
+                    .then(response => response.json())
+                    .then(result => this.bastards = result);
+
+            fetch("/leaderboard/children")
+                    .then(response => response.json())
+                    .then(result => this.children = result);
+        }
     });
-{{/tables}}
 </script>
 {{> footer}}
