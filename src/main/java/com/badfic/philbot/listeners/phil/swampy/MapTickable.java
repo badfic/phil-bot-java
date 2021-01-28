@@ -23,7 +23,7 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
-    public void tick() throws Exception {
+    public void run() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 

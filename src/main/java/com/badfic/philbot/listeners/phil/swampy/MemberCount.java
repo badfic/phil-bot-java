@@ -3,6 +3,7 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
+import com.badfic.philbot.service.DailyTickable;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -10,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MemberCount extends BaseSwampy implements PhilMarker {
+public class MemberCount extends BaseSwampy implements PhilMarker, DailyTickable {
 
     public MemberCount() {
         name = "memberCount";
@@ -63,15 +64,22 @@ public class MemberCount extends BaseSwampy implements PhilMarker {
         }
     }
 
+    @Override
+    public void run() {
+        updateCount();
+    }
+
     public boolean updateCount() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         Guild guild = philJda.getGuilds().get(0);
         VoiceChannel voiceChannelById = guild.getVoiceChannelById(swampyGamesConfig.getMemberCountChannel());
         if (voiceChannelById != null) {
             voiceChannelById.getManager().setName(guild.getMembers().size() + " members").queue();
+            Constants.debugToTestChannel(philJda, "Successfully updated member count channel");
             return true;
         }
 
         return false;
     }
+
 }

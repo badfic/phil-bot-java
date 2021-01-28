@@ -24,7 +24,7 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
     private TriviaRepository triviaRepository;
 
     @Override
-    public void tick() throws Exception {
+    public void run() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
