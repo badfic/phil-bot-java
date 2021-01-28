@@ -9,21 +9,22 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MinuteTicker extends BaseService {
+public class DailyTicker extends BaseService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Resource
-    private List<MinuteTickable> minuteTickables;
+    private List<DailyTickable> dailyTickables;
 
-    @Scheduled(cron = "0 * * * * ?", zone = "GMT")
+    @Scheduled(cron = "0 0 12 * * ?", zone = "GMT")
     public void masterTick() {
-        for (MinuteTickable runnable : minuteTickables) {
+        for (DailyTickable runnable : dailyTickables) {
             try {
                 runnable.run();
             } catch (Exception e) {
-                logger.error("Exception in minute tickable [{}]", runnable.getClass().getName(), e);
-                honeybadgerReporter.reportError(e, null, "Exception in minute tickable: " + runnable.getClass().getName());
+                logger.error("Exception in daily tickable [{}]", runnable.getClass().getName(), e);
+                honeybadgerReporter.reportError(e, null, "Exception in daily tickable: " + runnable.getClass().getName());
             }
         }
     }
+
 }

@@ -3,6 +3,7 @@ package com.badfic.philbot.config;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import java.awt.Color;
+import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,13 +12,18 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public interface Constants {
+    Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     String ADMIN_ROLE = "Queens of the Castle";
     String MOD_ROLE = "Princess of the Castle";
     String EIGHTEEN_PLUS_ROLE = "18+";
@@ -62,6 +68,13 @@ public interface Constants {
                         .sendMessage(match.get()).queue();
             }
         }
+    }
+
+    static void debugToTestChannel(JDA jda, String msg) {
+        logger.info(msg);
+        jda.getTextChannelsByName(Constants.TEST_CHANNEL, false).stream().findFirst().ifPresent(channel -> {
+            channel.sendMessage(msg).queue();
+        });
     }
 
     static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {

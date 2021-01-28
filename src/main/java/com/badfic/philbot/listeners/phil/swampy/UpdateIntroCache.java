@@ -3,59 +3,41 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
-import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.Family;
-import com.jagrosh.jdautilities.command.Command;
+import com.badfic.philbot.service.DailyTickable;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Resource;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UpdateIntroCache extends Command implements PhilMarker {
+public class UpdateIntroCache extends BaseSwampy implements PhilMarker, DailyTickable {
 
-    @Resource(name = "philJda")
-    @Lazy
-    private JDA philJda;
-
-    @Resource
-    @Lazy
-    private MemberCount memberCount;
-
-    private final DiscordUserRepository discordUserRepository;
-
-    @Autowired
-    public UpdateIntroCache(DiscordUserRepository discordUserRepository) {
+    public UpdateIntroCache() {
         name = "updateIntroCache";
         ownerCommand = true;
         help = "!!updateIntroCache\n" +
                 "Manually update the user introductions cache \n" +
                 "that is used to populate introductions from the #introductions channel onto users' `!!fam`";
-        this.discordUserRepository = discordUserRepository;
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        doUpdateIntroCache();
+        threadPoolTaskExecutor.submit(this);
     }
 
-    @Scheduled(cron = "0 0 1,12 * * ?", zone = "GMT")
-    public void doUpdateIntroCache() {
+    @Override
+    public void run() {
         Optional<TextChannel> optionalIntroChannel = philJda.getGuilds().get(0).getTextChannelsByName("introductions", false).stream().findFirst();
 
         if (!optionalIntroChannel.isPresent()) {
-            debug("ERROR: UpdateIntroCache could not find the #introductions channel");
+            honeybadgerReporter.reportError(new RuntimeException("ERROR: UpdateIntroCache could not find the #introductions channel"));
             return;
         }
 
@@ -97,17 +79,7 @@ public class UpdateIntroCache extends Command implements PhilMarker {
             }
         }
 
-        if (memberCount.updateCount()) {
-            debug("Successfully updated member introductions cache and updated member count channel");
-        } else {
-            debug("Successfully updated member introductions cache, failed to update member count channel");
-        }
-    }
-
-    private void debug(String msg) {
-        philJda.getTextChannelsByName(Constants.TEST_CHANNEL, false).stream().findFirst().ifPresent(channel -> {
-            channel.sendMessage(msg).queue();
-        });
+        Constants.debugToTestChannel(philJda, "Successfully updated member introductions cache");
     }
 
 }

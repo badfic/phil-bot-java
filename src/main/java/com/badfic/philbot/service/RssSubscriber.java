@@ -41,7 +41,7 @@ public class RssSubscriber extends BaseService implements MinuteTickable {
     private Ao3MetadataParser ao3MetadataParser;
 
     @Override
-    public void tick() throws Exception {
+    public void run() {
         if (REFRESH_COUNT.compareAndSet(-1, 0) || REFRESH_COUNT.compareAndSet(MINUTE_REFRESH_INTERVAL, 0)) {
             threadPoolTaskExecutor.submit(this::refresh);
             return;

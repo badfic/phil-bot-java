@@ -3,6 +3,7 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.CourtCase;
 import com.badfic.philbot.data.phil.CourtCaseRepository;
+import com.badfic.philbot.service.BaseService;
 import com.badfic.philbot.service.MinuteTickable;
 import com.google.common.collect.ImmutableMap;
 import java.lang.invoke.MethodHandles;
@@ -22,14 +23,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JudgeTickable extends NonCommandSwampy implements MinuteTickable {
+public class JudgeTickable extends BaseService implements MinuteTickable {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Resource
     private CourtCaseRepository courtCaseRepository;
 
     @Override
-    public void tick() throws Exception {
+    public void run() {
         Guild guild = philJda.getGuilds().get(0);
         Role megaHellRole = guild.getRolesByName(Constants.MEGA_HELL_ROLE, false).get(0);
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
