@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AntoniaMessageListener extends ListenerAdapter {
+public class AntoniaMessageListener {
 
     private static final Pattern ANTONIA_PATTERN = Constants.compileWords("antonia|toni|tony|stark|tash|iron man|tin can");
     private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
@@ -34,7 +33,6 @@ public class AntoniaMessageListener extends ListenerAdapter {
         this.antoniaCommand = antoniaCommand;
     }
 
-    @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw();
 
@@ -50,6 +48,10 @@ public class AntoniaMessageListener extends ListenerAdapter {
             if (oldValue.getLeft().equalsIgnoreCase(msgContent)) {
                 if (oldValue.getRight() + 1 >= 3 && "bird".equalsIgnoreCase(msgContent)) {
                     antoniaCommand.getAntoniaJda().getTextChannelById(channelId).sendMessage("the bird is the word").queue();
+                    return new ImmutablePair<>(msgContent, 0L);
+                }
+                if (oldValue.getRight() + 1 >= 3 && "word".equalsIgnoreCase(msgContent)) {
+                    antoniaCommand.getAntoniaJda().getTextChannelById(channelId).sendMessage("the word is the bird").queue();
                     return new ImmutablePair<>(msgContent, 0L);
                 }
 
