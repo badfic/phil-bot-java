@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TimeoutCommand extends BaseSwampy implements PhilMarker {
 
-    private static final int TIMEOUT_MINUTES = 5;
+    private static final int TIMEOUT_MINUTES = 7;
 
     @Resource
     private TimeoutCaseRepository timeoutCaseRepository;
@@ -38,7 +38,7 @@ public class TimeoutCommand extends BaseSwampy implements PhilMarker {
 
     @Override
     protected void execute(CommandEvent event) {
-        TextChannel megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).get(0);
+        TextChannel timeoutChannel = philJda.getTextChannelById(baseConfig.timeoutChannelId);
 
         if (CollectionUtils.size(event.getMessage().getMentionedMembers()) != 1) {
             event.replyError("Please mention one user to put in timeout");
@@ -70,7 +70,9 @@ public class TimeoutCommand extends BaseSwampy implements PhilMarker {
                     .filter(c -> c.getType() == ChannelType.TEXT || c.getType() == ChannelType.VOICE)
                     .forEach(channel -> assignOverridePermissions(channel, member));
 
-            megaHellChannel.sendMessage(member.getEffectiveName() + " has been put in timeout for " + TIMEOUT_MINUTES + " minutes").queue();
+            if (timeoutChannel != null) {
+                timeoutChannel.sendMessage(member.getEffectiveName() + " has been put in timeout for " + TIMEOUT_MINUTES + " minutes").queue();
+            }
         } catch (Exception e) {
             honeybadgerReporter.reportError(e, null, "Failed to put user " + member.getAsMention() + " in timeout");
         }

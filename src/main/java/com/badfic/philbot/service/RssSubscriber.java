@@ -11,7 +11,6 @@ import com.rometools.rome.io.XmlReader;
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
@@ -21,14 +20,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 
 @Component
-public class RssSubscriber extends BaseService implements MinuteTickable {
+public class RssSubscriber extends BaseService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final int MINUTE_REFRESH_INTERVAL = 30;
-    private static final AtomicInteger REFRESH_COUNT = new AtomicInteger(-1);
+
     private static final Set<String> FEEDS = ImmutableSet.of(
             "https://archiveofourown.org/tags/39926683/feed.atom",
             "https://archiveofourown.org/tags/41072152/feed.atom"
@@ -40,14 +39,9 @@ public class RssSubscriber extends BaseService implements MinuteTickable {
     @Resource
     private Ao3MetadataParser ao3MetadataParser;
 
-    @Override
+    @Scheduled(cron = "0 0,30 * * * ?", zone = "GMT")
     public void run() {
-        if (REFRESH_COUNT.compareAndSet(-1, 0) || REFRESH_COUNT.compareAndSet(MINUTE_REFRESH_INTERVAL, 0)) {
-            threadPoolTaskExecutor.submit(this::refresh);
-            return;
-        }
-
-        REFRESH_COUNT.incrementAndGet();
+        threadPoolTaskExecutor.submit(this::refresh);
     }
 
     private void refresh() {
