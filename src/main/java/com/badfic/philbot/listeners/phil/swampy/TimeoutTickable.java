@@ -1,6 +1,5 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
-import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.TimeoutCase;
 import com.badfic.philbot.data.phil.TimeoutCaseRepository;
 import com.badfic.philbot.service.BaseService;
@@ -19,7 +18,7 @@ public class TimeoutTickable extends BaseService implements MinuteTickable {
 
     @Override
     public void run() {
-        TextChannel megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).get(0);
+        TextChannel timeoutChannel = philJda.getTextChannelById(baseConfig.timeoutChannelId);
 
         for (TimeoutCase timeoutCase : timeoutCaseRepository.findAll()) {
             if (timeoutCase.getReleaseDate().isBefore(LocalDateTime.now())) {
@@ -36,10 +35,15 @@ public class TimeoutTickable extends BaseService implements MinuteTickable {
                     timeoutCaseRepository.deleteById(timeoutCase.getUserId());
                 } catch (Exception e) {
                     honeybadgerReporter.reportError(e, null, "Failed to release user " + timeoutCase.getUserId() + " from timeout");
-                    megaHellChannel.sendMessage("Failed to release <@!" + timeoutCase.getUserId() + "> from timeout").queue();
+                    if (timeoutChannel != null) {
+                        timeoutChannel.sendMessage("Failed to release <@!" + timeoutCase.getUserId() + "> from timeout").queue();
+                    }
                     continue;
                 }
-                megaHellChannel.sendMessage("<@!" + timeoutCase.getUserId() + "> has been released from timeout").queue();
+
+                if (timeoutChannel != null) {
+                    timeoutChannel.sendMessage("<@!" + timeoutCase.getUserId() + "> has been released from timeout").queue();
+                }
             }
         }
     }

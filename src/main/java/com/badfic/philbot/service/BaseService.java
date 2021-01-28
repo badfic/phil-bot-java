@@ -1,5 +1,6 @@
 package com.badfic.philbot.service;
 
+import com.badfic.philbot.config.BaseConfig;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
@@ -8,6 +9,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
 public abstract class BaseService {
+
+    @Resource
+    protected BaseConfig baseConfig;
 
     @Resource
     protected HoneybadgerReporter honeybadgerReporter;
