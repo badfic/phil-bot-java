@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -21,12 +21,12 @@ public class QuoteController extends BaseController {
     private QuoteRepository quoteRepository;
 
     @GetMapping(value = "/quotes", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView get(HttpSession httpSession) throws Exception {
-        checkSession(httpSession, false);
+    public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, false);
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Quotes");
-        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
+        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
         props.put("quotes", quoteRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream().map(q -> {
             Member memberById = philJda.getGuilds().get(0).getMemberById(q.getUserId());
             return new SimpleQuote(memberById != null ? memberById.getEffectiveName() : Long.toString(q.getUserId()),

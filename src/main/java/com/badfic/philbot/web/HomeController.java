@@ -1,6 +1,7 @@
 package com.badfic.philbot.web;
 
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.config.LoginRedirectException;
 import com.badfic.philbot.config.UnauthorizedException;
 import com.badfic.philbot.data.DiscordApiIdentityResponse;
 import com.badfic.philbot.data.DiscordApiLoginResponse;
@@ -9,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -28,8 +29,8 @@ public class HomeController extends BaseController {
     @GetMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView home(
             @RequestParam(value = "code") Optional<String> code,
-            HttpSession httpSession) throws Exception {
-        if (code.isPresent() && httpSession.getAttribute(DISCORD_TOKEN) == null) {
+            HttpServletRequest httpServletRequest) throws Exception {
+        if (code.isPresent() && httpServletRequest.getSession().getAttribute(DISCORD_TOKEN) == null) {
             String authApi = "https://discordapp.com/api/oauth2/token";
             String body = new StringBuilder()
                     .append("client_id=")
@@ -58,19 +59,26 @@ public class HomeController extends BaseController {
 
             Member memberById = philJda.getGuilds().get(0).getMemberById(discordApiIdentityResponse.getId());
             if (memberById != null) {
-                httpSession.setAttribute(DISCORD_TOKEN, accessToken);
-                httpSession.setAttribute(DISCORD_REFRESH_TOKEN, discordApiLoginResponse.getRefreshToken());
-                httpSession.setAttribute(DISCORD_ID, discordApiIdentityResponse.getId());
-                httpSession.setAttribute(DISCORD_USERNAME, discordApiIdentityResponse.getUsername());
+                httpServletRequest.getSession().setAttribute(DISCORD_TOKEN, accessToken);
+                httpServletRequest.getSession().setAttribute(DISCORD_REFRESH_TOKEN, discordApiLoginResponse.getRefreshToken());
+                httpServletRequest.getSession().setAttribute(DISCORD_ID, discordApiIdentityResponse.getId());
+                httpServletRequest.getSession().setAttribute(DISCORD_USERNAME, discordApiIdentityResponse.getUsername());
             } else {
-                throw new UnauthorizedException(discordApiIdentityResponse.getId() + " You are not authorized, you must be a swamp admin to access this page");
+                throw new UnauthorizedException(discordApiIdentityResponse.getId() +
+                        " You are not authorized, you must be a member of the swamp to access this page");
             }
         }
-        checkSession(httpSession, false);
+        checkSession(httpServletRequest, false);
+
+        Object awaitingRedirectUrl = httpServletRequest.getSession().getAttribute(AWAITING_REDIRECT_URL);
+        if (awaitingRedirectUrl != null) {
+            httpServletRequest.getSession().removeAttribute(AWAITING_REDIRECT_URL);
+            throw new LoginRedirectException(((String) awaitingRedirectUrl));
+        }
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Phil's Swamp");
-        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
+        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
 
         return new ModelAndView("index", props);
     }

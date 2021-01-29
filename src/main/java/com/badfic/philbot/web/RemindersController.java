@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +21,8 @@ public class RemindersController extends BaseController {
     private ReminderRepository reminderRepository;
 
     @GetMapping(value = "/reminders", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView get(HttpSession httpSession) throws Exception {
-        checkSession(httpSession, false);
+    public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, false);
 
         List<SimpleReminder> simpleReminderList = reminderRepository.findAll()
                 .stream()
@@ -36,7 +36,7 @@ public class RemindersController extends BaseController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Reminders");
-        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
+        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
         props.put("reminders", simpleReminderList);
 
         return new ModelAndView("reminders", props);

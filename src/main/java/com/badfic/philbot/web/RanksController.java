@@ -3,7 +3,7 @@ package com.badfic.philbot.web;
 import com.badfic.philbot.data.phil.Rank;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,12 +13,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class RanksController extends BaseController {
 
     @GetMapping(value = "/ranks", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView get(HttpSession httpSession) throws Exception {
-        checkSession(httpSession, false);
+    public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, false);
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Ranks");
-        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
+        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
         props.put("ranks", Rank.getAllRanks());
 
         return new ModelAndView("ranks", props);

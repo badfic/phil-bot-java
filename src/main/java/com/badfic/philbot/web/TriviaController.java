@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +27,8 @@ public class TriviaController extends BaseController {
     private TriviaRepository triviaRepository;
 
     @GetMapping(value = "/trivia", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getTriviaForm(HttpSession httpSession) throws Exception {
-        checkSession(httpSession, true);
+    public ModelAndView getTriviaForm(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, true);
 
         List<TriviaForm> triviaList = triviaRepository.findAll().stream().map(t -> {
             TriviaForm triviaForm = new TriviaForm();
@@ -43,15 +43,15 @@ public class TriviaController extends BaseController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Submit A New Trivia Question");
-        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
+        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
         props.put("trivia", triviaList);
 
         return new ModelAndView("trivia", props);
     }
 
     @PostMapping(value = "/trivia", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> postTriviaForm(@RequestBody TriviaForm form, HttpSession httpSession) throws Exception {
-        checkSession(httpSession, true);
+    public ResponseEntity<String> postTriviaForm(@RequestBody TriviaForm form, HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, true);
 
         if (Stream.of(form.getQuestion(), form.getAnswerA(), form.getAnswerB(), form.getAnswerC()).anyMatch(StringUtils::isBlank)) {
             return ResponseEntity.badRequest().body("Please provide a valid question, A, B, C, and answer");

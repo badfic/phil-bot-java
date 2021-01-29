@@ -12,6 +12,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -28,6 +29,7 @@ public abstract class BaseController {
     protected static final String DISCORD_ID = "DiscordId";
     protected static final String DISCORD_USERNAME = "DiscordUsername";
     protected static final String DISCORD_REFRESH_TOKEN = "DiscordRefreshToken";
+    protected static final String AWAITING_REDIRECT_URL = "AwaitingRedirectUrl";
 
     @Resource
     protected BaseConfig baseConfig;
@@ -41,14 +43,15 @@ public abstract class BaseController {
     @Resource(name = "philJda")
     protected JDA philJda;
 
-    protected void checkSession(HttpSession httpSession, boolean requiresAdmin) throws UnsupportedEncodingException {
-        if (httpSession.isNew()) {
+    protected void checkSession(HttpServletRequest httpServletRequest, boolean requiresAdmin) throws UnsupportedEncodingException {
+        if (httpServletRequest.getSession().isNew()) {
+            httpServletRequest.getSession().setAttribute(AWAITING_REDIRECT_URL, httpServletRequest.getRequestURI());
             throw new NewSessionException();
         }
-        if (httpSession.getAttribute(DISCORD_TOKEN) == null) {
+        if (httpServletRequest.getSession().getAttribute(DISCORD_TOKEN) == null) {
             throw new UnauthorizedException("You do not have a valid session. Please refresh and login again");
         }
-        refreshTokenIfNeeded(httpSession, requiresAdmin);
+        refreshTokenIfNeeded(httpServletRequest.getSession(), requiresAdmin);
     }
 
     protected DiscordApiIdentityResponse getDiscordApiIdentityResponse(String accessToken) {

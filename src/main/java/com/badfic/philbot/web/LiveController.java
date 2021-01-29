@@ -3,7 +3,7 @@ package com.badfic.philbot.web;
 import com.badfic.philbot.config.UnauthorizedException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +14,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class LiveController extends BaseController {
 
     @GetMapping(value = "/live", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView get(HttpSession httpSession) throws Exception {
-        checkSession(httpSession, false);
+    public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, false);
 
-        String discordId = (String) httpSession.getAttribute(DISCORD_ID);
+        String discordId = (String) httpServletRequest.getSession().getAttribute(DISCORD_ID);
         Member member = philJda.getGuilds().get(0).getMemberById(discordId);
 
         if (member == null) {
@@ -28,7 +28,7 @@ public class LiveController extends BaseController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "The Swamp Live");
-        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
+        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
         props.put("nickname", member.getEffectiveName());
         props.put("userAvatar", userAvatar);
 

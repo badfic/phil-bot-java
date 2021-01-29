@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,20 +20,20 @@ import org.springframework.web.servlet.ModelAndView;
 public class LeaderboardController extends BaseController {
 
     @GetMapping(produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getRanks(HttpSession httpSession) throws Exception {
-        checkSession(httpSession, false);
+    public ModelAndView getRanks(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, false);
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Leaderboard");
-        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
+        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
         props.put("tables", Arrays.asList("bastards", "children"));
 
         return new ModelAndView("leaderboard", props);
     }
 
     @GetMapping(value = "/bastards", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<DiscordUser> getBastards(HttpSession httpSession) throws Exception {
-        checkSession(httpSession, false);
+    public List<DiscordUser> getBastards(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, false);
 
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
 
@@ -51,8 +51,8 @@ public class LeaderboardController extends BaseController {
     }
 
     @GetMapping(value = "/children", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<DiscordUser> getChildren(HttpSession httpSession) throws Exception {
-        checkSession(httpSession, false);
+    public List<DiscordUser> getChildren(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, false);
 
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
 
