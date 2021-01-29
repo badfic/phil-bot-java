@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,14 +26,14 @@ public class GamesConfigController extends BaseController {
     private SwampyGamesConfigRepository swampyGamesConfigRepository;
 
     @GetMapping(value = "/games-config", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView get(HttpSession httpSession) throws Exception {
-        checkSession(httpSession, true);
+    public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, true);
 
         SwampyGamesConfig swampyGamesConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Games Config");
-        props.put("username", httpSession.getAttribute(DISCORD_USERNAME));
+        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
 
         List<ConfigEntry> configEntries = new ArrayList<>();
 
@@ -52,8 +52,8 @@ public class GamesConfigController extends BaseController {
     }
 
     @PostMapping(value = "/games-config", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> post(HttpSession httpSession, @RequestBody ConfigEntry configEntry) throws Exception {
-        checkSession(httpSession, true);
+    public ResponseEntity<String> post(HttpServletRequest httpServletRequest, @RequestBody ConfigEntry configEntry) throws Exception {
+        checkSession(httpServletRequest, true);
 
         SwampyGamesConfig swampyGamesConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
 

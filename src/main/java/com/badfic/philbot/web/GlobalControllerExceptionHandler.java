@@ -1,6 +1,7 @@
 package com.badfic.philbot.web;
 
 import com.badfic.philbot.config.BaseConfig;
+import com.badfic.philbot.config.LoginRedirectException;
 import com.badfic.philbot.config.NewSessionException;
 import com.badfic.philbot.config.UnauthorizedException;
 import io.honeybadger.reporter.HoneybadgerReporter;
@@ -37,6 +38,11 @@ public class GlobalControllerExceptionHandler {
                 .append(URLEncoder.encode(baseConfig.hostname, StandardCharsets.UTF_8.name()))
                 .append("&response_type=code&scope=identify");
         return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, urlBuilder.toString()).build();
+    }
+
+    @ExceptionHandler(LoginRedirectException.class)
+    public ResponseEntity<Object> handleLoginRedirectException(LoginRedirectException e) {
+        return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, baseConfig.hostname + e.getUrl()).build();
     }
 
     @ExceptionHandler(UnauthorizedException.class)

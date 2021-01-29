@@ -13,7 +13,7 @@ public class HlsProxyController extends BaseController {
 
     @GetMapping(value = "/hls/**")
     public ResponseEntity<byte[]> hlsProxy(HttpServletRequest httpServletRequest) {
-        HttpSession httpSession = httpServletRequest.getSession(true);
+        HttpSession httpSession = httpServletRequest.getSession();
         if (httpSession.isNew()) {
             throw new NewSessionException();
         }
