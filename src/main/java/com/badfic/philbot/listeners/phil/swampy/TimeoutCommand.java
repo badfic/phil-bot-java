@@ -5,7 +5,6 @@ import static net.dv8tion.jda.api.Permission.MESSAGE_EMBED_LINKS;
 import static net.dv8tion.jda.api.Permission.MESSAGE_WRITE;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.TimeoutCase;
 import com.badfic.philbot.data.phil.TimeoutCaseRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -21,7 +20,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TimeoutCommand extends BaseSwampy implements PhilMarker {
+public class TimeoutCommand extends BaseSwampy {
 
     private static final int TIMEOUT_MINUTES = 7;
 

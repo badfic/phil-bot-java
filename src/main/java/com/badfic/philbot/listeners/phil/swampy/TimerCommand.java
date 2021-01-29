@@ -1,14 +1,13 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TimerCommand extends BaseSwampy implements PhilMarker {
+public class TimerCommand extends BaseSwampy {
 
     public TimerCommand() {
         name = "timer";

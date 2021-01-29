@@ -7,6 +7,8 @@ import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGE_REACTIONS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
 
+import com.badfic.philbot.listeners.GenericReadyListener;
+import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -23,7 +25,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
@@ -249,7 +250,8 @@ public class BaseConfig {
                 .setOwnerId(ownerId)
                 .setPrefix("!!")
                 .useHelpBuilder(false)
-                .addCommands(commands.stream().filter(c -> c instanceof PhilMarker).toArray(Command[]::new))
+                .addCommands(commands.toArray(new Command[0]))
+                .setScheduleExecutor(taskScheduler().getScheduledExecutor())
                 .setActivity(Activity.playing("with our feelings"))
                 .setEmojis("\uD83E\uDD84", "⚠️", "\uD83D\uDE2D")
                 .setListener(new CommandListener() {
@@ -263,7 +265,8 @@ public class BaseConfig {
     }
 
     @Bean(name = "philJda")
-    public JDA philJda(List<EventListener> eventListeners,
+    public JDA philJda(GenericReadyListener genericReadyListener,
+                       PhilMessageListener philMessageListener,
                        @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
         return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES))
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS)
@@ -272,8 +275,7 @@ public class BaseConfig {
                 .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
                 .setGatewayPool(taskScheduler().getScheduledExecutor(), false)
                 .setHttpClient(okHttpClient())
-                .addEventListeners(eventListeners.stream().filter(e -> e instanceof PhilMarker).toArray(EventListener[]::new))
-                .addEventListeners(philCommandClient)
+                .addEventListeners(genericReadyListener, philMessageListener, philCommandClient)
                 .setActivity(Activity.playing("with our feelings"))
                 .build();
     }

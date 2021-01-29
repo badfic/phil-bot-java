@@ -1,6 +1,5 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
-import com.badfic.philbot.config.PhilMarker;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.tumblr.jumblr.JumblrClient;
 import com.tumblr.jumblr.exceptions.JumblrException;
@@ -16,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Tumblr extends BaseSwampy implements PhilMarker {
+public class Tumblr extends BaseSwampy {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 

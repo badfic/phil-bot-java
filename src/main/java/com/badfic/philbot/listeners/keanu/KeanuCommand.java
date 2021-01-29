@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.keanu;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.keanu.KeanuResponsesConfig;
 import com.badfic.philbot.data.keanu.KeanuResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
@@ -25,7 +24,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> implements PhilMarker {
+public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
 
     private static final Pattern PUPPY_PATTERN = Constants.compileWords("puppy|puppies|pupper|doggo|doge");
     private static final String HELLO_GIF = "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves";

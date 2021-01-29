@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.badfic.philbot.service.DailyTickable;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -11,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MemberCount extends BaseSwampy implements PhilMarker, DailyTickable {
+public class MemberCount extends BaseSwampy implements DailyTickable {
 
     public MemberCount() {
         name = "memberCount";

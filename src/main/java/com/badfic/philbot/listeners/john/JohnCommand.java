@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.john;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.john.JohnResponsesConfig;
 import com.badfic.philbot.data.john.JohnResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
@@ -19,7 +18,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JohnCommand extends BasicResponsesBot<JohnResponsesConfig> implements PhilMarker {
+public class JohnCommand extends BasicResponsesBot<JohnResponsesConfig> {
 
     @Resource(name = "johnJda")
     @Lazy
