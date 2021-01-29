@@ -2,7 +2,6 @@ package com.badfic.philbot.listeners;
 
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import java.lang.invoke.MethodHandles;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -14,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GenericReadyListener extends ListenerAdapter implements PhilMarker {
+public class GenericReadyListener extends ListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final String commitSha;

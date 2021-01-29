@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import net.dv8tion.jda.api.entities.Member;
@@ -9,7 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PfpCommand extends BaseSwampy implements PhilMarker {
+public class PfpCommand extends BaseSwampy {
 
     public PfpCommand() {
         name = "pfp";

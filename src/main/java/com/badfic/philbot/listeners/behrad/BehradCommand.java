@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.behrad;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.behrad.BehradResponsesConfig;
 import com.badfic.philbot.data.behrad.BehradResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
@@ -26,7 +25,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> implements PhilMarker {
+public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
 
     private static final Set<String> SHAYAN_IMGS = ImmutableSet.of(
             "https://cdn.discordapp.com/attachments/323666308107599872/750575009650573332/unknown-15.png",

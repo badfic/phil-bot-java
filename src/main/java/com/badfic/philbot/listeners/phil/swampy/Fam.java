@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.Family;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 @Component
-public class Fam extends BaseSwampy implements PhilMarker {
+public class Fam extends BaseSwampy {
 
     private final String modHelp;
 

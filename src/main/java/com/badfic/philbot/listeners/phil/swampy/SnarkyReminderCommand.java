@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.SnarkyReminderResponse;
 import com.badfic.philbot.data.phil.SnarkyReminderResponseRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -13,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SnarkyReminderCommand extends BaseSwampy implements PhilMarker {
+public class SnarkyReminderCommand extends BaseSwampy {
 
     @Resource
     private SnarkyReminderResponseRepository snarkyReminderResponseRepository;

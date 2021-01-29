@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.phil;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.Quote;
 import com.badfic.philbot.data.phil.QuoteRepository;
 import com.badfic.philbot.listeners.antonia.AntoniaMessageListener;
@@ -45,7 +44,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PhilMessageListener extends ListenerAdapter implements PhilMarker {
+public class PhilMessageListener extends ListenerAdapter {
 
     private static final Cache<String, Function<GuildMessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = CacheBuilder.newBuilder()
             .maximumSize(200)

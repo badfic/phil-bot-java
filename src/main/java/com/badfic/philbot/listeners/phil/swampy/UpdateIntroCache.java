@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.Family;
 import com.badfic.philbot.service.DailyTickable;
@@ -17,7 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UpdateIntroCache extends BaseSwampy implements PhilMarker, DailyTickable {
+public class UpdateIntroCache extends BaseSwampy implements DailyTickable {
 
     public UpdateIntroCache() {
         name = "updateIntroCache";

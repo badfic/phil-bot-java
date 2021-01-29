@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Set;
@@ -9,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SpookyGifScheduled extends BaseSwampy implements PhilMarker {
+public class SpookyGifScheduled extends BaseSwampy {
 
     private static final Set<String> GIFS = ImmutableSet.of(
             "https://tenor.com/view/spooky-gif-6177876",

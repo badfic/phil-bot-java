@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.phil;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.PhilResponsesConfig;
 import com.badfic.philbot.data.phil.PhilResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
@@ -22,7 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> implements PhilMarker {
+public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> {
 
     @Resource(name = "philJda")
     @Lazy

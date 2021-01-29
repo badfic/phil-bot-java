@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.antonia;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.antonia.AntoniaResponsesConfig;
 import com.badfic.philbot.data.antonia.AntoniaResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
@@ -19,7 +18,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AntoniaCommand extends BasicResponsesBot<AntoniaResponsesConfig> implements PhilMarker {
+public class AntoniaCommand extends BasicResponsesBot<AntoniaResponsesConfig> {
 
     @Resource(name = "antoniaJda")
     @Lazy

@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.PhilMarker;
 import com.badfic.philbot.data.phil.Quote;
 import com.badfic.philbot.data.phil.QuoteRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -16,7 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QuoteCommand extends BaseSwampy implements PhilMarker {
+public class QuoteCommand extends BaseSwampy {
 
     @Resource(name = "johnJda")
     @Lazy
