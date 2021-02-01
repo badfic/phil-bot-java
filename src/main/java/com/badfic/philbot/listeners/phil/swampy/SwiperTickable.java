@@ -61,6 +61,10 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                         if (savior.isPresent()) {
                             savior.get().setSwiperParticipations(savior.get().getSwiperParticipations() + 1);
                             discordUserRepository.save(savior.get());
+                            Member saviorMember = philJda.getGuilds().get(0).getMemberById(savior.get().getId());
+                            if (saviorMember != null) {
+                                givePointsToMember(700, saviorMember, PointsStat.SWIPER);
+                            }
                         }
                     } catch (Exception e) {
                         logger.error("Exception with swiper savior branch", e);
