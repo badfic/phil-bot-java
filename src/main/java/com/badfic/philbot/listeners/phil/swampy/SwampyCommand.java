@@ -47,9 +47,9 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83D\uDC2E", "\uD83D\uDC37", "\uD83E\uDD99",
-            "\uD83D\uDC3F️", "\uD83D\uDC22", "\uD83D\uDC38",
-            "\uD83D\uDC00", "\uD83E\uDD92", "\uD83D\uDC39"
+            "\uD83C\uDF0A", "\uD83E\uDDC5", "\uD83C\uDF46",
+            "\uD83C\uDF2E", "\uD83D\uDCA6", "\uD83D\uDCA7",
+            "\uD83E\uDD75", "\uD83D\uDC0D", "\uD83D\uDC09"
     );
 
     // volatile state
@@ -64,7 +64,7 @@ public class SwampyCommand extends BaseSwampy {
                 "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek", "billy",
                 "deer", "hot", "frosty", "glogg", "beam", "oof", "booty", "love", "chuck", "farm", "nut", "rat", "giraffe", "possum", "lena", "santiago",
                 "riverdale", "matthew", "murder", "book", "salami", "spicy", "spice", "salt", "yeet", "wah", "crafty", "bingus", "snarky", "duck", "crisco",
-                "mint", "spooder", "shark", "latte"};
+                "mint", "spooder", "shark", "latte", "sahar", "obama", "selfcare", "ween"};
         help =
                 "`!!swampy` aka...\n" + Arrays.stream(aliases).sorted().collect(Collectors.joining(", ")) + "\nHELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +

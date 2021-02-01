@@ -31,7 +31,8 @@ public class Stonks extends BaseSwampy {
             "https://cdn.discordapp.com/attachments/741053845098201099/771917366660694036/image0.jpg",
             "https://cdn.discordapp.com/attachments/741053845098201099/771917366904750160/image1.jpg",
             "https://cdn.discordapp.com/attachments/741053845098201099/780575961958711326/image0.jpg",
-            "https://cdn.discordapp.com/attachments/741053845098201099/780576653298237440/image0.jpg"
+            "https://cdn.discordapp.com/attachments/741053845098201099/780576653298237440/image0.jpg",
+            "https://cdn.discordapp.com/attachments/783445794568142879/805580386172141608/7fv2my960qd61.png"
     );
 
     public Stonks() {
@@ -96,7 +97,7 @@ public class Stonks extends BaseSwampy {
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(Constants.simpleEmbed("STONKS", description.toString(), Constants.pickRandom(STONKS)))
+                    .sendMessage(Constants.simpleEmbed("GAMESTONKS", description.toString(), Constants.pickRandom(STONKS)))
                     .queue();
         });
     }
