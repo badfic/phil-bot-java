@@ -15,6 +15,8 @@ public class Family {
     private Set<String> grandparents = new HashSet<>();
     private Set<String> parents = new HashSet<>();
     private Set<String> siblings = new HashSet<>();
+    private Set<String> niblings = new HashSet<>();
+    private Set<String> piblings = new HashSet<>();
     private Set<String> cousins = new HashSet<>();
 
     public String getIntro() {
@@ -81,6 +83,22 @@ public class Family {
         this.siblings = siblings;
     }
 
+    public Set<String> getNiblings() {
+        return niblings;
+    }
+
+    public void setNiblings(Set<String> niblings) {
+        this.niblings = niblings;
+    }
+
+    public Set<String> getPiblings() {
+        return piblings;
+    }
+
+    public void setPiblings(Set<String> piblings) {
+        this.piblings = piblings;
+    }
+
     public Set<String> getCousins() {
         return cousins;
     }
@@ -102,11 +120,13 @@ public class Family {
                 Objects.equals(grandparents, family.grandparents) &&
                 Objects.equals(parents, family.parents) &&
                 Objects.equals(siblings, family.siblings) &&
+                Objects.equals(niblings, family.niblings) &&
+                Objects.equals(piblings, family.piblings) &&
                 Objects.equals(cousins, family.cousins);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(intro, spouses, exes, children, grandchildren, grandparents, parents, siblings, cousins);
+        return Objects.hash(intro, spouses, exes, children, grandchildren, grandparents, parents, siblings, niblings, piblings, cousins);
     }
 }
