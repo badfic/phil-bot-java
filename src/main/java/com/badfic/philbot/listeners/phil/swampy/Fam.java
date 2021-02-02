@@ -48,10 +48,14 @@ public class Fam extends BaseSwampy {
                 "`!!fam disown parent Somebody`: Remove a parent\n" +
                 "`!!fam adopt grandparent Somebody`: Add a grandparent\n" +
                 "`!!fam disown grandparent Somebody`: Remove a grandparent\n" +
-                "`!!fam add cousin Somebody`: Add a cousin\n" +
-                "`!!fam remove cousin Somebody`: Remove a cousin\n" +
+                "`!!fam adopt cousin Somebody`: Add a cousin\n" +
+                "`!!fam disown cousin Somebody`: Remove a cousin\n" +
                 "`!!fam adopt sibling Somebody`: Add a sibling\n" +
-                "`!!fam disown sibling Somebody`: Remove a sibling\n";
+                "`!!fam disown sibling Somebody`: Remove a sibling\n" +
+                "`!!fam adopt nibling Somebody`: Add a nibling\n" +
+                "`!!fam disown nibling Somebody`: Remove a nibling\n" +
+                "`!!fam adopt pibling Somebody`: Add a pibling\n" +
+                "`!!fam disown pibling Somebody`: Remove a pibling";
         modHelp = help +
                 "\n**MOD ONLY COMMANDS**\n" +
                 "`!!fam nuke @Santiago`: Delete someone's family tree if they are misbehaving or not getting consent";
@@ -85,9 +89,9 @@ public class Fam extends BaseSwampy {
             addEx(event);
         } else if (args.startsWith("remove ex")) {
             removeEx(event);
-        } else if (args.startsWith("add cousin")) {
+        } else if (args.startsWith("adopt cousin")) {
             addCousin(event);
-        } else if (args.startsWith("remove cousin")) {
+        } else if (args.startsWith("disown cousin")) {
             removeCousin(event);
         } else if (args.startsWith("adopt child")) {
             adoptChild(event);
@@ -109,6 +113,14 @@ public class Fam extends BaseSwampy {
             adoptSibling(event);
         } else if (args.startsWith("disown sibling")) {
             disownSibling(event);
+        } else if (args.startsWith("adopt nibling")) {
+            adoptNibling(event);
+        } else if (args.startsWith("disown nibling")) {
+            disownNibling(event);
+        } else if (args.startsWith("adopt pibling")) {
+            adoptPibling(event);
+        } else if (args.startsWith("disown pibling")) {
+            disownPibling(event);
         } else if (args.isEmpty() || args.startsWith("<@!")) {
             show(event);
         } else {
@@ -207,6 +219,26 @@ public class Fam extends BaseSwampy {
     private void disownSibling(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "disown sibling", discordUser, "getSiblings", false);
+    }
+
+    private void adoptNibling(CommandEvent event) {
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "adopt nibling", discordUser, "getNiblings", true);
+    }
+
+    private void disownNibling(CommandEvent event) {
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "disown nibling", discordUser, "getNiblings", false);
+    }
+
+    private void adoptPibling(CommandEvent event) {
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "adopt pibling", discordUser, "getPiblings", true);
+    }
+
+    private void disownPibling(CommandEvent event) {
+        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        addOrRemoveFamily(event, "disown pibling", discordUser, "getPiblings", false);
     }
 
     private void adoptGrandchild(CommandEvent event) {
@@ -369,6 +401,8 @@ public class Fam extends BaseSwampy {
         append(family::getGrandparents, "**Grandparents**", description);
         append(family::getSiblings, "**Siblings**", description);
         append(family::getCousins, "**Cousins**", description);
+        append(family::getNiblings, "**Niblings**", description);
+        append(family::getPiblings, "**Piblings**", description);
         description.append("\n\nRandom family member spotlight: ");
 
         try {
