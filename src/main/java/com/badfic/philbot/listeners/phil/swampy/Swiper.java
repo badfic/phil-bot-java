@@ -120,7 +120,7 @@ public class Swiper extends BaseSwampy {
         doSwiper();
     }
 
-    @Scheduled(cron = "0 20 0,4,6,8,10,12,14,16,18,20,22 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 20 0,4,8,16,20 * * ?", zone = "GMT")
     public void swiper() {
         doSwiper();
     }
