@@ -16,7 +16,7 @@ public class DailyRiverdaleMemeController extends BaseController {
     private DailyRiverdaleMemeService dailyRiverdaleMemeService;
 
     @CrossOrigin
-    @GetMapping(value = "/daily-riverdale-meme", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/daily-riverdale-memes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> get() {
         return ResponseEntity.ok(dailyRiverdaleMemeService.getMessages());
     }
