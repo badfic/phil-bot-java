@@ -34,17 +34,6 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
 
     @Override
     public void run() {
-        threadPoolTaskExecutor.submit(this::refresh);
-    }
-
-    public List<String> getMessages() {
-        return howWeBecameCursedRepository.findAll(Sort.by(Sort.Direction.ASC, "timeCreated"))
-                .stream()
-                .map(HowWeBecameCursedEntity::getMessage)
-                .collect(Collectors.toList());
-    }
-
-    private void refresh() {
         Optional<TextChannel> optionalChannel = philJda.getGuilds().get(0).getTextChannelsByName("how-we-became-cursed", false).stream().findFirst();
 
         if (!optionalChannel.isPresent()) {
@@ -104,6 +93,13 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
         }
 
         Constants.debugToTestChannel(philJda, "Successfully updated how-we-became-cursed cache");
+    }
+
+    public List<String> getMessages() {
+        return howWeBecameCursedRepository.findAll(Sort.by(Sort.Direction.ASC, "timeCreated"))
+                .stream()
+                .map(HowWeBecameCursedEntity::getMessage)
+                .collect(Collectors.toList());
     }
 
     private String getMessageContent(Message message) {
