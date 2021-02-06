@@ -3,7 +3,9 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.DailyRiverdaleMemeEntity;
 import com.badfic.philbot.data.phil.DailyRiverdaleMemeRepository;
+import com.badfic.philbot.listeners.phil.swampy.BaseSwampy;
 import com.google.common.collect.Sets;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -20,12 +22,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DailyRiverdaleMemeService extends BaseService implements DailyTickable {
+public class DailyRiverdaleMemeService extends BaseSwampy implements DailyTickable {
 
     private static final String SEARCH_STRING = "out of context riverdale meme";
 
     @Resource
     private DailyRiverdaleMemeRepository dailyRiverdaleMemeRepository;
+
+    public DailyRiverdaleMemeService() {
+        name = "updateDailyRiverdaleMemes";
+        ownerCommand = true;
+    }
+
+    @Override
+    protected void execute(CommandEvent event) {
+        threadPoolTaskExecutor.submit(this);
+    }
 
     @Override
     public void run() {
@@ -99,7 +111,7 @@ public class DailyRiverdaleMemeService extends BaseService implements DailyTicka
     }
 
     public List<String> getMessages() {
-        return dailyRiverdaleMemeRepository.findAll(Sort.by(Sort.Direction.ASC, "timeCreated"))
+        return dailyRiverdaleMemeRepository.findAll(Sort.by(Sort.Direction.DESC, "timeCreated"))
                 .stream()
                 .map(entity -> entity.getMessage() + "<br/>\n<img src=\"" + entity.getImageUrl() + "\" class=\"img-fluid\">")
                 .collect(Collectors.toList());
