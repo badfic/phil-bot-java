@@ -1,4 +1,5 @@
 ![](https://quay.io/repository/badfic/phil-bot-java/status)
+![](https://img.shields.io/discord/740999022340341791)
 
 Start up postgres before running
 
