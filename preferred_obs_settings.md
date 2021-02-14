@@ -30,3 +30,6 @@ Base (Canvas) Resolution: 1280x720
 Output (Scaled) Resolution: 1280x720
 FPS Type: Common FPS Values: 30
 ```
+
+Back at the main screen under "Sources" hit the + button and add a "Display Capture" and pick whatever monitor you want to stream. Then once it shows up on your canvas, right click the canvas, select "Transform" then select "Fit to screen".  
+If your audio doesn't work out of the box you may have to hit the + again and add an "Audio output capture". Also if your audio quits working it is usually fixed by removing the "Audio output capture" and re-adding it.
