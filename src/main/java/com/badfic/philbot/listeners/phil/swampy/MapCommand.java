@@ -63,7 +63,7 @@ public class MapCommand extends BaseSwampy {
 
         String description = null;
         String image = null;
-        switch (ThreadLocalRandom.current().nextInt(1, 7)) {
+        switch (ThreadLocalRandom.current().nextInt(1, 5)) {
             case 1:
                 description = '"' + chosenQuestion.getNickname() + "\" is the nickname of what " + chosenQuestion.getIdentifier() + "?";
                 break;
@@ -77,14 +77,6 @@ public class MapCommand extends BaseSwampy {
             case 4:
                 description = "What " + chosenQuestion.getIdentifier() + " is highlighted on this map?";
                 image = chosenQuestion.getMapUrl();
-                break;
-            case 5:
-                description = "This image is a landscape from what " + chosenQuestion.getIdentifier() + "?";
-                image = chosenQuestion.getLandscapeUrl();
-                break;
-            case 6:
-                description = "This image is the skyline from what " + chosenQuestion.getIdentifier() + "?";
-                image = chosenQuestion.getSkylineUrl();
                 break;
         }
 
