@@ -1,9 +1,12 @@
 ![](https://quay.io/repository/badfic/phil-bot-java/status)
 ![](https://img.shields.io/discord/740999022340341791)
 
-Start up postgres before running
+Start up postgres and owncast before running
 
-`docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres`
+```
+docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
+docker run --name owncast -p 8085:8080 -p 1935:1935 -d gabekangas/owncast
+```
 
 For the java app, the following env vars are required for full functionality
 ```
@@ -17,6 +20,7 @@ BEHRAD_BOT_TOKEN
 KEANU_BOT_TOKEN
 ANTONIA_BOT_TOKEN
 JOHN_BOT_TOKEN
+TIMEOUT_CHANNEL_ID
 
 DISCORD_CLIENT_ID
 DISCORD_CLIENT_SECRET
