@@ -5,6 +5,7 @@ import com.badfic.philbot.data.phil.DailyRiverdaleMemeEntity;
 import com.badfic.philbot.data.phil.DailyRiverdaleMemeRepository;
 import com.badfic.philbot.listeners.phil.swampy.BaseSwampy;
 import com.google.common.collect.Sets;
+import com.google.common.html.HtmlEscapers;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.HashSet;
 import java.util.List;
@@ -113,7 +114,7 @@ public class DailyRiverdaleMemeService extends BaseSwampy implements DailyTickab
     public List<String> getMessages() {
         return dailyRiverdaleMemeRepository.findAll(Sort.by(Sort.Direction.DESC, "timeCreated"))
                 .stream()
-                .map(entity -> entity.getMessage() + "<br/>\n<img src=\"" + entity.getImageUrl() + "\" class=\"img-fluid\">")
+                .map(entity -> HtmlEscapers.htmlEscaper().escape(entity.getMessage()) + "<br/>\n<img src=\"" + entity.getImageUrl() + "\" class=\"img-fluid\">")
                 .collect(Collectors.toList());
     }
 

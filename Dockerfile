@@ -1,8 +1,9 @@
-FROM registry.access.redhat.com/ubi8/openjdk-8
-USER root
+FROM quay.io/badfic/zulu-openjdk-alpine:15
 COPY . .
-RUN mvn install
+RUN . mvnw install
 
-FROM gcr.io/distroless/java:8
-COPY --from=0 /home/jboss/target/philbot-0.0.1-SNAPSHOT.jar .
-CMD ["philbot-0.0.1-SNAPSHOT.jar"]
+FROM quay.io/badfic/zulu-openjdk-alpine:15-jre
+COPY --from=0 target/philbot-0.0.1-SNAPSHOT.jar ./philbot.jar
+EXPOSE 8080
+CMD ["-jar", "philbot.jar"]
+ENTRYPOINT ["java"]

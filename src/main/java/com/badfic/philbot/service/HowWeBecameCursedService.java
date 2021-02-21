@@ -151,7 +151,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
                 content = RegExUtils.replaceAll(
                         content,
                         ':' + emote.getName() + ':',
-                        "<img alt=\"" + emote.getName() + "\" src=\"" + imageUrl + "\" width=\"32\" height=\"32\">");
+                        "<img alt=\"" + HtmlEscapers.htmlEscaper().escape(emote.getName()) + "\" src=\"" + imageUrl + "\" width=\"32\" height=\"32\">");
             }
         }
 
