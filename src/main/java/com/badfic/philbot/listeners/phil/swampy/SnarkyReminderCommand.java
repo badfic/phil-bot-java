@@ -20,12 +20,12 @@ public class SnarkyReminderCommand extends BaseSwampy {
     public SnarkyReminderCommand() {
         name = "snarkyReminder";
         aliases = new String[] {"reminderResponse", "reminderResponses", "snarkyReminders", "snarkyResponses", "snarkyResponse"};
-        help = "`!!snarkyReminder add whatever` " +
-                "Adds a snarky response for when you ask to be reminded of something.\n" +
-                "NOTE: you can (and should) use `<name>` in your responses for a personal touch.\n" +
-                "`!!snarkyReminder delete 1` deletes snarky reminder number 1\n" +
-                "`!!snarkyReminder 1` shows snarky reminder 1\n" +
-                "`!!snarkyReminder` shows a list of all snarky reminders";
+        help = """
+                `!!snarkyReminder add whatever` Adds a snarky response for when you ask to be reminded of something.
+                NOTE: you can (and should) use `<name>` in your responses for a personal touch.
+                `!!snarkyReminder delete 1` deletes snarky reminder number 1
+                `!!snarkyReminder 1` shows snarky reminder 1
+                `!!snarkyReminder` shows a list of all snarky reminders""";
         requiredRole = Constants.ADMIN_ROLE;
     }
 
@@ -90,7 +90,7 @@ public class SnarkyReminderCommand extends BaseSwampy {
                             .append(reminder.getResponse());
                     event.reply(description.toString());
                 } else {
-                    event.replyError("Reminder Response #" + toLookup + " does not exist");;
+                    event.replyError("Reminder Response #" + toLookup + " does not exist");
                 }
             } catch (NumberFormatException e) {
                 event.replyError("Failed to parse number " + number);

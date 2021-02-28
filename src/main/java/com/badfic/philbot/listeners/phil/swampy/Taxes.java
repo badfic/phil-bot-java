@@ -42,7 +42,7 @@ public class Taxes extends BaseSwampy {
 
     private void doTaxes(boolean force) {
         Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
-        if (!optionalConfig.isPresent()) {
+        if (optionalConfig.isEmpty()) {
             return;
         }
         SwampyGamesConfig swampyGamesConfig = optionalConfig.get();

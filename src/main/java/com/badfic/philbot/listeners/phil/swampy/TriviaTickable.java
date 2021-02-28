@@ -41,7 +41,7 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
 
             Optional<Trivia> optTriviaQuestion = triviaRepository.findById(triviaGuid);
 
-            if (!optTriviaQuestion.isPresent()) {
+            if (optTriviaQuestion.isEmpty()) {
                 swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
                 return;
             }

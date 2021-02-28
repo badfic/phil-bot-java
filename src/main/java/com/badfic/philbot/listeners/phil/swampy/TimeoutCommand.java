@@ -30,9 +30,10 @@ public class TimeoutCommand extends BaseSwampy {
     public TimeoutCommand() {
         name = "timeout";
         requiredRole = Constants.ADMIN_ROLE;
-        help = "put a user in timeout (temporary mute/ban/jail).\n" +
-                "`!!timeout @user` puts a user in timeout for 5 minutes.\n" +
-                "`!!timeout 30 @user` puts a user in timeout for 30 minutes.";
+        help = """
+                put a user in timeout (temporary mute/ban/jail).
+                `!!timeout @user` puts a user in timeout for 5 minutes.
+                `!!timeout 30 @user` puts a user in timeout for 30 minutes.""";
     }
 
     @Override

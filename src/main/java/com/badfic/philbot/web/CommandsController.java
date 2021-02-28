@@ -2,6 +2,7 @@ package com.badfic.philbot.web;
 
 import com.jagrosh.jdautilities.command.Command;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,25 +25,27 @@ public class CommandsController extends BaseController {
         checkSession(httpServletRequest, false);
 
         List<SimpleCommand> simpleCommandsList = commands.stream()
-                .filter(c -> !c.isOwnerCommand() && !c.getName().equalsIgnoreCase("fireDrill") && !c.getName().endsWith("Talk"))
+                .filter(c -> !c.isOwnerCommand() && !c.getName().endsWith("Talk"))
                 .map(command -> {
-            String modHelp = null;
-            try {
-                modHelp = Arrays.stream(command.getClass().getDeclaredFields())
-                        .filter(f -> "modhelp".equalsIgnoreCase(f.getName()))
-                        .findAny()
-                        .map(f -> {
-                            try {
-                                f.setAccessible(true);
-                                return ((String) f.get(command));
-                            } catch (IllegalAccessException ignored) {
-                                return null;
-                            }
-                        }).orElse(null);
-            } catch (Exception ignored) {}
+                    String modHelp = null;
+                    try {
+                        modHelp = Arrays.stream(command.getClass().getDeclaredFields())
+                                .filter(f -> "modhelp".equalsIgnoreCase(f.getName()))
+                                .findAny()
+                                .map(f -> {
+                                    try {
+                                        f.setAccessible(true);
+                                        return ((String) f.get(command));
+                                    } catch (IllegalAccessException ignored) {
+                                        return null;
+                                    }
+                                }).orElse(null);
+                    } catch (Exception ignored) {}
 
-            return new SimpleCommand(command.getName(), command.getAliases(), command.getRequiredRole(), command.getHelp(), modHelp);
-        }).collect(Collectors.toList());
+                    return new SimpleCommand(command.getName(), command.getAliases(), command.getRequiredRole(), command.getHelp(), modHelp);
+                })
+                .sorted(Comparator.comparing(SimpleCommand::getName))
+                .collect(Collectors.toList());
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Commands");

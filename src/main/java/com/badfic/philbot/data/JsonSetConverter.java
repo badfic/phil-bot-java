@@ -37,7 +37,7 @@ public class JsonSetConverter implements AttributeConverter<Set<String>, String>
             if (s == null) {
                 return null;
             }
-            return OBJECT_MAPPER.readValue(s, new TypeReference<Set<String>>() {});
+            return OBJECT_MAPPER.readValue(s, new TypeReference<>() {});
         } catch (JsonProcessingException e) {
             throw new PersistenceException(e);
         }
