@@ -15,9 +15,11 @@ public class MemberCount extends BaseSwampy implements DailyTickable {
     public MemberCount() {
         name = "memberCount";
         requiredRole = Constants.ADMIN_ROLE;
-        help = "`!!memberCount` display member count\n" +
-                "`!!memberCount set 12345` sets the member count voice channel to the voice channel with the id 12345\n" +
-                "`!!memberCount update` manually updates the member count in the member count voice channel\n";
+        help = """
+                `!!memberCount` display member count
+                `!!memberCount set 12345` sets the member count voice channel to the voice channel with the id 12345
+                `!!memberCount update` manually updates the member count in the member count voice channel
+                """;
     }
 
     @Override

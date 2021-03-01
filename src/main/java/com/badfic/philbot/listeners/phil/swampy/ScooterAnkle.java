@@ -23,9 +23,10 @@ public class ScooterAnkle extends BaseSwampy {
 
     public ScooterAnkle() {
         name = "scooterankle";
-        help = "`!!scooterankle`\n" +
-                "Scooter Ankle sacrifices 25,000 of your own points to all swamplings (bastard and child) below you.\n" +
-                "In hopes that one of them may overtake the leader of their respective scoreboards.";
+        help = """
+                `!!scooterankle`
+                Scooter Ankle sacrifices 25,000 of your own points to all swamplings (bastard and child) below you.
+                In hopes that one of them may overtake the leader of their respective scoreboards.""";
     }
 
     @Override

@@ -26,10 +26,11 @@ public class QuoteCommand extends BaseSwampy {
 
     public QuoteCommand() {
         name = "quote";
-        help = "!!quote\n" +
-                "React to any message with the \uD83D\uDCAC emoji to save a Quote\n" +
-                "`!!quote` to get a random quote\n" +
-                "`!!quote 23` to get quote number 23";
+        help = """
+                !!quote
+                React to any message with the \uD83D\uDCAC emoji to save a Quote
+                `!!quote` to get a random quote
+                `!!quote 23` to get quote number 23""";
     }
 
     @Override
@@ -48,7 +49,7 @@ public class QuoteCommand extends BaseSwampy {
             long id = Long.parseLong(event.getArgs());
             Optional<Quote> optionalQuote = quoteRepository.findById(id);
 
-            if (!optionalQuote.isPresent()) {
+            if (optionalQuote.isEmpty()) {
                 johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " does not exist").queue();
                 return;
             }

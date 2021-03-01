@@ -64,20 +64,16 @@ public class MapCommand extends BaseSwampy {
         String description = null;
         String image = null;
         switch (ThreadLocalRandom.current().nextInt(1, 5)) {
-            case 1:
-                description = '"' + chosenQuestion.getNickname() + "\" is the nickname of what " + chosenQuestion.getIdentifier() + "?";
-                break;
-            case 2:
-                description = chosenQuestion.getCapital() + " is the capital of what " + chosenQuestion.getIdentifier() + "?";
-                break;
-            case 3:
+            case 1 -> description = '"' + chosenQuestion.getNickname() + "\" is the nickname of what " + chosenQuestion.getIdentifier() + "?";
+            case 2 -> description = chosenQuestion.getCapital() + " is the capital of what " + chosenQuestion.getIdentifier() + "?";
+            case 3 -> {
                 description = "This flag represents what " + chosenQuestion.getIdentifier() + "?";
                 image = chosenQuestion.getFlagUrl();
-                break;
-            case 4:
+            }
+            case 4 -> {
                 description = "What " + chosenQuestion.getIdentifier() + " is highlighted on this map?";
                 image = chosenQuestion.getMapUrl();
-                break;
+            }
         }
 
         description += "\n\nType your answer here in this channel within the next 15 minutes for " + swampyGamesConfig.getMapEventPoints() + " points.";

@@ -78,11 +78,11 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
                                 .getKey();
 
                         switch (winningSentence) {
-                            case ACQUIT:
+                            case ACQUIT -> {
                                 swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been acquitted").queue();
                                 courtCaseRepository.deleteById(courtCase.getDefendantId());
-                                break;
-                            case ONE_HOUR:
+                            }
+                            case ONE_HOUR -> {
                                 guild.addRoleToMember(courtCase.getDefendantId(), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusHours(1));
@@ -91,8 +91,8 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
                                         + courtCase.getCrime()).queue();
                                 megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
                                         + courtCase.getCrime()).queue();
-                                break;
-                            case FIVE_HOUR:
+                            }
+                            case FIVE_HOUR -> {
                                 guild.addRoleToMember(courtCase.getDefendantId(), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusHours(5));
@@ -101,8 +101,8 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
                                         + courtCase.getCrime()).queue();
                                 megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 5 hours in mega hell for "
                                         + courtCase.getCrime()).queue();
-                                break;
-                            case ONE_DAY:
+                            }
+                            case ONE_DAY -> {
                                 guild.addRoleToMember(courtCase.getDefendantId(), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusDays(1));
@@ -111,7 +111,7 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
                                         + courtCase.getCrime()).queue();
                                 megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 day in mega hell for "
                                         + courtCase.getCrime()).queue();
-                                break;
+                            }
                         }
                     } catch (Exception e) {
                         logger.error("Error with trial for [userId={}]", courtCase.getDefendantId(), e);

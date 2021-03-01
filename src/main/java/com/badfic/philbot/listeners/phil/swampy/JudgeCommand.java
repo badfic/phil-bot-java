@@ -39,9 +39,10 @@ public class JudgeCommand extends BaseSwampy {
 
     public JudgeCommand() {
         name = "judge";
-        help = "`!!judge @user for such and such crime` To judge a user for various crimes. People then vote on their sentence in mega-hell\n" +
-                "`!!judge mistrial @user` if you accidentally judged them you can cancel the trial, but only if they have not been convicted yet.\n" +
-                "`!!judge show @user` to see how much longer the person has for their trial or their sentence.";
+        help = """
+                `!!judge @user for such and such crime` To judge a user for various crimes. People then vote on their sentence in mega-hell
+                `!!judge mistrial @user` if you accidentally judged them you can cancel the trial, but only if they have not been convicted yet.
+                `!!judge show @user` to see how much longer the person has for their trial or their sentence.""";
     }
 
     @Override

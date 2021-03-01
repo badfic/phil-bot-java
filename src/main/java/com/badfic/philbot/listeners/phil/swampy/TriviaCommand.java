@@ -25,9 +25,10 @@ public class TriviaCommand extends BaseSwampy {
     public TriviaCommand() {
         name = "trivia";
         requiredRole = Constants.ADMIN_ROLE;
-        help = "!!trivia\n" +
-                "DM Phil `!!trivia` to get back a link to this admin site where you can add new trivia questions\n" +
-                "Manually triggering a trivia question has been disabled";
+        help = """
+                !!trivia
+                DM Phil `!!trivia` to get back a link to this admin site where you can add new trivia questions
+                Manually triggering a trivia question has been disabled""";
     }
 
     @Override
