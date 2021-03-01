@@ -35,15 +35,9 @@ public class Sweepstakes extends BaseSwampy {
         Role role = mentionedRoles.get(0);
 
         switch (role.getName()) {
-            case Constants.EIGHTEEN_PLUS_ROLE:
-                doSweepstakes(Constants.EIGHTEEN_PLUS_ROLE);
-                break;
-            case Constants.CHAOS_CHILDREN_ROLE:
-                doSweepstakes(Constants.CHAOS_CHILDREN_ROLE);
-                break;
-            default:
-                event.replyError("Please mention either chaos children role or 18+ role");
-                break;
+            case Constants.EIGHTEEN_PLUS_ROLE -> doSweepstakes(Constants.EIGHTEEN_PLUS_ROLE);
+            case Constants.CHAOS_CHILDREN_ROLE -> doSweepstakes(Constants.CHAOS_CHILDREN_ROLE);
+            default -> event.replyError("Please mention either chaos children role or 18+ role");
         }
     }
 

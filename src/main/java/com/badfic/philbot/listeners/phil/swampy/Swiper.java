@@ -81,14 +81,6 @@ public class Swiper extends BaseSwampy {
                     "Sweet Sweet Murder",
                     "https://cdn.discordapp.com/attachments/707453916882665552/783971471486615552/254c4699bb69c12a21714605beebd3f4.png"
             ))
-            .put("Crisco No Criscoing", new TheSwiper(
-                    "Crisco No Criscoing",
-                    "A Tub Of Crisco Has Been Spotted",
-                    "https://cdn.discordapp.com/attachments/741030569307275436/799730936765087794/PicsArt_01-15-10.03.48.jpg",
-                    "https://cdn.discordapp.com/attachments/741027502528659458/799683247042854932/image0.jpg",
-                    "Crisco Prevails",
-                    "https://cdn.discordapp.com/attachments/707453916882665552/802674091773263882/20077.png"
-            ))
             .put("Panic No Discoing", new TheSwiper(
                     "Panic No Discoing",
                     "Brendon Urie Spotted",

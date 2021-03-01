@@ -21,11 +21,12 @@ public class RemindersCommand extends BaseSwampy {
     public RemindersCommand() {
         name = "reminders";
         aliases = new String[] {"reminder"};
-        help = "!!reminders\n" +
-                "Type 'remind me in x minutes/hours/days to wash the garage' to be reminded\n" +
-                "`!!reminders` lists all reminders\n" +
-                "`!!reminders 5` Show reminder number 5\n" +
-                "`!!reminders delete 5` Delete reminder number 5";
+        help = """
+                !!reminders
+                Type 'remind me in x minutes/hours/days to wash the garage' to be reminded
+                `!!reminders` lists all reminders
+                `!!reminders 5` Show reminder number 5
+                `!!reminders delete 5` Delete reminder number 5""";
     }
 
     @Override
@@ -87,7 +88,7 @@ public class RemindersCommand extends BaseSwampy {
                         event.reply(finalString);
                     }
                 } else {
-                    event.replyError("Reminder #" + toLookup + " does not exist");;
+                    event.replyError("Reminder #" + toLookup + " does not exist");
                 }
             } catch (NumberFormatException e) {
                 event.replyError("Failed to parse number " + number);

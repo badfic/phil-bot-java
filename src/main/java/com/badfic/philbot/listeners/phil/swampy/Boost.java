@@ -24,10 +24,8 @@ public class Boost extends BaseSwampy {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final Set<String> BOOST_WORDS = ImmutableSet.of(
-            "butter", "oleo", "olio", "possum", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "jimjams", "word", "kitten",
-            "naughty", "nice", "nut", "yeet", "missouri", "shrek", "swamp", "bottoms", "marsh", "bog", "quagmire", "morass", "sump", "marshland", "fenland",
-            "sahar", "wetland", "grogu", "Kamala", "marvel", "korra", "katara", "sokka", "saltings", "saturate", "soak", "drench", "swampy", "florida", "moist",
-            "beyonce", "obama", "michelle", "denzel", "oprah", "dubois", "mlk", "rosa", "serena", "mandela", "mj", "bessie", "aretha", "kobe", "hendrix");
+            "butter", "oleo", "olio", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "word", "kitten", "naughty", "nice",
+            "nut", "feet", "yeet", "missouri", "shrek", "swamp", "sahar", "drench", "florida", "moist", "billy", "void", "space");
 
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;

@@ -26,9 +26,10 @@ public class RngCommand extends BaseSwampy {
 
     public RngCommand() {
         name = "rng";
-        help = "Generate a random number:\n" +
-                "`!!rng 1-10` Generates a random number between 1 (inclusive) and 10 (inclusive)\n" +
-                "(negative numbers do not work)";
+        help = """
+                Generate a random number:
+                `!!rng 1-10` Generates a random number between 1 (inclusive) and 10 (inclusive)
+                (negative numbers do not work)""";
     }
 
     @Override

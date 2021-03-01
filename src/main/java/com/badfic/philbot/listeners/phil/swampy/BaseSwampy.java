@@ -69,7 +69,7 @@ public abstract class BaseSwampy extends Command {
         String userId = member.getId();
         Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
 
-        if (!optionalUserEntity.isPresent()) {
+        if (optionalUserEntity.isEmpty()) {
             DiscordUser newUser = new DiscordUser();
             newUser.setId(userId);
             optionalUserEntity = Optional.of(discordUserRepository.save(newUser));

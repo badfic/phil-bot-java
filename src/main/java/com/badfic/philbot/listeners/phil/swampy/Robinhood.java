@@ -17,7 +17,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,10 +31,11 @@ public class Robinhood extends BaseSwampy {
 
     @Override
     public void execute(CommandEvent event) {
-        doRobinhood(true);
+        event.replyError("robinhood is disabled until further notice");
+        //doRobinhood(true);
     }
 
-    @Scheduled(cron = "0 9 2 * * ?", zone = "GMT")
+    //@Scheduled(cron = "0 9 2 * * ?", zone = "GMT")
     public void robinhood() {
         doRobinhood(false);
     }
@@ -73,6 +73,8 @@ public class Robinhood extends BaseSwampy {
                     if (user.getFamily() != null && CollectionUtils.isNotEmpty(user.getFamily().getSpouses())) {
                         taxRateRecoveryAmountPercentage -= 2;
                     }
+
+                    taxRateRecoveryAmountPercentage = Math.max(1, taxRateRecoveryAmountPercentage); // Always make sure it's at least 1 percent.
                     long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRateRecoveryAmountPercentage)).longValue();
                     Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
                     if (memberById != null && !isNotParticipating(memberById) && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {

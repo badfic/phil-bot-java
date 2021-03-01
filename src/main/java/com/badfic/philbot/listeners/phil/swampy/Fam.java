@@ -30,32 +30,34 @@ public class Fam extends BaseSwampy {
 
     public Fam() {
         name = "fam";
-        help = "!!fam\n" +
-                "Note for all the propose/divorce/adopt/disown commands,\n" +
-                "You can @ somebody or you can just type in any name if they are not on this server\n\n" +
-                "`!!fam`: Show your fam\n" +
-                "`!!fam show @Santiago`: Show somebody else's fam\n" +
-                "`!!fam tag there's a boost`: Tags all your fam, telling them \"there's a boost\"\n" +
-                "`!!fam propose Somebody`: Add a spouse\n" +
-                "`!!fam divorce Somebody`: Remove a spouse\n" +
-                "`!!fam add ex Somebody`: Add an ex\n" +
-                "`!!fam remove ex Somebody`: Remove an ex\n" +
-                "`!!fam adopt child Somebody`: Add a child\n" +
-                "`!!fam disown child Somebody`: Remove a child\n" +
-                "`!!fam adopt grandchild Somebody`: Add a grandchild\n" +
-                "`!!fam disown grandchild Somebody`: Remove a grandchild\n" +
-                "`!!fam adopt parent Somebody`: Add a parent\n" +
-                "`!!fam disown parent Somebody`: Remove a parent\n" +
-                "`!!fam adopt grandparent Somebody`: Add a grandparent\n" +
-                "`!!fam disown grandparent Somebody`: Remove a grandparent\n" +
-                "`!!fam adopt cousin Somebody`: Add a cousin\n" +
-                "`!!fam disown cousin Somebody`: Remove a cousin\n" +
-                "`!!fam adopt sibling Somebody`: Add a sibling\n" +
-                "`!!fam disown sibling Somebody`: Remove a sibling\n" +
-                "`!!fam adopt nibling Somebody`: Add a nibling\n" +
-                "`!!fam disown nibling Somebody`: Remove a nibling\n" +
-                "`!!fam adopt pibling Somebody`: Add a pibling\n" +
-                "`!!fam disown pibling Somebody`: Remove a pibling";
+        help = """
+                !!fam
+                Note for all the propose/divorce/adopt/disown commands,
+                You can @ somebody or you can just type in any name if they are not on this server
+
+                `!!fam`: Show your fam
+                `!!fam show @Santiago`: Show somebody else's fam
+                `!!fam tag there's a boost`: Tags all your fam, telling them "there's a boost"
+                `!!fam propose Somebody`: Add a spouse
+                `!!fam divorce Somebody`: Remove a spouse
+                `!!fam add ex Somebody`: Add an ex
+                `!!fam remove ex Somebody`: Remove an ex
+                `!!fam adopt child Somebody`: Add a child
+                `!!fam disown child Somebody`: Remove a child
+                `!!fam adopt grandchild Somebody`: Add a grandchild
+                `!!fam disown grandchild Somebody`: Remove a grandchild
+                `!!fam adopt parent Somebody`: Add a parent
+                `!!fam disown parent Somebody`: Remove a parent
+                `!!fam adopt grandparent Somebody`: Add a grandparent
+                `!!fam disown grandparent Somebody`: Remove a grandparent
+                `!!fam adopt cousin Somebody`: Add a cousin
+                `!!fam disown cousin Somebody`: Remove a cousin
+                `!!fam adopt sibling Somebody`: Add a sibling
+                `!!fam disown sibling Somebody`: Remove a sibling
+                `!!fam adopt nibling Somebody`: Add a nibling
+                `!!fam disown nibling Somebody`: Remove a nibling
+                `!!fam adopt pibling Somebody`: Add a pibling
+                `!!fam disown pibling Somebody`: Remove a pibling""";
         modHelp = help +
                 "\n**MOD ONLY COMMANDS**\n" +
                 "`!!fam nuke @Santiago`: Delete someone's family tree if they are misbehaving or not getting consent";

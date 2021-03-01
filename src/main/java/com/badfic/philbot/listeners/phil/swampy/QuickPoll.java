@@ -27,8 +27,6 @@ public class QuickPoll extends BaseSwampy {
                 event.getAuthor().getAsMention() + " asks:\n\n" + event.getArgs(),
                 "https://emoji.gg/assets/emoji/4392_ablobcouncil.gif");
 
-        event.reply(messageEmbed, msg -> {
-            msg.addReaction("❌").submit().thenRun(() -> msg.addReaction("✅").queue());
-        });
+        event.reply(messageEmbed, msg -> msg.addReaction("❌").submit().thenRun(() -> msg.addReaction("✅").queue()));
     }
 }

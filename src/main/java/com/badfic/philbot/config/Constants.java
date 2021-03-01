@@ -36,7 +36,7 @@ public interface Constants {
     String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
 
     Color SWAMP_GREEN = new Color(89, 145, 17);
-    Color COLOR_OF_THE_MONTH = SWAMP_GREEN;
+    Color COLOR_OF_THE_MONTH = new Color(0, 0, 0);
 
     static <T> T pickRandom(Collection<T> collection) {
         int index = ThreadLocalRandom.current().nextInt(collection.size());
@@ -63,18 +63,16 @@ public interface Constants {
         if (CollectionUtils.isNotEmpty(userTriggers)) {
             Optional<String> match = userTriggers.stream().filter(t -> t.getLeft().matcher(event.getMessage().getContentRaw()).find()).map(Pair::getRight).findAny();
 
-            if (match.isPresent()) {
-                event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
-                        .sendMessage(match.get()).queue();
-            }
+            match.ifPresent(s -> event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId()).sendMessage(s).queue());
         }
     }
 
     static void debugToTestChannel(JDA jda, String msg) {
         logger.info(msg);
-        jda.getTextChannelsByName(Constants.TEST_CHANNEL, false).stream().findFirst().ifPresent(channel -> {
-            channel.sendMessage(msg).queue();
-        });
+        jda.getTextChannelsByName(Constants.TEST_CHANNEL, false)
+                .stream()
+                .findFirst()
+                .ifPresent(channel -> channel.sendMessage(msg).queue());
     }
 
     static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {

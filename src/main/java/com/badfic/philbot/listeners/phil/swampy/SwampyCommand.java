@@ -47,9 +47,9 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83C\uDF0A", "\uD83E\uDDC5", "\uD83C\uDF46",
-            "\uD83C\uDF2E", "\uD83D\uDCA6", "\uD83D\uDCA7",
-            "\uD83E\uDD75", "\uD83D\uDC0D", "\uD83D\uDC09"
+            "\uD83D\uDC31", "\uD83D\uDE40", "\uD83D\uDE3E",
+            "\uD83D\uDE3F", "\uD83D\uDC08", "\uD83D\uDE38",
+            "\uD83D\uDE3D", "\uD83D\uDE3B", "\uD83D\uDC3E"
     );
 
     // volatile state
@@ -64,7 +64,7 @@ public class SwampyCommand extends BaseSwampy {
                 "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek", "billy",
                 "deer", "hot", "frosty", "glogg", "beam", "oof", "booty", "love", "chuck", "farm", "nut", "rat", "giraffe", "possum", "lena", "santiago",
                 "riverdale", "matthew", "murder", "book", "salami", "spicy", "spice", "salt", "yeet", "wah", "crafty", "bingus", "snarky", "duck", "crisco",
-                "mint", "spooder", "shark", "latte", "sahar", "obama", "selfcare", "nelly", "void", "baskin", "perry", "british"};
+                "mint", "spooder", "shark", "latte", "sahar", "obama", "selfcare", "nelly", "void", "baskin", "perry", "british", "duck", "shut", "waffle"};
         help =
                 "`!!swampy` aka...\n" + Arrays.stream(aliases).sorted().collect(Collectors.joining(", ")) + "\nHELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
@@ -87,7 +87,7 @@ public class SwampyCommand extends BaseSwampy {
 
         // seed swampy games config data
         Optional<SwampyGamesConfig> optionalConfig = this.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
-        if (!optionalConfig.isPresent()) {
+        if (optionalConfig.isEmpty()) {
             SwampyGamesConfig singleton = new SwampyGamesConfig();
             singleton.setId(SwampyGamesConfig.SINGLETON_ID);
             this.swampyGamesConfigRepository.save(singleton);

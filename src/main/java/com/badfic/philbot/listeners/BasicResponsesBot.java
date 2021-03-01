@@ -31,22 +31,25 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
         this.name = name;
         this.fullCmdPrefix = "!!" + name;
-        String rawHelp = "Any message containing `<name>` will make <name> respond with a random message if that channel is configured.\n\n" +
-                "`!!<name> tts` responds with a random message but spoken via text-to-speech\n" +
-                "`!!<name> nsfw add channel #channel` adds a channel to the list of channels nsfw <name> responds to\n" +
-                "`!!<name> nsfw remove channel #channel` removes a channel from the list of channels nsfw <name> responds to\n" +
-                "`!!<name> sfw add channel #channel` adds a channel to the list of channels normal <name> responds to\n" +
-                "`!!<name> sfw remove channel #channel` removes a channel from the list of channels normal <name> responds to\n" +
-                "`!!<name> nsfw add something something` adds 'something something' to the list of responses <name> has for nsfw channels\n" +
-                "`!!<name> nsfw remove something something` removes 'something something' from the list of responses <name> has for nsfw channels\n" +
-                "`!!<name> sfw add something something` adds 'something something' to the list of responses <name> has for normal channels\n" +
-                "`!!<name> sfw remove something something` removes 'something something' from the list of responses <name> has for normal channels\n" +
-                "`!!<name> nsfw config` responds with a json file of the nsfw config\n" +
-                "`!!<name> sfw config` responds with a json file of the normal config\n";
+        String rawHelp = """
+                Any message containing `<name>` will make <name> respond with a random message if that channel is configured.
+
+                `!!<name> tts` responds with a random message but spoken via text-to-speech
+                `!!<name> nsfw add channel #channel` adds a channel to the list of channels nsfw <name> responds to
+                `!!<name> nsfw remove channel #channel` removes a channel from the list of channels nsfw <name> responds to
+                `!!<name> sfw add channel #channel` adds a channel to the list of channels normal <name> responds to
+                `!!<name> sfw remove channel #channel` removes a channel from the list of channels normal <name> responds to
+                `!!<name> nsfw add something something` adds 'something something' to the list of responses <name> has for nsfw channels
+                `!!<name> nsfw remove something something` removes 'something something' from the list of responses <name> has for nsfw channels
+                `!!<name> sfw add something something` adds 'something something' to the list of responses <name> has for normal channels
+                `!!<name> sfw remove something something` removes 'something something' from the list of responses <name> has for normal channels
+                `!!<name> nsfw config` responds with a json file of the nsfw config
+                `!!<name> sfw config` responds with a json file of the normal config
+                """;
         this.help = StringUtils.replace(rawHelp, "<name>", name, -1);
 
         // seed data if needed
-        if (!configRepository.findById(BaseResponsesConfig.SINGLETON_ID).isPresent()) {
+        if (configRepository.findById(BaseResponsesConfig.SINGLETON_ID).isEmpty()) {
             GenericBotResponsesConfigJson kidFriendlyConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(sfwBootstrapJson),
                     GenericBotResponsesConfigJson.class);
             GenericBotResponsesConfigJson nsfwConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(nsfwBootstrapJson),
@@ -68,7 +71,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         }
 
         Optional<T> optionalConfig = configRepository.findById(BaseResponsesConfig.SINGLETON_ID);
-        if (!optionalConfig.isPresent()) {
+        if (optionalConfig.isEmpty()) {
             event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId()).sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name).queue();
             return;
         }
