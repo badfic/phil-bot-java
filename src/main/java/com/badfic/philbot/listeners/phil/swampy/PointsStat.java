@@ -32,7 +32,8 @@ public enum PointsStat {
     SHREKONING(DiscordUser::getShrekoningPoints, DiscordUser::setShrekoningPoints),
     STONKS(DiscordUser::getStonksPoints, DiscordUser::setStonksPoints),
     TAXES(DiscordUser::getTaxesPoints, DiscordUser::setTaxesPoints),
-    ROBINHOOD(DiscordUser::getRobinhoodPoints, DiscordUser::setRobinhoodPoints);
+    ROBINHOOD(DiscordUser::getRobinhoodPoints, DiscordUser::setRobinhoodPoints),
+    FIGHT(DiscordUser::getFightPoints, DiscordUser::setFightPoints);
 
     private final ToLongFunction<DiscordUser> getter;
     private final BiConsumer<DiscordUser, Long> setter;
