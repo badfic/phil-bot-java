@@ -137,6 +137,9 @@ public class DiscordUser {
     private long stonksPoints;
 
     @Column
+    private long fightPoints;
+
+    @Column
     private long taxesPoints;
 
     @Column
@@ -442,6 +445,14 @@ public class DiscordUser {
 
     public void setStonksPoints(long stonksPoints) {
         this.stonksPoints = stonksPoints;
+    }
+
+    public long getFightPoints() {
+        return fightPoints;
+    }
+
+    public void setFightPoints(long fightPoints) {
+        this.fightPoints = fightPoints;
     }
 
     public long getTaxesPoints() {

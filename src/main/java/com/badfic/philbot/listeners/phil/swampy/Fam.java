@@ -395,6 +395,10 @@ public class Fam extends BaseSwampy {
                     .append("\n\n");
         }
 
+        description.append("**DADDY**\n")
+                .append(philJda.getSelfUser().getAsMention())
+                .append("\n\n");
+
         append(family::getSpouses, "**Spouses**", description);
         append(family::getExes, "**Exes**", description);
         append(family::getChildren, "**Children**", description);
@@ -433,7 +437,8 @@ public class Fam extends BaseSwampy {
         allMembers.addAll(getMemberSet(family.getSiblings(), event));
         allMembers.addAll(getMemberSet(family.getCousins(), event));
 
-        return Constants.pickRandom(allMembers);
+        //return Constants.pickRandom(allMembers);
+        return philJda.getGuilds().get(0).getMemberById(philJda.getSelfUser().getIdLong());
     }
 
     private Set<Member> getMemberSet(Set<String> set, CommandEvent event) {

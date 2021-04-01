@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -31,11 +32,10 @@ public class Robinhood extends BaseSwampy {
 
     @Override
     public void execute(CommandEvent event) {
-        event.replyError("robinhood is disabled until further notice");
-        //doRobinhood(true);
+        doRobinhood(true);
     }
 
-    //@Scheduled(cron = "0 9 2 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 9 2 * * ?", zone = "GMT")
     public void robinhood() {
         doRobinhood(false);
     }
