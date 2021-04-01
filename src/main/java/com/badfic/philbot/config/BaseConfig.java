@@ -253,7 +253,7 @@ public class BaseConfig {
                 .addCommands(commands.toArray(new Command[0]))
                 .setScheduleExecutor(taskScheduler().getScheduledExecutor())
                 .setActivity(Activity.playing("with our feelings"))
-                .setEmojis("\uD83D\uDC08", "⚠️", "\uD83C\uDF35")
+                .setEmojis("\uD83C\uDF3F", "⚠️", "\uD83D\uDE24")
                 .setListener(new CommandListener() {
                     @Override
                     public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
