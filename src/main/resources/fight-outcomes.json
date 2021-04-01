@@ -154,5 +154,11 @@
     "winner": "VICTIM",
     "pointsToWinner": 1000,
     "pointsFromLoser": 1000
+  },
+  {
+    "text": "\"SHUT THE FUCK UP OR I'LL SEND KITE MAN HELL YEAING UP YOUR ASS!\" <AGGRESSOR> bellows.",
+    "winner": "AGGRESSOR",
+    "pointsToWinner": 100,
+    "pointsFromLoser": 100
   }
 ]
