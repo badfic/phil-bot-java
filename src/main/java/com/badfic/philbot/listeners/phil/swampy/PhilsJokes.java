@@ -13,7 +13,7 @@ import org.springframework.util.LinkedMultiValueMap;
 @Component
 public class PhilsJokes extends NonCommandSwampy {
 
-    @Scheduled(cron = "0 0,15,30,45 * * * *")
+    @Scheduled(cron = "0 17 17 * * *")
     public void sayDadJoke() {
         LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN_VALUE);
