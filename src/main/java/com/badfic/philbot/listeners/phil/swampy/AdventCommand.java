@@ -43,6 +43,22 @@ public class AdventCommand extends BaseSwampy {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (event.getArgs().equalsIgnoreCase("bugfix") && event.getMember().getId().equalsIgnoreCase(baseConfig.ownerId)) {
+            for (DiscordUser discordUser : discordUserRepository.findAll()) {
+                if (discordUser.getAdventCounter() < 25) {
+                    discordUser.setAdventCounter(25);
+                    long adventPoints = discordUser.getAdventPoints();
+                    if (adventPoints > 1000) {
+                        discordUser.setAdventPoints(1000);
+                    }
+                    discordUserRepository.save(discordUser);
+                }
+            }
+
+            event.replySuccess("successfully ran advent bugfix logic");
+            return;
+        }
+
         Member member = event.getMember();
 
         DiscordUser discordUser = getDiscordUserByMember(member);
@@ -53,8 +69,7 @@ public class AdventCommand extends BaseSwampy {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        //LocalDateTime nextAdventTime = discordUser.getLastAdvent().plusHours(24);
-        LocalDateTime nextAdventTime = discordUser.getLastAdvent().plusSeconds(1);
+        LocalDateTime nextAdventTime = discordUser.getLastAdvent().plusHours(24);
         if (now.isBefore(nextAdventTime) && discordUser.getAdventCounter() != 0) {
             Duration duration = Duration.between(now, nextAdventTime);
 
