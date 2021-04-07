@@ -151,6 +151,16 @@ public class DiscordUser {
     @Column
     private long scooterParticipant;
 
+    @Column
+    private int adventCounter;
+
+    @Column(columnDefinition = "TIMESTAMP")
+    @JsonIgnore
+    private LocalDateTime lastAdvent = LocalDateTime.now();
+
+    @Column
+    private long adventPoints;
+
     public String getId() {
         return id;
     }
@@ -481,5 +491,29 @@ public class DiscordUser {
 
     public void setScooterParticipant(long scooterParticipation) {
         this.scooterParticipant = scooterParticipation;
+    }
+
+    public int getAdventCounter() {
+        return adventCounter;
+    }
+
+    public void setAdventCounter(int adventCounter) {
+        this.adventCounter = adventCounter;
+    }
+
+    public LocalDateTime getLastAdvent() {
+        return lastAdvent;
+    }
+
+    public void setLastAdvent(LocalDateTime lastAdvent) {
+        this.lastAdvent = lastAdvent;
+    }
+
+    public long getAdventPoints() {
+        return adventPoints;
+    }
+
+    public void setAdventPoints(long adventPoints) {
+        this.adventPoints = adventPoints;
     }
 }
