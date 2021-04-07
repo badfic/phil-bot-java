@@ -152,7 +152,7 @@ public class DiscordUser {
     private long scooterParticipant;
 
     @Column
-    private int adventCounter;
+    private int adventCounter = 26;
 
     @Column(columnDefinition = "TIMESTAMP")
     @JsonIgnore
