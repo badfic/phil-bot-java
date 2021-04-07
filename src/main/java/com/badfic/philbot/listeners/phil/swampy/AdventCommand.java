@@ -54,7 +54,7 @@ public class AdventCommand extends BaseSwampy {
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nextAdventTime = discordUser.getLastAdvent().plusHours(24);
-        if (now.isBefore(nextAdventTime) && discordUser.getAdventCounter() != 0) {
+        if (now.isBefore(nextAdventTime) && discordUser.getAdventCounter() != 26) {
             Duration duration = Duration.between(now, nextAdventTime);
 
             if (duration.getSeconds() < 60) {
