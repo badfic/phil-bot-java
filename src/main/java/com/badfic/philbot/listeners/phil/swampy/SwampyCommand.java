@@ -300,11 +300,11 @@ public class SwampyCommand extends BaseSwampy {
         String two = Constants.pickRandom(SLOTS_EMOJIS);
         String three = Constants.pickRandom(SLOTS_EMOJIS);
 
-        if (one.equalsIgnoreCase(two) && two.equalsIgnoreCase(three)) {
+        if (one.equals(two) && two.equals(three)) {
             givePointsToMember(swampyGamesConfig.getSlotsWinPoints(), member, discordUser, PointsStat.SLOTS_WINNER_WINNER);
             event.reply(Constants.simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou won "
                             + swampyGamesConfig.getSlotsWinPoints() + " points!", member.getAsMention(), one, two, three), null, footer));
-        } else if (one.equalsIgnoreCase(two) || one.equalsIgnoreCase(three) || two.equalsIgnoreCase(three)) {
+        } else if (one.equals(two) || one.equals(three) || two.equals(three)) {
             givePointsToMember(swampyGamesConfig.getSlotsTwoOfThreePoints(), member, discordUser, PointsStat.SLOTS_CLOSE_ENOUGH);
             event.reply(Constants.simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou got 2 out of 3! You won "
                             + swampyGamesConfig.getSlotsTwoOfThreePoints() + " points!", member.getAsMention(), one, two, three), null, footer));
