@@ -326,7 +326,7 @@ public class Fam extends BaseSwampy {
 
                 PhilMessageListener.addReactionTask(msg.getId(), messageReactionAddEvent -> {
                     if (messageReactionAddEvent.getUserId().equalsIgnoreCase(mentionedMember.getId())) {
-                        if ("✅".equalsIgnoreCase(messageReactionAddEvent.getReactionEmote().getName())) {
+                        if ("✅".equals(messageReactionAddEvent.getReactionEmote().getName())) {
                             DiscordUser relookupUser = discordUserRepository.findById(discordUser.getId()).orElse(null);
 
                             if (relookupUser == null) {
@@ -343,7 +343,7 @@ public class Fam extends BaseSwampy {
 
                             msg.editMessage(messageSuccess).queue();
                             return true;
-                        } else if ("❌".equalsIgnoreCase(messageReactionAddEvent.getReactionEmote().getName())) {
+                        } else if ("❌".equals(messageReactionAddEvent.getReactionEmote().getName())) {
                             MessageEmbed messageFail = Constants.simpleEmbed(argName,
                                     mentionedMember.getAsMention() + " rejected " + event.getMember().getAsMention() + "'s `" + argName + '`',
                                     Color.RED);

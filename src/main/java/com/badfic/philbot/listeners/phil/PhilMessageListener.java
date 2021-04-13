@@ -156,7 +156,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
-        if (event.getReactionEmote().isEmoji() && "\uD83D\uDCAC".equalsIgnoreCase(event.getReactionEmote().getEmoji())) {
+        if (event.getReactionEmote().isEmoji() && "\uD83D\uDCAC".equals(event.getReactionEmote().getEmoji())) {
             if (!quoteRepository.existsByMessageId(event.getMessageIdLong())) {
                 event.getChannel().retrieveMessageById(event.getMessageId()).queue(msg -> {
                     long msgId = msg.getIdLong();
