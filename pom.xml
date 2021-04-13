@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.3</version>
+		<version>2.4.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.badfic</groupId>
@@ -15,10 +15,10 @@
 	<description>Phil Bot</description>
 
 	<properties>
-		<java.version>15</java.version>
-		<jda.version>4.2.0_227</jda.version>
+		<java.version>16</java.version>
+		<jda.version>4.2.1_253</jda.version>
 		<jda-utilities.version>3.0.5</jda-utilities.version>
-		<guava.version>30.1-jre</guava.version>
+		<guava.version>30.1.1-jre</guava.version>
 		<honeybadger.version>2.0.2</honeybadger.version>
 		<jumblr.version>0.0.13</jumblr.version>
 		<rome.version>1.15.0</rome.version>
@@ -174,6 +174,11 @@
 			<id>jcenter</id>
 			<name>jcenter-bintray</name>
 			<url>https://jcenter.bintray.com</url>
+		</repository>
+		<repository>
+			<id>dv8tion</id>
+			<name>m2-dv8tion</name>
+			<url>https://m2.dv8tion.net/releases</url>
 		</repository>
 	</repositories>
 
