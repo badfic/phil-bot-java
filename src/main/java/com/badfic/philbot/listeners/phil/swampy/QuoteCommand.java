@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -42,6 +43,30 @@ public class QuoteCommand extends BaseSwampy {
             Quote quote = quotes.getContent().get(0);
 
             respondWithQuote(event, quote);
+            return;
+        }
+
+        if (StringUtils.startsWithIgnoreCase(event.getArgs(), "delete")) {
+            String[] split = event.getArgs().split("\\s+");
+            if (ArrayUtils.getLength(split) != 2) {
+                event.replyError("Please specify a quote to delete: `!!quote delete 123`");
+                return;
+            }
+
+            try {
+                long id = Long.parseLong(split[1]);
+                Optional<Quote> optionalQuote = quoteRepository.findById(id);
+
+                if (optionalQuote.isPresent()) {
+                    quoteRepository.deleteById(id);
+                    johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " successfully deleted").queue();
+                } else {
+                    johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " does not exist").queue();
+                }
+            } catch (NumberFormatException e) {
+                johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Could not parse quote number from: " + split[1]).queue();
+            }
+
             return;
         }
 
