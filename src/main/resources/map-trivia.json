@@ -5,9 +5,7 @@
     "nickname": "Yellowhammer State",
     "capital": "Montgomery",
     "flagUrl": "https://cdn.civil.services/us-states/flags/alabama-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/alabama-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/alabama.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/alabama.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/alabama-large.png"
   },
   {
     "answer": "Alaska",
@@ -15,9 +13,7 @@
     "nickname": "The Last Frontier",
     "capital": "Juneau",
     "flagUrl": "https://cdn.civil.services/us-states/flags/alaska-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/alaska-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/alaska.jpg",
-    "skylineUrl": "https://cdn.discordapp.com/attachments/741053845098201099/784140821829386320/1025px-USS_Anchorage_in_Anchorage2C_Alaska.png"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/alaska-large.png"
   },
   {
     "answer": "Arizona",
@@ -25,9 +21,7 @@
     "nickname": "The Grand Canyon State",
     "capital": "Phoenix",
     "flagUrl": "https://cdn.civil.services/us-states/flags/arizona-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/arizona-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/arizona.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/arizona.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/arizona-large.png"
   },
   {
     "answer": "Arkansas",
@@ -35,9 +29,7 @@
     "nickname": "The Natural State",
     "capital": "Little Rock",
     "flagUrl": "https://cdn.civil.services/us-states/flags/arkansas-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/arkansas-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/arkansas.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/arkansas.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/arkansas-large.png"
   },
   {
     "answer": "California",
@@ -45,9 +37,7 @@
     "nickname": "Golden State",
     "capital": "Sacramento",
     "flagUrl": "https://cdn.civil.services/us-states/flags/california-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/california-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/california.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/california.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/california-large.png"
   },
   {
     "answer": "Colorado",
@@ -55,9 +45,7 @@
     "nickname": "The Centennial State",
     "capital": "Denver",
     "flagUrl": "https://cdn.civil.services/us-states/flags/colorado-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/colorado-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/colorado.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/colorado.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/colorado-large.png"
   },
   {
     "answer": "Connecticut",
@@ -65,9 +53,7 @@
     "nickname": "Constitution State",
     "capital": "Hartford",
     "flagUrl": "https://cdn.civil.services/us-states/flags/connecticut-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/connecticut-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/connecticut.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/connecticut.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/connecticut-large.png"
   },
   {
     "answer": "Delaware",
@@ -75,9 +61,7 @@
     "nickname": "The First State / The Diamond State",
     "capital": "Dover",
     "flagUrl": "https://cdn.civil.services/us-states/flags/delaware-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/delaware-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/delaware.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/delaware.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/delaware-large.png"
   },
   {
     "answer": "Florida",
@@ -85,9 +69,7 @@
     "nickname": "Sunshine State",
     "capital": "Tallahassee",
     "flagUrl": "https://cdn.civil.services/us-states/flags/florida-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/florida-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/florida.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/florida.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/florida-large.png"
   },
   {
     "answer": "Georgia",
@@ -95,9 +77,7 @@
     "nickname": "Peach State",
     "capital": "Atlanta",
     "flagUrl": "https://cdn.civil.services/us-states/flags/georgia-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/georgia-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/georgia.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/georgia.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/georgia-large.png"
   },
   {
     "answer": "Hawaii",
@@ -105,9 +85,7 @@
     "nickname": "Aloha State",
     "capital": "Honolulu",
     "flagUrl": "https://cdn.civil.services/us-states/flags/hawaii-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/hawaii-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/hawaii.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/hawaii.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/hawaii-large.png"
   },
   {
     "answer": "Idaho",
@@ -115,9 +93,7 @@
     "nickname": "Gem State",
     "capital": "Boise",
     "flagUrl": "https://cdn.civil.services/us-states/flags/idaho-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/idaho-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/idaho.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/idaho.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/idaho-large.png"
   },
   {
     "answer": "Illinois",
@@ -125,9 +101,7 @@
     "nickname": "Prairie State",
     "capital": "Springfield",
     "flagUrl": "https://cdn.civil.services/us-states/flags/illinois-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/illinois-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/illinois.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/illinois.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/illinois-large.png"
   },
   {
     "answer": "Indiana",
@@ -135,9 +109,7 @@
     "nickname": "Hoosier State",
     "capital": "Indianapolis",
     "flagUrl": "https://cdn.civil.services/us-states/flags/indiana-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/indiana-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/indiana.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/indiana.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/indiana-large.png"
   },
   {
     "answer": "Iowa",
@@ -145,9 +117,7 @@
     "nickname": "Hawkeye State",
     "capital": "Des Moines",
     "flagUrl": "https://cdn.civil.services/us-states/flags/iowa-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/iowa-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/iowa.jpg",
-    "skylineUrl": "https://cdn.discordapp.com/attachments/761398315119280158/781027677095198750/39e5bf85f821d73b4c3ad3cfc0d45392.png"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/iowa-large.png"
   },
   {
     "answer": "Kansas",
@@ -155,9 +125,7 @@
     "nickname": "Sunflower State",
     "capital": "Topeka",
     "flagUrl": "https://cdn.civil.services/us-states/flags/kansas-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/kansas-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/kansas.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/kansas.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/kansas-large.png"
   },
   {
     "answer": "Kentucky",
@@ -165,9 +133,7 @@
     "nickname": "Bluegrass State",
     "capital": "Frankfort",
     "flagUrl": "https://cdn.civil.services/us-states/flags/kentucky-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/kentucky-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/kentucky.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/kentucky.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/kentucky-large.png"
   },
   {
     "answer": "Louisiana",
@@ -175,9 +141,7 @@
     "nickname": "Pelican State",
     "capital": "Baton Rouge",
     "flagUrl": "https://cdn.civil.services/us-states/flags/louisiana-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/louisiana-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/louisiana.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/louisiana.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/louisiana-large.png"
   },
   {
     "answer": "Maine",
@@ -185,9 +149,7 @@
     "nickname": "Pine Tree State",
     "capital": "Augusta",
     "flagUrl": "https://cdn.civil.services/us-states/flags/maine-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/maine-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/maine.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/maine.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/maine-large.png"
   },
   {
     "answer": "Maryland",
@@ -195,9 +157,7 @@
     "nickname": "Old Line State",
     "capital": "Annapolis",
     "flagUrl": "https://cdn.civil.services/us-states/flags/maryland-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/maryland-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/maryland.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/maryland.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/maryland-large.png"
   },
   {
     "answer": "Massachusetts",
@@ -205,9 +165,7 @@
     "nickname": "Bay State",
     "capital": "Boston",
     "flagUrl": "https://cdn.civil.services/us-states/flags/massachusetts-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/massachusetts-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/massachusetts.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/massachusetts.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/massachusetts-large.png"
   },
   {
     "answer": "Michigan",
@@ -215,9 +173,7 @@
     "nickname": "Wolverine State / Great Lakes State",
     "capital": "Lansing",
     "flagUrl": "https://cdn.civil.services/us-states/flags/michigan-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/michigan-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/michigan.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/michigan.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/michigan-large.png"
   },
   {
     "answer": "Minnesota",
@@ -225,9 +181,7 @@
     "nickname": "North Star State / Land of 10,000 Lakes",
     "capital": "Saint Paul",
     "flagUrl": "https://cdn.civil.services/us-states/flags/minnesota-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/minnesota-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/minnesota.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/minnesota.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/minnesota-large.png"
   },
   {
     "answer": "Mississippi",
@@ -235,9 +189,7 @@
     "nickname": "Magnolia State",
     "capital": "Jackson",
     "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/800458762611720262/1920px-Flag_of_Mississippi.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/mississippi-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/mississippi.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/mississippi.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/mississippi-large.png"
   },
   {
     "answer": "Missouri",
@@ -245,9 +197,7 @@
     "nickname": "Show Me State",
     "capital": "Jefferson City",
     "flagUrl": "https://cdn.civil.services/us-states/flags/missouri-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/missouri-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/missouri.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/missouri.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/missouri-large.png"
   },
   {
     "answer": "Montana",
@@ -255,9 +205,7 @@
     "nickname": "Treasure State",
     "capital": "Helena",
     "flagUrl": "https://cdn.civil.services/us-states/flags/montana-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/montana-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/montana.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/montana.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/montana-large.png"
   },
   {
     "answer": "Nebraska",
@@ -265,9 +213,7 @@
     "nickname": "Cornhusker State",
     "capital": "Lincoln",
     "flagUrl": "https://cdn.civil.services/us-states/flags/nebraska-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/nebraska-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/nebraska.jpg",
-    "skylineUrl": "https://cdn.discordapp.com/attachments/761398315119280158/781475457248919562/images.png"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/nebraska-large.png"
   },
   {
     "answer": "Nevada",
@@ -275,9 +221,7 @@
     "nickname": "The Silver State",
     "capital": "Carson City",
     "flagUrl": "https://cdn.civil.services/us-states/flags/nevada-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/nevada-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/nevada.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/nevada.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/nevada-large.png"
   },
   {
     "answer": "New Hampshire",
@@ -285,9 +229,7 @@
     "nickname": "Granite State",
     "capital": "Concord",
     "flagUrl": "https://cdn.civil.services/us-states/flags/new-hampshire-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/new-hampshire-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/new-hampshire.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/new-hampshire.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/new-hampshire-large.png"
   },
   {
     "answer": "New Jersey",
@@ -295,9 +237,7 @@
     "nickname": "Garden State",
     "capital": "Trenton",
     "flagUrl": "https://cdn.civil.services/us-states/flags/new-jersey-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/new-jersey-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/new-jersey.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/new-jersey.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/new-jersey-large.png"
   },
   {
     "answer": "New Mexico",
@@ -305,9 +245,7 @@
     "nickname": "Land of Enchantment",
     "capital": "Santa Fe",
     "flagUrl": "https://cdn.civil.services/us-states/flags/new-mexico-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/new-mexico-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/new-mexico.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/new-mexico.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/new-mexico-large.png"
   },
   {
     "answer": "New York",
@@ -315,9 +253,7 @@
     "nickname": "Empire State",
     "capital": "Albany",
     "flagUrl": "https://cdn.civil.services/us-states/flags/new-york-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/new-york-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/new-york.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/new-york.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/new-york-large.png"
   },
   {
     "answer": "North Carolina",
@@ -325,9 +261,7 @@
     "nickname": "Old North State / Tar Heel State",
     "capital": "Raleigh",
     "flagUrl": "https://cdn.civil.services/us-states/flags/north-carolina-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/north-carolina-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/north-carolina.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/north-carolina.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/north-carolina-large.png"
   },
   {
     "answer": "North Dakota",
@@ -335,9 +269,7 @@
     "nickname": "Peace Garden State / Flickertail State / Roughrider State",
     "capital": "Bismarck",
     "flagUrl": "https://cdn.civil.services/us-states/flags/north-dakota-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/north-dakota-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/north-dakota.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/north-dakota.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/north-dakota-large.png"
   },
   {
     "answer": "Ohio",
@@ -345,9 +277,7 @@
     "nickname": "Buckeye State",
     "capital": "Columbus",
     "flagUrl": "https://cdn.civil.services/us-states/flags/ohio-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/ohio-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/ohio.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/ohio.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/ohio-large.png"
   },
   {
     "answer": "Oklahoma",
@@ -355,9 +285,7 @@
     "nickname": "Sooner State",
     "capital": "Oklahoma City",
     "flagUrl": "https://cdn.civil.services/us-states/flags/oklahoma-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/oklahoma-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/oklahoma.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/oklahoma.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/oklahoma-large.png"
   },
   {
     "answer": "Oregon",
@@ -365,9 +293,7 @@
     "nickname": "Beaver State",
     "capital": "Salem",
     "flagUrl": "https://cdn.civil.services/us-states/flags/oregon-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/oregon-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/oregon.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/oregon.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/oregon-large.png"
   },
   {
     "answer": "Pennsylvania",
@@ -375,9 +301,7 @@
     "nickname": "Keystone State",
     "capital": "Harrisburg",
     "flagUrl": "https://cdn.civil.services/us-states/flags/pennsylvania-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/pennsylvania-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/pennsylvania.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/pennsylvania.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/pennsylvania-large.png"
   },
   {
     "answer": "Rhode Island",
@@ -385,9 +309,7 @@
     "nickname": "The Ocean State",
     "capital": "Providence",
     "flagUrl": "https://cdn.civil.services/us-states/flags/rhode-island-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/rhode-island-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/rhode-island.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/rhode-island.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/rhode-island-large.png"
   },
   {
     "answer": "South Carolina",
@@ -395,9 +317,7 @@
     "nickname": "Palmetto State",
     "capital": "Columbia",
     "flagUrl": "https://cdn.civil.services/us-states/flags/south-carolina-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/south-carolina-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/south-carolina.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/south-carolina.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/south-carolina-large.png"
   },
   {
     "answer": "South Dakota",
@@ -405,9 +325,7 @@
     "nickname": "Mount Rushmore State",
     "capital": "Pierre",
     "flagUrl": "https://cdn.civil.services/us-states/flags/south-dakota-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/south-dakota-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/south-dakota.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/south-dakota.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/south-dakota-large.png"
   },
   {
     "answer": "Tennessee",
@@ -415,9 +333,7 @@
     "nickname": "Volunteer State",
     "capital": "Nashville",
     "flagUrl": "https://cdn.civil.services/us-states/flags/tennessee-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/tennessee-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/tennessee.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/tennessee.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/tennessee-large.png"
   },
   {
     "answer": "Texas",
@@ -425,9 +341,7 @@
     "nickname": "Lone Star State",
     "capital": "Austin",
     "flagUrl": "https://cdn.civil.services/us-states/flags/texas-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/texas-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/texas.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/texas.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/texas-large.png"
   },
   {
     "answer": "Utah",
@@ -435,9 +349,7 @@
     "nickname": "The Beehive State",
     "capital": "Salt Lake City",
     "flagUrl": "https://cdn.civil.services/us-states/flags/utah-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/utah-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/utah.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/utah.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/utah-large.png"
   },
   {
     "answer": "Vermont",
@@ -445,9 +357,7 @@
     "nickname": "Green Mountain State",
     "capital": "Montpelier",
     "flagUrl": "https://cdn.civil.services/us-states/flags/vermont-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/vermont-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/vermont.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/vermont.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/vermont-large.png"
   },
   {
     "answer": "Virginia",
@@ -455,9 +365,7 @@
     "nickname": "Old Dominion State",
     "capital": "Richmond",
     "flagUrl": "https://cdn.civil.services/us-states/flags/virginia-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/virginia-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/virginia.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/virginia.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/virginia-large.png"
   },
   {
     "answer": "Washington",
@@ -465,9 +373,7 @@
     "nickname": "The Evergreen State",
     "capital": "Olympia",
     "flagUrl": "https://cdn.civil.services/us-states/flags/washington-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/washington-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/washington.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/washington.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/washington-large.png"
   },
   {
     "answer": "West Virginia",
@@ -475,9 +381,7 @@
     "nickname": "Mountain State",
     "capital": "Charleston",
     "flagUrl": "https://cdn.civil.services/us-states/flags/west-virginia-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/west-virginia-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/west-virginia.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/west-virginia.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/west-virginia-large.png"
   },
   {
     "answer": "Wisconsin",
@@ -485,9 +389,7 @@
     "nickname": "Badger State",
     "capital": "Madison",
     "flagUrl": "https://cdn.civil.services/us-states/flags/wisconsin-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/wisconsin-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/wisconsin.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/wisconsin.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/wisconsin-large.png"
   },
   {
     "answer": "Wyoming",
@@ -495,9 +397,7 @@
     "nickname": "Equality State",
     "capital": "Cheyenne",
     "flagUrl": "https://cdn.civil.services/us-states/flags/wyoming-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/wyoming-large.png",
-    "landscapeUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/landscape/wyoming.jpg",
-    "skylineUrl": "https://cdn.civil.services/us-states/backgrounds/1280x720/skyline/wyoming.jpg"
+    "mapUrl": "https://cdn.civil.services/us-states/maps/wyoming-large.png"
   },
   {
     "answer": "Netherlands",
@@ -505,9 +405,7 @@
     "nickname": "Holland",
     "capital": "Amsterdam",
     "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/779857119558107146/1280px-Flag_of_the_Netherlands.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/779857396012154920/72318322-map-of-netherlands-highlighted-in-red-on-simple-shiny-metallic-map-with-clear-country-borde.png",
-    "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/779857674967449630/shutterstock_474434224-2200x880.png",
-    "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/779857519165308928/domtoren-hoofdafbeelding.png"
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/779857396012154920/72318322-map-of-netherlands-highlighted-in-red-on-simple-shiny-metallic-map-with-clear-country-borde.png"
   },
   {
     "answer": "Albania",
@@ -515,9 +413,7 @@
     "nickname": "Land of the Eagles",
     "capital": "Tirana",
     "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780658103498178560/1280px-Flag_of_Albania.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780658542675886100/location-map-of-albania-small.png",
-    "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780658820250206238/Lakes-in-Albanian-Alps-1024x683.png",
-    "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780660142685159424/tiranacityview-min_0.png"
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780658542675886100/location-map-of-albania-small.png"
   },
   {
     "answer": "Bhutan",
@@ -525,9 +421,7 @@
     "nickname": "Land of the Thunder Dragon",
     "capital": "Thimphu",
     "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780682423645503498/1920px-Flag_of_Bhutan.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780682580164214784/1920px-Bhutan_in_its_region.png",
-    "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780682765266845696/GettyImages-537245779_doc.png",
-    "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780682933727395860/manila-to-bhutan480.png"
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780682580164214784/1920px-Bhutan_in_its_region.png"
   },
   {
     "answer": "Indonesia",
@@ -535,9 +429,7 @@
     "nickname": "The Emerald of the Equator",
     "capital": "Jakarta",
     "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684182673686528/1920px-Flag_of_Indonesia.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684372055293952/1024px-Indonesia_28orthographic_projection29.png",
-    "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684537893617714/c4fedab1-4041-4db5-9245-97439472cf2c.png",
-    "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684693800222750/6352924-3x2-940x627.png"
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684372055293952/1024px-Indonesia_28orthographic_projection29.png"
   },
   {
     "answer": "Japan",
@@ -545,8 +437,222 @@
     "nickname": "Land of the Rising Sun",
     "capital": "Tokyo",
     "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780685253445943296/1920px-Flag_of_Japan.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780685376388988968/1024px-Japan_28orthographic_projection29.png",
-    "landscapeUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780686046076600350/takashi-komatsubara-japan-16.png",
-    "skylineUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780685825075052544/bf0717455d34f187946b360646d3bfa9.png"
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780685376388988968/1024px-Japan_28orthographic_projection29.png"
+  },
+  {
+    "answer": "France",
+    "identifier": "European Country",
+    "nickname": "The Hexagon",
+    "capital": "Paris",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832492433073504266/1280px-Flag_of_France.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832492055228841994/1024px-EU-France.png"
+  },
+  {
+    "answer": "Italy",
+    "identifier": "European Country",
+    "nickname": "The Boot",
+    "capital": "Rome",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832493655842619392/1920px-Flag_of_Italy.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832493380809785395/1024px-EU-Italy.png"
+  },
+  {
+    "answer": "Spain",
+    "identifier": "European Country",
+    "nickname": "The Red Fury",
+    "capital": "Madrid",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832494364356902953/1920px-Bandera_de_EspaC3B1a.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832494262016147486/1024px-EU-Spain.png"
+  },
+  {
+    "answer": "Poland",
+    "identifier": "European Country",
+    "nickname": "The Land of Fields",
+    "capital": "Warsaw",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832494751986352158/1920px-Flag_of_Poland.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832494865282629672/1024px-EU-Poland.png"
+  },
+  {
+    "answer": "Romania",
+    "identifier": "European Country",
+    "nickname": "The Land of Count Dracula",
+    "capital": "Bucharest",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832495420924100628/1920px-Flag_of_Romania.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832495476699561984/1024px-EU-Romania.png"
+  },
+  {
+    "answer": "Belgium",
+    "identifier": "European Country",
+    "nickname": "The Flat Country",
+    "capital": "Brussels",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832496736580272128/1024px-Flag_of_Belgium.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832496821879963708/1024px-EU-Belgium.png"
+  },
+  {
+    "answer": "Greece",
+    "identifier": "European Country",
+    "nickname": "Hellas",
+    "capital": "Athens",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832496986232979526/1920px-Flag_of_Greece.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832497087547310080/1024px-EU-Greece.png"
+  },
+  {
+    "answer": "Czech Republic",
+    "identifier": "European Country",
+    "nickname": "Czechia",
+    "capital": "Prague",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832497336788713504/1920px-Flag_of_the_Czech_Republic.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832497469459922944/1024px-EU-Czech_Republic.png"
+  },
+  {
+    "answer": "Sweden",
+    "identifier": "European Country",
+    "nickname": "The Elongated Country / Svedala / Mother Svea",
+    "capital": "Stockholm",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832497993331769374/1920px-Flag_of_Sweden.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498141395550248/1024px-EU-Sweden.png"
+  },
+  {
+    "answer": "Portugal",
+    "identifier": "European Country",
+    "nickname": "Lusitania / The Rectangle",
+    "capital": "Lisbon",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498428239937566/1920px-Flag_of_Portugal.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498564579328030/1024px-EU-Portugal_with_islands_circled.png"
+  },
+  {
+    "answer": "Hungary",
+    "identifier": "European Country",
+    "nickname": "The Land of Magyars / The Heart of Europe",
+    "capital": "Budapest",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498822672154634/1920px-Flag_of_Hungary.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498916544086056/1024px-EU-Hungary.png"
+  },
+  {
+    "answer": "Austria",
+    "identifier": "European Country",
+    "nickname": "The Musical Centre of Europe",
+    "capital": "Vienna",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832499300579016724/1920px-Flag_of_Austria.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832499432155119667/1024px-EU-Austria.png"
+  },
+  {
+    "answer": "Serbia",
+    "identifier": "European Country",
+    "nickname": "Rascia / The Balkan Tiger",
+    "capital": "Belgrade",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832499572105412618/1920px-Flag_of_Serbia.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832499825362075658/1024px-Europe-Serbia.png"
+  },
+  {
+    "answer": "Finland",
+    "identifier": "European Country",
+    "nickname": "The Land of a Thousand Lakes / The Marsh Land / The Strawberry Land",
+    "capital": "Helsinki",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832500020065730580/1920px-Flag_of_Finland.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832500133581160448/1024px-EU-Finland.png"
+  },
+  {
+    "answer": "Norway",
+    "identifier": "European Country",
+    "nickname": "The Land of the Midnight Sun / Fjords / Trolls / Vikings",
+    "capital": "Oslo",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832500450833203240/1280px-Flag_of_Norway.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832500584560197672/1024px-Europe-Norway.png"
+  },
+  {
+    "answer": "Ireland",
+    "identifier": "European Country",
+    "nickname": "The Emerald Isle",
+    "capital": "Dublin",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832500915910737960/1920px-Flag_of_Ireland.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501037373194250/1024px-EU-Ireland.png"
+  },
+  {
+    "answer": "Croatia",
+    "identifier": "European Country",
+    "nickname": "Our Beautiful",
+    "capital": "Zagreb",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501210413924362/1920px-Flag_of_Croatia.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501356648333312/1024px-EU-Croatia.png"
+  },
+  {
+    "answer": "Lithuania",
+    "identifier": "European Country",
+    "nickname": "The Land Of Storks",
+    "capital": "Vilnius",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501579915067412/1920px-Flag_of_Lithuania.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501644112691250/1024px-EU-Lithuania.png"
+  },
+  {
+    "answer": "Moldova",
+    "identifier": "European Country",
+    "nickname": "Bessarabia",
+    "capital": "Chișinău",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501866277503006/1920px-Flag_of_Moldova.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502003396640778/1024px-Location_Moldova_Europe.png"
+  },
+  {
+    "answer": "Slovenia",
+    "identifier": "European Country",
+    "nickname": "The Sunny Side of the Alps / Europe in Miniature",
+    "capital": "Ljubljana",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502113589395496/1920px-Flag_of_Slovenia.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502230602743808/1024px-EU-Slovenia.png"
+  },
+  {
+    "answer": "Latvia",
+    "identifier": "European Country",
+    "nickname": "The Land of Blue Lakes",
+    "capital": "Riga",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502435158294558/1920px-Flag_of_Latvia.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502572073877524/1024px-EU-Latvia.png"
+  },
+  {
+    "answer": "Estonia",
+    "identifier": "European Country",
+    "nickname": "Mary’s Land",
+    "capital": "Tallinn",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502790840516628/1920px-Flag_of_Estonia.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502926840430592/1024px-EU-Estonia.png"
+  },
+  {
+    "answer": "Iceland",
+    "identifier": "European Country",
+    "nickname": "The Land of Fire and Ice / The Reef / The Blue Land / The Beautiful Land of Ice",
+    "capital": "Reykjavík",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832503079127351306/1280px-Flag_of_Iceland.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832503181493796904/1024px-Europe-Iceland.png"
+  },
+  {
+    "answer": "England",
+    "identifier": "European Country",
+    "nickname": "Blighty",
+    "capital": "London",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832503958824026123/1920px-Flag_of_England.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832504205411221514/1024px-England_in_the_UK_and_Europe.png"
+  },
+  {
+    "answer": "Scotland",
+    "identifier": "European Country",
+    "nickname": "The Kingdom of the Gaels",
+    "capital": "Edinburgh",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832504543862456350/1920px-Flag_of_Scotland.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832504652817760266/1024px-Scotland_in_the_UK_and_Europe.png"
+  },
+  {
+    "answer": "Wales",
+    "identifier": "European Country",
+    "nickname": "Cymru / Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch",
+    "capital": "Cardiff",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832505097241493504/1920px-Flag_of_Wales_281959E28093present29.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832505216355663902/1024px-Wales_in_the_UK_and_Europe.png"
+  },
+  {
+    "answer": "United Kingdom",
+    "identifier": "European Country",
+    "nickname": "Great Britain / Albion",
+    "capital": "London",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832508040476360725/1920px-Flag_of_the_United_Kingdom.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832508203932712970/1024px-Europe-UK.png"
   }
 ]
