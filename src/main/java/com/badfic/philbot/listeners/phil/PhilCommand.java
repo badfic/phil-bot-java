@@ -68,6 +68,7 @@ public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> {
         if (isAllUppercase) {
             return Optional.of(StringUtils.upperCase(Constants.pickRandom(responses)));
         }
+
         return Optional.of(Constants.pickRandom(responses));
     }
 
