@@ -447,30 +447,38 @@ public class SwampyCommand extends BaseSwampy {
     }
 
     private void upvote(CommandEvent event) {
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
-
-        if (CollectionUtils.size(mentionedMembers) != 1) {
-            event.replyError("Please mention one user to upvote. Example `!!swampy up @Santiago`");
-            return;
-        }
-
-        Member mentionedMember = mentionedMembers.get(0);
-        if (isNotParticipating(mentionedMember)) {
-            event.replyError(mentionedMember.getEffectiveName() + " is not participating in the swampys");
-            return;
-        }
-
-        if (event.getMember().getId().equalsIgnoreCase(mentionedMember.getId())) {
-            event.replyError("You can't upvote yourself");
-            return;
-        }
-
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         if (swampyGamesConfig == null) {
             return;
         }
+
+        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
+
+        if (CollectionUtils.isEmpty(mentionedMembers)) {
+            event.replyError("Please mention at least one user to upvote. Example `!!swampy up @Santiago`");
+            return;
+        }
+
+        List<Member> eligibleMembers = mentionedMembers.stream().filter(mentionedMember -> {
+            if (isNotParticipating(mentionedMember)) {
+                event.replyError(mentionedMember.getEffectiveName() + " is not participating in the swampys");
+                return false;
+            }
+
+            if (event.getMember().getId().equalsIgnoreCase(mentionedMember.getId())) {
+                event.replyError("You can't upvote yourself");
+                return false;
+            }
+
+            return true;
+        }).collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(eligibleMembers)) {
+            event.replyError("Please mention at least one eligible user to upvote. Example `!!swampy up @Santiago`");
+            return;
+        }
+
+        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getUpvoteTimeoutMinutes(), ChronoUnit.MINUTES);
@@ -487,10 +495,12 @@ public class SwampyCommand extends BaseSwampy {
         discordUser.setLastVote(now);
         discordUserRepository.save(discordUser);
 
-        givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvotee(), mentionedMember, PointsStat.UPVOTED);
         givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvoter(), event.getMember(), PointsStat.UPVOTER);
 
-        event.replySuccess("Successfully upvoted " + mentionedMember.getEffectiveName());
+        for (Member mentionedMember : eligibleMembers) {
+            givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvotee(), mentionedMember, PointsStat.UPVOTED);
+            event.replySuccess("Successfully upvoted " + mentionedMember.getEffectiveName());
+        }
     }
 
     private void downvote(CommandEvent event) {
