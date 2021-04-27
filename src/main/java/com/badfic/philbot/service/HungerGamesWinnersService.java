@@ -112,7 +112,7 @@ public class HungerGamesWinnersService extends BaseSwampy implements DailyTickab
     }
 
     public List<String> getMessages() {
-        return hungerGamesWinnerRepository.findAll(Sort.by(Sort.Direction.ASC, "timeCreated"))
+        return hungerGamesWinnerRepository.findAll(Sort.by(Sort.Direction.DESC, "timeCreated"))
                 .stream()
                 .map(HungerGamesWinnerEntity::getMessage)
                 .collect(Collectors.toList());
