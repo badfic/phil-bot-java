@@ -42,9 +42,9 @@ public class DailyRiverdaleMemeService extends BaseSwampy implements DailyTickab
 
     @Override
     public void run() {
-        List<TextChannel> textChannelsByName = philJda.getTextChannelsByName("cursed-swamp", false);
+        List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
-            honeybadgerReporter.reportError(new RuntimeException("Failed to find cursed-swamp channel"));
+            honeybadgerReporter.reportError(new RuntimeException("Failed to find " + Constants.CURSED_SWAMP_CHANNEL + " channel"));
             return;
         }
 

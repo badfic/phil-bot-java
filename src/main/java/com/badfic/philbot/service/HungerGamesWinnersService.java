@@ -1,10 +1,12 @@
 package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.phil.HowWeBecameCursedEntity;
-import com.badfic.philbot.data.phil.HowWeBecameCursedRepository;
+import com.badfic.philbot.data.phil.HungerGamesWinnerEntity;
+import com.badfic.philbot.data.phil.HungerGamesWinnerRepository;
+import com.badfic.philbot.listeners.phil.swampy.BaseSwampy;
 import com.google.common.collect.Sets;
 import com.google.common.html.HtmlEscapers;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +18,7 @@ import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
+import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -24,17 +27,29 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HowWeBecameCursedService extends BaseService implements DailyTickable {
+public class HungerGamesWinnersService extends BaseSwampy implements DailyTickable {
+
+    private static final String REACTION_EMOJI = "\uD83C\uDFC1";
 
     @Resource
-    private HowWeBecameCursedRepository howWeBecameCursedRepository;
+    private HungerGamesWinnerRepository hungerGamesWinnerRepository;
+
+    public HungerGamesWinnersService() {
+        name = "updateHungerGamesWinners";
+        ownerCommand = true;
+    }
+
+    @Override
+    protected void execute(CommandEvent event) {
+        threadPoolTaskExecutor.submit(this);
+    }
 
     @Override
     public void run() {
-        Optional<TextChannel> optionalChannel = philJda.getGuilds().get(0).getTextChannelsByName("how-we-became-cursed", false).stream().findFirst();
+        Optional<TextChannel> optionalChannel = philJda.getGuilds().get(0).getTextChannelsByName(Constants.HUNGERDOME_CHANNEL, false).stream().findFirst();
 
         if (optionalChannel.isEmpty()) {
-            honeybadgerReporter.reportError(new IllegalArgumentException("Could not find how-we-became-cursed channel"));
+            honeybadgerReporter.reportError(new IllegalArgumentException("Could not find " + Constants.HUNGERDOME_CHANNEL + " channel"));
             return;
         }
 
@@ -55,47 +70,51 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
                     : -1;
 
             for (Message message : history.getRetrievedHistory()) {
-                messageIds.add(message.getIdLong());
+                MessageReaction.ReactionEmote reaction = message.getReactionByUnicode(REACTION_EMOJI);
 
-                HowWeBecameCursedEntity storedMessage;
-                Optional<HowWeBecameCursedEntity> storedMessageOpt = howWeBecameCursedRepository.findById(message.getIdLong());
+                if (reaction != null) {
+                    messageIds.add(message.getIdLong());
 
-                if (storedMessageOpt.isPresent()) {
-                    storedMessage = storedMessageOpt.get();
+                    HungerGamesWinnerEntity storedMessage;
+                    Optional<HungerGamesWinnerEntity> storedMessageOpt = hungerGamesWinnerRepository.findById(message.getIdLong());
 
-                    if (Objects.nonNull(message.getTimeEdited()) &&
-                            !message.getTimeEdited().toLocalDateTime().isEqual(storedMessage.getTimeEdited())) {
+                    if (storedMessageOpt.isPresent()) {
+                        storedMessage = storedMessageOpt.get();
+
+                        if (Objects.nonNull(message.getTimeEdited()) &&
+                                !message.getTimeEdited().toLocalDateTime().isEqual(storedMessage.getTimeEdited())) {
+                            String content = getMessageContent(message);
+
+                            storedMessage.setMessage(content);
+                            storedMessage.setTimeEdited(message.getTimeEdited().toLocalDateTime());
+                            hungerGamesWinnerRepository.save(storedMessage);
+                        }
+                    } else {
                         String content = getMessageContent(message);
 
-                        storedMessage.setMessage(content);
-                        storedMessage.setTimeEdited(message.getTimeEdited().toLocalDateTime());
-                        howWeBecameCursedRepository.save(storedMessage);
+                        storedMessage = new HungerGamesWinnerEntity(message.getIdLong(), content, message.getTimeCreated().toLocalDateTime(),
+                                message.getTimeEdited() != null ? message.getTimeEdited().toLocalDateTime() : message.getTimeCreated().toLocalDateTime());
+                        hungerGamesWinnerRepository.save(storedMessage);
                     }
-                } else {
-                    String content = getMessageContent(message);
-
-                    storedMessage = new HowWeBecameCursedEntity(message.getIdLong(), content, message.getTimeCreated().toLocalDateTime(),
-                            message.getTimeEdited() != null ? message.getTimeEdited().toLocalDateTime() : message.getTimeCreated().toLocalDateTime());
-                    howWeBecameCursedRepository.save(storedMessage);
                 }
             }
         }
 
-        Sets.SetView<Long> deletedMessageIds = Sets.difference(howWeBecameCursedRepository.findAllIds(), messageIds);
+        Sets.SetView<Long> deletedMessageIds = Sets.difference(hungerGamesWinnerRepository.findAllIds(), messageIds);
 
         for (Long deletedMessageId : deletedMessageIds) {
-            if (howWeBecameCursedRepository.existsById(deletedMessageId)) {
-                howWeBecameCursedRepository.deleteById(deletedMessageId);
+            if (hungerGamesWinnerRepository.existsById(deletedMessageId)) {
+                hungerGamesWinnerRepository.deleteById(deletedMessageId);
             }
         }
 
-        Constants.debugToTestChannel(philJda, "Successfully updated how-we-became-cursed cache");
+        Constants.debugToTestChannel(philJda, "Successfully updated " + Constants.HUNGERDOME_CHANNEL + " cache");
     }
 
     public List<String> getMessages() {
-        return howWeBecameCursedRepository.findAll(Sort.by(Sort.Direction.ASC, "timeCreated"))
+        return hungerGamesWinnerRepository.findAll(Sort.by(Sort.Direction.ASC, "timeCreated"))
                 .stream()
-                .map(HowWeBecameCursedEntity::getMessage)
+                .map(HungerGamesWinnerEntity::getMessage)
                 .collect(Collectors.toList());
     }
 

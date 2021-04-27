@@ -32,11 +32,15 @@ public interface Constants {
     String MEGA_HELL_CHANNEL = "mega-hell";
     String MEGA_HELL_ROLE = "in mega hell";
     String TEST_CHANNEL = "test-channel";
+    String HUNGERDOME_CHANNEL = "the-hungerdome";
+    String CURSED_SWAMP_CHANNEL = "cursed-swamp";
 
     String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
 
     Color SWAMP_GREEN = new Color(89, 145, 17);
     Color COLOR_OF_THE_MONTH = new Color(0, 0, 0);
+
+    Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
 
     static <T> T pickRandom(Collection<T> collection) {
         int index = ThreadLocalRandom.current().nextInt(collection.size());
