@@ -97,6 +97,14 @@ public class Swiper extends BaseSwampy {
                     "Doofenshmirtz Evil Incorporated",
                     "https://cdn.discordapp.com/attachments/707453916882665552/802676528759570452/a5663531c7b804c93fe2f4ca1c9c4a0b.gif"
             ))
+            .put("Sebastian No Stanning", new TheSwiper(
+                    "Sebastian No Stanning",
+                    "Sebastian Stan Spotted Nearby!",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/837962947694690324/f843b91a-df6c-11e8-8637-54e61741fa80_1615884836999.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/837962461680107520/AMSS.png",
+                    "Get Stan'd",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/837962744107761664/Z.png"
+            ))
             .build();
 
     public static final String SPIDERMAN_PNG = "https://cdn.discordapp.com/attachments/707453916882665552/769837667617079316/spiderman.png";
