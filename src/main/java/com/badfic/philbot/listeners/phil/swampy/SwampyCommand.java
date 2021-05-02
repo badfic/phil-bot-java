@@ -38,7 +38,7 @@ public class SwampyCommand extends BaseSwampy {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // soft point bans
-    private static final Pattern NO_NO_WORDS = Constants.compileWords("grapefruit|nelly");
+    private static final Pattern NO_NO_WORDS = Constants.compileWords("captain");
 
     // emoji
     public static final String[] LEADERBOARD_MEDALS = {
@@ -47,9 +47,9 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83C\uDF3F", "\uD83D\uDE24", "\uD83C\uDF32",
-            "\uD83E\uDD66", "\uD83E\uDD6C", "\uD83C\uDF43",
-            "\uD83C\uDF2C️", "\uD83D\uDCA8", "\uD83D\uDE43"
+            "\uD83D\uDC7D", "\uD83D\uDC68\u200D\uD83C\uDFA4", "\uD83E\uDDF6",
+            "\uD83D\uDD8B️", "\uD83C\uDFCB️", "\uD83D\uDC08",
+            "\uD83E\uDD62️", "\uD83C\uDDF1", "\uD83C\uDF35"
     );
 
     // volatile state
@@ -63,9 +63,9 @@ public class SwampyCommand extends BaseSwampy {
                 "swamp", "bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simp", "simpy", "shrimp", "shrimpy", "shremp",
                 "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek", "billy",
                 "deer", "hot", "frosty", "glogg", "beam", "oof", "booty", "love", "chuck", "farm", "nut", "rat", "giraffe", "possum", "lena", "santiago",
-                "riverdale", "matthew", "murder", "book", "salami", "spicy", "spice", "salt", "yeet", "wah", "crafty", "bingus", "snarky", "duck", "crisco",
+                "riverdale", "matthew", "murder", "book", "salami", "spicy", "spice", "salt", "yeet", "wah", "crafty", "bingus", "snarky", "crisco",
                 "mint", "spooder", "shark", "latte", "sahar", "obama", "selfcare", "nelly", "void", "baskin", "perry", "british", "duck", "shut", "waffle",
-                "vamp", "dap", "dab", "wap", "butter", "mullet", "vax", "vaxx", "steve", "shronk"};
+                "vamp", "dap", "dab", "wap", "butter", "mullet", "vax", "vaxx", "steve", "shronk", "oliver", "ophelia", "lisa", "rock"};
         help =
                 "`!!swampy` aka...\n" + Arrays.stream(aliases).sorted().collect(Collectors.joining(", ")) + "\nHELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +

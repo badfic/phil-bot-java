@@ -11,7 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class Rank {
-    public static final long LVL_MULTIPLIER = 3560;
+    public static final long LVL_MULTIPLIER = 2000;
     private static final Map<Long, Rank> LEVEL_MAP = new HashMap<>();
     private static final Set<String> LEVEL_ROLE_NAMES = new HashSet<>();
 
@@ -67,8 +67,8 @@ public class Rank {
             String[] values = StringUtils.split(line, '\t');
             String roleName = values[0];
             long level = Long.parseLong(values[1]);
-            String rankUpMessage = values[4];
-            String rankUpImage = values[5];
+            String rankUpMessage = values[6];
+            String rankUpImage = values[7];
 
             Rank rank = new Rank(i - 1, roleName, level, rankUpImage, rankUpMessage);
             LEVEL_MAP.put(level, rank);
