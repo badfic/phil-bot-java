@@ -60,15 +60,15 @@ public class Rank {
     }
 
     public static void init() throws Exception {
-        List<String> lines = IOUtils.readLines(Objects.requireNonNull(Rank.class.getClassLoader().getResourceAsStream("ranks.tsv")), StandardCharsets.UTF_8);
+        List<String> lines = IOUtils.readLines(Objects.requireNonNull(Rank.class.getClassLoader().getResourceAsStream("rank.tsv")), StandardCharsets.UTF_8);
 
         for (int i = 1; i < lines.size(); i++) {
             String line = lines.get(i);
             String[] values = StringUtils.split(line, '\t');
             String roleName = values[0];
             long level = Long.parseLong(values[1]);
-            String rankUpMessage = values[6];
-            String rankUpImage = values[7];
+            String rankUpMessage = values[2];
+            String rankUpImage = values[3];
 
             Rank rank = new Rank(i - 1, roleName, level, rankUpImage, rankUpMessage);
             LEVEL_MAP.put(level, rank);
