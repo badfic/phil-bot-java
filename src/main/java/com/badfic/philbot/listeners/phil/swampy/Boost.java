@@ -25,13 +25,13 @@ public class Boost extends BaseSwampy {
 
     private static final Set<String> BOOST_WORDS = ImmutableSet.of(
             "butter", "oleo", "olio", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "word", "kitten", "naughty", "nice",
-            "nut", "feet", "yeet", "missouri", "shrek", "swamp", "sahar", "drench", "florida", "moist", "void", "toke", "grass", "bowl", "light", "herb",
-            "broccoli", "sticky", "gelato", "bowl", "green", "blueberry", "cookies", "fire", "og");
+            "nut", "feet", "yeet", "missouri", "shrek", "swamp", "sahar", "drench", "florida", "moist", "void", "green", "bird", "lisa", "oliver", "ophelia",
+            "legends", "tomorrow", "plants");
 
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "boost";
-        help = "!!boost\nManually trigger a boost, if you don't end it manually it will end at the top of the hour";
+        help = "!!boost\nManually trigger a boost, it will end at the top of the hour";
     }
 
     @Override
