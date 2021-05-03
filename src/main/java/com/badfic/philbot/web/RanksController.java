@@ -14,7 +14,7 @@ public class RanksController extends BaseController {
 
     @GetMapping(value = "/ranks", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
-        checkSession(httpServletRequest, false);
+        checkSession(httpServletRequest, true);
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Ranks");
@@ -23,4 +23,5 @@ public class RanksController extends BaseController {
 
         return new ModelAndView("ranks", props);
     }
+
 }
