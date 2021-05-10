@@ -30,6 +30,7 @@ public abstract class BaseController {
     protected static final String DISCORD_USERNAME = "DiscordUsername";
     protected static final String DISCORD_REFRESH_TOKEN = "DiscordRefreshToken";
     protected static final String AWAITING_REDIRECT_URL = "AwaitingRedirectUrl";
+    protected static final String CHROMECAST_AUTH = "ChromecastAuth";
 
     @Resource
     protected BaseConfig baseConfig;

@@ -4,14 +4,11 @@
 
 <script>
     const streamUrl = window.location.origin + "/hls/stream.m3u8";
-    const streamPoster = "https://cdn.discordapp.com/attachments/323666308107599872/793416821826519070/swampy_watch_party.png";
-    var options;
-
-    options = {
-        poster: streamPoster,
+    const options = {
+        poster: "https://cdn.discordapp.com/attachments/323666308107599872/793416821826519070/swampy_watch_party.png",
         controls: true,
-        preload: 'none',
-        techOrder: [ 'chromecast', 'html5' ],
+        preload: "none",
+        techOrder: [ "chromecast", "html5" ],
         html5: {
             hls: {
                 overrideNative: !videojs.browser.IS_SAFARI,
@@ -20,9 +17,13 @@
     };
 
     (function(window, videojs) {
-        var player = window.player = videojs('player', options);
-        player.chromecast();
-        player.src({ type: "application/x-mpegURL", src: streamUrl });
-        player.controls(true);
+        fetch("/chromecast-auth")
+                .then(auth => auth.text())
+                .then(authCode => {
+                    const player = window.player = videojs('player', options);
+                    player.chromecast();
+                    player.src({ type: "application/x-mpegURL", src: streamUrl + "?auth=" + authCode });
+                    player.controls(true);
+                });
     }(window, window.videojs));
 </script>
