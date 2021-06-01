@@ -167,7 +167,8 @@ public class Swiper extends BaseSwampy {
         String description = "They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
                 + "' in this channel within 15 minutes to stop them!";
 
-        MessageEmbed message = Constants.simpleEmbed(theSwiper.getSpottedPhrase(), description, theSwiper.getSpottedImage());
+        MessageEmbed message = Constants.simpleEmbed(theSwiper.getSpottedPhrase(), description, theSwiper.getSpottedImage(), null, null,
+                member.getUser().getEffectiveAvatarUrl());
 
         swampysChannel.sendMessage(message).queue();
     }

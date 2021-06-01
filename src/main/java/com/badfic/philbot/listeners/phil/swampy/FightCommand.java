@@ -49,14 +49,14 @@ public class FightCommand extends BaseSwampy {
 
             String footer = aggressor.getEffectiveName() + " won " + fightOutcome.getPointsToWinner() + " points.\n" +
                     victim.getEffectiveName() + " lost " + fightOutcome.getPointsFromLoser() + " points.";
-            event.reply(Constants.simpleEmbed(aggressor.getEffectiveName() + " won", text, null, footer));
+            event.reply(Constants.simpleEmbed(aggressor.getEffectiveName() + " won", text, null, footer, null, aggressor.getUser().getEffectiveAvatarUrl()));
         } else {
             givePointsToMember(fightOutcome.getPointsToWinner(), victim, PointsStat.FIGHT);
             takePointsFromMember(fightOutcome.getPointsFromLoser(), aggressor, PointsStat.FIGHT);
 
             String footer = victim.getEffectiveName() + " won " + fightOutcome.getPointsToWinner() + " points.\n" +
                     aggressor.getEffectiveName() + " lost " + fightOutcome.getPointsFromLoser() + " points.";
-            event.reply(Constants.simpleEmbed(victim.getEffectiveName() + " won", text, null, footer));
+            event.reply(Constants.simpleEmbed(victim.getEffectiveName() + " won", text, null, footer, null, victim.getUser().getEffectiveAvatarUrl()));
         }
     }
 

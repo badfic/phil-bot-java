@@ -110,7 +110,7 @@ public class JudgeCommand extends BaseSwampy {
                 Sentence.FIVE_HOUR.getEmoji() + " for a 5 hour sentence\n" +
                 Sentence.ONE_DAY.getEmoji() + " for a 1 day sentence";
 
-        swampysChannel.sendMessage(Constants.simpleEmbed("Jury Summons", description)).queue(msg -> {
+        swampysChannel.sendMessage(Constants.simpleEmbedThumbnail("Jury Summons", description, defendant.getUser().getEffectiveAvatarUrl())).queue(msg -> {
             CourtCase courtCase = new CourtCase(defendant.getIdLong(), accuser.getIdLong(), msg.getIdLong(), finalCrime,
                     LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
             courtCaseRepository.save(courtCase);

@@ -86,7 +86,7 @@ public class Sweepstakes extends BaseSwampy {
 
         MessageEmbed message = Constants.simpleEmbed(role + " Sweepstakes Results",
                 String.format("Congratulations %s you won today's sweepstakes worth %d points!", member.getAsMention(), swampyGamesConfig.getSweepstakesPoints()),
-                swampyGamesConfig.getSweepstakesImg());
+                swampyGamesConfig.getSweepstakesImg(), null, null, member.getUser().getEffectiveAvatarUrl());
 
         philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                 .get(0)

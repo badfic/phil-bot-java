@@ -100,7 +100,8 @@ public class ScooterAnkle extends BaseSwampy {
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                 .thenRun(() -> swampysChannel.sendMessage(Constants.simpleEmbed(
-                        "\uD83D\uDEF4 Scooter Ankle \uD83D\uDEF4", description.toString(), swampyGamesConfig.getScooterAnkleImg())).queue());
+                        "\uD83D\uDEF4 Scooter Ankle \uD83D\uDEF4", description.toString(), swampyGamesConfig.getScooterAnkleImg(), null, null,
+                        event.getMember().getUser().getEffectiveAvatarUrl())).queue());
     }
 
 }

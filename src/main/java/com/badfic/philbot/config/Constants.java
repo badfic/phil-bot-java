@@ -80,11 +80,11 @@ public interface Constants {
     }
 
     static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {
-        return simpleEmbed(title, description, null, null, Constants.COLOR_OF_THE_MONTH, thumbnail);
+        return simpleEmbed(title, description, null, null, null, thumbnail);
     }
 
     static MessageEmbed simpleEmbed(String title, String description) {
-        return simpleEmbed(title, description, null, null, Constants.COLOR_OF_THE_MONTH, null);
+        return simpleEmbed(title, description, null, null, null, null);
     }
 
     static MessageEmbed simpleEmbed(String title, String description, Color color) {
@@ -92,7 +92,7 @@ public interface Constants {
     }
 
     static MessageEmbed simpleEmbed(String title, String description, String image) {
-        return simpleEmbed(title, description, image, null, Constants.COLOR_OF_THE_MONTH, null);
+        return simpleEmbed(title, description, image, null, null, null);
     }
 
     static MessageEmbed simpleEmbed(String title, String description, String image, Color color) {
@@ -100,7 +100,7 @@ public interface Constants {
     }
 
     static MessageEmbed simpleEmbed(String title, String description, String image, String footer) {
-        return simpleEmbed(title, description, image, footer, Constants.COLOR_OF_THE_MONTH, null);
+        return simpleEmbed(title, description, image, footer, null, null);
     }
 
     static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color) {
@@ -122,7 +122,7 @@ public interface Constants {
                 .setTitle(title)
                 .setDescription(finalDesc)
                 .setImage(image)
-                .setColor(color)
+                .setColor(color != null ? color : COLOR_OF_THE_MONTH)
                 .setFooter(footer)
                 .setThumbnail(thumbnail)
                 .build();
@@ -189,6 +189,7 @@ public interface Constants {
             "powered by 777 april showers",
             "powered by 777 may flowers",
             "powered by 777 rainy seasons",
+            "powered by 777 rainbows",
             "powered by 777 droughts",
             "powered by 777 WHY THE FUCK IS IT DARK AT 4PMs",
             "powered by 777 buckets",

@@ -42,7 +42,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
 
             MessageEmbed message = Constants.simpleEmbed(theSwiper.getNoSwipingPhrase(),
                     "Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points",
-                    theSwiper.getSwiperLostImage());
+                    theSwiper.getSwiperLostImage(), null, null, philJda.getSelfUser().getEffectiveAvatarUrl());
 
             if (victim.isPresent()) {
                 if (swiperSavior != null) {
