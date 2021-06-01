@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -72,7 +73,7 @@ public class Pride extends BaseSwampy {
 
         try {
             String[] split = event.getArgs().split("\\s+");
-            if ((CollectionUtils.size(mentionedMembers) == 1 && split.length == 1) || (split.length < 1)) {
+            if ((CollectionUtils.size(mentionedMembers) == 1 && split.length == 1) || (StringUtils.isBlank(event.getArgs()))) {
                 split = new String[] {"gay"};
             }
 
