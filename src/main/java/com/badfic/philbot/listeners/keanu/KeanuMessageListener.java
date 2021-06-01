@@ -6,6 +6,7 @@ import com.google.common.collect.Multimap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public class KeanuMessageListener {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw();
 
-        if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {
+        if (StringUtils.isBlank(msgContent) || msgContent.startsWith("!!") || event.getAuthor().isBot()) {
             return;
         }
 

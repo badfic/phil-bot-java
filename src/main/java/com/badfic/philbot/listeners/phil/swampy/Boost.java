@@ -25,8 +25,8 @@ public class Boost extends BaseSwampy {
 
     private static final Set<String> BOOST_WORDS = ImmutableSet.of(
             "butter", "oleo", "olio", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "word", "kitten", "naughty", "nice",
-            "nut", "feet", "yeet", "missouri", "shrek", "swamp", "sahar", "drench", "florida", "moist", "void", "green", "bird", "lisa", "oliver", "ophelia",
-            "legends", "tomorrow", "plants");
+            "nut", "feet", "yeet", "missouri", "shrek", "swamp", "drench", "florida", "moist", "void", "bird", "legends", "plants", "simp", "megan", "nelly",
+            "nuggets", "pride", "goat");
 
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;

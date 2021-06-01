@@ -31,7 +31,7 @@ public class BehradMessageListener {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw();
 
-        if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {
+        if (StringUtils.isBlank(msgContent) || msgContent.startsWith("!!") || event.getAuthor().isBot()) {
             return;
         }
 

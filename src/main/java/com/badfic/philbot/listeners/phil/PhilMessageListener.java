@@ -37,6 +37,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -126,7 +127,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
         String msgContent = event.getMessage().getContentRaw();
 
-        if (msgContent.startsWith("!!") || event.getAuthor().isBot()) {
+        if (StringUtils.isBlank(msgContent) || msgContent.startsWith("!!") || event.getAuthor().isBot()) {
             return;
         }
 
