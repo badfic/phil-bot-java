@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HlsProxyController extends BaseController {
 
     private static final Cache<String, String> OUTSTANDING_AUTHS = CacheBuilder.newBuilder()
-            .expireAfterWrite(Duration.of(15, ChronoUnit.MINUTES))
+            .expireAfterWrite(Duration.of(1, ChronoUnit.DAYS))
             .build();
 
     @GetMapping(value = "/{authCode}/hls/**")
