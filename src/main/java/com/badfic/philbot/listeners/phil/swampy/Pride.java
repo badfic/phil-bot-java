@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Pride extends BaseSwampy {
 
-    private static final float ALPHA = 0.40f;
+    private static final float ALPHA = 0.69f;
     private static final String[] FLAG_NAMES = new String[] {
             "lesbian",
             "gay",

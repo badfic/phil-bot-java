@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmoteMe extends BaseSwampy {
 
-    private static final float ALPHA = 0.40f;
+    private static final float ALPHA = 0.69f;
 
     public EmoteMe() {
         name = "emoteme";
