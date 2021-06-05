@@ -66,7 +66,8 @@ public class SwampyCommand extends BaseSwampy {
                 "riverdale", "matthew", "murder", "book", "salami", "spicy", "spice", "salt", "yeet", "wah", "crafty", "bingus", "snarky", "crisco",
                 "mint", "spooder", "shark", "latte", "sahar", "obama", "selfcare", "nelly", "void", "baskin", "perry", "british", "duck", "shut", "waffle",
                 "vamp", "dap", "dab", "wap", "butter", "mullet", "vax", "vaxx", "steve", "shronk", "oliver", "ophelia", "lisa", "rock", "buck", "bucky", "caw",
-                "sucky", "cap", "lesbian", "bi", "ace", "aro", "aroace", "demi", "enby", "nb", "intersex", "pan", "questioning", "trans"};
+                "sucky", "cap", "lesbian", "bi", "ace", "aro", "aroace", "demi", "enby", "nb", "intersex", "pan", "questioning", "trans", "megan", "goat",
+                "sam"};
         help =
                 "`!!swampy` aka...\n" + Arrays.stream(aliases).sorted().collect(Collectors.joining(", ")) + "\nHELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
