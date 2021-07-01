@@ -43,10 +43,6 @@ public class EmoteMe extends BaseSwampy {
         }
 
         Emote emote = event.getMessage().getEmotes().get(0);
-        if (emote.isAnimated()) {
-            event.replyError("Animated emotes are not supported");
-            return;
-        }
 
         if (StringUtils.isBlank(emote.getImageUrl())) {
             event.replyError("Could not load url for emote");

@@ -35,7 +35,8 @@ public class Pride extends BaseSwampy {
             "demi",
             "trans",
             "enby",
-            "intersex"
+            "intersex",
+            "auto"
     };
     private Map<String, BufferedImage> prideImages;
 

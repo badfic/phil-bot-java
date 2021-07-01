@@ -47,9 +47,9 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83C\uDFF3️\u200D⚧️", "\uD83C\uDFF3️\u200D\uD83C\uDF08", "\uD83E\uDD0E",
-            "\uD83D\uDE24", "\uD83D\uDE2D️", "\uD83D\uDCAF",
-            "\uD83D\uDC9C", "\uD83D\uDC9A", "\uD83E\uDD0D"
+            "\uD83E\uDD20", "\uD83E\uDD75", "\uD83E\uDDC3",
+            "\uD83D\uDC1A", "\uD83C\uDF0A", "\uD83C\uDF34",
+            "\uD83D\uDEE5️", "\uD83C\uDFD0", "\uD83C\uDFD6️"
     );
 
     // volatile state
@@ -67,7 +67,7 @@ public class SwampyCommand extends BaseSwampy {
                 "mint", "spooder", "shark", "latte", "sahar", "obama", "selfcare", "nelly", "void", "baskin", "perry", "british", "duck", "shut", "waffle",
                 "vamp", "dap", "dab", "wap", "butter", "mullet", "vax", "vaxx", "steve", "shronk", "oliver", "ophelia", "lisa", "rock", "buck", "bucky", "caw",
                 "sucky", "cap", "lesbian", "bi", "ace", "aro", "aroace", "demi", "enby", "nb", "intersex", "pan", "questioning", "trans", "megan", "goat",
-                "sam", "rise", "wow", "kachow", "loki"};
+                "sam", "rise", "wow", "kachow", "loki", "jetski", "summer"};
         help =
                 "`!!swampy` aka...\n" + Arrays.stream(aliases).sorted().collect(Collectors.joining(", ")) + "\nHELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +
