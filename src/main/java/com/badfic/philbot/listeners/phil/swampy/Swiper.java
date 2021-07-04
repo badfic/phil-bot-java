@@ -105,6 +105,14 @@ public class Swiper extends BaseSwampy {
                     "Get Stan'd",
                     "https://cdn.discordapp.com/attachments/707453916882665552/837962744107761664/Z.png"
             ))
+            .put("Loki No Larceny", new TheSwiper(
+                    "Loki No Larceny",
+                    "Loki Spotted Nearby!",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/861163773741760522/loki-disney-plus.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/861164307780599808/Loki-director-Kate-Herron-says-the-Marvel-shows-opening-scene-was-a-fun-hybrid-of-reused-and-unused-.png",
+                    "WOW, You just got Loki'd",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/861164191855542302/Screen-Shot-2020-12-10-at-5-2.png"
+            ))
             .build();
 
     public static final String SPIDERMAN_PNG = "https://cdn.discordapp.com/attachments/707453916882665552/769837667617079316/spiderman.png";
