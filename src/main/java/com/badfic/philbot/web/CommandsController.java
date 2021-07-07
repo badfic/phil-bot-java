@@ -2,7 +2,6 @@ package com.badfic.philbot.web;
 
 import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.Command;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +10,9 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.springframework.http.MediaType;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,25 +37,22 @@ public class CommandsController extends BaseController {
                     return isMod || !StringUtils.equalsIgnoreCase(c.getRequiredRole(), Constants.ADMIN_ROLE);
                 })
                 .map(command -> {
-                    String modHelp = null;
+                    final MutableObject<String> modHelp = new MutableObject<>();
 
                     if (isMod) {
                         try {
-                            modHelp = Arrays.stream(command.getClass().getDeclaredFields())
-                                    .filter(f -> "modhelp".equalsIgnoreCase(f.getName()))
-                                    .findAny()
-                                    .map(f -> {
-                                        try {
-                                            f.setAccessible(true);
-                                            return ((String) f.get(command));
-                                        } catch (IllegalAccessException ignored) {
-                                            return null;
-                                        }
-                                    }).orElse(null);
+                            ReflectionUtils.doWithFields(command.getClass(), field -> {
+                                if ("modhelp".equalsIgnoreCase(field.getName())) {
+                                    try {
+                                        field.setAccessible(true);
+                                        modHelp.setValue(((String) field.get(command)));
+                                    } catch (IllegalAccessException ignored) {}
+                                }
+                            });
                         } catch (Exception ignored) {}
                     }
 
-                    return new SimpleCommand(command.getName(), command.getAliases(), command.getRequiredRole(), command.getHelp(), modHelp);
+                    return new SimpleCommand(command.getName(), command.getAliases(), command.getRequiredRole(), command.getHelp(), modHelp.getValue());
                 })
                 .sorted(Comparator.comparing(SimpleCommand::getName))
                 .collect(Collectors.toList());

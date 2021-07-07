@@ -33,7 +33,8 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         this.name = name;
         this.fullCmdPrefix = "!!" + name;
         String rawHelp = "Any message containing `<name>` will make <name> respond with a random message if that channel is configured.";
-        this.modHelp = StringUtils.replace("""
+        this.help = StringUtils.replace(rawHelp, "<name>", name, -1);
+        this.modHelp = this.help + '\n' + StringUtils.replace("""
                 `!!<name> tts` responds with a random message but spoken via text-to-speech
                 `!!<name> nsfw add channel #channel` adds a channel to the list of channels nsfw <name> responds to
                 `!!<name> nsfw remove channel #channel` removes a channel from the list of channels nsfw <name> responds to
@@ -46,7 +47,6 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                 `!!<name> nsfw config` responds with a json file of the nsfw config
                 `!!<name> sfw config` responds with a json file of the normal config
                 """, "<name>", name, -1);
-        this.help = StringUtils.replace(rawHelp, "<name>", name, -1);
 
         // seed data if needed
         if (configRepository.findById(BaseResponsesConfig.SINGLETON_ID).isEmpty()) {
