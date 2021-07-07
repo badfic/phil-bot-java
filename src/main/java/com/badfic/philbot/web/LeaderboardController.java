@@ -26,6 +26,7 @@ public class LeaderboardController extends BaseController {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Leaderboard");
         props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
+        props.put("isMod", httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
         props.put("tables", Arrays.asList("bastards", "children"));
 
         return new ModelAndView("leaderboard", props);

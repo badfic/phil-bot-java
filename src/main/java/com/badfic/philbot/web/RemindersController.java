@@ -37,6 +37,7 @@ public class RemindersController extends BaseController {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Reminders");
         props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
+        props.put("isMod", httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
         props.put("reminders", simpleReminderList);
 
         return new ModelAndView("reminders", props);

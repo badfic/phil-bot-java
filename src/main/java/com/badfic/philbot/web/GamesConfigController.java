@@ -34,6 +34,7 @@ public class GamesConfigController extends BaseController {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Games Config");
         props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
+        props.put("isMod", httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
 
         List<ConfigEntry> configEntries = new ArrayList<>();
 

@@ -22,8 +22,7 @@ public class RemindersCommand extends BaseSwampy {
         name = "reminders";
         aliases = new String[] {"reminder"};
         help = """
-                !!reminders
-                Type 'remind me in x minutes/hours/days to wash the garage' to be reminded
+                Type "remind me in x minutes/hours/days to wash the garage" to be reminded by John.
                 `!!reminders` lists all reminders
                 `!!reminders 5` Show reminder number 5
                 `!!reminders delete 5` Delete reminder number 5""";

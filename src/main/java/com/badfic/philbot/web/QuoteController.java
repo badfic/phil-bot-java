@@ -27,6 +27,7 @@ public class QuoteController extends BaseController {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Quotes");
         props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
+        props.put("isMod", httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
         props.put("quotes", quoteRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream().map(q -> {
             Member memberById = philJda.getGuilds().get(0).getMemberById(q.getUserId());
             return new SimpleQuote(memberById != null ? memberById.getEffectiveName() : Long.toString(q.getUserId()),

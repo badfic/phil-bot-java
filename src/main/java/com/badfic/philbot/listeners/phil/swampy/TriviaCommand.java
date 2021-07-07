@@ -26,9 +26,8 @@ public class TriviaCommand extends BaseSwampy {
         name = "trivia";
         requiredRole = Constants.ADMIN_ROLE;
         help = """
-                !!trivia
-                DM Phil `!!trivia` to get back a link to this admin site where you can add new trivia questions
-                Manually triggering a trivia question has been disabled""";
+                `!!trivia dump` returns a json file with all the trivia questions and answers.
+                `!!trivia delete 44e04b28-7d39-41d8-8009-80ca6de5a04a` deleted trivia question with id 44e04b28-7d39-41d8-8009-80ca6de5a04a""";
     }
 
     @Override
@@ -40,7 +39,6 @@ public class TriviaCommand extends BaseSwampy {
             } catch (JsonProcessingException e) {
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send trivia dump to you").queue();
             }
-            return;
         } else if (event.getArgs().startsWith("delete")) {
             String guidStr = event.getArgs().replace("delete", "").trim();
             try {
@@ -55,11 +53,9 @@ public class TriviaCommand extends BaseSwampy {
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", badly formatted command." +
                         "Example: `!!trivia delete 44e04b28-7d39-41d8-8009-80ca6de5a04a`").queue();
             }
-
-            return;
+        } else {
+            event.replyError("Unrecognized trivia command. Trivia can't be triggered manually.");
         }
-
-        trivia();
     }
 
     @Scheduled(cron = "0 37 3,7,11,15,19,23 * * ?", zone = "GMT")

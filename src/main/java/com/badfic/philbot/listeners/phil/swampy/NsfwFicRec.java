@@ -15,7 +15,7 @@ public class NsfwFicRec extends BaseSwampy {
     public NsfwFicRec() {
         name = "nsfwficrec";
         aliases = new String[] {"swampyficrec"};
-        help = "!!nsfwficrec\nExample `!!nsfwficrec https://example.com`";
+        help = "`!!nsfwficrec https://example.com` Sends this fic recommendation to the nsfw-fic-recs channel for you.";
     }
 
     @Override

@@ -28,6 +28,7 @@ public abstract class BaseController {
     protected static final String DISCORD_TOKEN = "DiscordToken";
     protected static final String DISCORD_ID = "DiscordId";
     protected static final String DISCORD_USERNAME = "DiscordUsername";
+    protected static final String DISCORD_IS_MOD = "DiscordIsMod";
     protected static final String DISCORD_REFRESH_TOKEN = "DiscordRefreshToken";
     protected static final String AWAITING_REDIRECT_URL = "AwaitingRedirectUrl";
     protected static final String CHROMECAST_AUTH = "ChromecastAuth";
@@ -77,7 +78,7 @@ public abstract class BaseController {
                     getDiscordApiIdentityResponse((String) httpSession.getAttribute(DISCORD_TOKEN)));
 
             Member memberById = philJda.getGuilds().get(0).getMemberById(discordApiIdentityResponse.getId());
-            if (memberById == null || (requiresAdmin && !hasRole(memberById, Constants.ADMIN_ROLE) && !hasRole(memberById, Constants.MOD_ROLE))) {
+            if (memberById == null || (requiresAdmin && !hasRole(memberById, Constants.ADMIN_ROLE))) {
                 throw new UnauthorizedException(discordApiIdentityResponse.getId() +
                         " You are not authorized, you must be a swamp " + (requiresAdmin ? "admin" : "member") + " to access this page");
             }

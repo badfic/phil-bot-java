@@ -22,6 +22,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
     private final BaseResponsesConfigRepository<T> configRepository;
     private final ObjectMapper objectMapper;
     private final String fullCmdPrefix;
+    private final String modHelp;
 
     public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository,
                              ObjectMapper objectMapper, String name, String sfwBootstrapJson, String nsfwBootstrapJson,
@@ -31,9 +32,8 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
         this.name = name;
         this.fullCmdPrefix = "!!" + name;
-        String rawHelp = """
-                Any message containing `<name>` will make <name> respond with a random message if that channel is configured.
-
+        String rawHelp = "Any message containing `<name>` will make <name> respond with a random message if that channel is configured.";
+        this.modHelp = StringUtils.replace("""
                 `!!<name> tts` responds with a random message but spoken via text-to-speech
                 `!!<name> nsfw add channel #channel` adds a channel to the list of channels nsfw <name> responds to
                 `!!<name> nsfw remove channel #channel` removes a channel from the list of channels nsfw <name> responds to
@@ -45,7 +45,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                 `!!<name> sfw remove something something` removes 'something something' from the list of responses <name> has for normal channels
                 `!!<name> nsfw config` responds with a json file of the nsfw config
                 `!!<name> sfw config` responds with a json file of the normal config
-                """;
+                """, "<name>", name, -1);
         this.help = StringUtils.replace(rawHelp, "<name>", name, -1);
 
         // seed data if needed
@@ -72,7 +72,9 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
         Optional<T> optionalConfig = configRepository.findById(BaseResponsesConfig.SINGLETON_ID);
         if (optionalConfig.isEmpty()) {
-            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId()).sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name).queue();
+            event.getJDA().getGuilds().get(0)
+                    .getTextChannelById(event.getChannel().getId())
+                    .sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name).queue();
             return;
         }
 
@@ -83,7 +85,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
             if (event.getMember()
                     .getRoles()
                     .stream()
-                    .noneMatch(r -> r.getName().equalsIgnoreCase(Constants.ADMIN_ROLE) || r.getName().equalsIgnoreCase(Constants.MOD_ROLE))) {
+                    .noneMatch(r -> r.getName().equalsIgnoreCase(Constants.ADMIN_ROLE))) {
                 event.replyError("You do not have the correct role to use the " + name + " command");
                 return;
             }

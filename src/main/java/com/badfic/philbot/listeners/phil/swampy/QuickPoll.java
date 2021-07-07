@@ -12,7 +12,7 @@ public class QuickPoll extends BaseSwampy {
     public QuickPoll() {
         name = "qp";
         aliases = new String[] {"quickpoll"};
-        help = "!!qp\nExample `!!qp Should I eat taco bell`";
+        help = "Start a quick poll with a Yes and No option.\nExample `!!qp Should I eat taco bell`";
     }
 
     @Override

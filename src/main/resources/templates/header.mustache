@@ -32,18 +32,20 @@
             <li class="nav-item">
                 <a class="nav-link" href="/live">Live Watch Party</a>
             </li>
+            {{#isMod}}
             <li class="nav-item">
                 <span class="nav-link">|</span>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/trivia">Trivia (mods only)</a>
+                <a class="nav-link" href="/trivia">Trivia</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/games-config">Games Config (mods only)</a>
+                <a class="nav-link" href="/games-config">Games Config</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/ranks">Ranks (mods only)</a>
+                <a class="nav-link" href="/ranks">Ranks</a>
             </li>
+            {{/isMod}}
         </ul>
         <ul class="navbar-nav text-right">
             <li class="nav-item">

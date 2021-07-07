@@ -28,7 +28,6 @@ public class QuoteCommand extends BaseSwampy {
     public QuoteCommand() {
         name = "quote";
         help = """
-                !!quote
                 React to any message with the \uD83D\uDCAC emoji to save a Quote
                 `!!quote` to get a random quote
                 `!!quote 23` to get quote number 23""";

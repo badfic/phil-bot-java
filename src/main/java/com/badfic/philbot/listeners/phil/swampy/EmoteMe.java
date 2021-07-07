@@ -21,8 +21,7 @@ public class EmoteMe extends BaseSwampy {
 
     public EmoteMe() {
         name = "emoteme";
-        help = "`!!emoteme\n" +
-                "`!!emoteme :shrekphil: @Santiago`: apply shrek phil to Santiago's profile picture";
+        help = "`!!emoteme :shrekphil: @Santiago`: apply shrek phil to Santiago's profile picture";
     }
 
     @Override

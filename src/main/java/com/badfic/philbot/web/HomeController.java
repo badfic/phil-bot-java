@@ -59,10 +59,13 @@ public class HomeController extends BaseController {
 
             Member memberById = philJda.getGuilds().get(0).getMemberById(discordApiIdentityResponse.getId());
             if (memberById != null) {
+                Boolean isMod = hasRole(memberById, Constants.ADMIN_ROLE);
+
                 httpServletRequest.getSession().setAttribute(DISCORD_TOKEN, accessToken);
                 httpServletRequest.getSession().setAttribute(DISCORD_REFRESH_TOKEN, discordApiLoginResponse.getRefreshToken());
                 httpServletRequest.getSession().setAttribute(DISCORD_ID, discordApiIdentityResponse.getId());
                 httpServletRequest.getSession().setAttribute(DISCORD_USERNAME, discordApiIdentityResponse.getUsername());
+                httpServletRequest.getSession().setAttribute(DISCORD_IS_MOD, isMod);
             } else {
                 throw new UnauthorizedException(discordApiIdentityResponse.getId() +
                         " You are not authorized, you must be a member of the swamp to access this page");
@@ -79,6 +82,7 @@ public class HomeController extends BaseController {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Phil's Swamp");
         props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
+        props.put("isMod", httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
 
         return new ModelAndView("index", props);
     }

@@ -51,7 +51,7 @@ public class TimeoutCommand extends BaseSwampy {
             return;
         }
 
-        if (hasRole(member, Constants.ADMIN_ROLE) || hasRole(member, Constants.MOD_ROLE)) {
+        if (hasRole(member, Constants.ADMIN_ROLE)) {
             event.replyError("You can't put a mod in timeout");
             return;
         }
