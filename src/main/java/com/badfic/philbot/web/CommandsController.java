@@ -26,7 +26,7 @@ public class CommandsController extends BaseController {
     @GetMapping(value = "/commands", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
-        Boolean isMod = (Boolean) httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD);
+        boolean isMod = Boolean.TRUE.equals(httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
 
         List<SimpleCommand> simpleCommandsList = commands.stream()
                 .filter(c -> {
