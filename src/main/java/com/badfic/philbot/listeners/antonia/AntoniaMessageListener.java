@@ -61,9 +61,14 @@ public class AntoniaMessageListener {
             }
         });
 
-        if (StringUtils.containsIgnoreCase(event.getMessage().getContentRaw(), "kite man")) {
+        if (StringUtils.containsIgnoreCase(msgContent, "kite man")) {
             event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
                     .sendMessage("Hell yea").queue();
+            return;
+        }
+        if (StringUtils.containsIgnoreCase(msgContent, "owen wilson")) {
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                    .sendMessage("wow").queue();
             return;
         }
 

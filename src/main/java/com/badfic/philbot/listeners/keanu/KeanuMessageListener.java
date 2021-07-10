@@ -35,6 +35,12 @@ public class KeanuMessageListener {
             return;
         }
 
+        if (StringUtils.containsIgnoreCase(msgContent, "lightning mcqueen")) {
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                    .sendMessage("KACHOW!").queue();
+            return;
+        }
+
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
 
         if (KEANU_PATTERN.matcher(msgContent).find()) {
