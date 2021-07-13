@@ -82,6 +82,10 @@ public interface Constants {
         return simpleEmbed(title, description, null, null, null, thumbnail);
     }
 
+    static MessageEmbed simpleEmbedThumbnail(String title, String description, String image, String thumbnail) {
+        return simpleEmbed(title, description, image, null, null, thumbnail);
+    }
+
     static MessageEmbed simpleEmbed(String title, String description) {
         return simpleEmbed(title, description, null, null, null, null);
     }
