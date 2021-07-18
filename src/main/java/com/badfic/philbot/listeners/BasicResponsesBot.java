@@ -198,6 +198,12 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to remove").queue();
                     return;
                 }
+
+                if (saying.startsWith("`") && saying.endsWith("`")) {
+                    saying = StringUtils.substringAfter(saying, "`");
+                    saying = StringUtils.substringBefore(saying, "`");
+                }
+
                 responsesConfig.getNsfwConfig().getResponses().remove(saying);
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed `" + saying + "` from nsfw config").queue();
@@ -217,6 +223,12 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to remove").queue();
                     return;
                 }
+
+                if (saying.startsWith("`") && saying.endsWith("`")) {
+                    saying = StringUtils.substringAfter(saying, "`");
+                    saying = StringUtils.substringBefore(saying, "`");
+                }
+
                 responsesConfig.getSfwConfig().getResponses().remove(saying);
                 responsesConfig.getNsfwConfig().getResponses().remove(saying);
                 configRepository.save(responsesConfig);

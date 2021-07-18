@@ -28,7 +28,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
-import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
@@ -100,6 +100,9 @@ public class PhilMessageListener extends ListenerAdapter {
     private SwampyCommand swampyCommand;
 
     @Resource
+    private CustomBangCommands customBangCommands;
+
+    @Resource
     @Lazy
     private Ao3MetadataParser ao3MetadataParser;
 
@@ -129,6 +132,10 @@ public class PhilMessageListener extends ListenerAdapter {
 
         if (StringUtils.isBlank(msgContent) || msgContent.startsWith("!!") || event.getAuthor().isBot()) {
             return;
+        }
+
+        if (StringUtils.startsWith(msgContent, "!") && !StringUtils.trim(msgContent).equals("!")) {
+            customBangCommands.executeCustomCommand(StringUtils.trim(StringUtils.substring(msgContent, 1)), event.getTextChannel());
         }
 
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
@@ -210,8 +217,28 @@ public class PhilMessageListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildJoin(@NotNull GuildJoinEvent event) {
+    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         memberCount.updateCount();
+
+        event.getGuild().getTextChannelsByName("landing-zone", false).stream().findFirst().ifPresent(landingZone -> {
+            String guildName = event.getGuild().getName();
+            landingZone.sendMessage(Constants.simpleEmbed("Welcome to my humble swamp, swampling", String.format(
+                    """
+                    Hey %s, welcome to %s! Before you can be given full server access by a mod, there's a few things you need to do:
+                                        
+                    <:gayheart:741140553244082257> Select your #roles
+                    ‼️ You can select multiple roles, so choose all the ones you like! These will unlock secret channels for you to chat in
+                                        
+                    <:aroheart:741141415287062617> Write your introduction in #introductions
+                    
+                    ‼️ Make sure to include:
+                    7️⃣ Your age or age range
+                    <:gayhandshake:749048088080941097> Your pronouns
+                    😍 Any relevant information we need to know about you!
+                                                
+                    Otherwise, welcome and enjoy The Swamp!
+                    """, event.getMember().getAsMention(), guildName))).queue();
+        });
     }
 
     @Override
