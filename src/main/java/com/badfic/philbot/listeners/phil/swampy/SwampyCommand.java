@@ -111,27 +111,27 @@ public class SwampyCommand extends BaseSwampy {
             return;
         }
 
-        if (args.startsWith("help")) {
+        if (StringUtils.startsWithIgnoreCase(args, "help")) {
             if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
                 event.replyInDm(Constants.simpleEmbed("Help", modHelp));
             } else {
                 event.replyInDm(Constants.simpleEmbed("Help", help));
             }
-        } else if (args.startsWith("rank")) {
+        } else if (StringUtils.startsWithIgnoreCase(args, "rank")) {
             showRank(event);
-        } else if (args.startsWith("up")) {
+        } else if (StringUtils.startsWithIgnoreCase(args, "up")) {
             upvote(event);
-        } else if (args.startsWith("down")) {
+        } else if (StringUtils.startsWithIgnoreCase(args, "down")) {
             downvote(event);
-        } else if (args.startsWith("give")) {
+        } else if (StringUtils.startsWithIgnoreCase(args, "give")) {
             give(event);
-        } else if (args.startsWith("take")) {
+        } else if (StringUtils.startsWithIgnoreCase(args, "take")) {
             take(event);
-        } else if (args.startsWith("leaderboard")) {
+        } else if (StringUtils.startsWithIgnoreCase(args, "leaderboard")) {
             leaderboard(event);
-        } else if (args.startsWith("slots")) {
+        } else if (StringUtils.startsWithIgnoreCase(args, "slots")) {
             slots(event);
-        } else if (args.startsWith("reset")) {
+        } else if (StringUtils.startsWithIgnoreCase(args, "reset")) {
             if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
                 event.replyError("You do not have permission to use this command");
                 return;
@@ -141,7 +141,7 @@ public class SwampyCommand extends BaseSwampy {
                 event.reply(Constants.simpleEmbed("Reset The Games", "Are you sure you want to reset the Swampys? This will reset everyone's points. If you are sure, type `!!swampy reset confirm`"));
                 awaitingResetConfirmation = true;
             } else {
-                if (!args.startsWith("reset confirm")) {
+                if (!StringUtils.startsWithIgnoreCase(args, "reset confirm")) {
                     event.reply(Constants.simpleEmbed("Abort Reset", "Swampy reset aborted. You must type `!!swampy reset` and then confirm it with `!!swampy reset confirm`."));
                     awaitingResetConfirmation = false;
                     return;
