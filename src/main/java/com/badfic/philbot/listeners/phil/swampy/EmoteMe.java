@@ -39,6 +39,7 @@ public class EmoteMe extends BaseSwampy {
 
         if (CollectionUtils.size(event.getMessage().getEmotes()) != 1) {
             event.replyError("Please only specify one emote");
+            return;
         }
 
         Emote emote = event.getMessage().getEmotes().get(0);
