@@ -21,10 +21,12 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
@@ -68,6 +70,13 @@ public class EmoteMe extends BaseSwampy {
         }
     }
 
+    @PreDestroy
+    public void tearDown() {
+        if (emojiFile != null && Files.exists(emojiFile)) {
+            FileUtils.deleteQuietly(emojiFile.toFile());
+        }
+    }
+
     @Override
     protected void execute(CommandEvent event) {
         Member member = event.getMember();
@@ -90,15 +99,15 @@ public class EmoteMe extends BaseSwampy {
         try {
             BufferedImage overlayImage = null;
             if (CollectionUtils.size(emojis) == 1) {
-                if (emojiFile == null) {
+                if (emojiFile == null || !Files.exists(emojiFile)) {
                     synchronized (EmoteMe.class) {
-                        if (emojiFile == null) {
+                        if (emojiFile == null || !Files.exists(emojiFile)) {
                             init();
                         }
                     }
                 }
 
-                if (emojiFile == null) {
+                if (emojiFile == null || !Files.exists(emojiFile)) {
                     event.replyError("Could not download emoji list from unicode.org");
                     return;
                 }
