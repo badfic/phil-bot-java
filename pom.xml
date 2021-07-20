@@ -16,14 +16,16 @@
 
 	<properties>
 		<java.version>15</java.version>
-		<jda.version>4.2.1_253</jda.version>
-		<jda-utilities.version>3.0.5</jda-utilities.version>
+
+		<commons-io.version>2.8.0</commons-io.version>
+		<emoji-java.version>5.1.1</emoji-java.version>
 		<guava.version>30.1.1-jre</guava.version>
 		<honeybadger.version>2.0.2</honeybadger.version>
+		<jda.version>4.2.1_253</jda.version>
+		<jda-utilities.version>3.0.5</jda-utilities.version>
+		<jsoup.version>1.13.1</jsoup.version>
 		<jumblr.version>0.0.13</jumblr.version>
 		<rome.version>1.15.0</rome.version>
-		<jsoup.version>1.13.1</jsoup.version>
-		<commons-io.version>2.8.0</commons-io.version>
 
 		<!-- Web Jars -->
 		<webjars.version>0.40</webjars.version>
@@ -120,6 +122,11 @@
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>${jsoup.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vdurmont</groupId>
+			<artifactId>emoji-java</artifactId>
+			<version>${emoji-java.version}</version>
 		</dependency>
 
 		<!-- Web Jars -->
