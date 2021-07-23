@@ -69,7 +69,8 @@ public class JohnMessageListener extends BaseService {
             "https://cdn.discordapp.com/attachments/707453916882665552/793431107289743370/giphy.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/793431132963733514/giphy2.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/793431157717991464/chimmy.gif",
-            "https://cdn.discordapp.com/attachments/707453916882665552/793431180099452948/tata.gif");
+            "https://cdn.discordapp.com/attachments/707453916882665552/793431180099452948/tata.gif",
+            "https://cdn.discordapp.com/attachments/761398315119280158/867804756621131786/chris-evans-steve-rogers-heart-Favim.png");
     private static final Set<String> GOOD_BOT = ImmutableSet.of(
             ":D!!!",
             "I know",
