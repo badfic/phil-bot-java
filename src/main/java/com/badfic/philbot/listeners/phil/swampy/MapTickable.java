@@ -63,7 +63,7 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
 
             MessageEmbed messageEmbed = Constants.simpleEmbed("Map Trivia Complete", description.toString());
 
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new))
                     .thenRun(() -> swampysChannel.sendMessage(messageEmbed).queue());
         }
     }

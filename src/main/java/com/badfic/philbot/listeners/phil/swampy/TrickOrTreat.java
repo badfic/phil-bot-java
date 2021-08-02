@@ -92,7 +92,7 @@ public class TrickOrTreat extends BaseSwampy {
 
         MessageEmbed message = Constants.simpleEmbed(title, description.toString(), swampyGamesConfig.getTrickOrTreatImg(), footer);
 
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
                     .sendMessage(message)

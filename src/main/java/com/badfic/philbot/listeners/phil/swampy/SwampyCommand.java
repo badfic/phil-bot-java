@@ -303,27 +303,30 @@ public class SwampyCommand extends BaseSwampy {
         String three = Constants.pickRandom(SLOTS_EMOJIS);
 
         if (one.equals(two) && two.equals(three)) {
-            givePointsToMember(swampyGamesConfig.getSlotsWinPoints(), member, discordUser, PointsStat.SLOTS_WINNER_WINNER);
-            event.reply(Constants.simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou won "
-                            + swampyGamesConfig.getSlotsWinPoints() + " points!", member.getAsMention(), one, two, three), null, footer));
+            givePointsToMember(swampyGamesConfig.getSlotsWinPoints(), member, discordUser, PointsStat.SLOTS_WINNER_WINNER).thenRun(() -> {
+                event.reply(Constants.simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou won "
+                        + swampyGamesConfig.getSlotsWinPoints() + " points!", member.getAsMention(), one, two, three), null, footer));
 
-            event.getJDA().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).stream().findAny().ifPresent(swampysChannel -> {
-                swampysChannel.sendMessage(Constants.simpleEmbedThumbnail("SLOTS WINNER! " + one + one + one,
-                        member.getAsMention()
-                                + " just won "
-                                + NumberFormat.getIntegerInstance().format(swampyGamesConfig.getSlotsWinPoints())
-                                + " points from swampy slots! You too can win, play over in #bot-space",
-                        "https://cdn.discordapp.com/attachments/707453916882665552/864307474970443816/tenor.gif",
-                        member.getUser().getEffectiveAvatarUrl())).queue();
+                event.getJDA().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).stream().findAny().ifPresent(swampysChannel -> {
+                    swampysChannel.sendMessage(Constants.simpleEmbedThumbnail("SLOTS WINNER! " + one + one + one,
+                            member.getAsMention()
+                                    + " just won "
+                                    + NumberFormat.getIntegerInstance().format(swampyGamesConfig.getSlotsWinPoints())
+                                    + " points from swampy slots! You too can win, play over in #bot-space",
+                            "https://cdn.discordapp.com/attachments/707453916882665552/864307474970443816/tenor.gif",
+                            member.getUser().getEffectiveAvatarUrl())).queue();
+                });
             });
         } else if (one.equals(two) || one.equals(three) || two.equals(three)) {
-            givePointsToMember(swampyGamesConfig.getSlotsTwoOfThreePoints(), member, discordUser, PointsStat.SLOTS_CLOSE_ENOUGH);
-            event.reply(Constants.simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou got 2 out of 3! You won "
-                            + swampyGamesConfig.getSlotsTwoOfThreePoints() + " points!", member.getAsMention(), one, two, three), null, footer));
+            givePointsToMember(swampyGamesConfig.getSlotsTwoOfThreePoints(), member, discordUser, PointsStat.SLOTS_CLOSE_ENOUGH).thenRun(() -> {
+                event.reply(Constants.simpleEmbed(SLOT_MACHINE + " CLOSE ENOUGH! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou got 2 out of 3! You won "
+                        + swampyGamesConfig.getSlotsTwoOfThreePoints() + " points!", member.getAsMention(), one, two, three), null, footer));
+            });
         } else {
-            givePointsToMember(1, member, discordUser, PointsStat.SLOTS_LOSSES);
-            event.reply(Constants.simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, String.format("%s\n%s%s%s",
-                    member.getAsMention(), one, two, three), null, footer));
+            givePointsToMember(1, member, discordUser, PointsStat.SLOTS_LOSSES).thenRun(() -> {
+                event.reply(Constants.simpleEmbed(SLOT_MACHINE + " Better luck next time! " + SLOT_MACHINE, String.format("%s\n%s%s%s",
+                        member.getAsMention(), one, two, three), null, footer));
+            });
         }
     }
 
@@ -686,7 +689,7 @@ public class SwampyCommand extends BaseSwampy {
             }
         }
 
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> event.replySuccess("Reset the Swampys"));
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> event.replySuccess("Reset the Swampys"));
     }
 
 }

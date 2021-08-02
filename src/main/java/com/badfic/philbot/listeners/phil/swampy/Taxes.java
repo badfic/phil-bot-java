@@ -102,7 +102,7 @@ public class Taxes extends BaseSwampy {
                         + " points in taxes have been paid to " + swampyGamesConfig.getTaxesPerson(),
                 description.toString(), swampyGamesConfig.getTaxesImg());
 
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
                     .sendMessage(message)

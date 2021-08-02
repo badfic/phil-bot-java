@@ -7,6 +7,7 @@ import com.badfic.philbot.service.MinuteTickable;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -44,6 +45,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                     "Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points",
                     theSwiper.getSwiperLostImage(), null, null, philJda.getSelfUser().getEffectiveAvatarUrl());
 
+            CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
             if (victim.isPresent()) {
                 if (swiperSavior != null) {
                     try {
@@ -63,7 +65,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                             discordUserRepository.save(savior.get());
                             Member saviorMember = philJda.getGuilds().get(0).getMemberById(savior.get().getId());
                             if (saviorMember != null) {
-                                givePointsToMember(700, saviorMember, PointsStat.SWIPER);
+                                future = givePointsToMember(700, saviorMember, PointsStat.SWIPER);
                             }
                         }
                     } catch (Exception e) {
@@ -75,7 +77,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                         Member memberById = philJda.getGuilds().get(0).getMemberById(victim.get().getId());
 
                         if (memberById != null) {
-                            takePointsFromMember(swiperPoints, memberById, PointsStat.SWIPER);
+                            future = takePointsFromMember(swiperPoints, memberById, PointsStat.SWIPER);
                             message = Constants.simpleEmbed(theSwiper.getSwiperWonPhrase(),
                                     "You didn't save <@!" + victim.get().getId() + "> in time, they lost " + swiperPoints + " points",
                                     theSwiper.getSwiperWonImage());
@@ -87,7 +89,8 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                 }
             }
 
-            swampysChannel.sendMessage(message).queue();
+            final MessageEmbed finalMessage = message;
+            future.thenRun(() -> swampysChannel.sendMessage(finalMessage).queue());
         }
     }
 

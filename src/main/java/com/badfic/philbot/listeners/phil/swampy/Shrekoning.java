@@ -85,7 +85,7 @@ public class Shrekoning extends BaseSwampy {
 
         MessageEmbed message = Constants.simpleEmbed("The Shrekoning", description.toString(), swampyGamesConfig.getShrekoningImg());
 
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
                     .sendMessage(message)

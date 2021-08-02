@@ -6,10 +6,12 @@ import com.badfic.philbot.data.phil.Trivia;
 import com.badfic.philbot.data.phil.TriviaRepository;
 import com.badfic.philbot.service.MinuteTickable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -59,22 +61,26 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
 
             long wrongPoints = triviaEventPoints * -1;
 
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+
             List<User> users = msg.retrieveReactionUsers("\uD83C\uDDE6").complete();
-            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 0 ? (long) triviaEventPoints : wrongPoints);
+            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 0 ? (long) triviaEventPoints : wrongPoints, futures);
 
             users = msg.retrieveReactionUsers("\uD83C\uDDE7").complete();
-            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 1 ? (long) triviaEventPoints : wrongPoints);
+            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 1 ? (long) triviaEventPoints : wrongPoints, futures);
 
             users = msg.retrieveReactionUsers("\uD83C\uDDE8").complete();
-            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 2 ? (long) triviaEventPoints : wrongPoints);
+            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 2 ? (long) triviaEventPoints : wrongPoints, futures);
 
             msg.clearReactions().queue();
 
-            swampysChannel.sendMessage(Constants.simpleEmbed("Trivia Results", description.toString())).queue();
+            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
+                swampysChannel.sendMessage(Constants.simpleEmbed("Trivia Results", description.toString())).queue();
+            });
         }
     }
 
-    private void awardPoints(StringBuilder description, List<User> users, long points) {
+    private void awardPoints(StringBuilder description, List<User> users, long points, List<CompletableFuture<Void>> futures) {
         for (User user : users) {
             if (user.getId().equals(philJda.getSelfUser().getId())) {
                 continue;
@@ -98,9 +104,9 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
                             .append(">\n");
                 }
                 if (points < 1) {
-                    takePointsFromMember(points * -1, memberById, PointsStat.TRIVIA);
+                    futures.add(takePointsFromMember(points * -1, memberById, PointsStat.TRIVIA));
                 } else {
-                    givePointsToMember(points, memberById, PointsStat.TRIVIA);
+                    futures.add(givePointsToMember(points, memberById, PointsStat.TRIVIA));
                 }
             }
         }

@@ -82,16 +82,19 @@ public class Sweepstakes extends BaseSwampy {
             return;
         }
 
-        givePointsToMember(swampyGamesConfig.getSweepstakesPoints(), member, PointsStat.SWEEPSTAKES);
+        final Member finalMember = member;
 
-        MessageEmbed message = Constants.simpleEmbed(role + " Sweepstakes Results",
-                String.format("Congratulations %s you won today's sweepstakes worth %d points!", member.getAsMention(), swampyGamesConfig.getSweepstakesPoints()),
-                swampyGamesConfig.getSweepstakesImg(), null, null, member.getUser().getEffectiveAvatarUrl());
+        givePointsToMember(swampyGamesConfig.getSweepstakesPoints(), member, PointsStat.SWEEPSTAKES).thenRun(() -> {
+            MessageEmbed message = Constants.simpleEmbed(role + " Sweepstakes Results",
+                    String.format("Congratulations %s you won today's sweepstakes worth %d points!",
+                            finalMember.getAsMention(), swampyGamesConfig.getSweepstakesPoints()),
+                    swampyGamesConfig.getSweepstakesImg(), null, null, finalMember.getUser().getEffectiveAvatarUrl());
 
-        philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
-                .get(0)
-                .sendMessage(message)
-                .queue();
+            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
+                    .get(0)
+                    .sendMessage(message)
+                    .queue();
+        });
     }
 
 }

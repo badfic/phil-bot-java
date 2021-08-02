@@ -250,7 +250,7 @@ public class BaseConfig {
                 .setOwnerId(ownerId)
                 .setPrefix("!!")
                 .useHelpBuilder(false)
-                .addCommands(commands.toArray(new Command[0]))
+                .addCommands(commands.toArray(Command[]::new))
                 .setScheduleExecutor(taskScheduler().getScheduledExecutor())
                 .setActivity(Activity.playing("with our feelings"))
                 .setEmojis("\uD83E\uDD90", "⚠️", "\uD83D\uDC7F")

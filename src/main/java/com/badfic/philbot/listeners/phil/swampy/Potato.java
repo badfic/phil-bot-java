@@ -74,7 +74,7 @@ public class Potato extends BaseSwampy {
                 .append(NumberFormat.getIntegerInstance().format(totalPointsGiven.getValue()))
                 .append(" \uD83E\uDD54 to the swamplings!");
 
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
                     .sendMessage(Constants.simpleEmbed("GET MASHED!", description.toString(), IMAGE))

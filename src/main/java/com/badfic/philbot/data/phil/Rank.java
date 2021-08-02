@@ -98,7 +98,7 @@ public class Rank {
     }
 
     public static Rank[] getAllRanks() {
-        return LEVEL_MAP.values().toArray(new Rank[0]);
+        return LEVEL_MAP.values().toArray(Rank[]::new);
     }
 
 }

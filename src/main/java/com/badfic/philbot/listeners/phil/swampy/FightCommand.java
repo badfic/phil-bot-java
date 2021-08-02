@@ -4,6 +4,7 @@ import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import javax.annotation.PostConstruct;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,22 +43,25 @@ public class FightCommand extends BaseSwampy {
         String text = fightOutcome.getText();
         text = RegExUtils.replaceAll(text, "<AGGRESSOR>", aggressor.getEffectiveName());
         text = RegExUtils.replaceAll(text, "<VICTIM>", victim.getEffectiveName());
+        String finalText = text;
 
         if (fightOutcome.getWinner() == FightWinner.AGGRESSOR) {
-            givePointsToMember(fightOutcome.getPointsToWinner(), aggressor, PointsStat.FIGHT);
-            takePointsFromMember(fightOutcome.getPointsFromLoser(), victim, PointsStat.FIGHT);
-
-            String footer = aggressor.getEffectiveName() + " won " + fightOutcome.getPointsToWinner() + " points.\n" +
-                    victim.getEffectiveName() + " lost " + fightOutcome.getPointsFromLoser() + " points.";
-            event.reply(Constants.simpleEmbed(aggressor.getEffectiveName() + " won", text, null, footer, null, aggressor.getUser().getEffectiveAvatarUrl()));
+            allocatePoints(event, aggressor, victim, fightOutcome, finalText);
         } else {
-            givePointsToMember(fightOutcome.getPointsToWinner(), victim, PointsStat.FIGHT);
-            takePointsFromMember(fightOutcome.getPointsFromLoser(), aggressor, PointsStat.FIGHT);
-
-            String footer = victim.getEffectiveName() + " won " + fightOutcome.getPointsToWinner() + " points.\n" +
-                    aggressor.getEffectiveName() + " lost " + fightOutcome.getPointsFromLoser() + " points.";
-            event.reply(Constants.simpleEmbed(victim.getEffectiveName() + " won", text, null, footer, null, victim.getUser().getEffectiveAvatarUrl()));
+            allocatePoints(event, victim, aggressor, fightOutcome, finalText);
         }
+    }
+
+    private void allocatePoints(CommandEvent event, Member winner, Member loser, FightOutcome fightOutcome, String finalText) {
+        CompletableFuture.allOf(
+                givePointsToMember(fightOutcome.getPointsToWinner(), winner, PointsStat.FIGHT),
+                takePointsFromMember(fightOutcome.getPointsFromLoser(), loser, PointsStat.FIGHT))
+        .thenRun(() -> {
+            String footer = winner.getEffectiveName() + " won " + fightOutcome.getPointsToWinner() + " points.\n" +
+                    loser.getEffectiveName() + " lost " + fightOutcome.getPointsFromLoser() + " points.";
+
+            event.reply(Constants.simpleEmbed(winner.getEffectiveName() + " won", finalText, null, footer, null, winner.getUser().getEffectiveAvatarUrl()));
+        });
     }
 
     public enum FightWinner {
