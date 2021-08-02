@@ -71,6 +71,11 @@ public class Rank {
             String rankUpImage = values[3];
 
             Rank rank = new Rank(i - 1, roleName, level, rankUpImage, rankUpMessage);
+
+            if (LEVEL_MAP.get(level) != null) {
+                throw new IllegalStateException("Check rank.tsv, there's a duplicate level: " + level);
+            }
+
             LEVEL_MAP.put(level, rank);
             LEVEL_ROLE_NAMES.add(roleName);
         }

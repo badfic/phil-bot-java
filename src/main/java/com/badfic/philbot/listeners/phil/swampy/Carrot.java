@@ -31,7 +31,7 @@ public class Carrot extends BaseSwampy {
         carrot();
     }
 
-    @Scheduled(cron = "0 5 8 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 5 21 * * ?", zone = "GMT")
     public void carrot() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
 
@@ -45,7 +45,7 @@ public class Carrot extends BaseSwampy {
 
         List<DiscordUser> filteredUsers = allUsers.stream()
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
-                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22)))
+                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(2)))
                 .filter(u -> {
                     Member m = philJda.getGuilds().get(0).getMemberById(u.getId());
                     return m != null && !m.getUser().isBot();

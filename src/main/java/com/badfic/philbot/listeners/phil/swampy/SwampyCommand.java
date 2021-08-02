@@ -38,7 +38,7 @@ public class SwampyCommand extends BaseSwampy {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // soft point bans
-    private static final Pattern NO_NO_WORDS = Constants.compileWords("captain");
+    private static final Pattern NO_NO_WORDS = Constants.compileWords("wanda");
 
     // emoji
     public static final String[] LEADERBOARD_MEDALS = {
@@ -47,12 +47,11 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83E\uDD20", "\uD83E\uDD75", "\uD83E\uDDC3",
-            "\uD83D\uDC1A", "\uD83C\uDF0A", "\uD83C\uDF34",
-            "\uD83D\uDEE5️", "\uD83C\uDFD0", "\uD83C\uDFD6️"
+            "\uD83C\uDF80", "\uD83C\uDF08", "\uD83D\uDC26",
+            "\uD83E\uDD8C", "\uD83D\uDC08", "✨",
+            "\uD83D\uDC7F️", "\uD83E\uDD90", "\uD83C\uDF64"
     );
 
-    // volatile state
     private volatile boolean awaitingResetConfirmation = false;
 
     private final String modHelp;
@@ -67,7 +66,8 @@ public class SwampyCommand extends BaseSwampy {
                 "mint", "spooder", "shark", "latte", "sahar", "obama", "selfcare", "nelly", "void", "baskin", "perry", "british", "duck", "shut", "waffle",
                 "vamp", "dap", "dab", "wap", "butter", "mullet", "vax", "vaxx", "steve", "shronk", "oliver", "ophelia", "lisa", "rock", "buck", "bucky", "caw",
                 "sucky", "cap", "lesbian", "bi", "ace", "aro", "aroace", "demi", "enby", "nb", "intersex", "pan", "questioning", "trans", "megan", "goat",
-                "sam", "rise", "wow", "kachow", "loki", "jetski", "summer", "jeff", "wowki", "pog", "minutes", "yeehaw", "hug", "funny", "mobius", "mobi"};
+                "sam", "rise", "wow", "kachow", "loki", "jetski", "summer", "jeff", "wowki", "pog", "minutes", "yeehaw", "hug", "funny", "mobius", "mobi",
+                "chaos", "cool", "awesome", "lila", "tally"};
         help =
                 "`!!swampy` aka...\n" + Arrays.stream(aliases).sorted().collect(Collectors.joining(", ")) + "\nHELP:\n" +
                 "`!!swampy rank` show your swampy rank\n" +

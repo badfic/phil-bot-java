@@ -31,7 +31,7 @@ public class Potato extends BaseSwampy {
         potato();
     }
 
-    @Scheduled(cron = "0 5 11 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 5 17 * * ?", zone = "GMT")
     public void potato() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
 
@@ -45,7 +45,7 @@ public class Potato extends BaseSwampy {
 
         List<DiscordUser> filteredUsers = allUsers.stream()
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
-                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22)))
+                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(2)))
                 .filter(u -> {
                     Member m = philJda.getGuilds().get(0).getMemberById(u.getId());
                     return m != null && !m.getUser().isBot();
