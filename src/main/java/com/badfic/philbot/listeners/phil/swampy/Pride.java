@@ -5,14 +5,9 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,48 +15,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Pride extends BaseSwampy {
+public class Pride extends BaseFlagCommand {
 
     private static final float ALPHA = 0.69f;
-    private static final String[] FLAG_NAMES = new String[] {
-            "lesbian",
-            "gay",
-            "bi",
-            "questioning",
-            "pan",
-            "ace",
-            "aro",
-            "aroace",
-            "demi",
-            "trans",
-            "enby",
-            "intersex",
-            "auto",
-            "trixic",
-            "genderfluid",
-            "vincian",
-            "sapphic",
-            "achillean"
-    };
-    private Map<String, BufferedImage> prideImages;
 
     public Pride() {
         name = "pride";
         help = "`!!pride\n" +
                 Arrays.toString(FLAG_NAMES) +
                 "\n`!!pride demi @Santiago`: apply demi flag to Santiago's profile picture";
-    }
-
-    @PostConstruct
-    public void init() throws Exception {
-        prideImages = new HashMap<>();
-
-        for (String flagName : FLAG_NAMES) {
-            InputStream prideFlagStream = getClass().getClassLoader().getResourceAsStream("flags/" + flagName + ".png");
-            BufferedImage image = ImageIO.read(Objects.requireNonNull(prideFlagStream));
-
-            prideImages.put(flagName, image);
-        }
     }
 
     @Override
@@ -83,7 +45,7 @@ public class Pride extends BaseSwampy {
                 split = new String[] {"gay"};
             }
 
-            BufferedImage prideImage = prideImages.get(split[0]);
+            BufferedImage prideImage = PRIDE_IMAGES.get(split[0]);
 
             if (prideImage == null) {
                 event.replyError("Could not find flag for: " + split[0]);

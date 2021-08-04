@@ -31,7 +31,7 @@ public class Potato extends BaseSwampy {
         potato();
     }
 
-    @Scheduled(cron = "0 5 17 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 5 23 * * ?", zone = "GMT")
     public void potato() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
 
