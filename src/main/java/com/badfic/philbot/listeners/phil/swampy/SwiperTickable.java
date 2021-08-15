@@ -90,7 +90,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
             }
 
             final MessageEmbed finalMessage = message;
-            future.thenRun(() -> swampysChannel.sendMessage(finalMessage).queue());
+            future.thenRun(() -> swampysChannel.sendMessageEmbeds(finalMessage).queue());
         }
     }
 

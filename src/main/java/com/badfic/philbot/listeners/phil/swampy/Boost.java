@@ -89,7 +89,7 @@ public class Boost extends BaseSwampy {
 
             MessageEmbed messageEmbed = Constants.simpleEmbed("Boost Blitz Complete", description.toString(), swampyGamesConfig.getBoostEndImg());
 
-            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> swampysChannel.sendMessage(messageEmbed).queue());
+            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> swampysChannel.sendMessageEmbeds(messageEmbed).queue());
             return;
         }
 
@@ -103,7 +103,7 @@ public class Boost extends BaseSwampy {
                             + swampyGamesConfig.getBoostEventPoints() + " points",
                     swampyGamesConfig.getBoostStartImg());
 
-            swampysChannel.sendMessage(message).queue();
+            swampysChannel.sendMessageEmbeds(message).queue();
         }
     }
 

@@ -54,7 +54,7 @@ public class Taxes extends BaseSwampy {
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(message)
+                    .sendMessageEmbeds(message)
                     .queue();
             return;
         }
@@ -69,9 +69,6 @@ public class Taxes extends BaseSwampy {
             if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD) {
                 try {
                     long taxRate = ThreadLocalRandom.current().nextInt(swampyGamesConfig.getTaxesMinPercent(), swampyGamesConfig.getTaxesMaxPercent());
-                    //if (user.getFamily() != null && CollectionUtils.isNotEmpty(user.getFamily().getSpouses())) {
-                        //taxRate -= 2;
-                    //}
                     taxRate = Math.max(1, taxRate); // Always make sure it's at least 1 percent.
                     long taxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRate)).longValue();
                     Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
@@ -105,7 +102,7 @@ public class Taxes extends BaseSwampy {
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(message)
+                    .sendMessageEmbeds(message)
                     .queue();
         });
     }

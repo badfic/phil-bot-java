@@ -30,7 +30,7 @@ public class TimerCommand extends BaseSwampy {
             String id = RandomStringUtils.randomAlphabetic(4);
             event.reply(Constants.simpleEmbed("Timer started for " + time + " seconds", null,
                     "https://cdn.discordapp.com/attachments/752665408770801737/777011911647690752/Webp.net-resizeimage.png", "timer id = " + id));
-            event.getChannel().sendMessage(Constants.simpleEmbed("Time's up", null,
+            event.getChannel().sendMessageEmbeds(Constants.simpleEmbed("Time's up", null,
                     "https://cdn.discordapp.com/attachments/752665408770801737/777011404536414228/Webp.net-resizeimage.jpg", "timer id = " + id))
                     .queueAfter(time, TimeUnit.SECONDS);
         } catch (NumberFormatException e) {

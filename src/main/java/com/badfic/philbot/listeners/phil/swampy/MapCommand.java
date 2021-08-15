@@ -86,16 +86,16 @@ public class MapCommand extends BaseSwampy {
                 headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
                 ResponseEntity<byte[]> imageResponse = restTemplate.exchange(image, HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
 
-                swampysChannel.sendMessage(Constants.simpleEmbed("Map Trivia", description))
+                swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Map Trivia", description))
                         .addFile(imageResponse.getBody(), "image." + imageExtension)
                         .queue();
             } catch (Exception e) {
                 logger.error("Failed to load [image={}] for map trivia", image, e);
                 honeybadgerReporter.reportError(e, null, "Failed to load image for map trivia: " + image);
-                swampysChannel.sendMessage("Failed to load image for map trivia").queue();
+                swampysChannel.sendMessage("Failed to load image for map trivia. The answer is " + chosenQuestion.getAnswer()).queue();
             }
         } else {
-            swampysChannel.sendMessage(Constants.simpleEmbed("Map Trivia", description)).queue();
+            swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Map Trivia", description)).queue();
         }
     }
 }

@@ -30,7 +30,7 @@ public class GenericReadyListener extends ListenerAdapter {
         logger.info("Received ready event for [user={}]", event.getJDA().getSelfUser());
         MessageEmbed messageEmbed = Constants.simpleEmbed("Restarted",
                 String.format("We just restarted\ngit sha: %s\ncommit msg: %s", commitSha, commitMessage), Constants.SWAMP_GREEN);
-        event.getJDA().getTextChannelsByName("test-channel", false).get(0).sendMessage(messageEmbed).queue();
+        event.getJDA().getTextChannelsByName("test-channel", false).get(0).sendMessageEmbeds(messageEmbed).queue();
     }
 
 }

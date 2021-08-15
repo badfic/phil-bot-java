@@ -4,6 +4,7 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -27,18 +28,24 @@ public class Sweepstakes extends BaseSwampy {
     public void execute(CommandEvent event) {
         List<Role> mentionedRoles = event.getMessage().getMentionedRoles();
 
-        if (CollectionUtils.size(mentionedRoles) != 1) {
-            event.replyError("Please mention a role. Example `!!sweepstakes @18+`");
+        Role role = null;
+        if (CollectionUtils.size(mentionedRoles) == 1) {
+            role = mentionedRoles.get(0);
+        } else {
+            String trim = event.getArgs().trim();
+            List<Role> rolesByName = event.getJDA().getRolesByName(trim, true);
+
+            if (CollectionUtils.isNotEmpty(rolesByName)) {
+                role = rolesByName.get(0);
+            }
+        }
+
+        if (role == null) {
+            event.replyError("Please mention a role");
             return;
         }
 
-        Role role = mentionedRoles.get(0);
-
-        switch (role.getName()) {
-            case Constants.EIGHTEEN_PLUS_ROLE -> doSweepstakes(Constants.EIGHTEEN_PLUS_ROLE);
-            case Constants.CHAOS_CHILDREN_ROLE -> doSweepstakes(Constants.CHAOS_CHILDREN_ROLE);
-            default -> event.replyError("Please mention either chaos children role or 18+ role");
-        }
+        doSweepstakes(role.getName());
     }
 
     @Scheduled(cron = "0 3 2 * * ?", zone = "GMT")
@@ -77,7 +84,7 @@ public class Sweepstakes extends BaseSwampy {
         if (member == null) {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(Constants.simpleEmbed(role + " Sweepstakes Results", "Unable to choose a winner, nobody wins"))
+                    .sendMessageEmbeds(Constants.simpleEmbed(role + " Sweepstakes Results", "Unable to choose a winner, nobody wins"))
                     .queue();
             return;
         }
@@ -86,13 +93,13 @@ public class Sweepstakes extends BaseSwampy {
 
         givePointsToMember(swampyGamesConfig.getSweepstakesPoints(), member, PointsStat.SWEEPSTAKES).thenRun(() -> {
             MessageEmbed message = Constants.simpleEmbed(role + " Sweepstakes Results",
-                    String.format("Congratulations %s you won today's sweepstakes worth %d points!",
-                            finalMember.getAsMention(), swampyGamesConfig.getSweepstakesPoints()),
+                    String.format("Congratulations %s you won today's sweepstakes worth %s points!",
+                            finalMember.getAsMention(), NumberFormat.getIntegerInstance().format(swampyGamesConfig.getSweepstakesPoints())),
                     swampyGamesConfig.getSweepstakesImg(), null, null, finalMember.getUser().getEffectiveAvatarUrl());
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(message)
+                    .sendMessageEmbeds(message)
                     .queue();
         });
     }

@@ -77,7 +77,7 @@ public class Potato extends BaseSwampy {
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(Constants.simpleEmbed("GET MASHED!", description.toString(), IMAGE))
+                    .sendMessageEmbeds(Constants.simpleEmbed("GET MASHED!", description.toString(), IMAGE))
                     .queue();
         });
     }

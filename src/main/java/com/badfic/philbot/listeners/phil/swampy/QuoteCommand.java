@@ -95,7 +95,7 @@ public class QuoteCommand extends BaseSwampy {
                 .append("> ")
                 .append(msgLink);
         johnJda.getTextChannelById(event.getChannel().getIdLong())
-                .sendMessage(Constants.simpleEmbed("Quote #" + quote.getId(), description.toString(), quote.getImage(),
+                .sendMessageEmbeds(Constants.simpleEmbed("Quote #" + quote.getId(), description.toString(), quote.getImage(),
                         TIMESTAMP_FORMAT.format(quote.getCreated()))).queue();
     }
 

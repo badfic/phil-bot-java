@@ -178,7 +178,7 @@ public class Swiper extends BaseSwampy {
         MessageEmbed message = Constants.simpleEmbed(theSwiper.getSpottedPhrase(), description, theSwiper.getSpottedImage(), null, null,
                 member.getUser().getEffectiveAvatarUrl());
 
-        swampysChannel.sendMessage(message).queue();
+        swampysChannel.sendMessageEmbeds(message).queue();
     }
 
     public static class TheSwiper {

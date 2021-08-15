@@ -188,7 +188,7 @@ public class PhilMessageListener extends ListenerAdapter {
                     MessageEmbed messageEmbed = Constants.simpleEmbed("Quote #" + savedQuote.getId() + " Added",
                             "<@!" + event.getUserId() + "> Added quote #" + savedQuote.getId() + msgLink);
 
-                    johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage(messageEmbed).queue();
+                    johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(messageEmbed).queue();
                 });
             }
         }
@@ -222,7 +222,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
         event.getGuild().getTextChannelsByName("landing-zone", false).stream().findFirst().ifPresent(landingZone -> {
             String guildName = event.getGuild().getName();
-            landingZone.sendMessage(Constants.simpleEmbed("Welcome to my humble swamp, swampling", String.format(
+            landingZone.sendMessageEmbeds(Constants.simpleEmbed("Welcome to my humble swamp, swampling", String.format(
                     """
                     Hey %s, welcome to %s! Before you can be given full server access by a mod, there's a few things you need to do:
                                         

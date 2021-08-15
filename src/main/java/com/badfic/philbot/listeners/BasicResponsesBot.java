@@ -22,6 +22,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
     private final BaseResponsesConfigRepository<T> configRepository;
     private final ObjectMapper objectMapper;
     private final String fullCmdPrefix;
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final String modHelp;
 
     public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository,

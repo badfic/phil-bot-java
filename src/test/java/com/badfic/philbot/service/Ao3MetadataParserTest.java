@@ -46,6 +46,6 @@ public class Ao3MetadataParserTest {
         Mockito.doReturn(Collections.singletonList(mockChannel)).when(philJda).getTextChannelsByName(Mockito.eq(Constants.TEST_CHANNEL), Mockito.eq(false));
 
         ao3MetadataParser.parseWork("https://example.com", work, Constants.TEST_CHANNEL);
-        Mockito.verify(mockChannel).sendMessage(Mockito.any(MessageEmbed.class));
+        Mockito.verify(mockChannel).sendMessageEmbeds(Mockito.any(MessageEmbed.class));
     }
 }

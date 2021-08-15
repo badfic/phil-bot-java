@@ -153,7 +153,7 @@ public abstract class BaseSwampy extends Command {
                         newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()),
                         newRank.getRankUpImage(), newRole.getColor());
 
-                future = future.thenRun(() -> announcementsChannel.sendMessage(messageEmbed).queue());
+                future = future.thenRun(() -> announcementsChannel.sendMessageEmbeds(messageEmbed).queue());
             }
         }
 

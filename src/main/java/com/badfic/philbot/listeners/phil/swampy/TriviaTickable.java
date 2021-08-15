@@ -75,7 +75,7 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
             msg.clearReactions().queue();
 
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
-                swampysChannel.sendMessage(Constants.simpleEmbed("Trivia Results", description.toString())).queue();
+                swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Trivia Results", description.toString())).queue();
             });
         }
     }

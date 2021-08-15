@@ -77,7 +77,7 @@ public class Carrot extends BaseSwampy {
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(Constants.simpleEmbed("WOW, CARROTS!", description.toString(), CARROT_IMAGE))
+                    .sendMessageEmbeds(Constants.simpleEmbed("WOW, CARROTS!", description.toString(), CARROT_IMAGE))
                     .queue();
         });
     }

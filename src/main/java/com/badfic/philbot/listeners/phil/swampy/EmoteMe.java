@@ -31,6 +31,7 @@ import okio.Okio;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
@@ -57,14 +58,14 @@ public class EmoteMe extends BaseSwampy {
 
             okHttpClient.newCall(request).enqueue(new Callback() {
                 @Override
-                public void onFailure(Call call, IOException e) {
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     emojiDownloadAttempted = true;
                     honeybadgerReporter.reportError(e, null, "Failed to download emoji list from unicode.org");
                     emojiFile = null;
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) {
+                public void onResponse(@NotNull Call call, @NotNull Response response) {
                     Path tempFile = null;
                     try {
                         tempFile = Files.createTempFile(null, "html");

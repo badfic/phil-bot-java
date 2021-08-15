@@ -276,6 +276,7 @@ public class Fam extends BaseSwampy {
     private void addOrRemoveFamily(CommandEvent event, String argName, DiscordUser discordUser, String methodNameForSet, boolean add) {
         String args = event.getArgs();
         Method method = ReflectionUtils.findMethod(Family.class, methodNameForSet);
+        //noinspection unchecked
         Set<String> set = (Set<String>) ReflectionUtils.invokeMethod(method, discordUser.getFamily());
 
         if (set == null) {
@@ -320,7 +321,7 @@ public class Fam extends BaseSwampy {
                             + "` you.\nDo you accept?\n\n(You have 15 minutes to respond or else it defaults to reject)",
                     Constants.SWAMP_GREEN);
 
-            event.getChannel().sendMessage(message).queue(msg -> {
+            event.getChannel().sendMessageEmbeds(message).queue(msg -> {
                 msg.addReaction("✅").queue();
                 msg.addReaction("❌").queue();
 
@@ -334,6 +335,7 @@ public class Fam extends BaseSwampy {
                                 return true;
                             }
 
+                            //noinspection unchecked
                             ((Set<String>) ReflectionUtils.invokeMethod(method, relookupUser.getFamily())).add(mentionedMember.getId());
                             discordUserRepository.save(relookupUser);
 
@@ -341,14 +343,14 @@ public class Fam extends BaseSwampy {
                                     mentionedMember.getAsMention() + " accepted " + event.getMember().getAsMention() + "'s `" + argName + '`',
                                     Constants.SWAMP_GREEN);
 
-                            msg.editMessage(messageSuccess).queue();
+                            msg.editMessageEmbeds(messageSuccess).queue();
                             return true;
                         } else if ("❌".equals(messageReactionAddEvent.getReactionEmote().getName())) {
                             MessageEmbed messageFail = Constants.simpleEmbed(argName,
                                     mentionedMember.getAsMention() + " rejected " + event.getMember().getAsMention() + "'s `" + argName + '`',
                                     Color.RED);
 
-                            msg.editMessage(messageFail).queue();
+                            msg.editMessageEmbeds(messageFail).queue();
                             return true;
                         }
                     }

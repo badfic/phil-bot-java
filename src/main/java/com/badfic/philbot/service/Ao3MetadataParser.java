@@ -218,11 +218,11 @@ public class Ao3MetadataParser extends BaseService {
                     "Phil's AO3 Summary Report",
                     description.toString(),
                     null,
-                    String.format(footer, "Words: " + words, "Chapters: " + chapters, language.toString()),
+                    String.format(footer, "Words: " + words, "Chapters: " + chapters, language),
                     color,
                     "https://cdn.discordapp.com/attachments/707453916882665552/780261925212520508/wITXDY67Xw1sAAAAABJRU5ErkJggg.png");
 
-            channel.sendMessage(messageEmbed).queue();
+            channel.sendMessageEmbeds(messageEmbed).queue();
             return true;
         } catch (Exception e) {
             logger.error("Failed to parse ao3 [link={}]", originalLink, e);

@@ -88,7 +88,7 @@ public class Shrekoning extends BaseSwampy {
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(message)
+                    .sendMessageEmbeds(message)
                     .queue();
         });
     }

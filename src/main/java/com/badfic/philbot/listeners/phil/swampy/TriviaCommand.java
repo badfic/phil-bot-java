@@ -45,9 +45,9 @@ public class TriviaCommand extends BaseSwampy {
                 UUID guid = UUID.fromString(guidStr);
                 if (triviaRepository.existsById(guid)) {
                     triviaRepository.deleteById(guid);
-                    event.replySuccess("Successfully deleted " + guid.toString());
+                    event.replySuccess("Successfully deleted " + guid);
                 } else {
-                    event.replyError("Trivia with id " + guid.toString() + " does not exist.");
+                    event.replyError("Trivia with id " + guid + " does not exist.");
                 }
             } catch (Exception e) {
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", badly formatted command." +
@@ -82,7 +82,7 @@ public class TriviaCommand extends BaseSwampy {
                 "\nB: " + trivia.getAnswerB() +
                 "\nC: " + trivia.getAnswerC();
         String title = "Trivia time! (for " + swampyGamesConfig.getTriviaEventPoints() + " points)";
-        swampysChannel.sendMessage(Constants.simpleEmbed(title, description)).queue(success -> {
+        swampysChannel.sendMessageEmbeds(Constants.simpleEmbed(title, description)).queue(success -> {
             swampyGamesConfig.setTriviaGuid(trivia.getId());
             swampyGamesConfig.setTriviaMsgId(success.getId());
             swampyGamesConfig.setTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));

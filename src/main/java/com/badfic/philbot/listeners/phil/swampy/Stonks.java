@@ -99,7 +99,7 @@ public class Stonks extends BaseSwampy {
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(Constants.simpleEmbed("GAMESTONKS", description.toString(), Constants.pickRandom(STONKS)))
+                    .sendMessageEmbeds(Constants.simpleEmbed("GAMESTONKS", description.toString(), Constants.pickRandom(STONKS)))
                     .queue();
         });
     }

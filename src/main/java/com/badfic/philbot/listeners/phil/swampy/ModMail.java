@@ -35,7 +35,7 @@ public class ModMail extends BaseSwampy {
             MessageEmbed msg = Constants.simpleEmbed("Incoming Mod Mail",
                     "New mod mail from " + (event.getChannelType() == ChannelType.PRIVATE ? "anonymous user" : event.getAuthor().getAsMention())
                             + "\n\n" + event.getMessage().getContentRaw());
-            modChannel.get().sendMessage(msg).queue();
+            modChannel.get().sendMessageEmbeds(msg).queue();
             event.replySuccess("Successfully sent your message along to the mods");
         } else {
             event.replyError("Failed to send your message to the mods, please let the mods know this command is broken");

@@ -54,7 +54,7 @@ public class Robinhood extends BaseSwampy {
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(message)
+                    .sendMessageEmbeds(message)
                     .queue();
             return;
         }
@@ -108,7 +108,7 @@ public class Robinhood extends BaseSwampy {
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessage(message)
+                    .sendMessageEmbeds(message)
                     .queue();
         });
     }

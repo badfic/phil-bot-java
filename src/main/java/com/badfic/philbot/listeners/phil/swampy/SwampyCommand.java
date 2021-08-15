@@ -308,7 +308,7 @@ public class SwampyCommand extends BaseSwampy {
                         + swampyGamesConfig.getSlotsWinPoints() + " points!", member.getAsMention(), one, two, three), null, footer));
 
                 event.getJDA().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).stream().findAny().ifPresent(swampysChannel -> {
-                    swampysChannel.sendMessage(Constants.simpleEmbedThumbnail("SLOTS WINNER! " + one + one + one,
+                    swampysChannel.sendMessageEmbeds(Constants.simpleEmbedThumbnail("SLOTS WINNER! " + one + one + one,
                             member.getAsMention()
                                     + " just won "
                                     + NumberFormat.getIntegerInstance().format(swampyGamesConfig.getSlotsWinPoints())

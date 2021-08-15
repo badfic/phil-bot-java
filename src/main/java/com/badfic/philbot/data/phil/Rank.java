@@ -20,6 +20,7 @@ public class Rank {
     private final long level;
     private final String rankUpImage;
     private final String rankUpMessage;
+    @SuppressWarnings("FieldCanBeLocal")
     private final boolean newCardDeck;
 
     private Rank(int ordinal, String roleName, long level, String rankUpImage, String rankupMessage) {
