@@ -38,7 +38,7 @@ public class BehradMessageListener {
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
 
         if (BEHRAD_PATTERN.matcher(msgContent).find()) {
-            behradCommand.execute(new CommandEvent(event, null, null));
+            behradCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
             return;
         }
 

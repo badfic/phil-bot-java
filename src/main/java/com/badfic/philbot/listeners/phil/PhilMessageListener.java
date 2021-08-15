@@ -144,10 +144,10 @@ public class PhilMessageListener extends ListenerAdapter {
             ao3MetadataParser.parseLink(msgContent, event.getChannel().getName());
         }
 
-        swampyCommand.execute(new CommandEvent(event, "", philCommandClient));
+        swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, "", philCommandClient));
 
         if (PHIL_PATTERN.matcher(msgContent).find()) {
-            philCommand.execute(new CommandEvent(event, null, philCommandClient));
+            philCommand.execute(new CommandEvent(event, Constants.PREFIX, null, philCommandClient));
             return;
         }
     }

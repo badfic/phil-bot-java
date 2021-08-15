@@ -248,7 +248,7 @@ public class BaseConfig {
     public CommandClient philCommandClient(List<Command> commands, HoneybadgerReporter honeybadgerReporter) {
         return new CommandClientBuilder()
                 .setOwnerId(ownerId)
-                .setPrefix("!!")
+                .setPrefix(Constants.PREFIX)
                 .useHelpBuilder(false)
                 .addCommands(commands.toArray(Command[]::new))
                 .setScheduleExecutor(taskScheduler().getScheduledExecutor())
@@ -269,7 +269,7 @@ public class BaseConfig {
                        PhilMessageListener philMessageListener,
                        @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
         return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES))
-                .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS)
+                .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
                 .setRateLimitPool(taskScheduler().getScheduledExecutor(), false)
                 .setCallbackPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
                 .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)

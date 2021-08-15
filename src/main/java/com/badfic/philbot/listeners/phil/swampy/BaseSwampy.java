@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -61,6 +62,9 @@ public abstract class BaseSwampy extends Command {
 
     @Resource
     protected RestTemplate restTemplate;
+
+    @Resource
+    protected OkHttpClient okHttpClient;
 
     @Resource
     protected ThreadPoolTaskExecutor threadPoolTaskExecutor;

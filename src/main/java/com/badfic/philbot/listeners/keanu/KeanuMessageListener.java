@@ -44,7 +44,7 @@ public class KeanuMessageListener {
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
 
         if (KEANU_PATTERN.matcher(msgContent).find()) {
-            keanuCommand.execute(new CommandEvent(event, null, null));
+            keanuCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
             return;
         }
     }

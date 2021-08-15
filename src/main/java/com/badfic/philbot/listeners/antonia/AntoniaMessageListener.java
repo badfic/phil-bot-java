@@ -75,7 +75,7 @@ public class AntoniaMessageListener {
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
 
         if (ANTONIA_PATTERN.matcher(msgContent).find()) {
-            antoniaCommand.execute(new CommandEvent(event, null, null));
+            antoniaCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
             return;
         }
     }

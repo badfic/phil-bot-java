@@ -167,7 +167,7 @@ public class JohnMessageListener extends BaseService {
         }
 
         if (JOHN_PATTERN.matcher(msgContent).find()) {
-            johnCommand.execute(new CommandEvent(event, null, null));
+            johnCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
             return;
         }
     }

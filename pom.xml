@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.4</version>
+		<version>2.4.9</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.badfic</groupId>
@@ -21,8 +21,8 @@
 		<emoji-java.version>5.1.1</emoji-java.version>
 		<guava.version>30.1.1-jre</guava.version>
 		<honeybadger.version>2.0.2</honeybadger.version>
-		<jda.version>4.2.1_253</jda.version>
-		<jda-utilities.version>3.0.5</jda-utilities.version>
+		<jda.version>4.3.0_309</jda.version>
+		<jda-utilities.version>1.20.4</jda-utilities.version>
 		<jsoup.version>1.13.1</jsoup.version>
 		<jumblr.version>0.0.13</jumblr.version>
 		<rome.version>1.15.0</rome.version>
@@ -93,8 +93,8 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.jagrosh</groupId>
-			<artifactId>jda-utilities</artifactId>
+			<groupId>pw.chew</groupId>
+			<artifactId>jda-chewtils</artifactId>
 			<version>${jda-utilities.version}</version>
 			<type>pom</type>
 		</dependency>
@@ -178,14 +178,13 @@
 
 	<repositories>
 		<repository>
-			<id>jcenter</id>
-			<name>jcenter-bintray</name>
-			<url>https://jcenter.bintray.com</url>
-		</repository>
-		<repository>
 			<id>dv8tion</id>
 			<name>m2-dv8tion</name>
 			<url>https://m2.dv8tion.net/releases</url>
+		</repository>
+		<repository>
+			<id>chew-m2</id>
+			<url>https://m2.chew.pro/releases</url>
 		</repository>
 	</repositories>
 

@@ -7,17 +7,14 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
@@ -25,23 +22,24 @@ import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Member;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
+import okio.BufferedSink;
+import okio.Okio;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
 
 @Component
 public class EmoteMe extends BaseSwampy {
 
     private static final float ALPHA = 0.69f;
-    private static volatile Path emojiFile;
+    private volatile boolean emojiDownloadAttempted;
+    private volatile Path emojiFile;
 
     public EmoteMe() {
         name = "emoteme";
@@ -51,22 +49,45 @@ public class EmoteMe extends BaseSwampy {
     @PostConstruct
     public void init() {
         try {
-            LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
-            ResponseEntity<Resource> emojiListPageResponse = restTemplate.exchange("https://unicode.org/emoji/charts/full-emoji-list.html",
-                    HttpMethod.GET, new HttpEntity<>(headers), Resource.class);
+            Request request = new Request.Builder()
+                    .url("https://unicode.org/emoji/charts/full-emoji-list.html")
+                    .addHeader(HttpHeaders.USER_AGENT, Constants.USER_AGENT)
+                    .get()
+                    .build();
 
-            Objects.requireNonNull(emojiListPageResponse.getBody());
+            okHttpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    emojiDownloadAttempted = true;
+                    honeybadgerReporter.reportError(e, null, "Failed to download emoji list from unicode.org");
+                    emojiFile = null;
+                }
 
-            Path tempFile = Files.createTempFile(null, "html");
-            try (InputStream inputStream = emojiListPageResponse.getBody().getInputStream(); BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
-                IOUtils.copy(inputStream, writer, StandardCharsets.UTF_8);
-            }
+                @Override
+                public void onResponse(Call call, Response response) {
+                    Path tempFile = null;
+                    try {
+                        tempFile = Files.createTempFile(null, "html");
+                        try (BufferedSink bufferedSink = Okio.buffer(Okio.sink(tempFile.toFile()))) {
+                            bufferedSink.writeAll(response.body().source());
+                        }
+                        emojiFile = tempFile;
+                    } catch (Exception e) {
+                        honeybadgerReporter.reportError(e, null, "Failed to download emoji list from unicode.org");
+                        emojiFile = null;
 
-            emojiFile = tempFile;
+                        if (tempFile != null) {
+                            FileUtils.deleteQuietly(tempFile.toFile());
+                        }
+                    } finally {
+                        emojiDownloadAttempted = true;
+                    }
+                }
+            });
         } catch (Exception e) {
             honeybadgerReporter.reportError(e, null, "Failed to download emoji list from unicode.org");
             emojiFile = null;
+            emojiDownloadAttempted = true;
         }
     }
 
@@ -99,6 +120,11 @@ public class EmoteMe extends BaseSwampy {
         try {
             BufferedImage overlayImage = null;
             if (CollectionUtils.size(emojis) == 1) {
+                if (!emojiDownloadAttempted) {
+                    event.replyError("I haven't downloaded the emoji list yet, give me a minute");
+                    return;
+                }
+
                 if (emojiFile == null || !Files.exists(emojiFile)) {
                     synchronized (EmoteMe.class) {
                         if (emojiFile == null || !Files.exists(emojiFile)) {
