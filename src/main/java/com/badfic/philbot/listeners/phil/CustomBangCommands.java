@@ -48,6 +48,7 @@ public class CustomBangCommands extends BaseService {
             .put("nooo", "https://cdn.discordapp.com/attachments/323666308107599872/872006721533517824/nooo.png")
             .put("nuggets", "https://media.giphy.com/media/1TE9nHMxLuukmWgt7h/giphy.gif")
             .put("offtopic", "https://www.youtube.com/watch?v=tA8LjcpjjKQ")
+            .put("pain", "https://cdn.discordapp.com/attachments/741047915916820560/875879552310706227/unknown.png")
             .put("pisces", "https://cdn.discordapp.com/attachments/741053845098201099/748063961215139891/pissyboi.png")
             .put("police", "https://cdn.discordapp.com/attachments/836326671052963880/873805113913909248/unknown.png")
             .put("riverjail", "https://cdn.discordapp.com/attachments/761398315119280158/783134887410008075/riverjail.png")
