@@ -22,10 +22,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,14 +158,13 @@ public class BaseConfig {
     @Bean
     public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setMaxPoolSize(4);
+        threadPoolTaskExecutor.setMaxPoolSize(8);
         return threadPoolTaskExecutor;
     }
 
     @Bean(name = "taskScheduler")
     public ThreadPoolTaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(2);
         threadPoolTaskScheduler.setErrorHandler(t -> {
             logger.error("Error in scheduled task", t);
             honeybadgerReporter().reportError(t, null, "Error in scheduled task");
@@ -173,7 +174,9 @@ public class BaseConfig {
 
     @Bean
     public OkHttpClient okHttpClient() {
-        return new OkHttpClient.Builder().build();
+        return new OkHttpClient.Builder()
+                .connectionPool(new ConnectionPool(8, 5, TimeUnit.MINUTES))
+                .build();
     }
 
     @Bean
