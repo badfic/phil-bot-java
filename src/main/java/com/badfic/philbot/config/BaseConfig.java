@@ -165,6 +165,7 @@ public class BaseConfig {
     @Bean(name = "taskScheduler")
     public ThreadPoolTaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+        threadPoolTaskScheduler.setPoolSize(2);
         threadPoolTaskScheduler.setErrorHandler(t -> {
             logger.error("Error in scheduled task", t);
             honeybadgerReporter().reportError(t, null, "Error in scheduled task");
