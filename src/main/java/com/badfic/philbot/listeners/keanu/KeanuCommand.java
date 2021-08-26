@@ -56,6 +56,13 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
             "https://cdn.discordapp.com/attachments/323666308107599872/752638879500206171/keanu_confetti.gif",
             "https://cdn.discordapp.com/attachments/741030569307275436/753991114301898762/image0.png"
     );
+    private static final Set<String> FIGHT_GIFS = ImmutableSet.of(
+            "https://cdn.discordapp.com/attachments/707453916882665552/880260097752838185/john-wick-5.gif",
+            "https://cdn.discordapp.com/attachments/707453916882665552/880260100105830440/john-wick-4.gif",
+            "https://cdn.discordapp.com/attachments/707453916882665552/880260103830380574/john-wick-3.gif",
+            "https://cdn.discordapp.com/attachments/707453916882665552/880260105562652672/john-wick-2.gif",
+            "https://cdn.discordapp.com/attachments/707453916882665552/880260108968394762/john-wick-1.gif"
+    );
 
     @Resource(name = "keanuJda")
     @Lazy
@@ -93,6 +100,12 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
         if (StringUtils.containsIgnoreCase(msgContent, "hello")) {
             event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
                     .sendMessage(HELLO_GIF).queue();
+            return Optional.empty();
+        }
+
+        if (StringUtils.containsIgnoreCase(msgContent, "fight") || StringUtils.containsIgnoreCase(msgContent, "kill")) {
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                    .sendMessage(Constants.pickRandom(FIGHT_GIFS)).queue();
             return Optional.empty();
         }
 
