@@ -51,7 +51,7 @@ public class PhilMessageListener extends ListenerAdapter {
             .maximumSize(200)
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .build();
-    private static final Pattern PHIL_PATTERN = Constants.compileWords("phil|klemmer|phellen|cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam");
+    private static final Pattern PHIL_PATTERN = Constants.compileWords("phil|klemmer|phellen|the cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam");
     private static final Pattern AO3_PATTERN = Pattern.compile("^(?:http(s)?://)?(archiveofourown\\.org/works/)([0-9]+).*$", Pattern.CASE_INSENSITIVE);
     private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
             .put("594740276568784906", ImmutablePair.of(Constants.compileWords("hubby"), "Hi boo"))

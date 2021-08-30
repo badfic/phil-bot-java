@@ -1,17 +1,21 @@
 {{> header}}
 <div class="container-fluid">
+
+    <br/>
+    <h2>Note: !!swampy is "the upvote command"</h2>
+    <br/>
     {{#commands}}
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">{{name}}</h5>
+            <h3 class="card-title">!!{{name}}</h3>
             <p class="card-text">
                 {{#aliases}}
-                Aliases: {{aliases}}<br/>
+                <b>Aliases:</b><br/>{{aliases}}<br/><br/>
                 {{/aliases}}
                 {{#requiredRole}}
-                Required Role: {{requiredRole}}<br/>
+                <b>Required Role:</b> {{requiredRole}}<br/>
                 {{/requiredRole}}
-                Help:
+                <b>Help:</b>
             </p>
             {{#modHelp}}
                 <pre style="white-space: pre-wrap;">{{modHelp}}</pre>
@@ -21,6 +25,7 @@
             {{/modHelp}}
         </div>
     </div>
+    <br/>
     {{/commands}}
 </div>
 {{> footer}}
