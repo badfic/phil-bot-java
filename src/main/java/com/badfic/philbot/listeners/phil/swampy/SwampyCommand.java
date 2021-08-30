@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -58,7 +59,7 @@ public class SwampyCommand extends BaseSwampy {
 
     public SwampyCommand() {
         name = "swampy";
-        aliases = new String[] {
+        aliases = Stream.of(
                 "swamp", "bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "simp", "simpy", "shrimp", "shrimpy", "shremp",
                 "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek", "billy",
                 "deer", "hot", "frosty", "glogg", "beam", "oof", "booty", "love", "chuck", "farm", "nut", "rat", "giraffe", "possum", "lena", "santiago",
@@ -67,17 +68,17 @@ public class SwampyCommand extends BaseSwampy {
                 "vamp", "dap", "dab", "wap", "butter", "mullet", "vax", "vaxx", "steve", "shronk", "oliver", "ophelia", "lisa", "rock", "buck", "bucky", "caw",
                 "sucky", "cap", "lesbian", "bi", "ace", "aro", "aroace", "demi", "enby", "nb", "intersex", "pan", "questioning", "trans", "megan", "goat",
                 "sam", "rise", "wow", "kachow", "loki", "jetski", "summer", "jeff", "wowki", "pog", "minutes", "yeehaw", "hug", "funny", "mobius", "mobi",
-                "chaos", "cool", "awesome", "lila", "tally", "yay", "step", "goop", "mash"};
+                "chaos", "cool", "awesome", "lila", "tally", "yay", "step", "goop", "mash"
+        ).sorted().toArray(String[]::new);
         help =
-                "`!!swampy` aka...\n" + Arrays.stream(aliases).sorted().collect(Collectors.joining(", ")) + "\nHELP:\n" +
-                "`!!swampy rank` show your swampy rank\n" +
-                "`!!swampy leaderboard bastard` show the 18+ leaderboard\n" +
-                "`!!swampy leaderboard chaos` show the chaos children leaderboard\n" +
-                "`!!swampy leaderboard [" + Arrays.stream(PointsStat.values()).map(Enum::name).collect(Collectors.joining(", ")) +
-                        "]` show specific stat leaderboard\n" +
                 "`!!swampy up @Santiago` upvote a user for the swampys\n" +
-                "`!!swampy down @Santiago` downvote a user for the swampys\n" +
-                "`!!swampy slots` Play slots. Winners for 2 out of 3 matches or 3 out of 3 matches.";
+                "`!!swampy down @Santiago` downvote a user for the swampys\n\n" +
+                "`!!swampy rank` show your swampy rank\n\n" +
+                "`!!swampy slots` Play slots. Winners for 2 out of 3 matches or 3 out of 3 matches.\n\n" +
+                "`!!swampy leaderboard bastard` show the 18+ leaderboard\n" +
+                "`!!swampy leaderboard chaos` show the chaos children leaderboard\n\n" +
+                "`!!swampy leaderboard [" + Arrays.stream(PointsStat.values()).map(Enum::name).collect(Collectors.joining(", ")) +
+                        "]` show specific stat leaderboard\n";
         modHelp = help + "\n\nMODS ONLY COMMANDS:\n" +
                 "`!!swampy give 120 @Santiago` give 120 points to Santiago\n" +
                 "`!!swampy take 120 @Santiago` remove 120 points from Santiago\n" +
