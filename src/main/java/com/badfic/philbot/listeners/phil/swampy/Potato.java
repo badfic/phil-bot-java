@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class Potato extends BaseSwampy {
 
     private static final int POINTS_TO_GIVE = 1000;
-    private static final String IMAGE = "https://cdn.discordapp.com/attachments/794506942906761226/865015150158413854/get-mashed.png";
+    private static final String IMAGE = "https://cdn.discordapp.com/attachments/794506942906761226/882828802001096754/potato_man.png";
 
     public Potato() {
         name = "potato";
