@@ -18,7 +18,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -108,7 +107,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
 
         if (CollectionUtils.isNotEmpty(message.getAttachments())) {
             for (Message.Attachment attachment : message.getAttachments()) {
-                if (isImage(attachment.getUrl())) {
+                if (Constants.urlIsImage(attachment.getUrl())) {
                     contentBuilder.append("\n<img src=\"")
                             .append(attachment.getUrl())
                             .append("\" class=\"img-fluid\">");
@@ -123,7 +122,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
         if (CollectionUtils.isNotEmpty(message.getEmbeds())) {
             for (MessageEmbed embed : message.getEmbeds()) {
                 if (embed.getUrl() != null) {
-                    if (isImage(embed.getUrl())) {
+                    if (Constants.urlIsImage(embed.getUrl())) {
                         contentBuilder.append("\n<img src=\"")
                                 .append(embed.getUrl())
                                 .append("\" class=\"img-fluid\">");
@@ -153,11 +152,6 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
         }
 
         return content;
-    }
-
-    private static boolean isImage(String url) {
-        String fileExtension = FilenameUtils.getExtension(url);
-        return Constants.IMAGE_EXTENSION_PATTERN.matcher(fileExtension).find();
     }
 
 }

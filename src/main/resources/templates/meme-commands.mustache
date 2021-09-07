@@ -1,0 +1,93 @@
+{{> header}}
+<div class="container-fluid">
+    {{#isMod}}
+    <h1>New Meme Form</h1>
+
+    <div class="alert alert-primary d-none" role="alert" id="cardAlert">Status will appear here, probably</div>
+    <form id="memeForm">
+        <div class="form-group">
+            <label for="memeName">Name</label>
+            <input type="text" class="form-control" id="memeName" required>
+        </div>
+        <div class="form-group">
+            <label for="memeUrl">Url</label>
+            <input type="text" class="form-control" id="memeUrl" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <br/><br/>
+    {{/isMod}}
+
+    {{#commands}}
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title">!{{name}}</h3>
+            <p class="card-text">
+                <a href="{{url}}" target="_blank">{{url}}</a> <br/>
+                {{#urlIsImage}}
+                <img width="240" src="{{url}}" alt="{{name}}">
+                {{/urlIsImage}}
+                {{#isMod}}
+                <button type="button" class="btn btn-danger" onclick="formDelete('{{name}}')">Delete</button>
+                {{/isMod}}
+            </p>
+        </div>
+    </div>
+    <br/>
+    {{/commands}}
+</div>
+
+<script>
+    function formPost(e) {
+        e.preventDefault();
+
+        const cardAlert = document.querySelector("#cardAlert");
+        const memeName = document.querySelector("#memeName");
+        const memeUrl = document.querySelector("#memeUrl");
+
+        const postData = {
+            memeName: memeName.value,
+            memeUrl: memeUrl.value,
+        };
+
+        memeName.value = "";
+        memeUrl.value = "";
+
+        fetch(window.location.href, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(postData)
+        }).then(response => response.text())
+                .then(result => {
+                    cardAlert.classList.remove("d-none");
+                    cardAlert.innerHTML = result;
+                })
+                .catch(result => {
+                    cardAlert.classList.remove("d-none");
+                    cardAlert.innerHTML = result;
+                });
+    }
+
+    function formDelete(memeName) {
+        const cardAlert = document.querySelector("#cardAlert");
+
+        fetch(window.location.href + "/" + memeName, {
+            method: "DELETE"
+        }).then(response => response.text())
+                .then(result => {
+                    cardAlert.classList.remove("d-none");
+                    cardAlert.innerHTML = result;
+                    window.scrollTo(0, 0);
+                })
+                .catch(result => {
+                    cardAlert.classList.remove("d-none");
+                    cardAlert.innerHTML = result;
+                    window.scrollTo(0, 0);
+                });
+    }
+
+    document.querySelector("#memeForm").addEventListener("submit", formPost);
+</script>
+{{> footer}}

@@ -206,7 +206,7 @@ public class JohnMessageListener extends BaseService {
 
             Reminder savedReminder = reminderRepository.save(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
             SnarkyReminderResponse snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
-            johnCommand.getJohnJda().getTextChannelById(message.getChannel().getId())
+            johnCommand.getJohnJda().getTextChannelById(message.getChannel().getIdLong())
                     .sendMessage("(reminder #" + savedReminder.getId() + ") " +
                             snarkyReminderResponse.getResponse().replace("<name>", "<@!" + message.getAuthor().getId() + ">"))
                     .queue();

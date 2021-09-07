@@ -100,7 +100,7 @@ public class PhilMessageListener extends ListenerAdapter {
     private SwampyCommand swampyCommand;
 
     @Resource
-    private CustomBangCommands customBangCommands;
+    private MemeCommands memeCommands;
 
     @Resource
     @Lazy
@@ -135,7 +135,7 @@ public class PhilMessageListener extends ListenerAdapter {
         }
 
         if (StringUtils.startsWith(msgContent, "!") && !StringUtils.trim(msgContent).equals("!")) {
-            customBangCommands.executeCustomCommand(StringUtils.trim(StringUtils.substring(msgContent, 1)), event.getTextChannel());
+            memeCommands.executeCustomCommand(StringUtils.trim(StringUtils.substring(msgContent, 1)), event.getTextChannel());
         }
 
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);

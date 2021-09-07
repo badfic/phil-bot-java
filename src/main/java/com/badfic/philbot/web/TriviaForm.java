@@ -1,4 +1,4 @@
-package com.badfic.philbot.data;
+package com.badfic.philbot.web;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.UUID;
