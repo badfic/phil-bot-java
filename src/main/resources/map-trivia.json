@@ -522,7 +522,7 @@
   {
     "answer": "Hungary",
     "identifier": "European Country",
-    "nickname": "The Land of Magyars / The Heart of Europe",
+    "nickname": "The Land of Magyars",
     "capital": "Budapest",
     "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498822672154634/1920px-Flag_of_Hungary.png",
     "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498916544086056/1024px-EU-Hungary.png"
@@ -646,13 +646,5 @@
     "capital": "Cardiff",
     "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832505097241493504/1920px-Flag_of_Wales_281959E28093present29.png",
     "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832505216355663902/1024px-Wales_in_the_UK_and_Europe.png"
-  },
-  {
-    "answer": "United Kingdom",
-    "identifier": "European Country",
-    "nickname": "Great Britain / Albion",
-    "capital": "London",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832508040476360725/1920px-Flag_of_the_United_Kingdom.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832508203932712970/1024px-Europe-UK.png"
   }
 ]
