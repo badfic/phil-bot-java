@@ -646,5 +646,157 @@
     "capital": "Cardiff",
     "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832505097241493504/1920px-Flag_of_Wales_281959E28093present29.png",
     "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832505216355663902/1024px-Wales_in_the_UK_and_Europe.png"
+  },
+  {
+    "answer": "Mexico",
+    "identifier": "North American Country",
+    "nickname": "Tierra Azteca",
+    "capital": "Mexico City",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887191232613322812/800px-Flag_of_Mexico.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887191339819737168/551px-MEX_orthographic.png"
+  },
+  {
+    "answer": "Colombia",
+    "identifier": "South American Country",
+    "nickname": "The Gateway to South America",
+    "capital": "Bogotá",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887192437792079912/800px-Flag_of_Colombia.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887192521782997002/550px-COL_orthographic_28San_AndrC3A9s_and_Providencia_special29.png"
+  },
+  {
+    "answer": "Argentina",
+    "identifier": "South American Country",
+    "nickname": "La Argentina",
+    "capital": "Buenos Aires",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887193140925177886/800px-Flag_of_Argentina.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887193337231187998/551px-ARG_orthographic_282Ball_claims29.png"
+  },
+  {
+    "answer": "Peru",
+    "identifier": "South American Country",
+    "nickname": "(the capital is nicknamed) The Octopus",
+    "capital": "Lima",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887194016985256016/800px-Flag_of_Peru.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887194137953193984/551px-PER_orthographic.png"
+  },
+  {
+    "answer": "Venezuela",
+    "identifier": "South American Country",
+    "nickname": "Tierra de Gracia (Land of Grace)",
+    "capital": "Caracas",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887194649603760148/800px-Flag_of_Venezuela.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887194762204041256/550px-Venezuela_Orthographic_Map.png"
+  },
+  {
+    "answer": "Chile",
+    "identifier": "South American Country",
+    "nickname": "Pais de Los Poetas (Country of poets)",
+    "capital": "Santiago",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887195005125550100/800px-Flag_of_Chile.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887195113439240233/551px-CHL_orthographic_282Ball_claims29.png"
+  },
+  {
+    "answer": "Guatemala",
+    "identifier": "Central American Country",
+    "nickname": "Land of Eternal Spring",
+    "capital": "Guatemala City",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887195678797889606/800px-Flag_of_Guatemala.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887204598438301716/unknown.png"
+  },
+  {
+    "answer": "Ecuador",
+    "identifier": "South American Country",
+    "nickname": "Luz de América (Light of America)",
+    "capital": "Quito",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887196200384757841/800px-Flag_of_Ecuador.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887196262955380746/550px-ECU_orthographic.png"
+  },
+  {
+    "answer": "Bolivia",
+    "identifier": "South American Country",
+    "nickname": "Tibet of the Americas",
+    "capital": "Sucre / La Paz",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887196487640035358/800px-Bandera_de_Bolivia_28Estado29.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887196579835023451/550px-BOL_orthographic.png"
+  },
+  {
+    "answer": "Cuba",
+    "identifier": "North American Country",
+    "nickname": "Pearl of the Antilles",
+    "capital": "Havana",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887197103133192242/800px-Flag_of_Cuba.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887197364656431124/550px-CUB_orthographic.png"
+  },
+  {
+    "answer": "Dominican Republic",
+    "identifier": "North American Country",
+    "nickname": "Quisqueyans / The DR",
+    "capital": "Santo Domingo",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887197725748240424/800px-Flag_of_the_Dominican_Republic.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887197810301210674/550px-Dominican_Republic_28orthographic_projection29.png"
+  },
+  {
+    "answer": "Honduras",
+    "identifier": "Central American Country",
+    "nickname": "(the people are nicknamed) Catracho(a)",
+    "capital": "Tegucigalpa",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887198566110597161/800px-Flag_of_Honduras.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887204281818701864/unknown.png"
+  },
+  {
+    "answer": "Paraguay",
+    "identifier": "South American Country",
+    "nickname": "Corazon de Sudamerica (Heart of South America)",
+    "capital": "Asunción",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887199956677566505/800px-Flag_of_Paraguay.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887200019231428619/550px-PRY_orthographic.png"
+  },
+  {
+    "answer": "El Salvador",
+    "identifier": "Central American Country",
+    "nickname": "(the national football team is nicknamed) La Selecta",
+    "capital": "San Salvador",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887201606427365416/800px-Flag_of_El_Salvador.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887202069092663306/unknown.png"
+  },
+  {
+    "answer": "Nicaragua",
+    "identifier": "Central American Country",
+    "nickname": "The Land of Lakes and Volcanoes",
+    "capital": "Managua",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887203339446681630/800px-Flag_of_Nicaragua.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887203516261736478/unknown.png"
+  },
+  {
+    "answer": "Costa Rica",
+    "identifier": "Central American Country",
+    "nickname": "(the people are nicknamed) Tico(a)",
+    "capital": "San José",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887203890502725662/800px-Flag_of_Costa_Rica_28state29.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887203978088153108/unknown.png"
+  },
+  {
+    "answer": "Panama",
+    "identifier": "Central American Country",
+    "nickname": "(the national football team is nicknamed) Los Canaleros",
+    "capital": "Panama City",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887205124630532096/800px-Flag_of_Panama.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887205197619810304/unknown.png"
+  },
+  {
+    "answer": "Uruguay",
+    "identifier": "South American Country",
+    "nickname": "(the national football team is nicknamed) La Celeste",
+    "capital": "Montevideo",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887205868796518400/800px-Flag_of_Uruguay.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887205744821305384/unknown.png"
+  },
+  {
+    "answer": "Puerto Rico",
+    "identifier": "US Territory",
+    "nickname": "Borinquen / The Island of Enchantment",
+    "capital": "San Juan",
+    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887206856278286336/800px-Flag_of_Puerto_Rico.png",
+    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887206929338867722/1024px-Puerto_Rico_28orthographic_projection29.png"
   }
 ]
