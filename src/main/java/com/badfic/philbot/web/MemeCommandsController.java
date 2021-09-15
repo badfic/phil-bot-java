@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,7 +33,7 @@ public class MemeCommandsController extends BaseController {
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
 
-        List<MemeCommandEntity> memes = memeCommandRepository.findAll();
+        List<MemeCommandEntity> memes = memeCommandRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
         memes.forEach(meme -> meme.setUrlIsImage(Constants.urlIsImage(meme.getUrl())));
 
         Map<String, Object> props = new HashMap<>();
