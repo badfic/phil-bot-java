@@ -175,7 +175,7 @@ public class JohnMessageListener extends BaseService {
     private void addReminder(Message message) {
         try {
             String reminder;
-            int remindIdx = StringUtils.indexOf(message.getContentRaw(), "remind");
+            int remindIdx = StringUtils.indexOfIgnoreCase(message.getContentRaw(), "remind");
 
             Member member = message.getMember();
             if (CollectionUtils.isNotEmpty(message.getMentionedMembers())) {
