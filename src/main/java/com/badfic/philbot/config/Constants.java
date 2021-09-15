@@ -34,6 +34,7 @@ public interface Constants {
     String MEGA_HELL_CHANNEL = "mega-hell";
     String MEGA_HELL_ROLE = "in mega hell";
     String TEST_CHANNEL = "test-channel";
+    String MOD_LOGS_CHANNEL = "super-secret-mod-announcements";
     String HUNGERDOME_CHANNEL = "the-hungerdome";
     String CURSED_SWAMP_CHANNEL = "cursed-swamp";
     String MEMES_CHANNEL = "memes";

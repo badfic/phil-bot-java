@@ -25,16 +25,17 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -243,19 +244,68 @@ public class PhilMessageListener extends ListenerAdapter {
 
     @Override
     public void onGuildBan(@NotNull GuildBanEvent event) {
-        begone(event.getUser(), event);
+        swampyCommand.removeFromGames(event.getUser().getId());
+        Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("event-reminders", false).stream().findFirst();
+        announcementsChannel.ifPresent(channel -> channel.sendMessage("Begone Bot " + event.getUser().getName()).queue());
+
+        event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
+            channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
+                            event.getUser().getName() + " Was Banned",
+                            String.format("%s\nAka = %s\nWas Banned", event.getUser().getAsMention(), event.getUser().getName()),
+                            event.getUser().getEffectiveAvatarUrl()))
+                    .queue();
+        });
+
+        memberCount.updateCount();
     }
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
-        begone(event.getUser(), event);
+        swampyCommand.removeFromGames(event.getUser().getId());
+        memberCount.updateCount();
+
+        event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
+            channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
+                            event.getUser().getName() + " Has Left",
+                            String.format("%s\nAka = %s\nHas left the server", event.getUser().getAsMention(), event.getUser().getName()),
+                            event.getUser().getEffectiveAvatarUrl()))
+                    .queue();
+        });
     }
 
-    private void begone(User user, GenericGuildEvent event) {
-        swampyCommand.removeFromGames(user.getId());
-        Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("event-reminders", false).stream().findFirst();
-        announcementsChannel.ifPresent(channel -> channel.sendMessage("Begone Bot " + user.getAsMention()).queue());
-        memberCount.updateCount();
+    @Override
+    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
+        event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
+            channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
+                            event.getUser().getName() + " Updated Nickname",
+                            String.format("%s\nOld Nickname = %s\nNew Nickname = %s",
+                                    event.getUser().getAsMention(), event.getOldNickname(), event.getNewNickname()),
+                            event.getUser().getEffectiveAvatarUrl()))
+                    .queue();
+        });
+    }
+
+    @Override
+    public void onUserUpdateName(@NotNull UserUpdateNameEvent event) {
+        event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
+            channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
+                    event.getUser().getName() + " Updated Username",
+                    String.format("%s\nOld Username = %s\nNew Username = %s", event.getUser().getAsMention(), event.getOldName(), event.getNewName()),
+                    event.getUser().getEffectiveAvatarUrl()))
+                    .queue();
+        });
+    }
+
+    @Override
+    public void onUserUpdateAvatar(@NotNull UserUpdateAvatarEvent event) {
+        event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
+            channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
+                    event.getUser().getName() + " Updated Avatar",
+                    event.getUser().getAsMention() + "\nOld avatar is thumbnail (unless phil didn't have it cached)\nNew avatar is larger image",
+                    event.getNewAvatarUrl(),
+                    event.getOldAvatarUrl()))
+                    .queue();
+        });
     }
 
 }
