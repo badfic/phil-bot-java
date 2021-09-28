@@ -101,6 +101,9 @@ public class DiscordUser {
     private long triviaPoints;
 
     @Column
+    private long quoteTriviaPoints;
+
+    @Column
     private long trickOrTreatPoints;
 
     @Column
@@ -349,6 +352,14 @@ public class DiscordUser {
 
     public void setTriviaPoints(long triviaPoints) {
         this.triviaPoints = triviaPoints;
+    }
+
+    public long getQuoteTriviaPoints() {
+        return quoteTriviaPoints;
+    }
+
+    public void setQuoteTriviaPoints(long quoteTriviaPoints) {
+        this.quoteTriviaPoints = quoteTriviaPoints;
     }
 
     public long getTrickOrTreatPoints() {

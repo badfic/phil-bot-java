@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -25,7 +26,6 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
     @Override
     public void run() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
         if (Objects.nonNull(swampyGamesConfig.getMapPhrase())
                 && Objects.nonNull(swampyGamesConfig.getMapTriviaExpiration())
@@ -33,6 +33,9 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
             swampyGamesConfig.setMapPhrase(null);
             swampyGamesConfig.setMapTriviaExpiration(null);
             swampyGamesConfigRepository.save(swampyGamesConfig);
+
+            TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+            Guild guild = philJda.getGuilds().get(0);
 
             List<CompletableFuture<Void>> futures = new ArrayList<>();
             LocalDateTime startTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(15);
@@ -42,7 +45,7 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
                     .filter(u -> Objects.nonNull(u.getAcceptedMapTrivia()) && u.getAcceptedMapTrivia().isAfter(startTime))
                     .forEach(u -> {
                         try {
-                            Member memberLookedUp = philJda.getGuilds().get(0).getMemberById(u.getId());
+                            Member memberLookedUp = guild.getMemberById(u.getId());
                             if (memberLookedUp == null) {
                                 throw new RuntimeException("member not found");
                             }

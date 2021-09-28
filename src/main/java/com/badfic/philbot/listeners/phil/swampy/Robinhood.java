@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.collections4.CollectionUtils;
@@ -45,6 +46,7 @@ public class Robinhood extends BaseSwampy {
         if (swampyGamesConfig == null) {
             return;
         }
+        Guild guild = philJda.getGuilds().get(0);
 
         if (!force && ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceRobinhoodNotHappen()) {
             MessageEmbed message = Constants.simpleEmbed(swampyGamesConfig.getRobinhoodStopperPhrase(),
@@ -76,7 +78,7 @@ public class Robinhood extends BaseSwampy {
 
                     taxRateRecoveryAmountPercentage = Math.max(1, taxRateRecoveryAmountPercentage); // Always make sure it's at least 1 percent.
                     long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRateRecoveryAmountPercentage)).longValue();
-                    Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
+                    Member memberById = guild.getMemberById(user.getId());
                     if (memberById != null && !isNotParticipating(memberById) && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
                         futures.add(givePointsToMember(recoveredTaxes, memberById, PointsStat.ROBINHOOD));
                         totalRecovered += recoveredTaxes;

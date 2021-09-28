@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -48,6 +49,7 @@ public class Boost extends BaseSwampy {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+        Guild guild = philJda.getGuilds().get(0);
 
         if (swampyGamesConfig.getBoostPhrase() != null) {
             swampyGamesConfig.setBoostPhrase(null);
@@ -61,7 +63,7 @@ public class Boost extends BaseSwampy {
                     .filter(u -> u.getAcceptedBoost().isAfter(oneHourAgo))
                     .forEach(u -> {
                         try {
-                            Member memberLookedUp = philJda.getGuilds().get(0).getMemberById(u.getId());
+                            Member memberLookedUp = guild.getMemberById(u.getId());
                             if (memberLookedUp == null) {
                                 throw new RuntimeException("member not found");
                             }

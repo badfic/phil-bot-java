@@ -8,6 +8,7 @@ import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -24,6 +25,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
     public void run() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+        Guild guild = philJda.getGuilds().get(0);
 
         String swiperAwaiting = swampyGamesConfig.getSwiperAwaiting();
         int swiperPoints = swampyGamesConfig.getSwiperPoints();
@@ -63,7 +65,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                         if (savior.isPresent()) {
                             savior.get().setSwiperParticipations(savior.get().getSwiperParticipations() + 1);
                             discordUserRepository.save(savior.get());
-                            Member saviorMember = philJda.getGuilds().get(0).getMemberById(savior.get().getId());
+                            Member saviorMember = guild.getMemberById(savior.get().getId());
                             if (saviorMember != null) {
                                 future = givePointsToMember(700, saviorMember, PointsStat.SWIPER);
                             }
@@ -74,7 +76,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                     }
                 } else {
                     try {
-                        Member memberById = philJda.getGuilds().get(0).getMemberById(victim.get().getId());
+                        Member memberById = guild.getMemberById(victim.get().getId());
 
                         if (memberById != null) {
                             future = takePointsFromMember(swiperPoints, memberById, PointsStat.SWIPER);

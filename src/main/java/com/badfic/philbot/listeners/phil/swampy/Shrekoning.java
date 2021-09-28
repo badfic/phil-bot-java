@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.lang3.mutable.MutableLong;
@@ -43,6 +44,7 @@ public class Shrekoning extends BaseSwampy {
         }
 
         List<DiscordUser> allUsers = discordUserRepository.findAll();
+        Guild guild = philJda.getGuilds().get(0);
 
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -53,13 +55,13 @@ public class Shrekoning extends BaseSwampy {
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
                 .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22)))
                 .filter(u -> {
-                    Member m = philJda.getGuilds().get(0).getMemberById(u.getId());
+                    Member m = guild.getMemberById(u.getId());
                     return m != null && !m.getUser().isBot() && hasRole(m, Constants.CHAOS_CHILDREN_ROLE);
                 })
                 .skip(3)
                 .forEachOrdered(user -> {
                     try {
-                        Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
+                        Member memberById = guild.getMemberById(user.getId());
                         if (memberById != null) {
                             long points = ThreadLocalRandom.current()
                                     .nextLong(swampyGamesConfig.getShrekoningMinPoints(), swampyGamesConfig.getShrekoningMaxPoints());

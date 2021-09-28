@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,6 +35,7 @@ public class Potato extends BaseSwampy {
     @Scheduled(cron = "0 5 23 * * ?", zone = "GMT")
     public void potato() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
+        Guild guild = philJda.getGuilds().get(0);
 
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -47,14 +49,14 @@ public class Potato extends BaseSwampy {
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
                 .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(2)))
                 .filter(u -> {
-                    Member m = philJda.getGuilds().get(0).getMemberById(u.getId());
+                    Member m = guild.getMemberById(u.getId());
                     return m != null && !m.getUser().isBot();
                 })
                 .collect(Collectors.toList());
 
         for (DiscordUser user : filteredUsers) {
             try {
-                Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
+                Member memberById = guild.getMemberById(user.getId());
                 if (memberById != null) {
                     futures.add(givePointsToMember(POINTS_TO_GIVE, memberById, PointsStat.STONKS));
                     totalPointsGiven.add(POINTS_TO_GIVE);

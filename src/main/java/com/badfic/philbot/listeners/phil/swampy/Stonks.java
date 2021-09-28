@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ public class Stonks extends BaseSwampy {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         List<DiscordUser> allUsers = discordUserRepository.findAll();
+        Guild guild = philJda.getGuilds().get(0);
 
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -62,7 +64,7 @@ public class Stonks extends BaseSwampy {
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
                 .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22)))
                 .filter(u -> {
-                    Member m = philJda.getGuilds().get(0).getMemberById(u.getId());
+                    Member m = guild.getMemberById(u.getId());
                     return m != null && !m.getUser().isBot() && hasRole(m, Constants.EIGHTEEN_PLUS_ROLE);
                 })
                 .skip(10)
@@ -73,7 +75,7 @@ public class Stonks extends BaseSwampy {
                 long mostRecentTaxes = swampyGamesConfig.getMostRecentTaxes();
                 long pointsToGive = Math.min(swampyGamesConfig.getStonksMaxPoints(), Math.max(500, mostRecentTaxes / filteredUsers.size()));
 
-                Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
+                Member memberById = guild.getMemberById(user.getId());
                 if (memberById != null) {
                     futures.add(givePointsToMember(pointsToGive, memberById, PointsStat.STONKS));
                     totalPointsGiven.add(pointsToGive);

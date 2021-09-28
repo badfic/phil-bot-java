@@ -7,6 +7,7 @@ import com.badfic.philbot.service.MinuteTickable;
 import java.time.LocalDateTime;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.springframework.stereotype.Component;
 
@@ -19,13 +20,12 @@ public class TimeoutTickable extends BaseService implements MinuteTickable {
     @Override
     public void run() {
         TextChannel timeoutChannel = philJda.getTextChannelById(baseConfig.timeoutChannelId);
+        Guild guild = philJda.getGuilds().get(0);
 
         for (TimeoutCase timeoutCase : timeoutCaseRepository.findAll()) {
             if (timeoutCase.getReleaseDate().isBefore(LocalDateTime.now())) {
                 try {
-                    philJda.getGuilds()
-                            .get(0)
-                            .getChannels()
+                    guild.getChannels()
                             .stream()
                             .filter(c -> c.getType() == ChannelType.TEXT || c.getType() == ChannelType.VOICE)
                             .flatMap(c -> c.getMemberPermissionOverrides().stream())

@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -137,6 +138,7 @@ public class Swiper extends BaseSwampy {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+        Guild guild = philJda.getGuilds().get(0);
 
         if (swampyGamesConfig.getSwiperAwaiting() != null) {
             swampysChannel.sendMessage("There is currently a swiper running, you cannot trigger another").queue();
@@ -149,7 +151,7 @@ public class Swiper extends BaseSwampy {
 
         for (DiscordUser winningUser : allUsers) {
             try {
-                Member memberById = philJda.getGuilds().get(0).getMemberById(winningUser.getId());
+                Member memberById = guild.getMemberById(winningUser.getId());
                 if (memberById != null
                         && !isNotParticipating(memberById)
                         && winningUser.getXp() > swampyGamesConfig.getSwiperPoints()

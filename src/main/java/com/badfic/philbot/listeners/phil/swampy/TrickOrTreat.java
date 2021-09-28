@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ public class TrickOrTreat extends BaseSwampy {
             return;
         }
 
+        Guild guild = philJda.getGuilds().get(0);
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
@@ -50,7 +52,7 @@ public class TrickOrTreat extends BaseSwampy {
         for (DiscordUser user : allUsers) {
             if (user.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && user.getUpdateTime().isAfter(LocalDateTime.now().minusHours(15))) {
                 try {
-                    Member memberById = philJda.getGuilds().get(0).getMemberById(user.getId());
+                    Member memberById = guild.getMemberById(user.getId());
                     if (memberById != null && !isNotParticipating(memberById)) {
                         if (ThreadLocalRandom.current().nextInt() % 2 == 0) {
                             futures.add(givePointsToMember(swampyGamesConfig.getTrickOrTreatPoints(), memberById, PointsStat.TRICK_OR_TREAT));

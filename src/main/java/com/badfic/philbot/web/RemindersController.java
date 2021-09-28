@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +24,13 @@ public class RemindersController extends BaseController {
     @GetMapping(value = "/reminders", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
+        Guild guild = philJda.getGuilds().get(0);
 
         List<SimpleReminder> simpleReminderList = reminderRepository.findAll()
                 .stream()
                 .map(r -> {
                     long userId = r.getUserId();
-                    Member memberById = philJda.getGuilds().get(0).getMemberById(userId);
+                    Member memberById = guild.getMemberById(userId);
 
                     return new SimpleReminder(r.getId(), memberById != null ? memberById.getEffectiveName() : Long.toString(userId), r.getReminder(),
                             r.getDueDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());

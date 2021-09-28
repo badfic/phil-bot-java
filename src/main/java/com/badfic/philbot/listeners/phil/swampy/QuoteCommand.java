@@ -37,6 +37,14 @@ public class QuoteCommand extends BaseSwampy {
     protected void execute(CommandEvent event) {
         if (StringUtils.isBlank(event.getArgs())) {
             int count = (int) quoteRepository.count();
+
+            if (count < 1) {
+                johnJda.getTextChannelById(event.getChannel().getIdLong())
+                        .sendMessage("Could not find any quotes")
+                        .queue();
+                return;
+            }
+
             int idx = ThreadLocalRandom.current().nextInt(0, count);
             Page<Quote> quotes = quoteRepository.findAll(PageRequest.of(idx, 1));
             Quote quote = quotes.getContent().get(0);

@@ -18,6 +18,7 @@ public enum PointsStat {
     SLOTS_LOSSES(DiscordUser::getSlotsLosses, DiscordUser::setSlotsLosses),
     MAP(DiscordUser::getMapsPoints, DiscordUser::setMapsPoints),
     TRIVIA(DiscordUser::getTriviaPoints, DiscordUser::setTriviaPoints),
+    QUOTE_TRIVIA(DiscordUser::getQuoteTriviaPoints, DiscordUser::setQuoteTriviaPoints),
     TRICK_OR_TREAT(DiscordUser::getTrickOrTreatPoints, DiscordUser::setTrickOrTreatPoints),
     SCOOTER(DiscordUser::getScooterPoints, DiscordUser::setScooterPoints),
     SCOOTER_PARTICIPANT(DiscordUser::getScooterParticipant, DiscordUser::setScooterParticipant),

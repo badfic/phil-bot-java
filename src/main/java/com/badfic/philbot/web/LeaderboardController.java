@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,14 +38,15 @@ public class LeaderboardController extends BaseController {
         checkSession(httpServletRequest, false);
 
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
+        Guild guild = philJda.getGuilds().get(0);
 
         return swampyUsers.stream()
                 .filter(user -> {
-                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
+                    Member member = guild.getMemberById(user.getId());
                     return member != null && hasRole(member, Constants.EIGHTEEN_PLUS_ROLE);
                 })
                 .peek(user -> {
-                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
+                    Member member = guild.getMemberById(user.getId());
                     user.setNickname(member.getEffectiveName());
                     user.setProfileUrl(member.getUser().getEffectiveAvatarUrl());
                 })
@@ -56,14 +58,15 @@ public class LeaderboardController extends BaseController {
         checkSession(httpServletRequest, false);
 
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
+        Guild guild = philJda.getGuilds().get(0);
 
         return swampyUsers.stream()
                 .filter(user -> {
-                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
+                    Member member = guild.getMemberById(user.getId());
                     return member != null && hasRole(member, Constants.CHAOS_CHILDREN_ROLE);
                 })
                 .peek(user -> {
-                    Member member = philJda.getGuilds().get(0).getMemberById(user.getId());
+                    Member member = guild.getMemberById(user.getId());
                     user.setNickname(member.getEffectiveName());
                     user.setProfileUrl(member.getUser().getEffectiveAvatarUrl());
                 })

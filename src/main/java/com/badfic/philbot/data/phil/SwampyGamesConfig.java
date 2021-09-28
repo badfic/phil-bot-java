@@ -50,6 +50,15 @@ public class SwampyGamesConfig {
     private LocalDateTime triviaExpiration;
 
     @Column
+    private String quoteTriviaMsgId;
+
+    @Column
+    private short quoteTriviaCorrectAnswer;
+
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime quoteTriviaExpiration;
+
+    @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int normalMsgPoints = 5;
 
@@ -132,6 +141,10 @@ public class SwampyGamesConfig {
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int triviaEventPoints = 100;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int quoteTriviaEventPoints = 100;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
@@ -356,6 +369,30 @@ public class SwampyGamesConfig {
         this.triviaExpiration = triviaExpiration;
     }
 
+    public String getQuoteTriviaMsgId() {
+        return quoteTriviaMsgId;
+    }
+
+    public void setQuoteTriviaMsgId(String quoteTriviaMsgId) {
+        this.quoteTriviaMsgId = quoteTriviaMsgId;
+    }
+
+    public short getQuoteTriviaCorrectAnswer() {
+        return quoteTriviaCorrectAnswer;
+    }
+
+    public void setQuoteTriviaCorrectAnswer(short quoteTriviaCorrectAnswer) {
+        this.quoteTriviaCorrectAnswer = quoteTriviaCorrectAnswer;
+    }
+
+    public LocalDateTime getQuoteTriviaExpiration() {
+        return quoteTriviaExpiration;
+    }
+
+    public void setQuoteTriviaExpiration(LocalDateTime quoteTriviaExpiration) {
+        this.quoteTriviaExpiration = quoteTriviaExpiration;
+    }
+
     public int getNormalMsgPoints() {
         return normalMsgPoints;
     }
@@ -522,6 +559,14 @@ public class SwampyGamesConfig {
 
     public void setTriviaEventPoints(int triviaEventPoints) {
         this.triviaEventPoints = triviaEventPoints;
+    }
+
+    public int getQuoteTriviaEventPoints() {
+        return quoteTriviaEventPoints;
+    }
+
+    public void setQuoteTriviaEventPoints(int quoteTriviaEventPoints) {
+        this.quoteTriviaEventPoints = quoteTriviaEventPoints;
     }
 
     public int getRobinhoodMinPercent() {
@@ -764,11 +809,12 @@ public class SwampyGamesConfig {
         this.trickOrTreatTrickEmoji = trickOrTreatTrickEmoji;
     }
 
+    public long getMemberCountChannel() {
+        return memberCountChannel;
+    }
+
     public void setMemberCountChannel(long memberCountChannel) {
         this.memberCountChannel = memberCountChannel;
     }
 
-    public long getMemberCountChannel() {
-        return memberCountChannel;
-    }
 }

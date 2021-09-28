@@ -8,6 +8,7 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
@@ -64,13 +65,14 @@ public class Sweepstakes extends BaseSwampy {
             return;
         }
 
+        Guild guild = philJda.getGuilds().get(0);
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         Collections.shuffle(allUsers);
 
         Member member = null;
         for (DiscordUser winningUser : allUsers) {
             try {
-                Member memberById = philJda.getGuilds().get(0).getMemberById(winningUser.getId());
+                Member memberById = guild.getMemberById(winningUser.getId());
                 if (memberById != null
                         && !memberById.getUser().isBot()
                         && hasRole(memberById, role)
