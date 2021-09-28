@@ -28,7 +28,7 @@ public class QuoteTriviaTickable extends NonCommandSwampy implements MinuteTicka
             short quoteTriviaCorrectAnswer = swampyGamesConfig.getQuoteTriviaCorrectAnswer();
             int quoteTriviaEventPoints = swampyGamesConfig.getQuoteTriviaEventPoints();
 
-            swampyGamesConfig.setQuoteTriviaCorrectAnswer((short) -1);
+            swampyGamesConfig.setQuoteTriviaCorrectAnswer(null);
             swampyGamesConfig.setQuoteTriviaMsgId(null);
             swampyGamesConfig.setQuoteTriviaExpiration(null);
             swampyGamesConfigRepository.save(swampyGamesConfig);

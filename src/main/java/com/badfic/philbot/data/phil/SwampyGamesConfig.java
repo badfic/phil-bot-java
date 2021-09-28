@@ -53,7 +53,7 @@ public class SwampyGamesConfig {
     private String quoteTriviaMsgId;
 
     @Column
-    private short quoteTriviaCorrectAnswer;
+    private Short quoteTriviaCorrectAnswer;
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime quoteTriviaExpiration;
@@ -377,11 +377,11 @@ public class SwampyGamesConfig {
         this.quoteTriviaMsgId = quoteTriviaMsgId;
     }
 
-    public short getQuoteTriviaCorrectAnswer() {
+    public Short getQuoteTriviaCorrectAnswer() {
         return quoteTriviaCorrectAnswer;
     }
 
-    public void setQuoteTriviaCorrectAnswer(short quoteTriviaCorrectAnswer) {
+    public void setQuoteTriviaCorrectAnswer(Short quoteTriviaCorrectAnswer) {
         this.quoteTriviaCorrectAnswer = quoteTriviaCorrectAnswer;
     }
 
