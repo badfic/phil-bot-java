@@ -7,18 +7,20 @@ import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.utils.cache.MemberCacheView;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.mutable.MutableInt;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -83,28 +85,29 @@ public class QuoteTrivia extends BaseSwampy {
         final Member finalMember = member;
         final Quote finalQuote = quote;
 
-        List<Member> otherTwoMembers = new ArrayList<>();
+        MemberCacheView members = guild.getMemberCache();
 
-        // JDA recommends to use forEach as it doesn't create a copy of the underlying store. All other usages/iterations will create a copy.
-        guild.getMemberCache().forEach(randomMember -> {
-            if (otherTwoMembers.size() > 1) {
-                return;
-            }
+        if (members.size() < 3) {
+            swampysChannel.sendMessage("Not enough memebers to run a quote trivia").queue();
+            return;
+        }
 
+        Set<Member> otherTwoMembers = new HashSet<>();
+        while (otherTwoMembers.size() < 2) {
+            Member randomMember = Constants.pickRandom(members, members.size());
             if (randomMember.getIdLong() != finalMember.getIdLong()) {
                 otherTwoMembers.add(randomMember);
             }
-        });
+        }
 
         short correctAnswer = (short) ThreadLocalRandom.current().nextInt(3);
 
-        MutableInt otherMembersIterator = new MutableInt(0);
         String description = "Who said the following quote?" +
                 "\n\"" + finalQuote.getQuote() + '"' +
-                "\n\nA: " + getTriviaAnswer((short) 0, finalMember, otherTwoMembers, correctAnswer, otherMembersIterator) +
-                "\n\nB: " + getTriviaAnswer((short) 1, finalMember, otherTwoMembers, correctAnswer, otherMembersIterator) +
-                "\n\nC: " + getTriviaAnswer((short) 2, finalMember, otherTwoMembers, correctAnswer, otherMembersIterator);
-        String title = "Quote Trivia time! (for " + swampyGamesConfig.getTriviaEventPoints() + " points)";
+                "\n\nA: " + getTriviaAnswer((short) 0, finalMember, otherTwoMembers, correctAnswer) +
+                "\n\nB: " + getTriviaAnswer((short) 1, finalMember, otherTwoMembers, correctAnswer) +
+                "\n\nC: " + getTriviaAnswer((short) 2, finalMember, otherTwoMembers, correctAnswer);
+        String title = "Quote Trivia time! (for " + swampyGamesConfig.getQuoteTriviaEventPoints() + " points)";
         swampysChannel.sendMessageEmbeds(Constants.simpleEmbed(title, description)).queue(success -> {
             swampyGamesConfig.setQuoteTriviaCorrectAnswer(correctAnswer);
             swampyGamesConfig.setQuoteTriviaMsgId(success.getId());
@@ -117,12 +120,15 @@ public class QuoteTrivia extends BaseSwampy {
         });
     }
 
-    private String getTriviaAnswer(short position, Member correctMember, List<Member> otherTwoMembers, short correctAnswer, MutableInt otherMembersIterator) {
+    private String getTriviaAnswer(short position, Member correctMember, Set<Member> otherTwoMembers, short correctAnswer) {
         final Member selectedMember;
         if (correctAnswer == position) {
             selectedMember = correctMember;
         } else {
-            selectedMember = otherTwoMembers.get(otherMembersIterator.getAndIncrement());
+            Iterator<Member> i = otherTwoMembers.iterator();
+            Member next = i.next();
+            i.remove();
+            selectedMember = next;
         }
 
         return selectedMember.getAsMention() + " (" + selectedMember.getEffectiveName() + ')';
