@@ -68,7 +68,7 @@ public class SwampyCommand extends BaseSwampy {
                 "vamp", "dap", "dab", "wap", "butter", "mullet", "vax", "vaxx", "steve", "shronk", "oliver", "ophelia", "lisa", "rock", "buck", "bucky", "caw",
                 "sucky", "cap", "lesbian", "bi", "ace", "aro", "aroace", "demi", "enby", "nb", "intersex", "pan", "questioning", "trans", "megan", "goat",
                 "sam", "rise", "wow", "kachow", "loki", "jetski", "summer", "jeff", "wowki", "pog", "minutes", "yeehaw", "hug", "funny", "mobius", "mobi",
-                "chaos", "cool", "awesome", "lila", "tally", "yay", "step", "goop", "mash", "meow", "hold", "stick", "giddy", "meme", "marvel"
+                "chaos", "cool", "awesome", "lila", "tally", "yay", "step", "goop", "mash", "meow", "hold", "stick", "giddy", "meme", "marvel", "rio", "fill"
         ).sorted().toArray(String[]::new);
         help =
                 "`!!swampy up @Santiago` upvote a user for the swampys\n" +
