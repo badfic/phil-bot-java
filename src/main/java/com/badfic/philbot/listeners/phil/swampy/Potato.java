@@ -32,7 +32,7 @@ public class Potato extends BaseSwampy {
         potato();
     }
 
-    @Scheduled(cron = "0 5 23 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 5 13 * * ?", zone = "America/Los_Angeles")
     public void potato() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         Guild guild = philJda.getGuilds().get(0);

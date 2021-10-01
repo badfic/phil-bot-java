@@ -44,7 +44,7 @@ public class MapCommand extends BaseSwampy {
         doMap();
     }
 
-    @Scheduled(cron = "0 37 1,5,9,13,17,21 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 37 1,5,9,13,17,21 * * ?", zone = "America/Los_Angeles")
     public void doMap() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 

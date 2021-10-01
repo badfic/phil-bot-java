@@ -40,7 +40,7 @@ public class QuoteTrivia extends BaseSwampy {
         quoteTrivia();
     }
 
-    @Scheduled(cron = "0 37 2,6,10,14,18,22 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 37 2,6,10,14,18,22 * * ?", zone = "America/Los_Angeles")
     public void quoteTrivia() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);

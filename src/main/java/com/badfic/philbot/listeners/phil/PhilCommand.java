@@ -33,7 +33,7 @@ public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> {
                 "phil-kidFriendlyConfig.json", "phil-nsfwConfig.json", PhilResponsesConfig::new);
     }
 
-    @Scheduled(cron = "0 1 17 * * WED", zone = "GMT")
+    @Scheduled(cron = "0 1 7 * * WED", zone = "America/Los_Angeles")
     public void goodMorning() {
         TextChannel general = philJda.getTextChannelsByName("general", false).get(0);
         general.sendMessage("https://cdn.discordapp.com/attachments/323666308107599872/834310518478471218/mullethumpygrinch.png").queue();

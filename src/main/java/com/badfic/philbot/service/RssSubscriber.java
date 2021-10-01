@@ -39,7 +39,7 @@ public class RssSubscriber extends BaseService {
     @Resource
     private Ao3MetadataParser ao3MetadataParser;
 
-    @Scheduled(cron = "0 0,30 * * * ?", zone = "GMT")
+    @Scheduled(cron = "0 0,30 * * * ?", zone = "America/Los_Angeles")
     public void run() {
         threadPoolTaskExecutor.submit(this::refresh);
     }

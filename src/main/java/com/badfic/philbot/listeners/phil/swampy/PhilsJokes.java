@@ -13,7 +13,7 @@ import org.springframework.util.LinkedMultiValueMap;
 @Component
 public class PhilsJokes extends NonCommandSwampy {
 
-    @Scheduled(cron = "0 17 17 * * *")
+    @Scheduled(cron = "0 17 7 * * *", zone = "America/Los_Angeles")
     public void sayDadJoke() {
         LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN_VALUE);

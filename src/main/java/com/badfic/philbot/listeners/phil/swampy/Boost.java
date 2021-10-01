@@ -40,7 +40,7 @@ public class Boost extends BaseSwampy {
         doBoost(true);
     }
 
-    @Scheduled(cron = "0 0 * * * ?", zone = "GMT")
+    @Scheduled(cron = "0 0 * * * ?", zone = "America/Los_Angeles")
     public void boost() {
         doBoost(false);
     }

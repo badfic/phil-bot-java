@@ -35,7 +35,7 @@ public class Taxes extends BaseSwampy {
         doTaxes(true);
     }
 
-    @Scheduled(cron = "0 15 2 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 35 16 * * ?", zone = "America/Los_Angeles")
     public void taxes() {
         doTaxes(false);
     }

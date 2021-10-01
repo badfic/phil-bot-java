@@ -36,7 +36,7 @@ public class Shrekoning extends BaseSwampy {
         shrekoning();
     }
 
-    @Scheduled(cron = "0 47 2 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 47 16 * * ?", zone = "America/Los_Angeles")
     public void shrekoning() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         if (swampyGamesConfig == null) {

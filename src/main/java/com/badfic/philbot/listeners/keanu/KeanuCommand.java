@@ -74,7 +74,7 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
                 "keanu-kidFriendlyConfig.json", "keanu-nsfwConfig.json", KeanuResponsesConfig::new);
     }
 
-    @Scheduled(cron = "0 0 17 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 0 7 * * ?", zone = "America/Los_Angeles")
     public void goodMorning() {
         TextChannel general = keanuJda.getTextChannelsByName("general", false).get(0);
         general.sendMessage(Constants.pickRandom(GOOD_MORNING_GIFS)).queue();

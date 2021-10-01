@@ -32,7 +32,7 @@ public class Carrot extends BaseSwampy {
         carrot();
     }
 
-    @Scheduled(cron = "0 5 21 * * ?", zone = "GMT")
+    @Scheduled(cron = "0 5 11 * * ?", zone = "America/Los_Angeles")
     public void carrot() {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         Guild guild = philJda.getGuilds().get(0);
