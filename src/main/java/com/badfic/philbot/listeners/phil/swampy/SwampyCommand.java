@@ -48,9 +48,9 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83E\uDDC7", "\uD83D\uDC3B", "\uD83C\uDF32",
-            "\uD83D\uDCD6", "\uD83E\uDDDB", "\uD83D\uDD25",
-            "\uD83E\uDDFB️", "\uD83D\uDC36", "\uD83D\uDC87"
+            "\uD83E\uDEB1", "\uD83C\uDF15", "\uD83D\uDD78️",
+            "\uD83D\uDD77️", "\uD83E\uDD87", "\uD83C\uDF83",
+            "\uD83D\uDC7B️", "\uD83E\uDDDB", "\uD83C\uDF6C"
     );
 
     private volatile boolean awaitingResetConfirmation = false;
@@ -68,7 +68,8 @@ public class SwampyCommand extends BaseSwampy {
                 "vamp", "dap", "dab", "wap", "butter", "mullet", "vax", "vaxx", "steve", "shronk", "oliver", "ophelia", "lisa", "rock", "buck", "bucky", "caw",
                 "sucky", "cap", "lesbian", "bi", "ace", "aro", "aroace", "demi", "enby", "nb", "intersex", "pan", "questioning", "trans", "megan", "goat",
                 "sam", "rise", "wow", "kachow", "loki", "jetski", "summer", "jeff", "wowki", "pog", "minutes", "yeehaw", "hug", "funny", "mobius", "mobi",
-                "chaos", "cool", "awesome", "lila", "tally", "yay", "step", "goop", "mash", "meow", "hold", "stick", "giddy", "meme", "marvel", "rio", "fill"
+                "chaos", "cool", "awesome", "lila", "tally", "yay", "step", "goop", "mash", "meow", "hold", "stick", "giddy", "meme", "marvel", "rio",
+                "fill", "sweet", "suite", "mommy", "halloween", "pumpkin", "ghost", "witch"
         ).sorted().toArray(String[]::new);
         help =
                 "`!!swampy up @Santiago` upvote a user for the swampys\n" +
