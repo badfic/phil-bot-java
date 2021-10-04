@@ -25,7 +25,7 @@ public class ScooterAnkle extends BaseSwampy {
         name = "scooterankle";
         help = """
                 `!!scooterankle`
-                Scooter Ankle sacrifices a portion (50k, last updated) of your own points to all swamplings (bastard and child) below you.
+                Scooter Ankle sacrifices a portion (100k, last updated October 2021) of your own points to all swamplings (bastard and child) below you.
                 In hopes that one of them may overtake the leader of their respective scoreboards.""";
     }
 
