@@ -49,7 +49,7 @@ public class Shrekoning extends BaseSwampy {
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder("Shrek has infiltrated the swamp! He's giving \uD83E\uDDC5 \uD83E\uDDC5 \uD83E\uDDC5 " +
-                "to all of the not-top-3 chaos children!\n\n");
+                "to all of the not-top-2 chaos children!\n\n");
 
         allUsers.stream()
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
@@ -58,7 +58,7 @@ public class Shrekoning extends BaseSwampy {
                     Member m = guild.getMemberById(u.getId());
                     return m != null && !m.getUser().isBot() && hasRole(m, Constants.CHAOS_CHILDREN_ROLE);
                 })
-                .skip(3)
+                .skip(2)
                 .forEachOrdered(user -> {
                     try {
                         Member memberById = guild.getMemberById(user.getId());

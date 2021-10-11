@@ -55,7 +55,7 @@ public class Stonks extends BaseSwampy {
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder("Stonky? has infiltrated the swamp, giving \uD83D\uDCC8 \uD83D\uDCC8 \uD83D\uDCC8 " +
-                "to all of the not-top-10 bastards!\n" +
+                "to all of the not-top-5 bastards!\n" +
                 "There's a very complicated formula involving how many taxes were paid, but the min per user is 500 and the max is " +
                 NumberFormat.getIntegerInstance().format(swampyGamesConfig.getStonksMaxPoints()) +
                 "\n\n");
@@ -67,7 +67,7 @@ public class Stonks extends BaseSwampy {
                     Member m = guild.getMemberById(u.getId());
                     return m != null && !m.getUser().isBot() && hasRole(m, Constants.EIGHTEEN_PLUS_ROLE);
                 })
-                .skip(10)
+                .skip(5)
                 .collect(Collectors.toList());
 
         for (DiscordUser user : filteredUsers) {
