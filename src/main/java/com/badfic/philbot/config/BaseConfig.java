@@ -22,12 +22,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import okhttp3.ConnectionPool;
+import net.dv8tion.jda.internal.utils.IOUtil;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,9 +156,7 @@ public class BaseConfig {
 
     @Bean
     public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
-        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setMaxPoolSize(8);
-        return threadPoolTaskExecutor;
+        return new ThreadPoolTaskExecutor();
     }
 
     @Bean(name = "taskScheduler")
@@ -175,9 +172,7 @@ public class BaseConfig {
 
     @Bean
     public OkHttpClient okHttpClient() {
-        return new OkHttpClient.Builder()
-                .connectionPool(new ConnectionPool(8, 5, TimeUnit.MINUTES))
-                .build();
+        return IOUtil.newHttpClientBuilder().build();
     }
 
     @Bean
@@ -186,14 +181,13 @@ public class BaseConfig {
     }
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate(new OkHttp3ClientHttpRequestFactory(okHttpClient()));
+    public RestTemplate restTemplate(OkHttpClient okHttpClient) {
+        return new RestTemplate(new OkHttp3ClientHttpRequestFactory(okHttpClient));
     }
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer propsConfig
-                = new PropertySourcesPlaceholderConfigurer();
+        PropertySourcesPlaceholderConfigurer propsConfig = new PropertySourcesPlaceholderConfigurer();
         propsConfig.setLocation(new ClassPathResource("git.properties"));
         propsConfig.setIgnoreResourceNotFound(true);
         propsConfig.setIgnoreUnresolvablePlaceholders(true);
@@ -201,61 +195,71 @@ public class BaseConfig {
     }
 
     @Bean(name = "antoniaJda")
-    public JDA antoniaJda() throws Exception {
+    public JDA antoniaJda(ThreadPoolTaskScheduler taskScheduler,
+                          ThreadPoolTaskExecutor threadPoolTaskExecutor,
+                          OkHttpClient okHttpClient) throws Exception {
         return JDABuilder.createLight(antoniaBotToken, Collections.emptyList())
-                .setRateLimitPool(taskScheduler().getScheduledExecutor(), false)
-                .setCallbackPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
-                .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
-                .setGatewayPool(taskScheduler().getScheduledExecutor(), false)
-                .setHttpClient(okHttpClient())
+                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
+                .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
+                .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
+                .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
+                .setHttpClient(okHttpClient)
                 .setActivity(Activity.listening(ANTONIA_STATUS_LIST[ThreadLocalRandom.current().nextInt(ANTONIA_STATUS_LIST.length)]))
                 .build();
     }
 
     @Bean(name = "johnJda")
-    public JDA johnJda() throws Exception {
+    public JDA johnJda(ThreadPoolTaskScheduler taskScheduler,
+                       ThreadPoolTaskExecutor threadPoolTaskExecutor,
+                       OkHttpClient okHttpClient) throws Exception {
         return JDABuilder.createLight(johnBotToken, Collections.emptyList())
-                .setRateLimitPool(taskScheduler().getScheduledExecutor(), false)
-                .setCallbackPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
-                .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
-                .setGatewayPool(taskScheduler().getScheduledExecutor(), false)
-                .setHttpClient(okHttpClient())
+                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
+                .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
+                .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
+                .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
+                .setHttpClient(okHttpClient)
                 .setActivity(Activity.watching("Constantine"))
                 .build();
     }
 
     @Bean(name = "behradJda")
-    public JDA behradJda() throws Exception {
+    public JDA behradJda(ThreadPoolTaskScheduler taskScheduler,
+                         ThreadPoolTaskExecutor threadPoolTaskExecutor,
+                         OkHttpClient okHttpClient) throws Exception {
         return JDABuilder.createLight(behradBotToken, Collections.emptyList())
-                .setRateLimitPool(taskScheduler().getScheduledExecutor(), false)
-                .setCallbackPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
-                .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
-                .setGatewayPool(taskScheduler().getScheduledExecutor(), false)
-                .setHttpClient(okHttpClient())
+                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
+                .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
+                .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
+                .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
+                .setHttpClient(okHttpClient)
                 .setActivity(Activity.playing(BEHRAD_STATUS_LIST[ThreadLocalRandom.current().nextInt(BEHRAD_STATUS_LIST.length)]))
                 .build();
     }
 
     @Bean(name = "keanuJda")
-    public JDA keanuJda() throws Exception {
+    public JDA keanuJda(ThreadPoolTaskScheduler taskScheduler,
+                        ThreadPoolTaskExecutor threadPoolTaskExecutor,
+                        OkHttpClient okHttpClient) throws Exception {
         return JDABuilder.createLight(keanuBotToken, Collections.emptyList())
-                .setRateLimitPool(taskScheduler().getScheduledExecutor(), false)
-                .setCallbackPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
-                .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
-                .setGatewayPool(taskScheduler().getScheduledExecutor(), false)
-                .setHttpClient(okHttpClient())
+                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
+                .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
+                .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
+                .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
+                .setHttpClient(okHttpClient)
                 .setActivity(Activity.watching(KEANU_STATUS_LIST[ThreadLocalRandom.current().nextInt(KEANU_STATUS_LIST.length)]))
                 .build();
     }
 
     @Bean(name = "philCommandClient")
-    public CommandClient philCommandClient(List<Command> commands, HoneybadgerReporter honeybadgerReporter) {
+    public CommandClient philCommandClient(ThreadPoolTaskScheduler taskScheduler,
+                                           List<Command> commands,
+                                           HoneybadgerReporter honeybadgerReporter) {
         return new CommandClientBuilder()
                 .setOwnerId(ownerId)
                 .setPrefix(Constants.PREFIX)
                 .useHelpBuilder(false)
                 .addCommands(commands.toArray(Command[]::new))
-                .setScheduleExecutor(taskScheduler().getScheduledExecutor())
+                .setScheduleExecutor(taskScheduler.getScheduledExecutor())
                 .setActivity(Activity.playing("with our feelings"))
                 .setEmojis("\uD83C\uDF6C", "⚠️", "\uD83D\uDC80")
                 .setListener(new CommandListener() {
@@ -269,16 +273,19 @@ public class BaseConfig {
     }
 
     @Bean(name = "philJda")
-    public JDA philJda(GenericReadyListener genericReadyListener,
+    public JDA philJda(ThreadPoolTaskScheduler taskScheduler,
+                       ThreadPoolTaskExecutor threadPoolTaskExecutor,
+                       OkHttpClient okHttpClient,
+                       GenericReadyListener genericReadyListener,
                        PhilMessageListener philMessageListener,
                        @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
         return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES))
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
-                .setRateLimitPool(taskScheduler().getScheduledExecutor(), false)
-                .setCallbackPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
-                .setEventPool(threadPoolTaskExecutor().getThreadPoolExecutor(), false)
-                .setGatewayPool(taskScheduler().getScheduledExecutor(), false)
-                .setHttpClient(okHttpClient())
+                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
+                .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
+                .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
+                .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
+                .setHttpClient(okHttpClient)
                 .addEventListeners(genericReadyListener, philMessageListener, philCommandClient)
                 .setActivity(Activity.playing("with our feelings"))
                 .build();
