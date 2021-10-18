@@ -74,7 +74,6 @@ public class Sweepstakes extends BaseSwampy {
             try {
                 Member memberById = guild.getMemberById(winningUser.getId());
                 if (memberById != null
-                        && !memberById.getUser().isBot()
                         && hasRole(memberById, role)
                         && winningUser.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD
                         && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22))) {

@@ -161,12 +161,10 @@ public abstract class BaseSwampy extends Command {
     }
 
     protected boolean isNotParticipating(Member member) {
-        boolean notEighteenOrChaos = member.getRoles().stream().noneMatch(r -> {
+        return member.getRoles().stream().noneMatch(r -> {
             String roleName = r.getName();
             return Constants.CHAOS_CHILDREN_ROLE.equalsIgnoreCase(roleName) || Constants.EIGHTEEN_PLUS_ROLE.equalsIgnoreCase(roleName);
         });
-
-        return member.getUser().isBot() || notEighteenOrChaos;
     }
 
     protected boolean hasRole(Member member, Rank rank) {

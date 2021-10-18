@@ -50,7 +50,7 @@ public class Potato extends BaseSwampy {
                 .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(2)))
                 .filter(u -> {
                     Member m = guild.getMemberById(u.getId());
-                    return m != null && !m.getUser().isBot();
+                    return m != null;
                 })
                 .collect(Collectors.toList());
 

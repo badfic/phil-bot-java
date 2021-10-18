@@ -65,7 +65,7 @@ public class Stonks extends BaseSwampy {
                 .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22)))
                 .filter(u -> {
                     Member m = guild.getMemberById(u.getId());
-                    return m != null && !m.getUser().isBot() && hasRole(m, Constants.EIGHTEEN_PLUS_ROLE);
+                    return m != null && hasRole(m, Constants.EIGHTEEN_PLUS_ROLE);
                 })
                 .skip(5)
                 .collect(Collectors.toList());

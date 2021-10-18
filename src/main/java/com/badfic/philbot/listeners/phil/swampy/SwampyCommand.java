@@ -69,7 +69,7 @@ public class SwampyCommand extends BaseSwampy {
                 "sucky", "cap", "lesbian", "bi", "ace", "aro", "aroace", "demi", "enby", "nb", "intersex", "pan", "questioning", "trans", "megan", "goat",
                 "sam", "rise", "wow", "kachow", "loki", "jetski", "summer", "jeff", "wowki", "pog", "minutes", "yeehaw", "hug", "funny", "mobius", "mobi",
                 "chaos", "cool", "awesome", "lila", "tally", "yay", "step", "goop", "mash", "meow", "hold", "stick", "giddy", "meme", "marvel", "rio",
-                "fill", "sweet", "suite", "mommy", "halloween", "pumpkin", "ghost", "witch", "sports", "crime"
+                "fill", "sweet", "suite", "mommy", "halloween", "pumpkin", "ghost", "witch", "sports", "crime", "elle", "birthday", "party"
         ).sorted().toArray(String[]::new);
         help =
                 "`!!swampy up @Santiago` upvote a user for the swampys\n" +
@@ -161,24 +161,20 @@ public class SwampyCommand extends BaseSwampy {
 
             if (swampyGamesConfig.getBoostPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getBoostPhrase())) {
                 acceptedBoost(event.getMember());
-                return;
             }
 
             if (swampyGamesConfig.getMapPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getMapPhrase())) {
                 acceptedMap(event.getMember());
-                return;
             }
 
             if (swampyGamesConfig.getSwiperAwaiting() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getNoSwipingPhrase())) {
                 givePointsToMember(1, event.getMember(), PointsStat.SWIPER_PARTICIPATIONS);
                 swampyGamesConfig.setSwiperSavior(event.getMember().getId());
                 swampyGamesConfigRepository.save(swampyGamesConfig);
-                return;
             }
 
             if (NO_NO_WORDS.matcher(msgContent).find()) {
                 takePointsFromMember(swampyGamesConfig.getNoNoWordsPoints(), event.getMember(), PointsStat.NO_NO);
-                return;
             }
 
             Message message = event.getMessage();

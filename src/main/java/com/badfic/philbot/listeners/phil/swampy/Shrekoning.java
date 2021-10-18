@@ -56,7 +56,7 @@ public class Shrekoning extends BaseSwampy {
                 .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22)))
                 .filter(u -> {
                     Member m = guild.getMemberById(u.getId());
-                    return m != null && !m.getUser().isBot() && hasRole(m, Constants.CHAOS_CHILDREN_ROLE);
+                    return m != null && hasRole(m, Constants.CHAOS_CHILDREN_ROLE);
                 })
                 .skip(2)
                 .forEachOrdered(user -> {
