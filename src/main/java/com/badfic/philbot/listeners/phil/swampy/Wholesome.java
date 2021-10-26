@@ -46,6 +46,7 @@ public class Wholesome extends BaseSwampy {
             .add("https://cdn.discordapp.com/attachments/810711700818100244/885280298382802954/df6b6401681304ad7eeb6ce2b18d6fb3.png")
             .add("https://cdn.discordapp.com/attachments/741000350500126753/887827931261456465/image0.jpg")
             .add("https://cdn.discordapp.com/attachments/741047915916820560/901192893895700570/image0.jpg")
+            .add("https://cdn.discordapp.com/attachments/707453916882665552/902398312022421504/cat-bouncing.gif")
             .build();
 
     public Wholesome() {
