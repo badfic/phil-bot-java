@@ -362,7 +362,7 @@ public class SwampyCommand extends BaseSwampy {
         MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + rank.getLevel() + ": " + rank.getRoleName(),
                 description,
                 rank.getRankUpImage(),
-                role.getColor());
+                role != null ? role.getColor() : Constants.COLOR_OF_THE_MONTH);
 
         event.reply(messageEmbed);
     }

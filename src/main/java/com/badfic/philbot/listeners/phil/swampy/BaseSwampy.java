@@ -123,7 +123,14 @@ public abstract class BaseSwampy extends Command {
         }
 
         Rank newRank = Rank.byXp(user.getXp());
-        Role newRole = member.getGuild().getRolesByName(newRank.getRoleName(), true).get(0);
+        Optional<Role> newRoleOpt = member.getGuild().getRolesByName(newRank.getRoleName(), true).stream().findFirst();
+
+        if (newRoleOpt.isEmpty()) {
+            Constants.debugToTestChannel(philJda, "ERROR Could not find swampy level role: " + newRank.getRoleName());
+            return ImmutablePair.of(null, CompletableFuture.completedFuture(null));
+        }
+
+        Role newRole = newRoleOpt.get();
 
         CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
         if (!hasRole(member, newRank)) {
