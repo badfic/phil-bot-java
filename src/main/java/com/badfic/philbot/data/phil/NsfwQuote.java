@@ -5,14 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "quote")
-public class Quote extends BaseQuote {
+@Table(name = "nsfw_quote")
+public class NsfwQuote extends BaseQuote {
 
-    public Quote() {
+    public NsfwQuote() {
         super();
     }
 
-    public Quote(long messageId, long channelId, String quote, String image, long userId, LocalDateTime created) {
+    public NsfwQuote(long messageId, long channelId, String quote, String image, long userId, LocalDateTime created) {
         super(messageId, channelId, quote, image, userId, created);
     }
 

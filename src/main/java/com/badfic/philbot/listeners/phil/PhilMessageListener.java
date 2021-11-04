@@ -1,6 +1,8 @@
 package com.badfic.philbot.listeners.phil;
 
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.data.phil.NsfwQuote;
+import com.badfic.philbot.data.phil.NsfwQuoteRepository;
 import com.badfic.philbot.data.phil.Quote;
 import com.badfic.philbot.data.phil.QuoteRepository;
 import com.badfic.philbot.listeners.antonia.AntoniaMessageListener;
@@ -93,6 +95,9 @@ public class PhilMessageListener extends ListenerAdapter {
 
     @Resource
     private QuoteRepository quoteRepository;
+
+    @Resource
+    private NsfwQuoteRepository nsfwQuoteRepository;
 
     @Resource
     private PhilCommand philCommand;
@@ -188,6 +193,35 @@ public class PhilMessageListener extends ListenerAdapter {
 
                     MessageEmbed messageEmbed = Constants.simpleEmbed("Quote #" + savedQuote.getId() + " Added",
                             "<@!" + event.getUserId() + "> Added quote #" + savedQuote.getId() + msgLink);
+
+                    johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(messageEmbed).queue();
+                });
+            }
+        }
+
+        if (event.getReactionEmote().isEmoji() && "\uD83C\uDF46".equals(event.getReactionEmote().getEmoji())) {
+            if (!nsfwQuoteRepository.existsByMessageId(event.getMessageIdLong())) {
+                event.getChannel().retrieveMessageById(event.getMessageId()).queue(msg -> {
+                    long msgId = msg.getIdLong();
+                    long channelId = msg.getChannel().getIdLong();
+
+                    String image = null;
+                    if (CollectionUtils.isNotEmpty(msg.getEmbeds())) {
+                        image = msg.getEmbeds().get(0).getUrl();
+                    }
+                    if (CollectionUtils.isNotEmpty(msg.getAttachments())) {
+                        image = msg.getAttachments().get(0).getUrl();
+                    }
+
+                    NsfwQuote savedQuote = nsfwQuoteRepository.save(new NsfwQuote(msgId, channelId, msg.getContentRaw(), image,
+                            msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
+
+                    msg.addReaction("\uD83C\uDF46").queue();
+
+                    String msgLink = " [(jump)](https://discordapp.com/channels/" + event.getGuild().getIdLong() + '/' + channelId + '/' + msgId + ')';
+
+                    MessageEmbed messageEmbed = Constants.simpleEmbed("NsfwQuote #" + savedQuote.getId() + " Added",
+                            "<@!" + event.getUserId() + "> Added NsfwQuote #" + savedQuote.getId() + msgLink);
 
                     johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(messageEmbed).queue();
                 });
