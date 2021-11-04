@@ -30,60 +30,50 @@ public class NsfwQuoteLoader extends BaseSwampy {
 
         new Thread(() -> {
             List<Long> savedQuotes = new ArrayList<>();
-            List<TextChannel> textChannels = philJda.getGuilds().get(0).getTextChannels();
 
-            philJda.getTextChannelById(originalChannelId).sendMessage("_sigh_ This is gonna take a while...").queue();
+            TextChannel textChannel = philJda.getTextChannelsByName("onlyfans-chatroom", false).get(0);
+            philJda.getTextChannelById(originalChannelId).sendMessage("Processing NsfwQuotes in channel: " + textChannel.getName() + " ...").queue();
 
-            for (TextChannel textChannel : textChannels) {
-                if (!textChannel.isNSFW()) {
-                    philJda.getTextChannelById(originalChannelId)
-                            .sendMessage("Skipping NsfwQuotes in channel: " + textChannel.getName() + " because it is not an nsfw channel").queue();
-                    continue;
+            long lastMsgId = 0;
+            while (lastMsgId != -1) {
+                MessageHistory history;
+                if (lastMsgId == 0) {
+                    history = textChannel.getHistoryFromBeginning(100).complete();
+                } else {
+                    history = textChannel.getHistoryAfter(lastMsgId, 100).complete();
                 }
 
-                philJda.getTextChannelById(originalChannelId).sendMessage("Processing NsfwQuotes in channel: " + textChannel.getName() + " ...").queue();
+                lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())
+                        ? history.getRetrievedHistory().get(0).getIdLong()
+                        : -1;
 
-                long lastMsgId = 0;
-                while (lastMsgId != -1) {
-                    MessageHistory history;
-                    if (lastMsgId == 0) {
-                        history = textChannel.getHistoryFromBeginning(100).complete();
-                    } else {
-                        history = textChannel.getHistoryAfter(lastMsgId, 100).complete();
+                for (Message message : history.getRetrievedHistory()) {
+                    List<MessageReaction> reactions = message.getReactions();
+
+                    boolean doAdd = false;
+                    for (MessageReaction reaction : reactions) {
+                        if (reaction.getReactionEmote().isEmoji() && "\uD83C\uDF46".equalsIgnoreCase(reaction.getReactionEmote().getEmoji())) {
+                            doAdd = true;
+                        }
                     }
 
-                    lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())
-                            ? history.getRetrievedHistory().get(0).getIdLong()
-                            : -1;
-
-                    for (Message message : history.getRetrievedHistory()) {
-                        List<MessageReaction> reactions = message.getReactions();
-
-                        boolean doAdd = false;
-                        for (MessageReaction reaction : reactions) {
-                            if (reaction.getReactionEmote().isEmoji() && "\uD83C\uDF46".equalsIgnoreCase(reaction.getReactionEmote().getEmoji())) {
-                                doAdd = true;
-                            }
+                    if (doAdd) {
+                        long messageId = message.getIdLong();
+                        long userId = message.getAuthor().getIdLong();
+                        long channelId = textChannel.getIdLong();
+                        String image = null;
+                        if (CollectionUtils.isNotEmpty(message.getEmbeds())) {
+                            image = message.getEmbeds().get(0).getUrl();
+                        }
+                        if (CollectionUtils.isNotEmpty(message.getAttachments())) {
+                            image = message.getAttachments().get(0).getUrl();
                         }
 
-                        if (doAdd) {
-                            long messageId = message.getIdLong();
-                            long userId = message.getAuthor().getIdLong();
-                            long channelId = textChannel.getIdLong();
-                            String image = null;
-                            if (CollectionUtils.isNotEmpty(message.getEmbeds())) {
-                                image = message.getEmbeds().get(0).getUrl();
-                            }
-                            if (CollectionUtils.isNotEmpty(message.getAttachments())) {
-                                image = message.getAttachments().get(0).getUrl();
-                            }
+                        if (!nsfwQuoteRepository.existsByMessageId(messageId)) {
+                            NsfwQuote savedQuote = nsfwQuoteRepository.save(new NsfwQuote(
+                                    messageId, channelId, message.getContentRaw(), image, userId, message.getTimeCreated().toLocalDateTime()));
 
-                            if (!nsfwQuoteRepository.existsByMessageId(messageId)) {
-                                NsfwQuote savedQuote = nsfwQuoteRepository.save(new NsfwQuote(
-                                        messageId, channelId, message.getContentRaw(), image, userId, message.getTimeCreated().toLocalDateTime()));
-
-                                savedQuotes.add(savedQuote.getId());
-                            }
+                            savedQuotes.add(savedQuote.getId());
                         }
                     }
                 }

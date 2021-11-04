@@ -26,15 +26,21 @@ public class NsfwQuoteCommand extends BaseSwampy {
     private NsfwQuoteRepository nsfwQuoteRepository;
 
     public NsfwQuoteCommand() {
-        name = "NsfwQuote";
+        name = "nsfwQuote";
         help = """
+                18+ only
                 React to any message with the 🍆 emoji to save an NsfwQuote
-                `!!NsfwQuote` to get a random quote
-                `!!NsfwQuote 23` to get quote number 23""";
+                `!!nsfwQuote` to get a random quote
+                `!!nsfwQuote 23` to get quote number 23""";
     }
 
     @Override
     protected void execute(CommandEvent event) {
+        if (!event.getTextChannel().isNSFW()) {
+            event.replyError("nsfwQuote can only be called in an nsfw channel");
+            return;
+        }
+
         if (StringUtils.isBlank(event.getArgs())) {
             int count = (int) nsfwQuoteRepository.count();
 
