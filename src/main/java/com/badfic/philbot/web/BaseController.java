@@ -10,6 +10,7 @@ import com.badfic.philbot.data.DiscordUserRepository;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ public abstract class BaseController {
     protected static final String DISCORD_ID = "DiscordId";
     protected static final String DISCORD_USERNAME = "DiscordUsername";
     protected static final String DISCORD_IS_MOD = "DiscordIsMod";
+    protected static final String DISCORD_IS_18 = "DiscordIs18";
     protected static final String DISCORD_REFRESH_TOKEN = "DiscordRefreshToken";
     protected static final String AWAITING_REDIRECT_URL = "AwaitingRedirectUrl";
     protected static final String CHROMECAST_AUTH = "ChromecastAuth";
@@ -109,6 +111,17 @@ public abstract class BaseController {
             httpSession.setAttribute(DISCORD_TOKEN, loginResponse.getBody().getAccessToken());
             httpSession.setAttribute(DISCORD_REFRESH_TOKEN, loginResponse.getBody().getRefreshToken());
         }
+    }
+
+    protected void addCommonProps(HttpServletRequest httpServletRequest, Map<String, Object> props) {
+        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
+        props.put("isMod", httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
+        props.put("is18", httpServletRequest.getSession().getAttribute(DISCORD_IS_18));
+    }
+
+    protected Member getMemberFromSession(HttpServletRequest httpServletRequest) {
+        String discordId = (String) httpServletRequest.getSession().getAttribute(DISCORD_ID);
+        return philJda.getGuilds().get(0).getMemberById(discordId);
     }
 
 }

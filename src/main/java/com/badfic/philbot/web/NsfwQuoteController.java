@@ -1,6 +1,6 @@
 package com.badfic.philbot.web;
 
-import com.badfic.philbot.data.phil.QuoteRepository;
+import com.badfic.philbot.data.phil.NsfwQuoteRepository;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,20 +16,22 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 @RestController
-public class QuoteController extends BaseController {
+public class NsfwQuoteController extends BaseController {
 
     @Resource
-    private QuoteRepository quoteRepository;
+    private NsfwQuoteRepository nsfwQuoteRepository;
 
-    @GetMapping(value = "/quotes", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/nsfw-quotes", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
+
         Guild guild = philJda.getGuilds().get(0);
 
         Map<String, Object> props = new HashMap<>();
-        props.put("pageTitle", "\uD83D\uDCAC Quotes");
         addCommonProps(httpServletRequest, props);
-        props.put("quotes", quoteRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream().map(q -> {
+        props.put("pageTitle", "\uD83C\uDF46 Quotes");
+
+        props.put("quotes", nsfwQuoteRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream().map(q -> {
             Member memberById = guild.getMemberById(q.getUserId());
             return new SimpleQuote(memberById != null ? memberById.getEffectiveName() : Long.toString(q.getUserId()),
                     q.getId(),
@@ -40,7 +42,7 @@ public class QuoteController extends BaseController {
                     q.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         }).collect(Collectors.toList()));
 
-        return new ModelAndView("quotes", props);
+        return new ModelAndView("nsfw-quotes", props);
     }
 
     public static record SimpleQuote(String name, long id, String quote, String image, long channelId, long messageId, long timestamp) {}

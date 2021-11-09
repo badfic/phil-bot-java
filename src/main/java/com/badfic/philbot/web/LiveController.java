@@ -28,8 +28,7 @@ public class LiveController extends BaseController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "The Swamp Live");
-        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
-        props.put("isMod", httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
+        addCommonProps(httpServletRequest, props);
         props.put("nickname", member.getEffectiveName());
         props.put("userAvatar", userAvatar);
 

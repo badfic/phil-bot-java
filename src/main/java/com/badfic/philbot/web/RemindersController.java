@@ -38,41 +38,12 @@ public class RemindersController extends BaseController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Reminders");
-        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
-        props.put("isMod", httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
+        addCommonProps(httpServletRequest, props);
         props.put("reminders", simpleReminderList);
 
         return new ModelAndView("reminders", props);
     }
 
-    private static class SimpleReminder {
-        private final long id;
-        private final String name;
-        private final String reminder;
-        private final long dueDate;
-
-        public SimpleReminder(long id, String name, String reminder, long dueDate) {
-            this.id = id;
-            this.name = name;
-            this.reminder = reminder;
-            this.dueDate = dueDate;
-        }
-
-        public long getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getReminder() {
-            return reminder;
-        }
-
-        public long getDueDate() {
-            return dueDate;
-        }
-    }
+    private static record SimpleReminder(long id, String name, String reminder, long dueDate) {}
 
 }

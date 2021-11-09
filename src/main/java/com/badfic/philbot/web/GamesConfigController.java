@@ -31,10 +31,6 @@ public class GamesConfigController extends BaseController {
 
         SwampyGamesConfig swampyGamesConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
 
-        Map<String, Object> props = new HashMap<>();
-        props.put("pageTitle", "Games Config");
-        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
-        props.put("isMod", httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
 
         List<ConfigEntry> configEntries = new ArrayList<>();
 
@@ -47,6 +43,9 @@ public class GamesConfigController extends BaseController {
             }
         }
 
+        Map<String, Object> props = new HashMap<>();
+        props.put("pageTitle", "Games Config");
+        addCommonProps(httpServletRequest, props);
         props.put("configEntries", configEntries);
 
         return new ModelAndView("games-config", props);
@@ -58,16 +57,16 @@ public class GamesConfigController extends BaseController {
 
         SwampyGamesConfig swampyGamesConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
 
-        if (configEntry != null && StringUtils.isNotBlank(configEntry.getFieldName()) && StringUtils.isNotBlank(configEntry.getFieldValue())) {
-            Field declaredField = SwampyGamesConfig.class.getDeclaredField(configEntry.getFieldName());
+        if (configEntry != null && StringUtils.isNotBlank(configEntry.fieldName()) && StringUtils.isNotBlank(configEntry.fieldValue())) {
+            Field declaredField = SwampyGamesConfig.class.getDeclaredField(configEntry.fieldName());
             declaredField.setAccessible(true);
 
             if (int.class.equals(declaredField.getType())) {
-                int realValue = Integer.parseInt(configEntry.getFieldValue());
+                int realValue = Integer.parseInt(configEntry.fieldValue());
 
                 declaredField.set(swampyGamesConfig, realValue);
             } else {
-                declaredField.set(swampyGamesConfig, configEntry.getFieldValue());
+                declaredField.set(swampyGamesConfig, configEntry.fieldValue());
             }
 
             swampyGamesConfigRepository.save(swampyGamesConfig);
@@ -76,43 +75,6 @@ public class GamesConfigController extends BaseController {
         return ResponseEntity.ok("Saved. If it was an image you'll have to refresh to see the new image.");
     }
 
-    private static class ConfigEntry {
-        private String fieldName;
-        private String fieldValue;
-        private Boolean valueIsImg;
-
-        public ConfigEntry() {
-        }
-
-        public ConfigEntry(String fieldName, String fieldValue, Boolean valueIsImg) {
-            this.fieldName = fieldName;
-            this.fieldValue = fieldValue;
-            this.valueIsImg = valueIsImg;
-        }
-
-        public String getFieldName() {
-            return fieldName;
-        }
-
-        public void setFieldName(String fieldName) {
-            this.fieldName = fieldName;
-        }
-
-        public String getFieldValue() {
-            return fieldValue;
-        }
-
-        public void setFieldValue(String fieldValue) {
-            this.fieldValue = fieldValue;
-        }
-
-        public Boolean getValueIsImg() {
-            return valueIsImg;
-        }
-
-        public void setValueIsImg(Boolean valueIsImg) {
-            this.valueIsImg = valueIsImg;
-        }
-    }
+    private static record ConfigEntry(String fieldName, String fieldValue, Boolean valueIsImg) {}
 
 }

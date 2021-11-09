@@ -1,6 +1,7 @@
 {{> header}}
 <div class="container-fluid">
-    <h1>💬 Quotes</h1>
+    <h1>🍆 NSFW Quotes 🍆</h1>
+    {{#is18}}
     <div class="table-responsive-sm">
         <table class="table table-striped">
             <thead>
@@ -25,6 +26,10 @@
             </tbody>
         </table>
     </div>
+    {{/is18}}
+    {{^is18}}
+    <span>You must have the 18+ role to view nsfw quotes.</span>
+    {{/is18}}
 </div>
 {{> dateable}}
 {{> footer}}

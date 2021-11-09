@@ -42,8 +42,7 @@ public class TriviaController extends BaseController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Submit A New Trivia Question");
-        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
-        props.put("isMod", httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
+        addCommonProps(httpServletRequest, props);
         props.put("trivia", triviaList);
 
         return new ModelAndView("trivia", props);

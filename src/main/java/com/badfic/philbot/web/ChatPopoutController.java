@@ -17,8 +17,7 @@ public class ChatPopoutController extends BaseController {
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
 
-        String discordId = (String) httpServletRequest.getSession().getAttribute(DISCORD_ID);
-        Member member = philJda.getGuilds().get(0).getMemberById(discordId);
+        Member member = getMemberFromSession(httpServletRequest);
 
         if (member == null) {
             throw new UnauthorizedException("You do not have a valid session. Please refresh and login again");

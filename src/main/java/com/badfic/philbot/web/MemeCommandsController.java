@@ -38,8 +38,7 @@ public class MemeCommandsController extends BaseController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Meme Commands");
-        props.put("username", httpServletRequest.getSession().getAttribute(DISCORD_USERNAME));
-        props.put("isMod", httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
+        addCommonProps(httpServletRequest, props);
         props.put("commands", memes);
 
         return new ModelAndView("meme-commands", props);
