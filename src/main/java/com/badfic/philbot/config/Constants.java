@@ -91,13 +91,13 @@ public interface Constants {
         int mode = 1;
         int maxCount = 0;
 
-        // 1 through 7, ISO Standard
-        int[] counts = new int[8];
+        int[] counts = new int[7];
 
         for (int i = 0; i < array.length; i++) {
             int currentValue = array[i];
 
-            int currentFrequency = counts[currentValue]++;
+            // ISO days are 1 through 7, so we subtract 1 for our counts array indexing
+            int currentFrequency = counts[currentValue - 1]++;
             if (currentFrequency > maxCount) {
                 maxCount = currentFrequency;
                 mode = currentValue;
