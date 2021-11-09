@@ -88,10 +88,11 @@ public interface Constants {
             return ImmutablePair.of(DayOfWeek.SUNDAY, 0);
         }
 
-        int mode = 0;
+        int mode = 1;
         int maxCount = 0;
 
-        int[] counts = new int[7];
+        // 1 through 7, ISO Standard
+        int[] counts = new int[8];
 
         for (int i = 0; i < array.length; i++) {
             int currentValue = array[i];
