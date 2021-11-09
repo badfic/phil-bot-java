@@ -4,12 +4,15 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.NsfwQuote;
 import com.badfic.philbot.data.phil.NsfwQuoteRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.time.DayOfWeek;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,11 +30,13 @@ public class NsfwQuoteCommand extends BaseSwampy {
 
     public NsfwQuoteCommand() {
         name = "nsfwQuote";
+        aliases = new String[]{"nsfwQuotes", "cursedQuote", "cursedQuotes"};
         help = """
                 18+ only
                 React to any message with the 🍆 emoji to save an NsfwQuote
                 `!!nsfwQuote` to get a random quote
-                `!!nsfwQuote 23` to get quote number 23""";
+                `!!nsfwQuote 23` to get quote number 23
+                `!!nsfwQuote stats` returns statistics about all nsfw quotes""";
     }
 
     @Override
@@ -56,6 +61,26 @@ public class NsfwQuoteCommand extends BaseSwampy {
             NsfwQuote quote = quotes.getContent().get(0);
 
             respondWithQuote(event, quote);
+            return;
+        }
+
+        if (StringUtils.startsWithIgnoreCase(event.getArgs(), "stat")) {
+            int[] quoteDaysOfWeek = nsfwQuoteRepository.getQuoteDaysOfWeek();
+            Pair<DayOfWeek, Integer> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeek);
+
+            DayOfWeek day = mode.getLeft();
+            int count = mode.getRight();
+
+            long mostQuotedUserId = nsfwQuoteRepository.getMostQuotedUser();
+            Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
+
+            keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Cursed Quote Statistics",
+                    String.format("Day of the week with the most cursed quotes: %s" +
+                            "\nNumber of cursed quotes on that day: %d" +
+                            "\nMost cursed quotes: %s",
+                            day.toString(),
+                            count,
+                            mostQuotedMember != null ? mostQuotedMember.getAsMention() : "<@!" + mostQuotedUserId + ">"))).queue();
             return;
         }
 

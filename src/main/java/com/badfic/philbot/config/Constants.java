@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import java.awt.Color;
 import java.lang.invoke.MethodHandles;
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Iterator;
@@ -17,7 +18,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +81,29 @@ public interface Constants {
 
     static Pattern compileWords(String s) {
         return Pattern.compile("\\b(" + s + ")\\b", Pattern.CASE_INSENSITIVE);
+    }
+
+    static Pair<DayOfWeek, Integer> isoDayOfWeekMode(int[] array) {
+        if (ArrayUtils.isEmpty(array)) {
+            return ImmutablePair.of(DayOfWeek.SUNDAY, 0);
+        }
+
+        int mode = 0;
+        int maxCount = 0;
+
+        int[] counts = new int[7];
+
+        for (int i = 0; i < array.length; i++) {
+            int currentValue = array[i];
+
+            int currentFrequency = counts[currentValue]++;
+            if (currentFrequency > maxCount) {
+                maxCount = currentFrequency;
+                mode = currentValue;
+            }
+        }
+
+        return ImmutablePair.of(DayOfWeek.of(mode), maxCount);
     }
 
     static void checkUserTriggerWords(MessageReceivedEvent event, Multimap<String, Pair<Pattern, String>> userTriggerWords) {

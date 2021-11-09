@@ -4,12 +4,15 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.Quote;
 import com.badfic.philbot.data.phil.QuoteRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.time.DayOfWeek;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,10 +30,12 @@ public class QuoteCommand extends BaseSwampy {
 
     public QuoteCommand() {
         name = "quote";
+        aliases = new String[] {"quotes"};
         help = """
                 React to any message with the \uD83D\uDCAC emoji to save a Quote
                 `!!quote` to get a random quote
-                `!!quote 23` to get quote number 23""";
+                `!!quote 23` to get quote number 23
+                `!!quote stats` returns statistics about all quotes""";
     }
 
     @Override
@@ -50,6 +55,26 @@ public class QuoteCommand extends BaseSwampy {
             Quote quote = quotes.getContent().get(0);
 
             respondWithQuote(event, quote);
+            return;
+        }
+
+        if (StringUtils.startsWithIgnoreCase(event.getArgs(), "stat")) {
+            int[] quoteDaysOfWeek = quoteRepository.getQuoteDaysOfWeek();
+            Pair<DayOfWeek, Integer> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeek);
+
+            DayOfWeek day = mode.getLeft();
+            int count = mode.getRight();
+
+            long mostQuotedUserId = quoteRepository.getMostQuotedUser();
+            Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
+
+            johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Quote Statistics",
+                    String.format("Day of the week with the most quotes: %s" +
+                                    "\nNumber of quotes on that day: %d" +
+                                    "\nMost quotes: %s",
+                            day.toString(),
+                            count,
+                            mostQuotedMember != null ? mostQuotedMember.getAsMention() : "<@!" + mostQuotedUserId + ">"))).queue();
             return;
         }
 
