@@ -10,6 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -35,7 +36,8 @@ public class QuoteCommand extends BaseSwampy {
                 React to any message with the \uD83D\uDCAC emoji to save a Quote
                 `!!quote` to get a random quote
                 `!!quote 23` to get quote number 23
-                `!!quote stats` returns statistics about all quotes""";
+                `!!quote stats` returns statistics about all quotes
+                `!!quote stats @Santiago` returns statistics about Santiago""";
     }
 
     @Override
@@ -59,6 +61,28 @@ public class QuoteCommand extends BaseSwampy {
         }
 
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "stat")) {
+            if (CollectionUtils.isNotEmpty(event.getMessage().getMentionedMembers())) {
+                Member member = event.getMessage().getMentionedMembers().get(0);
+                long memberId = member.getIdLong();
+                int[] quoteDaysOfWeekForUser = quoteRepository.getQuoteDaysOfWeekForUser(memberId);
+                Pair<DayOfWeek, Integer> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeekForUser);
+
+                DayOfWeek day = mode.getLeft();
+                int count = mode.getRight();
+
+                johnJda.getTextChannelById(event.getChannel().getIdLong()).
+                        sendMessageEmbeds(Constants.simpleEmbed("User Quote Statistics",
+                                String.format("%s Statistics:" +
+                                                "\n\nTotal number of quotes: %d" +
+                                                "\n\nDay of week with the most quotes: %s" +
+                                                "\nNumber of quotes on that day: %d",
+                                        member.getAsMention(),
+                                        quoteDaysOfWeekForUser.length,
+                                        day.toString(),
+                                        count))).queue();
+                return;
+            }
+
             int[] quoteDaysOfWeek = quoteRepository.getQuoteDaysOfWeek();
             Pair<DayOfWeek, Integer> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeek);
 
@@ -68,7 +92,7 @@ public class QuoteCommand extends BaseSwampy {
             long mostQuotedUserId = quoteRepository.getMostQuotedUser();
             Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
 
-            johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Quote Statistics",
+            johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Quote Statistics",
                     String.format("Day of the week with the most quotes: %s" +
                                     "\nNumber of quotes on that day: %d" +
                                     "\nMost quotes: %s",

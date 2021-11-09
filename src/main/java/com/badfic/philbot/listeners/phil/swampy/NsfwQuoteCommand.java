@@ -10,6 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,7 +37,8 @@ public class NsfwQuoteCommand extends BaseSwampy {
                 React to any message with the 🍆 emoji to save an NsfwQuote
                 `!!nsfwQuote` to get a random quote
                 `!!nsfwQuote 23` to get quote number 23
-                `!!nsfwQuote stats` returns statistics about all nsfw quotes""";
+                `!!nsfwQuote stats` returns statistics about all nsfw quotes
+                `!!nsfwQuote stats @Santiago` returns statistics about Santiago""";
     }
 
     @Override
@@ -65,6 +67,28 @@ public class NsfwQuoteCommand extends BaseSwampy {
         }
 
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "stat")) {
+            if (CollectionUtils.isNotEmpty(event.getMessage().getMentionedMembers())) {
+                Member member = event.getMessage().getMentionedMembers().get(0);
+                long memberId = member.getIdLong();
+                int[] quoteDaysOfWeekForUser = nsfwQuoteRepository.getQuoteDaysOfWeekForUser(memberId);
+                Pair<DayOfWeek, Integer> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeekForUser);
+
+                DayOfWeek day = mode.getLeft();
+                int count = mode.getRight();
+
+                keanuJda.getTextChannelById(event.getChannel().getIdLong()).
+                        sendMessageEmbeds(Constants.simpleEmbed("User Cursed Quote Statistics",
+                                String.format("%s Statistics:" +
+                                                "\n\nTotal number of quotes: %d" +
+                                                "\n\nDay of week with the most quotes: %s" +
+                                                "\nNumber of quotes on that day: %d",
+                                        member.getAsMention(),
+                                        quoteDaysOfWeekForUser.length,
+                                        day.toString(),
+                                        count))).queue();
+                return;
+            }
+
             int[] quoteDaysOfWeek = nsfwQuoteRepository.getQuoteDaysOfWeek();
             Pair<DayOfWeek, Integer> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeek);
 
@@ -74,7 +98,7 @@ public class NsfwQuoteCommand extends BaseSwampy {
             long mostQuotedUserId = nsfwQuoteRepository.getMostQuotedUser();
             Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
 
-            keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Cursed Quote Statistics",
+            keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Cursed Quote Statistics",
                     String.format("Day of the week with the most cursed quotes: %s" +
                             "\nNumber of cursed quotes on that day: %d" +
                             "\nMost cursed quotes: %s",
