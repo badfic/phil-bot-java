@@ -74,6 +74,7 @@ public class SwampyCommand extends BaseSwampy {
                 "glow", "dress", "donut", "turn", "thirst", "thirsty", "boogie", "nice", "butt", "eggplant"
         ).sorted().toArray(String[]::new);
         help =
+                "NOTE: the \"help\", \"rank\", \"up\", \"down\", and \"slots\" swampy commands can now be used with ANY `!!` alias you want.\n\n" +
                 "`!!swampy up @Santiago` upvote a user for the swampys\n" +
                 "`!!swampy down @Santiago` downvote a user for the swampys\n\n" +
                 "`!!swampy rank` show your swampy rank\n\n" +

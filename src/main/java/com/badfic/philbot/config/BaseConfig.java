@@ -9,6 +9,7 @@ import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
 
 import com.badfic.philbot.listeners.GenericReadyListener;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
+import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -21,13 +22,18 @@ import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Stream;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.utils.IOUtil;
 import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -254,7 +260,14 @@ public class BaseConfig {
     public CommandClient philCommandClient(ThreadPoolTaskScheduler taskScheduler,
                                            List<Command> commands,
                                            HoneybadgerReporter honeybadgerReporter) {
-        return new CommandClientBuilder()
+        Optional<SwampyCommand> optSwampyCommand = commands.stream()
+                .filter(c -> c instanceof SwampyCommand)
+                .findAny()
+                .map(c -> (SwampyCommand) c);
+
+        final MutableObject<CommandClient> thisClient = new MutableObject<>();
+
+        thisClient.setValue(new CommandClientBuilder()
                 .setOwnerId(ownerId)
                 .setPrefix(Constants.PREFIX)
                 .useHelpBuilder(false)
@@ -268,8 +281,32 @@ public class BaseConfig {
                         logger.error("Exception in command: " + command.getName(), throwable);
                         honeybadgerReporter.reportError(throwable, event, "Exception in command: " + command.getName());
                     }
+
+                    @Override
+                    public void onNonCommandMessage(MessageReceivedEvent event) {
+                        if (optSwampyCommand.isPresent()) {
+                            SwampyCommand swampyCommand = optSwampyCommand.get();
+
+                            String contentRaw = event.getMessage().getContentRaw();
+
+                            if (StringUtils.startsWith(contentRaw, Constants.PREFIX)) {
+                                String message = StringUtils.substring(contentRaw, 1);
+                                message = StringUtils.trim(message);
+
+                                String[] parts;
+                                if (StringUtils.isNotBlank(message) && (parts = message.split("\\s+")).length >= 2) {
+                                    if (Stream.of("help", "rank", "up", "down", "slots")
+                                            .anyMatch(arg -> StringUtils.equalsIgnoreCase(arg, parts[1]))) {
+                                        swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, parts[1], thisClient.getValue()));
+                                    }
+                                }
+                            }
+                        }
+                    }
                 })
-                .build();
+                .build());
+
+        return thisClient.getValue();
     }
 
     @Bean(name = "philJda")
