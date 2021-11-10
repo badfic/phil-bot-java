@@ -53,7 +53,7 @@ public class NsfwQuoteCommand extends BaseSwampy {
 
             if (count < 1) {
                 keanuJda.getTextChannelById(event.getChannel().getIdLong())
-                        .sendMessage("Could not find any NsfwQuotes")
+                        .sendMessage("Could not find any nsfwQuotes")
                         .queue();
                 return;
             }
@@ -78,13 +78,17 @@ public class NsfwQuoteCommand extends BaseSwampy {
 
                 keanuJda.getTextChannelById(event.getChannel().getIdLong()).
                         sendMessageEmbeds(Constants.simpleEmbed("User Cursed Quote Statistics",
-                                String.format("%s Statistics:" +
-                                                "\n\nTotal number of quotes: %d" +
-                                                "\n\nDay of week with the most quotes: %s" +
-                                                "\nNumber of quotes on that day: %d",
+                                String.format("""
+                                                %s Statistics:
+
+                                                Total number of cursed quotes: %d
+
+                                                Day of week with the most cursed quotes: %s
+                                                Number of cursed quotes on %sS: %d""",
                                         member.getAsMention(),
                                         quoteDaysOfWeekForUser.length,
-                                        day.toString(),
+                                        day,
+                                        day,
                                         count))).queue();
                 return;
             }
@@ -99,10 +103,13 @@ public class NsfwQuoteCommand extends BaseSwampy {
             Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
 
             keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Cursed Quote Statistics",
-                    String.format("Day of the week with the most cursed quotes: %s" +
-                            "\nNumber of cursed quotes on that day: %d" +
-                            "\nMost cursed quotes: %s",
-                            day.toString(),
+                    String.format("""
+                                    Day of the week with the most cursed quotes: %s
+                                    Total number of cursed quotes on %sS: %d
+
+                                    User cursed-quoted the most: %s""",
+                            day,
+                            day,
                             count,
                             mostQuotedMember != null ? mostQuotedMember.getAsMention() : "<@!" + mostQuotedUserId + ">"))).queue();
             return;
@@ -111,7 +118,7 @@ public class NsfwQuoteCommand extends BaseSwampy {
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "delete")) {
             String[] split = event.getArgs().split("\\s+");
             if (ArrayUtils.getLength(split) != 2) {
-                event.replyError("Please specify a NsfwQuote to delete: `!!NsfwQuote delete 123`");
+                event.replyError("Please specify a NsfwQuote to delete: `!!nsfwQuote delete 123`");
                 return;
             }
 

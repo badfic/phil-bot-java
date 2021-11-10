@@ -19,7 +19,7 @@ public abstract class BaseTalk extends Command {
     public BaseTalk(String name) {
         this.name = name;
         guildOnly = false;
-        help = "!!" + name + " #channel Type Your Message\nExample: !!philTalk #general Hello Swamplings";
+        help = Constants.PREFIX + name + " #channel Type Your Message\nExample: !!philTalk #general Hello Swamplings";
     }
 
     public abstract JDA getJda();
@@ -43,7 +43,7 @@ public abstract class BaseTalk extends Command {
         }
 
         String msg = event.getMessage().getContentRaw();
-        msg = msg.replace("!!" + name + " ", "");
+        msg = msg.replace(Constants.PREFIX + name + " ", "");
         msg = msg.replace(split[0], "");
         msg = msg.trim();
 

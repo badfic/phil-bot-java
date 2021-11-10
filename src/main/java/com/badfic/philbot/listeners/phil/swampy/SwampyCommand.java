@@ -106,7 +106,7 @@ public class SwampyCommand extends BaseSwampy {
         String args = event.getArgs();
         String msgContent = event.getMessage().getContentRaw();
 
-        if (msgContent.startsWith("!!") && isNotParticipating(event.getMember())) {
+        if (msgContent.startsWith(Constants.PREFIX) && isNotParticipating(event.getMember())) {
             event.replyError("Please ask a mod to check your roles to participate in the swampys");
             return;
         }
@@ -153,7 +153,7 @@ public class SwampyCommand extends BaseSwampy {
                 reset(event);
                 awaitingResetConfirmation = false;
             }
-        } else if (msgContent.startsWith("!!")) {
+        } else if (msgContent.startsWith(Constants.PREFIX)) {
             event.replyError("Unrecognized command");
         } else {
             SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();

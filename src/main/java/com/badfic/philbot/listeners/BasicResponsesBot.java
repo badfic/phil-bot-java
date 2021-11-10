@@ -32,7 +32,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         this.objectMapper = objectMapper;
 
         this.name = name;
-        this.fullCmdPrefix = "!!" + name;
+        this.fullCmdPrefix = Constants.PREFIX + name;
         String rawHelp = "Any message containing `<name>` will make <name> respond with a random message if that channel is configured.";
         this.help = StringUtils.replace(rawHelp, "<name>", name, -1);
         this.modHelp = this.help + '\n' + StringUtils.replace("""

@@ -136,7 +136,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
         String msgContent = event.getMessage().getContentRaw();
 
-        if (StringUtils.isBlank(msgContent) || msgContent.startsWith("!!") || event.getAuthor().isBot()) {
+        if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
             return;
         }
 
@@ -279,8 +279,6 @@ public class PhilMessageListener extends ListenerAdapter {
     @Override
     public void onGuildBan(@NotNull GuildBanEvent event) {
         swampyCommand.removeFromGames(event.getUser().getId());
-        Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("event-reminders", false).stream().findFirst();
-        announcementsChannel.ifPresent(channel -> channel.sendMessage("Begone Bot " + event.getUser().getName()).queue());
 
         event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
             channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
@@ -291,12 +289,14 @@ public class PhilMessageListener extends ListenerAdapter {
         });
 
         memberCount.updateCount();
+
+        Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("event-reminders", false).stream().findFirst();
+        announcementsChannel.ifPresent(channel -> channel.sendMessage("Begone Bot " + event.getUser().getName()).queue());
     }
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
         swampyCommand.removeFromGames(event.getUser().getId());
-        memberCount.updateCount();
 
         event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
             channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
@@ -305,6 +305,13 @@ public class PhilMessageListener extends ListenerAdapter {
                             event.getUser().getEffectiveAvatarUrl()))
                     .queue();
         });
+
+        memberCount.updateCount();
+
+        if (event.getUser().isBot()) {
+            Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("event-reminders", false).stream().findFirst();
+            announcementsChannel.ifPresent(channel -> channel.sendMessage("Begone Bot " + event.getUser().getName()).queue());
+        }
     }
 
     @Override

@@ -72,13 +72,17 @@ public class QuoteCommand extends BaseSwampy {
 
                 johnJda.getTextChannelById(event.getChannel().getIdLong()).
                         sendMessageEmbeds(Constants.simpleEmbed("User Quote Statistics",
-                                String.format("%s Statistics:" +
-                                                "\n\nTotal number of quotes: %d" +
-                                                "\n\nDay of week with the most quotes: %s" +
-                                                "\nNumber of quotes on that day: %d",
+                                String.format("""
+                                                %s Statistics:
+
+                                                Total number of quotes: %d
+
+                                                Day of week with the most quotes: %s
+                                                Number of quotes on %sS: %d""",
                                         member.getAsMention(),
                                         quoteDaysOfWeekForUser.length,
-                                        day.toString(),
+                                        day,
+                                        day,
                                         count))).queue();
                 return;
             }
@@ -93,10 +97,13 @@ public class QuoteCommand extends BaseSwampy {
             Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
 
             johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Quote Statistics",
-                    String.format("Day of the week with the most quotes: %s" +
-                                    "\nNumber of quotes on that day: %d" +
-                                    "\nMost quotes: %s",
-                            day.toString(),
+                    String.format("""
+                                    Day of the week with the most quotes: %s
+                                    Total number of quotes on %sS: %d
+
+                                    User quoted the most: %s""",
+                            day,
+                            day,
                             count,
                             mostQuotedMember != null ? mostQuotedMember.getAsMention() : "<@!" + mostQuotedUserId + ">"))).queue();
             return;
