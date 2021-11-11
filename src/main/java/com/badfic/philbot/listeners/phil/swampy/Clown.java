@@ -13,20 +13,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Heart extends BaseFlagCommand {
+public class Clown extends BaseFlagCommand {
 
-    private final BufferedImage heart;
+    private final BufferedImage image;
 
-    public Heart() {
-        name = "heart";
-        help = "`Display the heart emote with various pride flags.\n" +
+    public Clown() {
+        name = "clown";
+        help = "Display the clown emote with various pride flags.\n" +
                 Arrays.toString(FLAG_NAMES) +
-                "\n`!!heart demi`: display a demi heart emote";
+                "\n`!!clown demi`: display a demi clown emote";
 
         try {
-            heart = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("flags/heart.png")));
+            image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("flags/clown.png")));
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to load heart png", e);
+            throw new IllegalStateException("Failed to load clown png", e);
         }
     }
 
@@ -45,7 +45,7 @@ public class Heart extends BaseFlagCommand {
                 return;
             }
 
-            BufferedImage newImg = new BufferedImage(heart.getWidth(), heart.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = newImg.createGraphics();
 
             graphics.setComposite(AlphaComposite.Clear);
@@ -55,18 +55,18 @@ public class Heart extends BaseFlagCommand {
             graphics.drawImage(prideImage, 0, 0, null);
 
             graphics.setComposite(AlphaComposite.SrcOver);
-            graphics.drawImage(heart, 0, 0, null);
+            graphics.drawImage(image, 0, 0, null);
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(newImg, "png", outputStream);
             graphics.dispose();
 
             event.getTextChannel().sendMessage(" ")
-                    .addFile(outputStream.toByteArray(), "heart.png")
+                    .addFile(outputStream.toByteArray(), "clown.png")
                     .queue();
         } catch (Exception e) {
-            honeybadgerReporter.reportError(e, null, "Failed to make heart, args: " + event.getArgs());
-            event.replyError("Failed to " + event.getArgs() + " heart");
+            honeybadgerReporter.reportError(e, null, "Failed to make clown, args: " + event.getArgs());
+            event.replyError("Failed to " + event.getArgs() + " clown");
         }
     }
 
