@@ -6,6 +6,7 @@ import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -55,7 +56,9 @@ public class ScooterAnkle extends BaseSwampy {
 
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         List<DiscordUser> filteredUsers = allUsers.stream()
-                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getXp() < scooterUser.getXp())
+                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD
+                        && u.getXp() < scooterUser.getXp()
+                        && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24)))
                 .collect(Collectors.toList());
 
         if (filteredUsers.size() < 1) {
