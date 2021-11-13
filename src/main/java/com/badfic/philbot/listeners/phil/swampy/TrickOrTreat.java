@@ -34,7 +34,7 @@ public class TrickOrTreat extends BaseSwampy {
         trickOrTreat();
     }
 
-    @Scheduled(cron = "0 3 9 * * ?", zone = "America/Los_Angeles")
+    @Scheduled(cron = "${swampy.schedule.events.trickortreat}", zone = "${swampy.schedule.timezone}")
     public void trickOrTreat() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         if (swampyGamesConfig == null) {

@@ -1,8 +1,8 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.phil.Quote;
-import com.badfic.philbot.data.phil.QuoteRepository;
+import com.badfic.philbot.data.phil.NsfwQuote;
+import com.badfic.philbot.data.phil.NsfwQuoteRepository;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
@@ -25,13 +25,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QuoteTrivia extends BaseSwampy {
+public class NsfwQuoteTrivia extends BaseSwampy {
 
     @Resource
-    private QuoteRepository quoteRepository;
+    private NsfwQuoteRepository nsfwQuoteRepository;
 
-    public QuoteTrivia() {
-        name = "quoteTrivia";
+    public NsfwQuoteTrivia() {
+        name = "nsfwQuoteTrivia";
         ownerCommand = true;
     }
 
@@ -40,30 +40,30 @@ public class QuoteTrivia extends BaseSwampy {
         quoteTrivia();
     }
 
-    @Scheduled(cron = "${swampy.schedule.events.quotetrivia}", zone = "${swampy.schedule.timezone}")
+    @Scheduled(cron = "${swampy.schedule.events.nsfwquotetrivia}", zone = "${swampy.schedule.timezone}")
     public void quoteTrivia() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+        TextChannel triviaChannel = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false).get(0);
         Guild guild = philJda.getGuilds().get(0);
 
-        if (swampyGamesConfig.getQuoteTriviaMsgId() != null) {
-            swampysChannel.sendMessage("There is currently a quote trivia running, you can't trigger another.").queue();
+        if (swampyGamesConfig.getNsfwQuoteTriviaMsgId() != null) {
+            triviaChannel.sendMessage("There is currently an nsfw quote trivia running, you can't trigger another.").queue();
             return;
         }
 
-        List<Long> allQuotes = quoteRepository.findAllIds();
+        List<Long> allQuotes = nsfwQuoteRepository.findAllIds();
 
         if (CollectionUtils.isEmpty(allQuotes)) {
-            swampysChannel.sendMessage("There are no quotes to do a quote trivia").queue();
+            triviaChannel.sendMessage("There are no nsfw quotes to do a trivia").queue();
             return;
         }
 
         Collections.shuffle(allQuotes);
 
-        Quote quote = null;
+        NsfwQuote quote = null;
         Member member = null;
         for (Long quoteId : allQuotes) {
-            Optional<Quote> optionalQuote = quoteRepository.findById(quoteId);
+            Optional<NsfwQuote> optionalQuote = nsfwQuoteRepository.findById(quoteId);
 
             if (optionalQuote.isPresent()) {
                 quote = optionalQuote.get();
@@ -79,16 +79,16 @@ public class QuoteTrivia extends BaseSwampy {
         }
 
         if (member == null) {
-            swampysChannel.sendMessage("There are no quotes with valid active swamplings to do a quote trivia").queue();
+            triviaChannel.sendMessage("There are no nsfw quotes with valid active swamplings to do a trivia").queue();
             return;
         }
         final Member finalMember = member;
-        final Quote finalQuote = quote;
+        final NsfwQuote finalQuote = quote;
 
         MemberCacheView members = guild.getMemberCache();
 
         if (members.size() < 3) {
-            swampysChannel.sendMessage("Not enough memebers to run a quote trivia").queue();
+            triviaChannel.sendMessage("Not enough members to run a nsfw quote trivia").queue();
             return;
         }
 
@@ -107,11 +107,11 @@ public class QuoteTrivia extends BaseSwampy {
                 "\n\nA: " + getTriviaAnswer((short) 0, finalMember, otherTwoMembers, correctAnswer) +
                 "\n\nB: " + getTriviaAnswer((short) 1, finalMember, otherTwoMembers, correctAnswer) +
                 "\n\nC: " + getTriviaAnswer((short) 2, finalMember, otherTwoMembers, correctAnswer);
-        String title = "Quote Trivia time! (for " + swampyGamesConfig.getQuoteTriviaEventPoints() + " points)";
-        swampysChannel.sendMessageEmbeds(Constants.simpleEmbed(title, description)).queue(success -> {
-            swampyGamesConfig.setQuoteTriviaCorrectAnswer(correctAnswer);
-            swampyGamesConfig.setQuoteTriviaMsgId(success.getId());
-            swampyGamesConfig.setQuoteTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
+        String title = "\uD83C\uDF46 Quote Trivia time! (for " + swampyGamesConfig.getNsfwQuoteTriviaEventPoints() + " points)";
+        triviaChannel.sendMessageEmbeds(Constants.simpleEmbed(title, description)).queue(success -> {
+            swampyGamesConfig.setNsfwQuoteTriviaCorrectAnswer(correctAnswer);
+            swampyGamesConfig.setNsfwQuoteTriviaMsgId(success.getId());
+            swampyGamesConfig.setNsfwQuoteTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
             success.addReaction("\uD83C\uDDE6").queue();

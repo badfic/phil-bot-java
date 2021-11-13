@@ -15,7 +15,7 @@ public class DailyTicker extends BaseService {
     @Resource
     private List<DailyTickable> dailyTickables;
 
-    @Scheduled(cron = "0 0 2 * * ?", zone = "America/Los_Angeles")
+    @Scheduled(cron = "${swampy.schedule.daily}", zone = "${swampy.schedule.timezone}")
     public void masterTick() {
         for (DailyTickable runnable : dailyTickables) {
             threadPoolTaskExecutor.submit(() -> {

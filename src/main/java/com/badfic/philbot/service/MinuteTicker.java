@@ -16,7 +16,7 @@ public class MinuteTicker extends BaseService {
     @Resource
     private List<MinuteTickable> minuteTickables;
 
-    @Scheduled(cron = "0 * * * * ?", zone = "America/Los_Angeles")
+    @Scheduled(cron = "${swampy.schedule.minutely}", zone = "${swampy.schedule.timezone}")
     public void masterTick() {
         if (philJda == null || CollectionUtils.isEmpty(philJda.getGuilds())) {
             logger.info("Still setting up philJDA, MinuteTicker shows it as null");

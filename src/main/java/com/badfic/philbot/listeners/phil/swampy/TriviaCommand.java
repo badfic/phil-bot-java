@@ -58,7 +58,7 @@ public class TriviaCommand extends BaseSwampy {
         }
     }
 
-    @Scheduled(cron = "0 37 3,7,11,15,19,23 * * ?", zone = "America/Los_Angeles")
+    @Scheduled(cron = "${swampy.schedule.events.trivia}", zone = "${swampy.schedule.timezone}")
     public void trivia() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);

@@ -59,6 +59,15 @@ public class SwampyGamesConfig {
     private LocalDateTime quoteTriviaExpiration;
 
     @Column
+    private String nsfwQuoteTriviaMsgId;
+
+    @Column
+    private Short nsfwQuoteTriviaCorrectAnswer;
+
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime nsfwQuoteTriviaExpiration;
+
+    @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int normalMsgPoints = 5;
 
@@ -145,6 +154,10 @@ public class SwampyGamesConfig {
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int quoteTriviaEventPoints = 100;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int nsfwQuoteTriviaEventPoints = 100;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
@@ -393,6 +406,30 @@ public class SwampyGamesConfig {
         this.quoteTriviaExpiration = quoteTriviaExpiration;
     }
 
+    public String getNsfwQuoteTriviaMsgId() {
+        return nsfwQuoteTriviaMsgId;
+    }
+
+    public void setNsfwQuoteTriviaMsgId(String nsfwQuoteTriviaMsgId) {
+        this.nsfwQuoteTriviaMsgId = nsfwQuoteTriviaMsgId;
+    }
+
+    public Short getNsfwQuoteTriviaCorrectAnswer() {
+        return nsfwQuoteTriviaCorrectAnswer;
+    }
+
+    public void setNsfwQuoteTriviaCorrectAnswer(Short nsfwQuoteTriviaCorrectAnswer) {
+        this.nsfwQuoteTriviaCorrectAnswer = nsfwQuoteTriviaCorrectAnswer;
+    }
+
+    public LocalDateTime getNsfwQuoteTriviaExpiration() {
+        return nsfwQuoteTriviaExpiration;
+    }
+
+    public void setNsfwQuoteTriviaExpiration(LocalDateTime nsfwQuoteTriviaExpiration) {
+        this.nsfwQuoteTriviaExpiration = nsfwQuoteTriviaExpiration;
+    }
+
     public int getNormalMsgPoints() {
         return normalMsgPoints;
     }
@@ -567,6 +604,14 @@ public class SwampyGamesConfig {
 
     public void setQuoteTriviaEventPoints(int quoteTriviaEventPoints) {
         this.quoteTriviaEventPoints = quoteTriviaEventPoints;
+    }
+
+    public int getNsfwQuoteTriviaEventPoints() {
+        return nsfwQuoteTriviaEventPoints;
+    }
+
+    public void setNsfwQuoteTriviaEventPoints(int nsfwQuoteTriviaEventPoints) {
+        this.nsfwQuoteTriviaEventPoints = nsfwQuoteTriviaEventPoints;
     }
 
     public int getRobinhoodMinPercent() {

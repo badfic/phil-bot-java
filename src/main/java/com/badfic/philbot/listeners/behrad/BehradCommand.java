@@ -59,7 +59,7 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
                 "behrad-kidFriendlyConfig.json", "behrad-nsfwConfig.json", BehradResponsesConfig::new);
     }
 
-    @Scheduled(cron = "0 2 7 * * WED", zone = "America/Los_Angeles")
+    @Scheduled(cron = "${swampy.schedule.behrad.humpday}", zone = "${swampy.schedule.timezone}")
     public void goodMorning() {
         TextChannel general = behradJda.getTextChannelsByName("general", false).get(0);
         general.sendMessage("https://tenor.com/view/itis-wednesdaymy-dudes-wednesday-viralyoutube-gif-18012295").queue();

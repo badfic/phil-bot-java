@@ -49,12 +49,12 @@ public class Sweepstakes extends BaseSwampy {
         doSweepstakes(role.getName());
     }
 
-    @Scheduled(cron = "0 3 16 * * ?", zone = "America/Los_Angeles")
+    @Scheduled(cron = "${swampy.schedule.events.sweepstakes18}", zone = "${swampy.schedule.timezone}")
     public void sweepstakes18() {
         doSweepstakes(Constants.EIGHTEEN_PLUS_ROLE);
     }
 
-    @Scheduled(cron = "0 7 16 * * ?", zone = "America/Los_Angeles")
+    @Scheduled(cron = "${swampy.schedule.events.sweepstakeschaos}", zone = "${swampy.schedule.timezone}")
     public void sweepstakesChaos() {
         doSweepstakes(Constants.CHAOS_CHILDREN_ROLE);
     }

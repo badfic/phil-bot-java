@@ -46,7 +46,7 @@ public class Stonks extends BaseSwampy {
         stonks();
     }
 
-    @Scheduled(cron = "0 17 16 * * ?", zone = "America/Los_Angeles")
+    @Scheduled(cron = "${swampy.schedule.events.stonks}", zone = "${swampy.schedule.timezone}")
     public void stonks() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 

@@ -39,7 +39,7 @@ public class RssSubscriber extends BaseService {
     @Resource
     private Ao3MetadataParser ao3MetadataParser;
 
-    @Scheduled(cron = "0 0,30 * * * ?", zone = "America/Los_Angeles")
+    @Scheduled(cron = "${swampy.schedule.rss}", zone = "${swampy.schedule.timezone}")
     public void run() {
         threadPoolTaskExecutor.submit(this::refresh);
     }

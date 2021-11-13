@@ -36,7 +36,7 @@ public class Robinhood extends BaseSwampy {
         doRobinhood(true);
     }
 
-    @Scheduled(cron = "0 9 16 * * ?", zone = "America/Los_Angeles")
+    @Scheduled(cron = "${swampy.schedule.events.robinhood}", zone = "${swampy.schedule.timezone}")
     public void robinhood() {
         doRobinhood(false);
     }
