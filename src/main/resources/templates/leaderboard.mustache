@@ -147,11 +147,11 @@
             }
         },
         created: function() {
-            fetch("/leaderboard/bastards")
+            fetch("/members/leaderboard/bastards")
                     .then(response => response.json())
                     .then(result => this.bastards = result);
 
-            fetch("/leaderboard/children")
+            fetch("/members/leaderboard/children")
                     .then(response => response.json())
                     .then(result => this.children = result);
         }
