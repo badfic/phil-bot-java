@@ -1,6 +1,10 @@
 package com.badfic.philbot.web.swamp;
 
 import com.badfic.philbot.config.BaseConfig;
+import com.badfic.philbot.service.DailyMarvelMemeService;
+import com.badfic.philbot.service.DailyRiverdaleMemeService;
+import com.badfic.philbot.service.HowWeBecameCursedService;
+import com.badfic.philbot.service.HungerGamesWinnersService;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -17,6 +21,18 @@ public class SwampController {
 
     @Resource
     private BaseConfig baseConfig;
+
+    @Resource
+    private HungerGamesWinnersService hungerGamesWinnersService;
+
+    @Resource
+    private HowWeBecameCursedService howWeBecameCursedService;
+
+    @Resource
+    private DailyMarvelMemeService dailyMarvelMemeService;
+
+    @Resource
+    private DailyRiverdaleMemeService dailyRiverdaleMemeService;
 
     @GetMapping(value = "/commands")
     public ResponseEntity<String> getOldCommandsPage() {
@@ -53,6 +69,7 @@ public class SwampController {
     public ModelAndView getRiverdaleMemes() throws Exception {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Riverdale Memes — The Swamp");
+        props.put("messages", dailyRiverdaleMemeService.getMessages());
         return new ModelAndView("riverdale-memes", props);
     }
 
@@ -60,6 +77,7 @@ public class SwampController {
     public ModelAndView getMarvelMemes() throws Exception {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Marvel Memes — The Swamp");
+        props.put("messages", dailyMarvelMemeService.getMessages());
         return new ModelAndView("marvel-memes", props);
     }
 
@@ -67,6 +85,7 @@ public class SwampController {
     public ModelAndView getCursedTimeline() throws Exception {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Cursed Timeline — The Swamp");
+        props.put("messages", howWeBecameCursedService.getMessages());
         return new ModelAndView("cursed-timeline", props);
     }
 
@@ -74,6 +93,7 @@ public class SwampController {
     public ModelAndView getHungerGames() throws Exception {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Cursed Timeline — The Swamp");
+        props.put("messages", hungerGamesWinnersService.getMessages());
         return new ModelAndView("hunger-games", props);
     }
 

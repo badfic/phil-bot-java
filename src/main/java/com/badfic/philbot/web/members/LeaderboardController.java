@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -31,6 +32,7 @@ public class LeaderboardController extends BaseMembersController {
     }
 
     @GetMapping(value = "/leaderboard/bastards", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
     public List<DiscordUser> getBastards(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
 
@@ -51,6 +53,7 @@ public class LeaderboardController extends BaseMembersController {
     }
 
     @GetMapping(value = "/leaderboard/children", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
     public List<DiscordUser> getChildren(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
 
