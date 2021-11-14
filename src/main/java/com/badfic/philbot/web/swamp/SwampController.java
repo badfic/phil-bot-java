@@ -8,6 +8,7 @@ import com.badfic.philbot.service.HungerGamesWinnersService;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,14 +35,24 @@ public class SwampController {
     @Resource
     private DailyRiverdaleMemeService dailyRiverdaleMemeService;
 
-    @GetMapping(value = "/commands")
-    public ResponseEntity<String> getOldCommandsPage() {
-        return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, baseConfig.hostname + "/members/commands").build();
-    }
-
-    @GetMapping(value = "/live")
-    public ResponseEntity<String> getOldLivePage() {
-        return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, baseConfig.hostname + "/members/live").build();
+    @GetMapping(value = {
+            "/chat-popout",
+            "/commands",
+            "/games-config",
+            "/leaderboard",
+            "/live",
+            "/logout",
+            "/meme-commands",
+            "/nsfw-quotes",
+            "/quotes",
+            "/ranks",
+            "/reminders",
+            "/trivia"
+    })
+    public ResponseEntity<String> getOldCommandsPage(HttpServletRequest httpServletRequest) {
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header(HttpHeaders.LOCATION, baseConfig.hostname + "/members" + httpServletRequest.getRequestURI())
+                .build();
     }
 
     @GetMapping(value = {"/", "/index.html"}, produces = MediaType.TEXT_HTML_VALUE)
