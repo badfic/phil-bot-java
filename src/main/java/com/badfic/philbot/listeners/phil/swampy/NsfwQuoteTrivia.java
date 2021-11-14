@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.utils.cache.MemberCacheView;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -85,19 +85,23 @@ public class NsfwQuoteTrivia extends BaseSwampy {
         final Member finalMember = member;
         final NsfwQuote finalQuote = quote;
 
-        MemberCacheView members = guild.getMemberCache();
-
-        if (members.size() < 3) {
-            triviaChannel.sendMessage("Not enough members to run a nsfw quote trivia").queue();
-            return;
-        }
+        List<Member> members = guild.getMemberCache().stream().collect(Collectors.toList());
+        Collections.shuffle(members);
 
         Set<Member> otherTwoMembers = new HashSet<>();
-        while (otherTwoMembers.size() < 2) {
-            Member randomMember = Constants.pickRandom(members, members.size());
-            if (randomMember.getIdLong() != finalMember.getIdLong()) {
+        for (Member randomMember : members) {
+            if (randomMember.getIdLong() != finalMember.getIdLong() && hasRole(randomMember, Constants.EIGHTEEN_PLUS_ROLE)) {
                 otherTwoMembers.add(randomMember);
             }
+
+            if (otherTwoMembers.size() > 1) {
+                break;
+            }
+        }
+
+        if (otherTwoMembers.size() < 2) {
+            triviaChannel.sendMessage("Not enough members to run an \uD83C\uDF46 quote trivia").queue();
+            return;
         }
 
         short correctAnswer = (short) ThreadLocalRandom.current().nextInt(3);

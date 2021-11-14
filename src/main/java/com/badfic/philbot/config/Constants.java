@@ -63,15 +63,6 @@ public interface Constants {
         return iterator.next();
     }
 
-    static <T> T pickRandom(Iterable<T> collection, long size) {
-        long index = ThreadLocalRandom.current().nextLong(size);
-        Iterator<T> iterator = collection.iterator();
-        for (long i = 0; i < index; i++) {
-            iterator.next();
-        }
-        return iterator.next();
-    }
-
     static String prettyPrintDuration(Duration duration) {
         return duration.toString()
                 .substring(2)
