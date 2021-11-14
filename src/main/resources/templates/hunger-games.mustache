@@ -1,0 +1,48 @@
+{{> swamp-header}}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center">Hunger Games Winners</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm"></div>
+        <div class="col-sm">
+            <div id="app">
+                <div class="swamp" v-for="message in messages" v-html="message">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm"></div>
+    </div>
+</div>
+
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            messages: []
+        }
+    });
+
+    fetch("https://philbot.desdemonawren.com/hunger-games-winners", {
+        "method": "GET"
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            console.log("Could not load hunger-games-winners.json, Server returned " + response.status + " : " + response.statusText);
+        }
+    })
+    .then(response => {
+        app.messages = response;
+    })
+    .catch(err => {
+        console.log("Could not load hunger-games-winners.json, caught error: " + err);
+    });
+</script>
+
+{{> footer}}

@@ -17,6 +17,9 @@ server:
   servlet:
     session:
       timeout: 604800
+  error:
+    whitelabel:
+      enabled: false
 
 swampy:
   schedule:

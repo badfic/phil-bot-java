@@ -1,0 +1,50 @@
+{{> swamp-header}}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center">The Story of How We Became Cursed</h2>
+            <p class="text-center">THE FOLLOWING IS THE REAL LIFE ACCOUNT OF HOW RARE PAIR AFFAIR WENT FROM BEING AN
+                INNOCENT RARE PAIR SERVER TO THE CURSED SERVER IT IS TODAY</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm"></div>
+        <div class="col-sm">
+            <div id="app">
+                <div class="swamp" v-for="message in messages" v-html="message">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm"></div>
+    </div>
+</div>
+
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            messages: []
+        }
+    });
+
+    fetch("https://philbot.desdemonawren.com/how-we-became-cursed", {
+        "method": "GET"
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            console.log("Could not load how-we-became-cursed.json, Server returned " + response.status + " : " + response.statusText);
+        }
+    })
+    .then(response => {
+        app.messages = response;
+    })
+    .catch(err => {
+        console.log("Could not load how-we-became-cursed.json, caught error: " + err);
+    });
+</script>
+
+{{> footer}}

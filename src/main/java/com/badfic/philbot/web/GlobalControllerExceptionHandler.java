@@ -35,7 +35,7 @@ public class GlobalControllerExceptionHandler {
                 .append("https://discord.com/api/oauth2/authorize?client_id=")
                 .append(baseConfig.discordClientId)
                 .append("&redirect_uri=")
-                .append(URLEncoder.encode(baseConfig.hostname, StandardCharsets.UTF_8.name()))
+                .append(URLEncoder.encode(baseConfig.hostname + "/members/home", StandardCharsets.UTF_8.name()))
                 .append("&response_type=code&scope=identify");
         return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, urlBuilder.toString()).build();
     }

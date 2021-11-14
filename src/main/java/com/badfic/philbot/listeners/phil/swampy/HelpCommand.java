@@ -13,7 +13,7 @@ public class HelpCommand extends BaseSwampy {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.reply("Find help for commands here: " + baseConfig.hostname + "/commands");
+        event.reply("Find help for commands here: " + baseConfig.hostname + "/members/commands");
     }
 
 }
