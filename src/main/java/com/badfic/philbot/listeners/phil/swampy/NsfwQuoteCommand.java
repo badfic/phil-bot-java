@@ -3,13 +3,21 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.NsfwQuote;
 import com.badfic.philbot.data.phil.NsfwQuoteRepository;
+import com.badfic.philbot.data.phil.SwampyGamesConfig;
+import com.badfic.philbot.service.DailyTickable;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.DayOfWeek;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.MessageHistory;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +28,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NsfwQuoteCommand extends BaseSwampy {
+public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
+
+    private static final String EGGPLANT_EMOJI = "\uD83C\uDF46";
 
     @Resource(name = "keanuJda")
     @Lazy
@@ -38,13 +48,68 @@ public class NsfwQuoteCommand extends BaseSwampy {
                 `!!nsfwQuote` to get a random quote
                 `!!nsfwQuote 23` to get quote number 23
                 `!!nsfwQuote stats` returns statistics about all nsfw quotes
-                `!!nsfwQuote stats @Santiago` returns statistics about Santiago""";
+                `!!nsfwQuote stats @Santiago` returns statistics about Santiago
+                `!!nsfwQuote cache` runs the meme saver if a channel is configured""";
+    }
+
+    @Override
+    public void runDailyTask() {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        long channelId = swampyGamesConfig.getNsfwSavedMemesChannelId();
+
+        if (channelId > 0) {
+            Set<String> images = nsfwQuoteRepository.findAllNonNullImages();
+
+            TextChannel philLookedUpChannel = philJda.getTextChannelById(channelId);
+            TextChannel keanuLookedUpChannel = keanuJda.getTextChannelById(channelId);
+
+            if (philLookedUpChannel == null || keanuLookedUpChannel == null) {
+                Constants.debugToTestChannel(keanuJda, "Could not update nsfw saved memes channel, it does not exist");
+                return;
+            }
+
+            long lastMsgId = 0;
+            while (lastMsgId != -1) {
+                MessageHistory history;
+                if (lastMsgId == 0) {
+                    history = philLookedUpChannel.getHistoryFromBeginning(100).complete();
+                } else {
+                    history = philLookedUpChannel.getHistoryAfter(lastMsgId, 100).complete();
+                }
+
+                lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())
+                        ? history.getRetrievedHistory().get(0).getIdLong()
+                        : -1;
+
+                for (Message message : history.getRetrievedHistory()) {
+                    images.remove(message.getContentRaw());
+                }
+            }
+
+            for (String image : images) {
+                keanuLookedUpChannel.sendMessage(image).queue();
+            }
+
+            Constants.debugToTestChannel(keanuJda, "Successfully updated nsfw saved memes channel");
+        } else {
+            Constants.debugToTestChannel(keanuJda, "Could not update nsfw saved memes channel, no channel is configured");
+        }
     }
 
     @Override
     protected void execute(CommandEvent event) {
         if (!event.getTextChannel().isNSFW()) {
             event.replyError("nsfwQuote can only be called in an nsfw channel");
+            return;
+        }
+
+        if (StringUtils.startsWithIgnoreCase(event.getArgs(), "cache")) {
+            if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
+                event.replyError("You do not have permission to execute this command");
+                return;
+            }
+
+            threadPoolTaskExecutor.submit(this::runDailyTask);
             return;
         }
 
@@ -151,6 +216,41 @@ public class NsfwQuoteCommand extends BaseSwampy {
             respondWithQuote(event, optionalQuote.get());
         } catch (NumberFormatException e) {
             keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Did not recognize number " + event.getArgs()).queue();
+        }
+    }
+
+    public String getEmoji() {
+        return EGGPLANT_EMOJI;
+    }
+
+    public void saveQuote(GenericGuildMessageReactionEvent event) {
+        long messageId = event.getMessageIdLong();
+        long channelId = event.getChannel().getIdLong();
+        long guildId = event.getGuild().getIdLong();
+        long quoterId = event.getUserIdLong();
+
+        if (!nsfwQuoteRepository.existsByMessageId(messageId)) {
+            keanuJda.getTextChannelById(channelId).retrieveMessageById(messageId).queue(msg -> {
+                String image = null;
+                if (CollectionUtils.isNotEmpty(msg.getEmbeds())) {
+                    image = msg.getEmbeds().get(0).getUrl();
+                }
+                if (CollectionUtils.isNotEmpty(msg.getAttachments())) {
+                    image = msg.getAttachments().get(0).getUrl();
+                }
+
+                NsfwQuote savedQuote = nsfwQuoteRepository.save(new NsfwQuote(messageId, channelId, msg.getContentRaw(), image,
+                        msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
+
+                msg.addReaction(EGGPLANT_EMOJI).queue();
+
+                String msgLink = " [(jump)](https://discordapp.com/channels/" + guildId + '/' + channelId + '/' + messageId + ')';
+
+                MessageEmbed messageEmbed = Constants.simpleEmbed("NsfwQuote #" + savedQuote.getId() + " Added",
+                        "<@!" + quoterId + "> Added NsfwQuote #" + savedQuote.getId() + msgLink);
+
+                keanuJda.getTextChannelById(channelId).sendMessageEmbeds(messageEmbed).queue();
+            });
         }
     }
 

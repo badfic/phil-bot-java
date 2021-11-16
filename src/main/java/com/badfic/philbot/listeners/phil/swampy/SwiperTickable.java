@@ -22,7 +22,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
-    public void run() {
+    public void runMinutelyTask() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
         Guild guild = philJda.getGuilds().get(0);

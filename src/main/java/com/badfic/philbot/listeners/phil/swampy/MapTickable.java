@@ -24,7 +24,7 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
-    public void run() {
+    public void runMinutelyTask() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         if (Objects.nonNull(swampyGamesConfig.getMapPhrase())

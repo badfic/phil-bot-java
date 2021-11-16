@@ -1,4 +1,5 @@
 package com.badfic.philbot.service;
 
-public interface DailyTickable extends Runnable {
+public interface DailyTickable {
+    void runDailyTask();
 }

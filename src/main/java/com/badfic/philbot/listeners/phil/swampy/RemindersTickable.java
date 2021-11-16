@@ -21,7 +21,7 @@ public class RemindersTickable implements MinuteTickable {
     private JDA johnJda;
 
     @Override
-    public void run() {
+    public void runMinutelyTask() {
         LocalDateTime now = LocalDateTime.now();
         for (Reminder reminder : reminderRepository.findByDueDateBefore(now)) {
             TextChannel textChannelById = johnJda.getTextChannelById(reminder.getChannelId());

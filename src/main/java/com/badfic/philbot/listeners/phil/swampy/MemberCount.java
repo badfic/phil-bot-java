@@ -66,7 +66,7 @@ public class MemberCount extends BaseSwampy implements DailyTickable {
     }
 
     @Override
-    public void run() {
+    public void runDailyTask() {
         updateCount();
     }
 

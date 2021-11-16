@@ -29,7 +29,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
     private HowWeBecameCursedRepository howWeBecameCursedRepository;
 
     @Override
-    public void run() {
+    public void runDailyTask() {
         Optional<TextChannel> optionalChannel = philJda.getGuilds().get(0).getTextChannelsByName("how-we-became-cursed", false).stream().findFirst();
 
         if (optionalChannel.isEmpty()) {

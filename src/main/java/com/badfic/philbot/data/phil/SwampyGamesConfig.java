@@ -64,6 +64,9 @@ public class SwampyGamesConfig {
     @Column
     private Short nsfwQuoteTriviaCorrectAnswer;
 
+    @Column
+    private long memberCountChannel;
+
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime nsfwQuoteTriviaExpiration;
 
@@ -284,7 +287,12 @@ public class SwampyGamesConfig {
     private String trickOrTreatTrickEmoji = "\uD83D\uDEA7";
 
     @Column
-    private long memberCountChannel;
+    @ControllerConfigurable(type = ControllerConfigurable.Type.LONG)
+    private long sfwSavedMemesChannelId = 0;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.LONG)
+    private long nsfwSavedMemesChannelId = 0;
 
     public Short getId() {
         return id;
@@ -428,6 +436,14 @@ public class SwampyGamesConfig {
 
     public void setNsfwQuoteTriviaExpiration(LocalDateTime nsfwQuoteTriviaExpiration) {
         this.nsfwQuoteTriviaExpiration = nsfwQuoteTriviaExpiration;
+    }
+
+    public long getMemberCountChannel() {
+        return memberCountChannel;
+    }
+
+    public void setMemberCountChannel(long memberCountChannel) {
+        this.memberCountChannel = memberCountChannel;
     }
 
     public int getNormalMsgPoints() {
@@ -854,12 +870,20 @@ public class SwampyGamesConfig {
         this.trickOrTreatTrickEmoji = trickOrTreatTrickEmoji;
     }
 
-    public long getMemberCountChannel() {
-        return memberCountChannel;
+    public long getSfwSavedMemesChannelId() {
+        return sfwSavedMemesChannelId;
     }
 
-    public void setMemberCountChannel(long memberCountChannel) {
-        this.memberCountChannel = memberCountChannel;
+    public void setSfwSavedMemesChannelId(long sfwSavedMemesChannelId) {
+        this.sfwSavedMemesChannelId = sfwSavedMemesChannelId;
+    }
+
+    public long getNsfwSavedMemesChannelId() {
+        return nsfwSavedMemesChannelId;
+    }
+
+    public void setNsfwSavedMemesChannelId(long nsfwSavedMemesChannelId) {
+        this.nsfwSavedMemesChannelId = nsfwSavedMemesChannelId;
     }
 
 }

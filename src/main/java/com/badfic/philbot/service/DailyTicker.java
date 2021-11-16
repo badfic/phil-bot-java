@@ -17,13 +17,13 @@ public class DailyTicker extends BaseService {
 
     @Scheduled(cron = "${swampy.schedule.daily}", zone = "${swampy.schedule.timezone}")
     public void masterTick() {
-        for (DailyTickable runnable : dailyTickables) {
+        for (DailyTickable tickable : dailyTickables) {
             threadPoolTaskExecutor.submit(() -> {
                 try {
-                    runnable.run();
+                    tickable.runDailyTask();
                 } catch (Exception e) {
-                    logger.error("Exception in daily tickable [{}]", runnable.getClass().getName(), e);
-                    honeybadgerReporter.reportError(e, null, "Exception in daily tickable: " + runnable.getClass().getName());
+                    logger.error("Exception in daily tickable [{}]", tickable.getClass().getName(), e);
+                    honeybadgerReporter.reportError(e, null, "Exception in daily tickable: " + tickable.getClass().getName());
                 }
             });
         }

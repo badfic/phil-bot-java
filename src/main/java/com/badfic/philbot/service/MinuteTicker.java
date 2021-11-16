@@ -23,12 +23,12 @@ public class MinuteTicker extends BaseService {
             return; // Context is still setting up and the minute rolled over before phil received the ready message from discord api.
         }
 
-        for (MinuteTickable runnable : minuteTickables) {
+        for (MinuteTickable tickable : minuteTickables) {
             try {
-                runnable.run();
+                tickable.runMinutelyTask();
             } catch (Exception e) {
-                logger.error("Exception in minute tickable [{}]", runnable.getClass().getName(), e);
-                honeybadgerReporter.reportError(e, null, "Exception in minute tickable: " + runnable.getClass().getName());
+                logger.error("Exception in minute tickable [{}]", tickable.getClass().getName(), e);
+                honeybadgerReporter.reportError(e, null, "Exception in minute tickable: " + tickable.getClass().getName());
             }
         }
     }

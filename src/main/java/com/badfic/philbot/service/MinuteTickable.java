@@ -1,4 +1,5 @@
 package com.badfic.philbot.service;
 
-public interface MinuteTickable extends Runnable {
+public interface MinuteTickable {
+    void runMinutelyTask();
 }

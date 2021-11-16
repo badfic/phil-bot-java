@@ -1,15 +1,13 @@
 package com.badfic.philbot.listeners.phil;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.phil.NsfwQuote;
-import com.badfic.philbot.data.phil.NsfwQuoteRepository;
-import com.badfic.philbot.data.phil.Quote;
-import com.badfic.philbot.data.phil.QuoteRepository;
 import com.badfic.philbot.listeners.antonia.AntoniaMessageListener;
 import com.badfic.philbot.listeners.behrad.BehradMessageListener;
 import com.badfic.philbot.listeners.john.JohnMessageListener;
 import com.badfic.philbot.listeners.keanu.KeanuMessageListener;
 import com.badfic.philbot.listeners.phil.swampy.MemberCount;
+import com.badfic.philbot.listeners.phil.swampy.NsfwQuoteCommand;
+import com.badfic.philbot.listeners.phil.swampy.QuoteCommand;
 import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
 import com.badfic.philbot.service.Ao3MetadataParser;
 import com.google.common.cache.Cache;
@@ -25,7 +23,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -39,7 +36,6 @@ import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEve
 import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -94,10 +90,12 @@ public class PhilMessageListener extends ListenerAdapter {
     private JDA johnJda;
 
     @Resource
-    private QuoteRepository quoteRepository;
+    @Lazy
+    private NsfwQuoteCommand nsfwQuoteCommand;
 
     @Resource
-    private NsfwQuoteRepository nsfwQuoteRepository;
+    @Lazy
+    private QuoteCommand quoteCommand;
 
     @Resource
     private PhilCommand philCommand;
@@ -170,61 +168,13 @@ public class PhilMessageListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
-        if (event.getReactionEmote().isEmoji() && "\uD83D\uDCAC".equals(event.getReactionEmote().getEmoji())) {
-            if (!quoteRepository.existsByMessageId(event.getMessageIdLong())) {
-                event.getChannel().retrieveMessageById(event.getMessageId()).queue(msg -> {
-                    long msgId = msg.getIdLong();
-                    long channelId = msg.getChannel().getIdLong();
-
-                    String image = null;
-                    if (CollectionUtils.isNotEmpty(msg.getEmbeds())) {
-                        image = msg.getEmbeds().get(0).getUrl();
-                    }
-                    if (CollectionUtils.isNotEmpty(msg.getAttachments())) {
-                        image = msg.getAttachments().get(0).getUrl();
-                    }
-
-                    Quote savedQuote = quoteRepository.save(new Quote(msgId, channelId, msg.getContentRaw(), image,
-                            msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
-
-                    msg.addReaction("\uD83D\uDCAC").queue();
-
-                    String msgLink = " [(jump)](https://discordapp.com/channels/" + event.getGuild().getIdLong() + '/' + channelId + '/' + msgId + ')';
-
-                    MessageEmbed messageEmbed = Constants.simpleEmbed("Quote #" + savedQuote.getId() + " Added",
-                            "<@!" + event.getUserId() + "> Added quote #" + savedQuote.getId() + msgLink);
-
-                    johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(messageEmbed).queue();
-                });
+        if (event.getReactionEmote().isEmoji()) {
+            if (quoteCommand.getEmoji().equals(event.getReactionEmote().getEmoji())) {
+                quoteCommand.saveQuote(event);
             }
-        }
 
-        if (event.getReactionEmote().isEmoji() && "\uD83C\uDF46".equals(event.getReactionEmote().getEmoji())) {
-            if (!nsfwQuoteRepository.existsByMessageId(event.getMessageIdLong())) {
-                event.getChannel().retrieveMessageById(event.getMessageId()).queue(msg -> {
-                    long msgId = msg.getIdLong();
-                    long channelId = msg.getChannel().getIdLong();
-
-                    String image = null;
-                    if (CollectionUtils.isNotEmpty(msg.getEmbeds())) {
-                        image = msg.getEmbeds().get(0).getUrl();
-                    }
-                    if (CollectionUtils.isNotEmpty(msg.getAttachments())) {
-                        image = msg.getAttachments().get(0).getUrl();
-                    }
-
-                    NsfwQuote savedQuote = nsfwQuoteRepository.save(new NsfwQuote(msgId, channelId, msg.getContentRaw(), image,
-                            msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
-
-                    msg.addReaction("\uD83C\uDF46").queue();
-
-                    String msgLink = " [(jump)](https://discordapp.com/channels/" + event.getGuild().getIdLong() + '/' + channelId + '/' + msgId + ')';
-
-                    MessageEmbed messageEmbed = Constants.simpleEmbed("NsfwQuote #" + savedQuote.getId() + " Added",
-                            "<@!" + event.getUserId() + "> Added NsfwQuote #" + savedQuote.getId() + msgLink);
-
-                    johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(messageEmbed).queue();
-                });
+            if (nsfwQuoteCommand.getEmoji().equals(event.getReactionEmote().getEmoji())) {
+                nsfwQuoteCommand.saveQuote(event);
             }
         }
 

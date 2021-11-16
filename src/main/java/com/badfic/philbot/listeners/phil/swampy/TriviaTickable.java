@@ -27,7 +27,7 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
     private TriviaRepository triviaRepository;
 
     @Override
-    public void run() {
+    public void runMinutelyTask() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         if (Objects.nonNull(swampyGamesConfig.getTriviaMsgId())

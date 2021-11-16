@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class NsfwQuoteTriviaTickable extends NonCommandSwampy implements MinuteTickable {
 
     @Override
-    public void run() {
+    public void runMinutelyTask() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         if (Objects.nonNull(swampyGamesConfig.getNsfwQuoteTriviaMsgId())

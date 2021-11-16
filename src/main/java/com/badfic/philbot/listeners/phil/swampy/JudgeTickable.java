@@ -30,7 +30,7 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
     private CourtCaseRepository courtCaseRepository;
 
     @Override
-    public void run() {
+    public void runMinutelyTask() {
         Guild guild = philJda.getGuilds().get(0);
         Role megaHellRole = guild.getRolesByName(Constants.MEGA_HELL_ROLE, false).get(0);
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);

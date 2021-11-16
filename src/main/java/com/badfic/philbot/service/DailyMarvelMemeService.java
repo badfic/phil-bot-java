@@ -37,11 +37,11 @@ public class DailyMarvelMemeService extends BaseSwampy implements DailyTickable 
 
     @Override
     protected void execute(CommandEvent event) {
-        threadPoolTaskExecutor.submit(this);
+        threadPoolTaskExecutor.submit(this::runDailyTask);
     }
 
     @Override
-    public void run() {
+    public void runDailyTask() {
         List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
             honeybadgerReporter.reportError(new RuntimeException("Failed to find " + Constants.MEMES_CHANNEL + " channel"));

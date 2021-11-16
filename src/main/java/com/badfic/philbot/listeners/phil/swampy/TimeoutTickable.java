@@ -18,7 +18,7 @@ public class TimeoutTickable extends BaseService implements MinuteTickable {
     private TimeoutCaseRepository timeoutCaseRepository;
 
     @Override
-    public void run() {
+    public void runMinutelyTask() {
         TextChannel timeoutChannel = philJda.getTextChannelById(baseConfig.timeoutChannelId);
         Guild guild = philJda.getGuilds().get(0);
 

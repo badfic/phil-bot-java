@@ -29,11 +29,11 @@ public class UpdateIntroCache extends BaseSwampy implements DailyTickable {
 
     @Override
     protected void execute(CommandEvent event) {
-        threadPoolTaskExecutor.submit(this);
+        threadPoolTaskExecutor.submit(this::runDailyTask);
     }
 
     @Override
-    public void run() {
+    public void runDailyTask() {
         Optional<TextChannel> optionalIntroChannel = philJda.getGuilds().get(0).getTextChannelsByName("introductions", false).stream().findFirst();
 
         if (optionalIntroChannel.isEmpty()) {

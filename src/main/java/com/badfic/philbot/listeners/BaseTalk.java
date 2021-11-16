@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Member;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 
 public abstract class BaseTalk extends Command {
@@ -43,9 +44,8 @@ public abstract class BaseTalk extends Command {
         }
 
         String msg = event.getMessage().getContentRaw();
-        msg = msg.replace(Constants.PREFIX + name + " ", "");
-        msg = msg.replace(split[0], "");
-        msg = msg.trim();
+        msg = StringUtils.replaceIgnoreCase(msg, Constants.PREFIX + name + " ", "");
+        msg = msg.replace(split[0], "").trim();
 
         String finalMsg = msg;
         getJda().getGuilds()

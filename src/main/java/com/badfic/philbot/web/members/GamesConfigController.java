@@ -65,6 +65,10 @@ public class GamesConfigController extends BaseMembersController {
                 int realValue = Integer.parseInt(configEntry.fieldValue());
 
                 declaredField.set(swampyGamesConfig, realValue);
+            } else if (long.class.equals(declaredField.getType())) {
+                long realValue = Long.parseLong(configEntry.fieldValue());
+
+                declaredField.set(swampyGamesConfig, realValue);
             } else {
                 declaredField.set(swampyGamesConfig, configEntry.fieldValue());
             }
