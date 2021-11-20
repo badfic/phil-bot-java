@@ -36,7 +36,7 @@ public class HlsProxyController extends BaseMembersController {
         return restTemplate.getForEntity(targetUrl, byte[].class);
     }
 
-    @GetMapping(value = "chromecast-auth")
+    @GetMapping(value = "/chromecast-auth")
     public ResponseEntity<String> chromecastAuth(HttpServletRequest httpServletRequest) {
         HttpSession httpSession = httpServletRequest.getSession();
         if (httpSession.isNew()) {
