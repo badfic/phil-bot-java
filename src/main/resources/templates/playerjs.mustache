@@ -3,7 +3,6 @@
 <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 
 <script>
-    const streamUrl = window.location.origin + "/members/hls/stream.m3u8";
     const options = {
         poster: "https://cdn.discordapp.com/attachments/323666308107599872/793416821826519070/swampy_watch_party.png",
         controls: true,
@@ -21,7 +20,7 @@
                 .then(auth => auth.text())
                 .then(authCode => {
                     const player = window.player = videojs('player', options);
-                    player.src({ type: "application/x-mpegURL", src: window.location.origin + "/" + authCode + "/hls/stream.m3u8" });
+                    player.src({ type: "application/x-mpegURL", src: window.location.origin + "/members/" + authCode + "/hls/stream.m3u8" });
                     player.controls(true);
                     player.chromecast();
                 });
