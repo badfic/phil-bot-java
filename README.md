@@ -4,8 +4,8 @@
 Start up postgres and owncast before running
 
 ```
-docker run --rm --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
-docker run --rm --name owncast -p 8085:8080 -p 1935:1935 -d gabekangas/owncast
+docker run --rm --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:12
+docker run --rm --name owncast -p 8085:8080 -p 1935:1935 -d gabekangas/owncast:0.0.5
 ```
 
 For the java app, the following env vars are required for full functionality

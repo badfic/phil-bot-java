@@ -32,7 +32,7 @@ public class HlsProxyController extends BaseMembersController {
             throw new UnauthorizedException("You do not have a valid session. Please refresh and login again");
         }
 
-        String targetUrl = "http://" + baseConfig.owncastInstance + httpServletRequest.getRequestURI().replace("/" + auth, "");
+        String targetUrl = "http://" + baseConfig.owncastInstance + httpServletRequest.getRequestURI().replace("/members/" + auth, "");
         return restTemplate.getForEntity(targetUrl, byte[].class);
     }
 
