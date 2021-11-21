@@ -69,13 +69,6 @@ public class SwampController {
         return new ModelAndView("the-swampys", props);
     }
 
-    @GetMapping(value = "/cursed-memes.html", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getCursedMemes() throws Exception {
-        Map<String, Object> props = new HashMap<>();
-        props.put("pageTitle", "Cursed Memes — The Swamp");
-        return new ModelAndView("cursed-memes", props);
-    }
-
     @GetMapping(value = "/daily-riverdale-memes.html", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getRiverdaleMemes() throws Exception {
         Map<String, Object> props = new HashMap<>();
