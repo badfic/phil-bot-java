@@ -87,7 +87,7 @@ public abstract class BaseSwampy extends Command {
             return CompletableFuture.completedFuture(null);
         }
 
-        user.setXp(user.getXp() + pointsToGive);
+        user.setXp(Math.max(0, user.getXp() + pointsToGive));
         long pointsStatsCurrent = pointsStat.getter().applyAsLong(user);
         pointsStatsCurrent += pointsToGive;
         pointsStat.setter().accept(user, pointsStatsCurrent);
@@ -104,17 +104,7 @@ public abstract class BaseSwampy extends Command {
     }
 
     protected CompletableFuture<Void> takePointsFromMember(long pointsToTake, Member member, PointsStat pointsStat) {
-        if (isNotParticipating(member)) {
-            return CompletableFuture.completedFuture(null);
-        }
-
-        DiscordUser user = getDiscordUserByMember(member);
-        user.setXp(Math.max(0, user.getXp() - pointsToTake));
-        long pointsStatsCurrent = pointsStat.getter().applyAsLong(user);
-        pointsStatsCurrent -= pointsToTake;
-        pointsStat.setter().accept(user, pointsStatsCurrent);
-        user = discordUserRepository.save(user);
-        return assignRolesIfNeeded(member, user).getRight();
+        return givePointsToMember(-pointsToTake, member, pointsStat);
     }
 
     protected Pair<Role, CompletableFuture<Void>> assignRolesIfNeeded(Member member, DiscordUser user) {
