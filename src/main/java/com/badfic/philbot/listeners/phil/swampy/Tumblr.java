@@ -2,7 +2,6 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.tumblr.jumblr.JumblrClient;
-import com.tumblr.jumblr.exceptions.JumblrException;
 import com.tumblr.jumblr.types.Blog;
 import com.tumblr.jumblr.types.Post;
 import java.lang.invoke.MethodHandles;
@@ -49,7 +48,7 @@ public class Tumblr extends BaseSwampy {
                     event.reply("\uD83D\uDD16 **" + blog.getTitle() + "** \n\uD83D\uDD8A️ **Last Post**: " + post.getPostUrl());
                 }
             }
-        } catch (JumblrException e) {
+        } catch (Exception e) {
             logger.error("Failed to get [user={}] tumblr posts", split[0], e);
             honeybadgerReporter.reportError(e, "Failed to get user's tumblr posts: " + split[0]);
             event.replyError("Something went wrong trying to get user's posts: " + split[0]);
