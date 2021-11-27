@@ -36,3 +36,8 @@ TUMBLR_OAUTH_SECRET
 
 OWNCAST_INSTANCE
 ```
+
+The following JVM argument is now required for the tumblr command to work correctly
+```
+--add-opens java.base/java.io=ALL-UNNAMED
+```

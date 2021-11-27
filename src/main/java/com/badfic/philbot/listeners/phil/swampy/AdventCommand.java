@@ -30,11 +30,13 @@ public class AdventCommand extends BaseSwampy {
         List<String> lines = IOUtils.readLines(Objects.requireNonNull(Rank.class.getClassLoader().getResourceAsStream("advent.tsv")), StandardCharsets.UTF_8);
 
         ImmutableMap.Builder<Integer, AdventDay> builder = ImmutableMap.builder();
-        for (int i = 0; i < lines.size(); i++) {
+        for (int i = 1; i < lines.size(); i++) { // skip the header line
             String line = lines.get(i);
-            String[] values = StringUtils.split(line, '\t');
+            String[] values = StringUtils.splitPreserveAllTokens(line, '\t');
 
-            int day = Integer.parseInt(values[0]);
+            String dayColumn = values[0];
+            String[] dayParts = StringUtils.split(dayColumn, ' ');
+            int day = Integer.parseInt(dayParts[0].trim());
             String thumbnail = values[1];
             long points = Long.parseLong(values[2]);
             String largeImage = values.length > 3 ? values[3] : null;
