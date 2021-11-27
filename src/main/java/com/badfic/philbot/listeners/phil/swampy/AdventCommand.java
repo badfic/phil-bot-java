@@ -58,7 +58,7 @@ public class AdventCommand extends BaseSwampy {
 
         DiscordUser discordUser = getDiscordUserByMember(member);
 
-        if (discordUser.getAdventCounter() > 29) {
+        if (discordUser.getAdventCounter() >= 29) {
             event.replyError("The Swampmas advent event only goes 29 days. Congratulations, you finished it.");
             return;
         }
