@@ -3,6 +3,8 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.Rank;
+import com.badfic.philbot.data.phil.Reminder;
+import com.badfic.philbot.data.phil.ReminderRepository;
 import com.google.common.collect.ImmutableMap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.nio.charset.StandardCharsets;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +23,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AdventCommand extends BaseSwampy {
+
+    @Resource
+    private ReminderRepository reminderRepository;
+
     private final Map<Integer, AdventDay> days;
 
     public AdventCommand() throws Exception {
@@ -97,6 +104,8 @@ public class AdventCommand extends BaseSwampy {
 
                 event.reply(Constants.simpleEmbed("Advent Day " + adventDay.day, description, adventDay.largeImage, footer,
                         Constants.COLOR_OF_THE_MONTH, adventDay.thumbnail));
+
+                reminderRepository.save(new Reminder(member.getIdLong(), event.getChannel().getIdLong(), "Swampmas Advent", LocalDateTime.now().plusHours(24)));
             }
         });
     }
