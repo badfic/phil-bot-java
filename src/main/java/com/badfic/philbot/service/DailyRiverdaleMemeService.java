@@ -23,7 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DailyRiverdaleMemeService extends BaseSwampy implements DailyTickable {
+public class DailyRiverdaleMemeService extends BaseSwampy {
 
     private static final String SEARCH_STRING = "out of context riverdale meme";
 
@@ -37,11 +37,10 @@ public class DailyRiverdaleMemeService extends BaseSwampy implements DailyTickab
 
     @Override
     protected void execute(CommandEvent event) {
-        threadPoolTaskExecutor.submit(this::runDailyTask);
+        threadPoolTaskExecutor.submit(this::runTask);
     }
 
-    @Override
-    public void runDailyTask() {
+    private void runTask() {
         List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
             honeybadgerReporter.reportError(new RuntimeException("Failed to find " + Constants.CURSED_SWAMP_CHANNEL + " channel"));
