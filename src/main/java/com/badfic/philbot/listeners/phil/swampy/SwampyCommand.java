@@ -39,7 +39,7 @@ public class SwampyCommand extends BaseSwampy {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // soft point bans
-    private static final Pattern NO_NO_WORDS = Constants.compileWords("wanda");
+    private static final Pattern NO_NO_WORDS = Constants.compileWords("snowflake|eternals|captain|witch|christmas|santa|grinch");
 
     // emoji
     public static final String[] LEADERBOARD_MEDALS = {
@@ -48,9 +48,9 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83E\uDD83", "\uD83E\uDD67", "\uD83C\uDF57️",
-            "\uD83E\uDD54️", "\uD83C\uDF60", "\uD83C\uDF42",
-            "\uD83C\uDF15️", "\uD83C\uDF83", "\uD83E\uDD66"
+            "\uD83D\uDE08", "\uD83C\uDF84", "\uD83C\uDF85️",
+            "\uD83C\uDF81️", "\uD83C\uDF30", "\uD83D\uDD4E",
+            "⛄️", "❄️", "\uD83E\uDD76"
     );
 
     private volatile boolean awaitingResetConfirmation = false;
