@@ -46,12 +46,19 @@ public class AntoniaMessageListener {
                 return new ImmutablePair<>(msgContent, 1L);
             }
             if (oldValue.getLeft().equalsIgnoreCase(msgContent)) {
-                if (oldValue.getRight() + 1 >= 3 && "bird".equalsIgnoreCase(msgContent)) {
+                if (oldValue.getRight() + 1 >= 3 && "bird".equalsIgnoreCase(msgContent.trim())) {
                     antoniaCommand.getAntoniaJda().getTextChannelById(channelId).sendMessage("the bird is the word").queue();
                     return new ImmutablePair<>(msgContent, 0L);
                 }
-                if (oldValue.getRight() + 1 >= 3 && "word".equalsIgnoreCase(msgContent)) {
+                if (oldValue.getRight() + 1 >= 3 && "word".equalsIgnoreCase(msgContent.trim())) {
                     antoniaCommand.getAntoniaJda().getTextChannelById(channelId).sendMessage("the word is the bird").queue();
+                    return new ImmutablePair<>(msgContent, 0L);
+                }
+                if (oldValue.getRight() +1 >= 3 && "mattgrinch".equalsIgnoreCase(msgContent.trim())) {
+                    antoniaCommand.getAntoniaJda()
+                            .getTextChannelById(channelId)
+                            .sendMessage("https://cdn.discordapp.com/attachments/707453916882665552/914409167610056734/unknown.png")
+                            .queue();
                     return new ImmutablePair<>(msgContent, 0L);
                 }
 
