@@ -115,6 +115,13 @@ public interface Constants {
                 .ifPresent(channel -> channel.sendMessage(msg).queue());
     }
 
+    static void debugToModLogsChannel(JDA jda, MessageEmbed messageEmbed) {
+        jda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false)
+                .stream()
+                .findAny()
+                .ifPresent(channel -> channel.sendMessageEmbeds(messageEmbed).queue());
+    }
+
     static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {
         return simpleEmbed(title, description, null, null, null, thumbnail);
     }

@@ -10,6 +10,7 @@ import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ import javax.annotation.PostConstruct;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.apache.commons.collections4.CollectionUtils;
@@ -251,6 +253,26 @@ public class SwampyCommand extends BaseSwampy {
                 givePointsToMember(swampyGamesConfig.getReactionPoints(), msg.getMember(), PointsStat.REACTED_POINTS);
             }
         });
+
+        MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
+        long guildId = event.getGuild().getIdLong();
+        long channelId = event.getChannel().getIdLong();
+
+        MessageEmbed messageEmbed;
+        if (reactionEmote.isEmote()) {
+            messageEmbed = Constants.simpleEmbedThumbnail("Reaction Event",
+                    String.format("<@!%d> reacted %s (see thumbnail) to\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
+                            reactionGiverId, reactionEmote.getName(), guildId, channelId, messageId,
+                            DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())),
+                    reactionEmote.getEmote().getImageUrl());
+        } else {
+            messageEmbed = Constants.simpleEmbed("Reaction Event",
+                    String.format("<@!%d> reacted %s to\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
+                            reactionGiverId, reactionEmote.getName(), guildId, channelId, messageId,
+                            DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())));
+        }
+
+        Constants.debugToModLogsChannel(event.getJDA(), messageEmbed);
     }
 
     public void removeFromGames(String id) {

@@ -268,7 +268,7 @@ public class PhilMessageListener extends ListenerAdapter {
     public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
         event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
             channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
-                            event.getUser().getName() + " Updated Nickname",
+                            event.getOldNickname() + " Updated Nickname",
                             String.format("%s\nOld Nickname = %s\nNew Nickname = %s",
                                     event.getUser().getAsMention(), event.getOldNickname(), event.getNewNickname()),
                             event.getUser().getEffectiveAvatarUrl()))
@@ -280,7 +280,7 @@ public class PhilMessageListener extends ListenerAdapter {
     public void onUserUpdateName(@NotNull UserUpdateNameEvent event) {
         event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
             channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
-                    event.getUser().getName() + " Updated Username",
+                    event.getOldName() + " Updated Username",
                     String.format("%s\nOld Username = %s\nNew Username = %s", event.getUser().getAsMention(), event.getOldName(), event.getNewName()),
                     event.getUser().getEffectiveAvatarUrl()))
                     .queue();
