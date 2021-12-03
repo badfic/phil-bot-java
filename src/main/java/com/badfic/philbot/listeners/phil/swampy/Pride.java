@@ -21,6 +21,7 @@ public class Pride extends BaseFlagCommand {
 
     public Pride() {
         name = "pride";
+        aliases = new String[] {"flag"};
         help = "`!!pride\n" +
                 Arrays.toString(FLAG_NAMES) +
                 "\n`!!pride demi @Santiago`: apply demi flag to Santiago's profile picture";

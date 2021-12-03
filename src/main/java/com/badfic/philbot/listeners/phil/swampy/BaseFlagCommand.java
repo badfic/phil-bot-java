@@ -27,7 +27,8 @@ public abstract class BaseFlagCommand extends BaseSwampy {
             "genderfluid",
             "vincian",
             "sapphic",
-            "achillean"
+            "achillean",
+            "poly"
     };
     protected static final Map<String, BufferedImage> PRIDE_IMAGES;
 

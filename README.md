@@ -1,6 +1,12 @@
 ![](https://quay.io/repository/badfic/phil-bot-java/status)
 ![](https://img.shields.io/discord/740999022340341791)
 
+A multipurpose discord bot for "The Swamp", a community discord server (join at [https://discord.gg/sdykqyx](https://discord.gg/sdykqyx))
+
+---
+
+#Building The Project
+
 Start up postgres and owncast before running
 
 ```
@@ -41,3 +47,7 @@ The following JVM argument is now required for the tumblr command to work correc
 ```
 --add-opens java.base/java.io=ALL-UNNAMED
 ```
+
+---
+
+IntelliJ IDEA product subscription provided by JetBrains: https://www.jetbrains.com/community/opensource
