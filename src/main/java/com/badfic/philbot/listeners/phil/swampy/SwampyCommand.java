@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -248,7 +249,8 @@ public class SwampyCommand extends BaseSwampy {
         givePointsToMember(swampyGamesConfig.getReactionPoints(), event.getMember(), PointsStat.REACTOR_POINTS);
         long messageId = event.getMessageIdLong();
         long reactionGiverId = event.getMember().getIdLong();
-        event.getChannel().retrieveMessageById(messageId).queue(msg -> {
+        TextChannel channel = event.getChannel();
+        channel.retrieveMessageById(messageId).queue(msg -> {
             if (msg != null && msg.getMember() != null && msg.getMember().getIdLong() != reactionGiverId) {
                 givePointsToMember(swampyGamesConfig.getReactionPoints(), msg.getMember(), PointsStat.REACTED_POINTS);
             }
@@ -256,19 +258,18 @@ public class SwampyCommand extends BaseSwampy {
 
         MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
         long guildId = event.getGuild().getIdLong();
-        long channelId = event.getChannel().getIdLong();
 
         MessageEmbed messageEmbed;
         if (reactionEmote.isEmote()) {
             messageEmbed = Constants.simpleEmbedThumbnail("Reaction Event",
-                    String.format("<@!%d> reacted %s (see thumbnail) to\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
-                            reactionGiverId, reactionEmote.getName(), guildId, channelId, messageId,
+                    String.format("<@!%d> reacted %s (see thumbnail) to\n%s\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
+                            reactionGiverId, reactionEmote.getName(), channel.getAsMention(), guildId, channel.getIdLong(), messageId,
                             DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())),
                     reactionEmote.getEmote().getImageUrl());
         } else {
             messageEmbed = Constants.simpleEmbed("Reaction Event",
-                    String.format("<@!%d> reacted %s to\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
-                            reactionGiverId, reactionEmote.getName(), guildId, channelId, messageId,
+                    String.format("<@!%d> reacted %s to\n%s\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
+                            reactionGiverId, reactionEmote.getName(), channel.getAsMention(), guildId, channel.getIdLong(), messageId,
                             DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())));
         }
 
