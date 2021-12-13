@@ -23,12 +23,19 @@
         <div class="card-body">
             <h3 class="card-title">!{{name}}</h3>
             <p class="card-text">
-                <a href="{{url}}" target="_blank">{{url}}</a> <br/>
-                {{#urlIsImage}}
-                <img width="240" src="{{url}}" alt="{{name}}">
-                {{/urlIsImage}}
+                {{^urlIsList}}
+                    <a href="{{url}}" target="_blank">{{url}}</a> <br/>
+                    {{#urlIsImage}}
+                        <img width="240" src="{{url}}" alt="{{name}}"> <br/>
+                    {{/urlIsImage}}
+                {{/urlIsList}}
+
+                {{#urlIsList}}
+                    {{url}} <br/>
+                {{/urlIsList}}
+
                 {{#isMod}}
-                <button type="button" class="btn btn-danger" onclick="formDelete('{{name}}')">Delete</button>
+                    <button type="button" class="btn btn-danger" onclick="formDelete('{{name}}')">Delete</button>
                 {{/isMod}}
             </p>
         </div>

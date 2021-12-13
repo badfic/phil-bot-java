@@ -19,6 +19,9 @@ public class MemeCommandEntity {
     @Transient
     private Boolean urlIsImage;
 
+    @Transient
+    private Boolean urlIsList;
+
     public MemeCommandEntity() {
     }
 
@@ -51,4 +54,11 @@ public class MemeCommandEntity {
         this.urlIsImage = urlIsImage;
     }
 
+    public Boolean getUrlIsList() {
+        return urlIsList;
+    }
+
+    public void setUrlIsList(Boolean urlIsList) {
+        this.urlIsList = urlIsList;
+    }
 }

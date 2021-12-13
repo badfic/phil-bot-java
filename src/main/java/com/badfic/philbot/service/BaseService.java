@@ -1,6 +1,7 @@
 package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.BaseConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
@@ -25,5 +26,8 @@ public abstract class BaseService {
 
     @Resource
     protected ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @Resource
+    protected ObjectMapper objectMapper;
 
 }

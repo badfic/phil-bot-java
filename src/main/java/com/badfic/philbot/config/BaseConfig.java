@@ -8,6 +8,7 @@ import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGE_REACTIONS
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
 
 import com.badfic.philbot.listeners.GenericReadyListener;
+import com.badfic.philbot.listeners.phil.MemeCommandsService;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -259,7 +260,8 @@ public class BaseConfig {
     @Bean(name = "philCommandClient")
     public CommandClient philCommandClient(ThreadPoolTaskScheduler taskScheduler,
                                            List<Command> commands,
-                                           HoneybadgerReporter honeybadgerReporter) {
+                                           HoneybadgerReporter honeybadgerReporter,
+                                           MemeCommandsService memeCommandsService) {
         Optional<SwampyCommand> optSwampyCommand = commands.stream()
                 .filter(c -> c instanceof SwampyCommand)
                 .findAny()
@@ -290,15 +292,20 @@ public class BaseConfig {
                             String contentRaw = event.getMessage().getContentRaw();
 
                             if (StringUtils.startsWith(contentRaw, Constants.PREFIX)) {
-                                String message = StringUtils.substring(contentRaw, 1);
+                                String message = StringUtils.substring(contentRaw, 2);
                                 message = StringUtils.trim(message);
 
                                 String[] parts;
-                                if (StringUtils.isNotBlank(message) && (parts = message.split("\\s+")).length >= 2) {
-                                    if (Stream.of("help", "rank", "up", "down", "slots")
-                                            .anyMatch(arg -> StringUtils.equalsIgnoreCase(arg, parts[1]))) {
-                                        swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, parts[1], thisClient.getValue()));
+                                if (StringUtils.isNotBlank(message)) {
+                                    if ((parts = message.split("\\s+")).length >= 2) {
+                                        if (Stream.of("help", "rank", "up", "down", "slots")
+                                                .anyMatch(arg -> StringUtils.equalsIgnoreCase(arg, parts[1]))) {
+                                            swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, parts[1], thisClient.getValue()));
+                                            return;
+                                        }
                                     }
+
+                                    memeCommandsService.executeCustomCommand(parts[0], event.getTextChannel());
                                 }
                             }
                         }
