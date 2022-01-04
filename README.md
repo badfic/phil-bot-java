@@ -4,7 +4,7 @@ A multipurpose discord bot for "The Swamp", a community discord server (join at 
 
 ---
 
-#Building The Project
+# Building The Project
 
 Start up postgres and owncast before running
 
