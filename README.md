@@ -1,4 +1,3 @@
-![](https://quay.io/repository/badfic/phil-bot-java/status)
 ![](https://img.shields.io/discord/740999022340341791)
 
 A multipurpose discord bot for "The Swamp", a community discord server (join at [https://discord.gg/sdykqyx](https://discord.gg/sdykqyx))
