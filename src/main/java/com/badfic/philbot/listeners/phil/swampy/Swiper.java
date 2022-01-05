@@ -29,7 +29,7 @@ public class Swiper extends BaseSwampy {
             .put("Swiper No Swiping", new TheSwiper(
                     "Swiper No Swiping",
                     "Swiper Was Spotted Nearby",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882837086389026816/swiper_coming.png",
+                    "https://cdn.discordapp.com/attachments/741024218938081340/922969160345059328/SPOILER_swiper.png",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882837094685360179/swiper_lose.png",
                     "Swiper Escaped!",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882837105825443930/swiper_win.png"
@@ -37,18 +37,18 @@ public class Swiper extends BaseSwampy {
             .put("Snarter No Snarting", new TheSwiper(
                     "Snarter No Snarting",
                     "Rory and Snart Were Spotted Nearby",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882905193413488650/snarter_comes.png",
+                    "https://cdn.discordapp.com/attachments/741030569307275436/924881936592289832/familyjewels.png",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882905202640945162/snarter_lose.png",
                     "Rory and Snart Escaped!",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882905213512585236/snarter_win.png"
+                    "https://cdn.discordapp.com/attachments/741030569307275436/924881936890097694/Snarter.gif"
             ))
             .put("Squidward No Squidding", new TheSwiper(
                     "Squidward No Squidding",
                     "Squidward Was Spotted Nearby",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882842774167228426/squidward_coming.png",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882842784783036467/squidward_lose.png",
+                    "https://cdn.discordapp.com/attachments/741024218938081340/924150658041532476/IMG_4941.png",
+                    "https://cdn.discordapp.com/attachments/741024218938081340/924150658314141716/phonto.jpg",
                     "Squidward Squidded Away With Yo Points!",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882842796216713246/squidward_win.png"
+                    "https://cdn.discordapp.com/attachments/741024218938081340/924150658540638208/phonto.jpg"
             ))
             .put("Simper No Simping", new TheSwiper(
                     "Simper No Simping",
@@ -93,7 +93,7 @@ public class Swiper extends BaseSwampy {
             .put("Doofen No Shmirtzing", new TheSwiper(
                     "Doofen No Shmirtzing",
                     "Dr. Doofenshmirtz Spotted Nearby!",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882885583758835732/doof_comes.png",
+                    "https://cdn.discordapp.com/attachments/761398315119280158/928159786388820019/doof-arrives.png",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882885589333082132/doof_loses.png",
                     "Doofenshmirtz Evil Incorporated",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882885597927186472/doof_wins.png"
@@ -101,10 +101,10 @@ public class Swiper extends BaseSwampy {
             .put("Sebastian No Stanning", new TheSwiper(
                     "Sebastian No Stanning",
                     "Sebastian Stan Spotted Nearby!",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882865239815778304/bucky_comes.png",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882865248850288670/bucky_lose.png",
+                    "https://cdn.discordapp.com/attachments/741024218938081340/923715944310779984/nostanning.png",
+                    "https://cdn.discordapp.com/attachments/741024218938081340/923715944700837958/sebstopped.png",
                     "Get Stan'd",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882865258069385256/bucky_win.png"
+                    "https://cdn.discordapp.com/attachments/741024218938081340/923715945388716094/yesstanning.png"
             ))
             .put("Loki No Larceny", new TheSwiper(
                     "Loki No Larceny",
@@ -116,7 +116,7 @@ public class Swiper extends BaseSwampy {
             ))
             .build();
 
-    public static final String SPIDERMAN_PNG = "https://cdn.discordapp.com/attachments/794506942906761226/883074130285588490/unknown.png";
+    public static final String SPIDERMAN_PNG = "https://cdn.discordapp.com/attachments/707453916882665552/928163455901511720/spidey.png";
 
     public Swiper() {
         requiredRole = Constants.ADMIN_ROLE;
