@@ -155,9 +155,6 @@ public class BaseConfig {
     @Value("${TUMBLR_OAUTH_SECRET}")
     public String tumblrOauthSecret;
 
-    @Value("${TIMEOUT_CHANNEL_ID}")
-    public String timeoutChannelId;
-
     @Value("${OWNCAST_INSTANCE}")
     public String owncastInstance;
 
