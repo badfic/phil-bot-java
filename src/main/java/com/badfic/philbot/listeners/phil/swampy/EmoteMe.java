@@ -179,7 +179,7 @@ public class EmoteMe extends BaseSwampy {
                 overlayImage = ImageIO.read(new URL(emote.getImageUrl()));
             }
 
-            String effectiveAvatarUrl = member.getUser().getEffectiveAvatarUrl();
+            String effectiveAvatarUrl = member.getEffectiveAvatarUrl();
             BufferedImage profilePic = ImageIO.read(new URL(effectiveAvatarUrl));
 
             BufferedImage newImg = new BufferedImage(profilePic.getWidth(), profilePic.getHeight(), BufferedImage.TYPE_INT_ARGB);

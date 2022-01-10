@@ -414,7 +414,7 @@ public class Fam extends BaseSwampy {
             description.append(familyMember.getAsMention());
             MessageEmbed msg = Constants.simpleEmbed(member.getEffectiveName() + "'s Family",
                     description.toString(),
-                    familyMember.getUser().getEffectiveAvatarUrl());
+                    familyMember.getEffectiveAvatarUrl());
 
             event.reply(msg);
         } catch (Exception e) {

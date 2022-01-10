@@ -47,7 +47,7 @@ public class LeaderboardController extends BaseMembersController {
                 .peek(user -> {
                     Member member = guild.getMemberById(user.getId());
                     user.setNickname(member.getEffectiveName());
-                    user.setProfileUrl(member.getUser().getEffectiveAvatarUrl());
+                    user.setProfileUrl(member.getEffectiveAvatarUrl());
                 })
                 .collect(Collectors.toList());
     }
@@ -68,7 +68,7 @@ public class LeaderboardController extends BaseMembersController {
                 .peek(user -> {
                     Member member = guild.getMemberById(user.getId());
                     user.setNickname(member.getEffectiveName());
-                    user.setProfileUrl(member.getUser().getEffectiveAvatarUrl());
+                    user.setProfileUrl(member.getEffectiveAvatarUrl());
                 })
                 .collect(Collectors.toList());
     }

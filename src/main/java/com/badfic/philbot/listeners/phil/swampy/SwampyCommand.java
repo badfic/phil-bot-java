@@ -51,9 +51,9 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83D\uDE08", "\uD83C\uDF84", "\uD83C\uDF85️",
-            "\uD83C\uDF81️", "\uD83C\uDF30", "\uD83D\uDD4E",
-            "⛄️", "❄️", "\uD83E\uDD76"
+            "⚡", "\uD83C\uDF82", "\uD83E\uDDE8️",
+            "\uD83C\uDF86️", "\uD83C\uDF89", "\uD83C\uDF8A",
+            "\uD83C\uDF7E", "\uD83E\uDD73", "✨"
     );
 
     private volatile boolean awaitingResetConfirmation = false;
@@ -338,7 +338,7 @@ public class SwampyCommand extends BaseSwampy {
                                     + NumberFormat.getIntegerInstance().format(swampyGamesConfig.getSlotsWinPoints())
                                     + " points from swampy slots! You too can win, play over in #bot-space",
                             "https://cdn.discordapp.com/attachments/707453916882665552/864307474970443816/tenor.gif",
-                            member.getUser().getEffectiveAvatarUrl())).queue();
+                            member.getEffectiveAvatarUrl())).queue();
                 });
             });
         } else if (one.equals(two) || one.equals(three) || two.equals(three)) {

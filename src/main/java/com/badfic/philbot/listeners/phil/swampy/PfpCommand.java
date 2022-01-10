@@ -24,7 +24,7 @@ public class PfpCommand extends BaseSwampy {
             member = mentionedMembers.get(0);
         }
 
-        event.reply(Constants.simpleEmbed(member.getEffectiveName(), null, member.getUser().getEffectiveAvatarUrl()));
+        event.reply(Constants.simpleEmbed(member.getEffectiveName(), null, member.getEffectiveAvatarUrl()));
     }
 
 }

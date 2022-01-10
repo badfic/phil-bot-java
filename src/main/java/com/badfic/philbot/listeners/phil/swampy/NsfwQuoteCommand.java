@@ -42,6 +42,7 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
     public NsfwQuoteCommand() {
         name = "nsfwQuote";
         aliases = new String[]{"nsfwQuotes", "cursedQuote", "cursedQuotes"};
+        nsfwOnly = true;
         help = """
                 18+ only
                 React to any message with the 🍆 emoji to save an NsfwQuote
@@ -98,11 +99,6 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (!event.getTextChannel().isNSFW()) {
-            event.replyError("nsfwQuote can only be called in an nsfw channel");
-            return;
-        }
-
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "cache")) {
             if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
                 event.replyError("You do not have permission to execute this command");

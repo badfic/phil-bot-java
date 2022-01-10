@@ -178,7 +178,7 @@ public class Swiper extends BaseSwampy {
                 + "' in this channel within 15 minutes to stop them!";
 
         MessageEmbed message = Constants.simpleEmbed(theSwiper.getSpottedPhrase(), description, theSwiper.getSpottedImage(), null, null,
-                member.getUser().getEffectiveAvatarUrl());
+                member.getEffectiveAvatarUrl());
 
         swampysChannel.sendMessageEmbeds(message).queue();
     }

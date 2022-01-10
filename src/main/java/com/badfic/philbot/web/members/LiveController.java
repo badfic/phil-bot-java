@@ -24,7 +24,7 @@ public class LiveController extends BaseMembersController {
             throw new UnauthorizedException("You do not have a valid session. Please refresh and login again");
         }
 
-        String userAvatar = member.getUser().getEffectiveAvatarUrl();
+        String userAvatar = member.getEffectiveAvatarUrl();
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "The Swamp Live");

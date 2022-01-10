@@ -21,11 +21,11 @@
 		<emoji-java.version>5.1.1</emoji-java.version>
 		<guava.version>31.0.1-jre</guava.version>
 		<honeybadger.version>2.1.0</honeybadger.version>
-		<jda.version>4.3.0_348</jda.version>
-		<jda-utilities.version>1.23.0</jda-utilities.version>
+		<jda.version>4.4.0_352</jda.version>
+		<jda-utilities.version>1.24.1</jda-utilities.version>
 		<jsoup.version>1.14.3</jsoup.version>
 		<jumblr.version>0.0.13</jumblr.version>
-		<rome.version>1.16.0</rome.version>
+		<rome.version>1.18.0</rome.version>
 
 		<!-- Web Jars -->
 		<webjars.version>0.42</webjars.version>
