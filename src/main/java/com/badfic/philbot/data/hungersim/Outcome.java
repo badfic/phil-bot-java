@@ -1,10 +1,10 @@
 package com.badfic.philbot.data.hungersim;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,28 +18,12 @@ import org.apache.commons.lang3.StringUtils;
 @Table(name = "hg_outcome")
 public class Outcome {
 
-    public static final Set<String> VARIABLES = ImmutableSet.of(
-            "$player1",
-            "$player1_subject",
-            "$player1_object",
-            "$player1_possessive",
-            "$player1_self",
-            "$player2",
-            "$player2_subject",
-            "$player2_object",
-            "$player2_possessive",
-            "$player2_self",
-            "$player3",
-            "$player3_subject",
-            "$player3_object",
-            "$player3_possessive",
-            "$player3_self",
-            "$player4",
-            "$player4_subject",
-            "$player4_object",
-            "$player4_possessive",
-            "$player4_self"
-    );
+    public static final Map<String, List<String>> VARIABLES = ImmutableMap.<String, List<String>>builder()
+            .put("$player1", ImmutableList.of("$player1_subject", "$player1_object", "$player1_possessive", "$player1_self"))
+            .put("$player2", ImmutableList.of("$player2_subject", "$player2_object", "$player2_possessive", "$player2_self"))
+            .put("$player3", ImmutableList.of("$player3_subject", "$player3_object", "$player3_possessive", "$player3_self"))
+            .put("$player4", ImmutableList.of("$player4_subject", "$player4_object", "$player4_possessive", "$player4_self"))
+            .build();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
