@@ -1,4 +1,4 @@
-package com.badfic.philbot.data.hungergames;
+package com.badfic.philbot.data.hungersim;
 
 import com.badfic.philbot.data.DiscordUser;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package com.badfic.philbot.data.hungergames;
+package com.badfic.philbot.data.hungersim;
 
 import java.util.ArrayList;
 import java.util.List;

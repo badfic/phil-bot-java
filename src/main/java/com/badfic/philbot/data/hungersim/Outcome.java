@@ -1,4 +1,4 @@
-package com.badfic.philbot.data.hungergames;
+package com.badfic.philbot.data.hungersim;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;

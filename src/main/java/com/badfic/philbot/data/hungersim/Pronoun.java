@@ -1,4 +1,4 @@
-package com.badfic.philbot.data.hungergames;
+package com.badfic.philbot.data.hungersim;
 
 import java.util.Objects;
 import javax.persistence.Column;

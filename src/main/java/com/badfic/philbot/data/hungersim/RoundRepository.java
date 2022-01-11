@@ -1,4 +1,4 @@
-package com.badfic.philbot.data.hungergames;
+package com.badfic.philbot.data.hungersim;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,8 +1,8 @@
-package com.badfic.philbot.data.hungergames;
+package com.badfic.philbot.data.hungersim;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,15 +31,16 @@ public class Round {
     private Boolean openingRound = Boolean.FALSE; // there can only be one
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "id", fetch = FetchType.EAGER)
-    private Set<Outcome> outcomes = new HashSet<>();
+    private List<Outcome> outcomes = new ArrayList<>();
 
     public Round() {
     }
 
-    public Round(String name, String description, Boolean openingRound) {
+    public Round(String name, String description, Boolean openingRound, List<Outcome> outcomes) {
         this.name = name;
         this.description = description;
         this.openingRound = openingRound;
+        this.outcomes = outcomes;
     }
 
     public Long getId() {
@@ -70,11 +71,11 @@ public class Round {
         this.openingRound = openingRound;
     }
 
-    public Set<Outcome> getOutcomes() {
+    public List<Outcome> getOutcomes() {
         return outcomes;
     }
 
-    public void setOutcomes(Set<Outcome> outcomes) {
+    public void setOutcomes(List<Outcome> outcomes) {
         this.outcomes = outcomes;
     }
 

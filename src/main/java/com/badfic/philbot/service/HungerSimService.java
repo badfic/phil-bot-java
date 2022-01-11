@@ -1,22 +1,22 @@
 package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.hungergames.Game;
-import com.badfic.philbot.data.hungergames.GameRepository;
-import com.badfic.philbot.data.hungergames.Outcome;
-import com.badfic.philbot.data.hungergames.Player;
-import com.badfic.philbot.data.hungergames.PlayerRepository;
-import com.badfic.philbot.data.hungergames.Round;
-import com.badfic.philbot.data.hungergames.RoundRepository;
+import com.badfic.philbot.data.hungersim.Game;
+import com.badfic.philbot.data.hungersim.GameRepository;
+import com.badfic.philbot.data.hungersim.Outcome;
+import com.badfic.philbot.data.hungersim.Player;
+import com.badfic.philbot.data.hungersim.PlayerRepository;
+import com.badfic.philbot.data.hungersim.Round;
+import com.badfic.philbot.data.hungersim.RoundRepository;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HungerGameService extends BaseService {
+public class HungerSimService extends BaseService {
 
     @Resource
     private GameRepository gameRepository;
@@ -27,13 +27,13 @@ public class HungerGameService extends BaseService {
     @Resource
     private PlayerRepository playerRepository;
 
-    public synchronized void newGame(String name, List<Player> players) {
-        if (players.size() < 2) {
-            throw new IllegalArgumentException("You can't start a game with less than 2 players");
-        }
+    public synchronized void newGame(String name, Collection<Long> players) {
 
-        gameRepository.deleteAll();
-        gameRepository.save(new Game(name, players));
+    }
+
+    public synchronized Game getGame() {
+        return gameRepository.findById(Game.SINGLETON_ID)
+                .orElseThrow(() -> new IllegalArgumentException("You must start a new game first"));
     }
 
     public synchronized Step runStep() {
@@ -67,7 +67,7 @@ public class HungerGameService extends BaseService {
     }
 
     private Step runRoundAndGetResult(Game game, List<Player> activePlayers, Round openingRound) {
-        Set<Outcome> outcomes = openingRound.getOutcomes();
+        List<Outcome> outcomes = openingRound.getOutcomes();
         List<String> appliedOutcomes = new ArrayList<>();
 
         while (!activePlayers.isEmpty()) {
