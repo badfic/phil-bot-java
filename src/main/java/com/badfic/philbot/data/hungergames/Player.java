@@ -25,11 +25,9 @@ public class Player {
     @Column
     private Integer hp = 10;
 
-    @Column
     @OneToOne
     private Pronoun pronoun;
 
-    @Column
     @OneToOne
     private DiscordUser discordUser;
 

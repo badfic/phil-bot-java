@@ -30,7 +30,7 @@ public class Round {
     @Column
     private Boolean openingRound = Boolean.FALSE; // there can only be one
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "round", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "id", fetch = FetchType.EAGER)
     private Set<Outcome> outcomes = new HashSet<>();
 
     public Round() {

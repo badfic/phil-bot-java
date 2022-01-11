@@ -23,7 +23,7 @@ public class Game {
     @Column
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "game", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "id", fetch = FetchType.EAGER)
     private List<Player> players = new ArrayList<>();
 
     @Column
