@@ -1,0 +1,144 @@
+{{> members-header}}
+<div class="container">
+    <h1>Hunger Sim</h1>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-pronouns">Pronouns</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/members/hunger-sim-players">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-outcomes">Outcomes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-rounds">Rounds</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-game">Game</a>
+        </li>
+    </ul>
+
+    <div class="row">
+        <div id="app">
+            <form id="newPlayer">
+                <div class="form-group">
+                    <label for="discordId">Discord ID</label>
+                    <input type="text" class="form-control" id="discordId">
+                </div>
+                <div class="form-group">
+                    <label for="name">Name (Only if not a Discord User)</label>
+                    <input type="text" class="form-control" id="name">
+                </div>
+                <div class="form-group">
+                    <label for="pronoun">Pronouns</label>
+                    <select class="form-control" id="pronoun" required>
+                        <option v-for="pronoun in pronouns" :value="pronoun.id">[[ pronoun.subject ]] / [[ pronoun.object ]]</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-dark mb-2">Save</button>
+            </form>
+
+            <div class="card" v-for="player in players">
+                <div class="card-body">
+                    <p>ID: [[ player.id ]]</p>
+                    <p v-if="player.discordUser">Discord ID: [[ player.discordUser.id ]]</p>
+                    <p v-if="player.name">Name: [[ player.name ]]</p>
+                    <p>Pronouns: [[ player.pronoun.subject ]] / [[ player.pronoun.object ]]</p>
+                    <form :id="player.id" class="deleteForm">
+                        <button type="submit" class="btn btn-dark mb-2">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const app = new Vue({
+        el: "#app",
+        delimiters: ["[[", "]]"],
+        data: {
+            pronouns: [],
+            players: []
+        },
+        methods: {
+            refresh: refreshMethod
+        },
+        updated: function () {
+            document.querySelectorAll(".deleteForm").forEach(f => {
+                f.addEventListener("submit", deleteSubmit);
+            });
+        },
+        created: refreshMethod
+    });
+
+    function refreshMethod() {
+        fetch("/members/hunger-sim/pronoun")
+                .then(response => response.json())
+                .then(result => app.pronouns = result);
+
+        fetch("/members/hunger-sim/player")
+                .then(response => response.json())
+                .then(result => app.players = result);
+    }
+
+    function formSubmit(e) {
+        e.preventDefault();
+
+        const postData = {
+            name: document.querySelector("#name").value,
+            discordId: document.querySelector("#discordId").value,
+            pronounId: document.querySelector("#pronoun").value,
+        };
+
+        fetch("/members/hunger-sim/player", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => {
+            if (response.ok) {
+                app.refresh();
+            } else {
+                alert("Failed to save player");
+            }
+
+            return response.text();
+        })
+        .then(responseText => console.log(responseText))
+        .catch(result => alert(result));
+    }
+
+    function deleteSubmit(e) {
+        e.preventDefault();
+
+        const idToDelete = e.target.id;
+
+        fetch("/members/hunger-sim/player/" + idToDelete, {
+            method: "DELETE"
+        })
+        .then(response => {
+            if (response.ok) {
+                app.refresh();
+            } else {
+                alert("Failed to delete player");
+            }
+
+            return response.text();
+        })
+        .then(responseText => console.log(responseText))
+        .catch(result => alert(result));
+    }
+
+    document.querySelector("#newPlayer").addEventListener("submit", formSubmit);
+</script>
+{{> footer}}

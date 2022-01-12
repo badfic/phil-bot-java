@@ -1,0 +1,143 @@
+{{> members-header}}
+<div class="container">
+    <h1>Hunger Sim</h1>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/members/hunger-sim-pronouns">Pronouns</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-players">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-outcomes">Outcomes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-rounds">Rounds</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-game">Game</a>
+        </li>
+    </ul>
+
+    <div class="row">
+        <div id="app">
+            <form id="newPronoun">
+                <div class="form-group">
+                    <label for="subject">Subjective</label>
+                    <input type="text" class="form-control" id="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="object">Objective</label>
+                    <input type="text" class="form-control" id="object" required>
+                </div>
+                <div class="form-group">
+                    <label for="possessive">Possessive</label>
+                    <input type="text" class="form-control" id="possessive" required>
+                </div>
+                <div class="form-group">
+                    <label for="self">Self</label>
+                    <input type="text" class="form-control" id="self" required>
+                </div>
+
+                <button type="submit" class="btn btn-dark mb-2">Save</button>
+            </form>
+
+            <div class="card" v-for="pronoun in pronouns">
+                <div class="card-body">
+                    <p>ID: [[ pronoun.id ]]</p>
+                    <p>Subjective: [[ pronoun.subject ]]</p>
+                    <p>Objective: [[ pronoun.object ]]</p>
+                    <p>Possessive: [[ pronoun.possessive ]]</p>
+                    <p>Self: [[ pronoun.self ]]</p>
+                    <form :id="pronoun.id" class="deleteForm">
+                        <button type="submit" class="btn btn-dark mb-2">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const app = new Vue({
+        el: "#app",
+        delimiters: ["[[", "]]"],
+        data: {
+            pronouns: []
+        },
+        methods: {
+            refresh: refreshMethod
+        },
+        updated: function () {
+            document.querySelectorAll(".deleteForm").forEach(f => {
+                f.addEventListener("submit", deleteSubmit);
+            });
+        },
+        created: refreshMethod
+    });
+
+    function refreshMethod() {
+        fetch("/members/hunger-sim/pronoun")
+                .then(response => response.json())
+                .then(result => app.pronouns = result);
+    }
+
+    function formSubmit(e) {
+        e.preventDefault();
+
+        const postData = {
+            subject: document.querySelector("#subject").value,
+            object: document.querySelector("#object").value,
+            possessive: document.querySelector("#possessive").value,
+            self: document.querySelector("#self").value
+        };
+
+        fetch("/members/hunger-sim/pronoun", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => {
+            if (response.ok) {
+                app.refresh();
+            } else {
+                alert(response.statusText + " Failed to save pronoun");
+            }
+
+            return response.text();
+        })
+        .then(responseText => console.log(responseText))
+        .catch(result => alert(result));
+    }
+
+    function deleteSubmit(e) {
+        e.preventDefault();
+
+        const idToDelete = e.target.id;
+
+        fetch("/members/hunger-sim/pronoun/" + idToDelete, {
+            method: "DELETE"
+        })
+        .then(response => {
+            if (response.ok) {
+                app.refresh();
+            } else {
+                alert(response.statusText + " Failed to delete pronoun");
+            }
+
+            return response.text();
+        })
+        .then(responseText => console.log(responseText))
+        .catch(result => alert(result));
+    }
+
+    document.querySelector("#newPronoun").addEventListener("submit", formSubmit);
+</script>
+{{> footer}}
