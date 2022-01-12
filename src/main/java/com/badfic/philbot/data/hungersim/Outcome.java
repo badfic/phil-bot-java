@@ -18,11 +18,11 @@ import org.apache.commons.lang3.StringUtils;
 @Table(name = "hg_outcome")
 public class Outcome {
 
-    public static final Map<String, List<String>> VARIABLES = ImmutableMap.<String, List<String>>builder()
-            .put("$player1", ImmutableList.of("$player1_subject", "$player1_object", "$player1_possessive", "$player1_self"))
-            .put("$player2", ImmutableList.of("$player2_subject", "$player2_object", "$player2_possessive", "$player2_self"))
-            .put("$player3", ImmutableList.of("$player3_subject", "$player3_object", "$player3_possessive", "$player3_self"))
-            .put("$player4", ImmutableList.of("$player4_subject", "$player4_object", "$player4_possessive", "$player4_self"))
+    public static final Map<Integer, List<String>> VARIABLES = ImmutableMap.<Integer, List<String>>builder()
+            .put(1, ImmutableList.of("{player1}", "{player1_subject}", "{player1_object}", "{player1_possessive}", "{player1_self}"))
+            .put(2, ImmutableList.of("{player2}", "{player2_subject}", "{player2_object}", "{player2_possessive}", "{player2_self}"))
+            .put(3, ImmutableList.of("{player3}", "{player3_subject}", "{player3_object}", "{player3_possessive}", "{player3_self}"))
+            .put(4, ImmutableList.of("{player4}", "{player4_subject}", "{player4_object}", "{player4_possessive}", "{player4_self}"))
             .build();
 
     @Id
@@ -35,16 +35,16 @@ public class Outcome {
     @Column
     private Integer numPlayers = 1;
 
-    @Column
+    @Column(name = "player_1_hp")
     private Integer player1Hp = 0;
 
-    @Column
+    @Column(name = "player_2_hp")
     private Integer player2Hp = 0;
 
-    @Column
+    @Column(name = "player_3_hp")
     private Integer player3Hp = 0;
 
-    @Column
+    @Column(name = "player_4_hp")
     private Integer player4Hp = 0;
 
     public Outcome() {
@@ -52,11 +52,11 @@ public class Outcome {
 
     public Outcome(String outcomeText, Integer numPlayers, Integer player1Hp, Integer player2Hp, Integer player3Hp, Integer player4Hp) {
         this.outcomeText = outcomeText;
-        this.numPlayers = numPlayers;
-        this.player1Hp = player1Hp;
-        this.player2Hp = player2Hp;
-        this.player3Hp = player3Hp;
-        this.player4Hp = player4Hp;
+        this.numPlayers = Objects.requireNonNullElse(numPlayers, 1);
+        this.player1Hp = Objects.requireNonNullElse(player1Hp, 0);
+        this.player2Hp = Objects.requireNonNullElse(player2Hp, 0);
+        this.player3Hp = Objects.requireNonNullElse(player3Hp, 0);
+        this.player4Hp = Objects.requireNonNullElse(player4Hp, 0);
     }
 
     public Long getId() {
@@ -151,10 +151,10 @@ public class Outcome {
         for (int i = 0; i < playerList.size(); i++) {
             Player player = playerList.get(i);
 
-            result = StringUtils.replace(result, "$player" + (i + 1), player.getEffectiveName(jda));
-            result = StringUtils.replace(result, "$player" + (i + 1) + "_subject", player.getPronoun().getSubject());
-            result = StringUtils.replace(result, "$player" + (i + 1) + "_object", player.getPronoun().getObject());
-            result = StringUtils.replace(result, "$player" + (i + 1) + "_possessive", player.getPronoun().getPossessive());
+            result = StringUtils.replace(result, "{player" + (i + 1) + '}', player.getEffectiveName(jda));
+            result = StringUtils.replace(result, "{player" + (i + 1) + "_subject}", player.getPronoun().getSubject());
+            result = StringUtils.replace(result, "{player" + (i + 1) + "_object}", player.getPronoun().getObject());
+            result = StringUtils.replace(result, "{player" + (i + 1) + "_possessive}", player.getPronoun().getPossessive());
         }
 
         return result;

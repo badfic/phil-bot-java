@@ -14,6 +14,7 @@ import com.badfic.philbot.data.hungersim.Round;
 import com.badfic.philbot.data.hungersim.RoundRepository;
 import com.badfic.philbot.service.HungerSimService;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.annotation.Resource;
@@ -59,75 +60,36 @@ public class HungerSimRestController extends BaseMembersController {
     @Resource
     private RoundRepository roundRepository;
 
-    /** GAME **/
+    /** PRONOUNS **/
 
-    @PostMapping(value = "/hunger-sim/game", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Game newGame(HttpServletRequest httpServletRequest, @RequestBody GameDto game) throws Exception {
+    @GetMapping(value = "/hunger-sim/pronoun", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Pronoun> getPronouns(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, true);
+        return pronounRepository.findAll();
+    }
+
+    @PostMapping(value = "/hunger-sim/pronoun", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Pronoun newPronoun(HttpServletRequest httpServletRequest, @RequestBody PronounDto pronoun) throws Exception {
         checkSession(httpServletRequest, true);
 
-        if (game.playerIds.size() < 2) {
-            throw new IllegalArgumentException("You can't start a game with less than 2 players");
+        if (Stream.of(pronoun.subject, pronoun.object, pronoun.possessive, pronoun.self).anyMatch(StringUtils::isBlank)) {
+            throw new IllegalArgumentException("subject, object, possessive, and self must not be empty");
         }
 
-        gameRepository.deleteAll();
+        return pronounRepository.save(new Pronoun(pronoun.subject, pronoun.object, pronoun.possessive, pronoun.self));
+    }
 
-        List<Player> players = playerRepository.findAllById(game.playerIds);
+    @DeleteMapping(value = "/hunger-sim/pronoun/{pronounId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void newPronoun(HttpServletRequest httpServletRequest, @PathVariable("pronounId") Long pronounId) throws Exception {
+        checkSession(httpServletRequest, true);
 
-        for (Player player : players) {
-            player.setHp(10);
+        Pronoun pronoun = pronounRepository.findById(pronounId).orElseThrow(() -> new IllegalArgumentException("Could not find Pronoun with that ID"));
+
+        try {
+            pronounRepository.delete(pronoun);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("You can't delete a pronoun that still has player(s) attached to it. Delete the player(s) first.", e);
         }
-
-        playerRepository.saveAll(players);
-
-        return gameRepository.save(new Game(game.name, players));
-    }
-
-    @GetMapping(value = "/hunger-sim/game", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Game getGame(HttpServletRequest httpServletRequest) throws Exception {
-        checkSession(httpServletRequest, true);
-        return hungerSimService.getGame();
-    }
-
-    /** OUTCOMES **/
-
-    @GetMapping(value = "/hunger=sim/outcome", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Outcome> getOutcomes(HttpServletRequest httpServletRequest) throws Exception {
-        checkSession(httpServletRequest, true);
-        return outcomeRepository.findAll();
-    }
-
-    @PostMapping(value = "/hunger-sim/outcome", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Outcome newOutcome(HttpServletRequest httpServletRequest, @RequestBody OutcomeDto outcome) throws Exception {
-        checkSession(httpServletRequest, true);
-
-        validateOutcome(outcome);
-
-        return outcomeRepository.save(new Outcome(
-                outcome.outcomeText, outcome.numPlayers, outcome.player1Hp, outcome.player2Hp, outcome.player3Hp, outcome.player4Hp));
-    }
-
-    @PutMapping(value = "/hunger-sim/outcome/{outcomeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Outcome updateOutcome(HttpServletRequest httpServletRequest, @PathVariable("outcomeId") Long outcomeId, @RequestBody OutcomeDto outcome)
-            throws Exception {
-        checkSession(httpServletRequest, true);
-
-        Outcome outcomeEntity = outcomeRepository.findById(outcomeId).orElseThrow(() -> new IllegalArgumentException("Outcome by that ID does not exist"));
-
-        outcomeEntity.setNumPlayers(outcome.numPlayers);
-        outcomeEntity.setOutcomeText(outcome.outcomeText);
-        outcomeEntity.setPlayer1Hp(outcome.player1Hp);
-        outcomeEntity.setPlayer2Hp(outcome.player2Hp);
-        outcomeEntity.setPlayer3Hp(outcome.player3Hp);
-        outcomeEntity.setPlayer4Hp(outcome.player4Hp);
-
-        return outcomeRepository.save(outcomeEntity);
-    }
-
-    @DeleteMapping(value = "/hunger-sim/outcome/{outcomeId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteOutcome(HttpServletRequest httpServletRequest, @PathVariable("outcomeId") Long outcomeId) throws Exception {
-        checkSession(httpServletRequest, true);
-        Outcome outcome = outcomeRepository.findById(outcomeId).orElseThrow(() -> new IllegalArgumentException("Outcome by that ID does not exist"));
-        outcomeRepository.delete(outcome);
     }
 
     /** PLAYERS **/
@@ -195,36 +157,52 @@ public class HungerSimRestController extends BaseMembersController {
         playerRepository.delete(player);
     }
 
-    /** PRONOUNS **/
+    /** OUTCOMES **/
 
-    @GetMapping(value = "/hunger-sim/pronoun", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Pronoun> getPronouns(HttpServletRequest httpServletRequest) throws Exception {
+    @GetMapping(value = "/hunger-sim/outcome", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Outcome> getOutcomes(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        return pronounRepository.findAll();
+        return outcomeRepository.findAll();
     }
 
-    @PostMapping(value = "/hunger-sim/pronoun", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Pronoun newPronoun(HttpServletRequest httpServletRequest, @RequestBody PronounDto pronoun) throws Exception {
+    @GetMapping(value = "/hunger-sim/outcome/variables", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<Integer, List<String>> getOutcomeVariables(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-
-        if (Stream.of(pronoun.subject, pronoun.object, pronoun.possessive, pronoun.self).anyMatch(StringUtils::isBlank)) {
-            throw new IllegalArgumentException("subject, object, possessive, and self must not be empty");
-        }
-
-        return pronounRepository.save(new Pronoun(pronoun.subject, pronoun.object, pronoun.possessive, pronoun.self));
+        return Outcome.VARIABLES;
     }
 
-    @DeleteMapping(value = "/hunger-sim/pronoun/{pronounId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void newPronoun(HttpServletRequest httpServletRequest, @PathVariable("pronounId") Long pronounId) throws Exception {
+    @PostMapping(value = "/hunger-sim/outcome", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Outcome newOutcome(HttpServletRequest httpServletRequest, @RequestBody OutcomeDto outcome) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Pronoun pronoun = pronounRepository.findById(pronounId).orElseThrow(() -> new IllegalArgumentException("Could not find Pronoun with that ID"));
+        validateOutcome(outcome);
 
-        try {
-            pronounRepository.delete(pronoun);
-        } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("You can't delete a pronoun that still has player(s) attached to it. Delete the player(s) first.", e);
-        }
+        return outcomeRepository.save(new Outcome(
+                outcome.outcomeText, outcome.numPlayers, outcome.player1Hp, outcome.player2Hp, outcome.player3Hp, outcome.player4Hp));
+    }
+
+    @PutMapping(value = "/hunger-sim/outcome/{outcomeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Outcome updateOutcome(HttpServletRequest httpServletRequest, @PathVariable("outcomeId") Long outcomeId, @RequestBody OutcomeDto outcome)
+            throws Exception {
+        checkSession(httpServletRequest, true);
+
+        Outcome outcomeEntity = outcomeRepository.findById(outcomeId).orElseThrow(() -> new IllegalArgumentException("Outcome by that ID does not exist"));
+
+        outcomeEntity.setNumPlayers(outcome.numPlayers);
+        outcomeEntity.setOutcomeText(outcome.outcomeText);
+        outcomeEntity.setPlayer1Hp(outcome.player1Hp);
+        outcomeEntity.setPlayer2Hp(outcome.player2Hp);
+        outcomeEntity.setPlayer3Hp(outcome.player3Hp);
+        outcomeEntity.setPlayer4Hp(outcome.player4Hp);
+
+        return outcomeRepository.save(outcomeEntity);
+    }
+
+    @DeleteMapping(value = "/hunger-sim/outcome/{outcomeId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteOutcome(HttpServletRequest httpServletRequest, @PathVariable("outcomeId") Long outcomeId) throws Exception {
+        checkSession(httpServletRequest, true);
+        Outcome outcome = outcomeRepository.findById(outcomeId).orElseThrow(() -> new IllegalArgumentException("Outcome by that ID does not exist"));
+        outcomeRepository.delete(outcome);
     }
 
     /** ROUNDS **/
@@ -268,14 +246,43 @@ public class HungerSimRestController extends BaseMembersController {
         roundRepository.delete(round);
     }
 
+    /** GAME **/
+
+    @PostMapping(value = "/hunger-sim/game", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Game newGame(HttpServletRequest httpServletRequest, @RequestBody GameDto game) throws Exception {
+        checkSession(httpServletRequest, true);
+
+        if (game.playerIds.size() < 2) {
+            throw new IllegalArgumentException("You can't start a game with less than 2 players");
+        }
+
+        gameRepository.deleteAll();
+
+        List<Player> players = playerRepository.findAllById(game.playerIds);
+
+        for (Player player : players) {
+            player.setHp(10);
+        }
+
+        playerRepository.saveAll(players);
+
+        return gameRepository.save(new Game(game.name, players));
+    }
+
+    @GetMapping(value = "/hunger-sim/game", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Game getGame(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, true);
+        return hungerSimService.getGame();
+    }
+
     private void validateOutcome(OutcomeDto outcome) {
         if (outcome.numPlayers < 1 || outcome.numPlayers > 4) {
             throw new IllegalArgumentException("numPlayers must be 1, 2, 3, or 4");
         }
 
         for (int i = 1; i < (outcome.numPlayers + 1); i++) {
-            if (!StringUtils.contains(outcome.outcomeText, "$player" + i)) {
-                throw new IllegalArgumentException("Outcome must mention $player" + i);
+            if (!StringUtils.contains(outcome.outcomeText, "{player" + i + '}')) {
+                throw new IllegalArgumentException("Outcome must mention {player" + i + '}');
             }
         }
     }

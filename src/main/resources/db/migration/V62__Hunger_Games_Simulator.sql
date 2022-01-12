@@ -27,12 +27,12 @@ CREATE UNIQUE INDEX ON hg_round(opening_round) WHERE opening_round = true;
 
 CREATE TABLE hg_outcome (
     id BIGSERIAL PRIMARY KEY,
-    outcome_text TEXT,
-    num_players INTEGER,
-    player_1_hp INTEGER,
-    player_2_hp INTEGER,
-    player_3_hp INTEGER,
-    player_4_hp INTEGER
+    outcome_text TEXT UNIQUE,
+    num_players INTEGER DEFAULT 1,
+    player_1_hp INTEGER DEFAULT 0,
+    player_2_hp INTEGER DEFAULT 0,
+    player_3_hp INTEGER DEFAULT 0,
+    player_4_hp INTEGER DEFAULT 0
 );
 
 CREATE TABLE hg_game (

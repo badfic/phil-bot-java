@@ -2,6 +2,8 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
+import com.badfic.philbot.data.hungersim.Player;
+import com.badfic.philbot.data.hungersim.PlayerRepository;
 import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.google.common.collect.ImmutableSet;
@@ -24,6 +26,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -57,6 +60,9 @@ public class SwampyCommand extends BaseSwampy {
     );
 
     private volatile boolean awaitingResetConfirmation = false;
+
+    @Resource
+    private PlayerRepository playerRepository;
 
     private final String modHelp;
 
@@ -278,6 +284,9 @@ public class SwampyCommand extends BaseSwampy {
     }
 
     public void removeFromGames(String id) {
+        Optional<Player> optionalPlayer = playerRepository.findByDiscordUser_id(id);
+        optionalPlayer.ifPresent(player -> playerRepository.delete(player));
+
         if (discordUserRepository.existsById(id)) {
             discordUserRepository.deleteById(id);
         }
