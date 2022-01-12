@@ -43,7 +43,6 @@ public class Pronoun {
     }
 
     public String getSubject() {
-
         return subject;
     }
 

@@ -252,6 +252,10 @@ public class HungerSimRestController extends BaseMembersController {
     public Game newGame(HttpServletRequest httpServletRequest, @RequestBody GameDto game) throws Exception {
         checkSession(httpServletRequest, true);
 
+        if (gameRepository.existsById(Game.SINGLETON_ID)) {
+            throw new IllegalArgumentException("You must delete the existing game before creating a new one");
+        }
+
         if (game.playerIds.size() < 2) {
             throw new IllegalArgumentException("You can't start a game with less than 2 players");
         }
@@ -272,7 +276,20 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/game", produces = MediaType.APPLICATION_JSON_VALUE)
     public Game getGame(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        return hungerSimService.getGame();
+        return gameRepository.findById(Game.SINGLETON_ID).orElse(null);
+    }
+
+    @DeleteMapping(value = "/hunger-sim/game", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteGame(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, true);
+        Game game = gameRepository.findById(Game.SINGLETON_ID).orElseThrow(() -> new IllegalArgumentException("There is no active game"));
+        gameRepository.delete(game);
+    }
+
+    @GetMapping(value = "/hunger-sim/game/step", produces = MediaType.APPLICATION_JSON_VALUE)
+    public HungerSimService.Step runStep(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, true);
+        return hungerSimService.runStep();
     }
 
     private void validateOutcome(OutcomeDto outcome) {

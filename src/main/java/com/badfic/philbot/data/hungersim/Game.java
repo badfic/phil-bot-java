@@ -1,5 +1,6 @@
 package com.badfic.philbot.data.hungersim;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +19,7 @@ public class Game {
     public static final Short SINGLETON_ID = 1;
 
     @Id
+    @JsonIgnore
     private Short id;
 
     @Column

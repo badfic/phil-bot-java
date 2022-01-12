@@ -9,7 +9,6 @@ import com.badfic.philbot.data.hungersim.PlayerRepository;
 import com.badfic.philbot.data.hungersim.Round;
 import com.badfic.philbot.data.hungersim.RoundRepository;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Resource;
@@ -26,15 +25,6 @@ public class HungerSimService extends BaseService {
 
     @Resource
     private PlayerRepository playerRepository;
-
-    public synchronized void newGame(String name, Collection<Long> players) {
-
-    }
-
-    public synchronized Game getGame() {
-        return gameRepository.findById(Game.SINGLETON_ID)
-                .orElseThrow(() -> new IllegalArgumentException("You must start a new game first"));
-    }
 
     public synchronized Step runStep() {
         Game game = gameRepository.findById(Game.SINGLETON_ID)

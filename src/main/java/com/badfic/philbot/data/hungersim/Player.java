@@ -38,8 +38,8 @@ public class Player {
     }
 
     public Player(DiscordUser discordUser, Pronoun pronoun) {
-        this.pronoun = pronoun;
         this.discordUser = discordUser;
+        this.pronoun = pronoun;
     }
 
     public Player(String name, Pronoun pronoun) {
