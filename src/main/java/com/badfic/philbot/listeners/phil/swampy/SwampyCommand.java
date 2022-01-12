@@ -193,7 +193,8 @@ public class SwampyCommand extends BaseSwampy {
 
             PointsStat pointsStat = PointsStat.MESSAGE;
             long pointsToGive = swampyGamesConfig.getNormalMsgPoints();
-            if ("bot-space".equals(event.getChannel().getName()) || "sim-games".equals(event.getChannel().getName())) {
+            String eventChannelName = event.getChannel().getName();
+            if ("bot-space".equals(eventChannelName) || "sim-games".equals(eventChannelName) || "pokemon".equals(eventChannelName)) {
                 pointsToGive = 1;
             } else if (bonus && now.isAfter(nextMsgBonusTime)) {
                 pointsStat = PointsStat.PICTURE_MESSAGE;
