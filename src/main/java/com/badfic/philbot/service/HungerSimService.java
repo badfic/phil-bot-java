@@ -7,6 +7,8 @@ import com.badfic.philbot.data.hungersim.Outcome;
 import com.badfic.philbot.data.hungersim.Player;
 import com.badfic.philbot.data.hungersim.PlayerRepository;
 import com.badfic.philbot.data.hungersim.Round;
+import com.badfic.philbot.data.hungersim.RoundOutcome;
+import com.badfic.philbot.data.hungersim.RoundOutcomeRepository;
 import com.badfic.philbot.data.hungersim.RoundRepository;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +24,9 @@ public class HungerSimService extends BaseService {
 
     @Resource
     private RoundRepository roundRepository;
+
+    @Resource
+    private RoundOutcomeRepository roundOutcomeRepository;
 
     @Resource
     private PlayerRepository playerRepository;
@@ -57,7 +62,7 @@ public class HungerSimService extends BaseService {
     }
 
     private Step runRoundAndGetResult(Game game, List<Player> activePlayers, Round openingRound) {
-        List<Outcome> outcomes = openingRound.getOutcomes();
+        List<Outcome> outcomes = roundOutcomeRepository.findByRound(openingRound).stream().map(RoundOutcome::getOutcome).toList();
         List<String> appliedOutcomes = new ArrayList<>();
 
         while (!activePlayers.isEmpty()) {

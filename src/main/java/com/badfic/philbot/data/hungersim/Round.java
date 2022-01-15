@@ -1,17 +1,14 @@
 package com.badfic.philbot.data.hungersim;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "hg_round")
@@ -28,19 +25,18 @@ public class Round {
     private String description;
 
     @Column
-    private Boolean openingRound = Boolean.FALSE; // there can only be one
+    private Boolean openingRound = Boolean.FALSE;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "id", fetch = FetchType.EAGER)
-    private List<Outcome> outcomes = new ArrayList<>();
+    @Transient
+    private List<Outcome> outcomes;
 
     public Round() {
     }
 
-    public Round(String name, String description, Boolean openingRound, List<Outcome> outcomes) {
+    public Round(String name, String description, Boolean openingRound) {
         this.name = name;
         this.description = description;
         this.openingRound = openingRound;
-        this.outcomes = outcomes;
     }
 
     public Long getId() {
