@@ -216,7 +216,7 @@ public class HungerSimRestController extends BaseMembersController {
     public void deleteOutcome(HttpServletRequest httpServletRequest, @PathVariable("outcomeId") Long outcomeId) throws Exception {
         checkSession(httpServletRequest, true);
         Outcome outcome = outcomeRepository.findById(outcomeId).orElseThrow(() -> new IllegalArgumentException("Outcome by that ID does not exist"));
-        roundOutcomeRepository.deleteByOutcome(outcome);
+        roundOutcomeRepository.deleteAll(roundOutcomeRepository.findByOutcome(outcome));
         outcomeRepository.delete(outcome);
     }
 
@@ -291,7 +291,7 @@ public class HungerSimRestController extends BaseMembersController {
         checkSession(httpServletRequest, true);
 
         Round round = roundRepository.findById(roundId).orElseThrow(() -> new IllegalArgumentException("Round by that ID does not exist"));
-        roundOutcomeRepository.deleteByRound(round);
+        roundOutcomeRepository.deleteAll(roundOutcomeRepository.findByRound(round));
         roundRepository.delete(round);
     }
 
@@ -306,6 +306,10 @@ public class HungerSimRestController extends BaseMembersController {
         List<Round> openingRound = roundRepository.findByOpeningRound(true);
         if (CollectionUtils.isEmpty(openingRound)) {
             throw new IllegalArgumentException("You must make one round and mark it as \"Opening Round\"");
+        }
+
+        if (CollectionUtils.isEmpty(roundRepository.findByOpeningRound(false))) {
+            throw new IllegalArgumentException("You must make one additional round beyond the \"Opening Round\"");
         }
 
         if (game.playerIds.size() < 2) {
@@ -323,6 +327,7 @@ public class HungerSimRestController extends BaseMembersController {
         gameEntity.setId(Game.SINGLETON_ID);
         gameEntity.setName(game.name);
         gameEntity.setRound(openingRound.get(0));
+        gameEntity.setRoundCounter(0);
         gameEntity.setCurrentOutcomes(Collections.singletonList("Game has not started"));
         gameEntity.setPlayers(players);
 

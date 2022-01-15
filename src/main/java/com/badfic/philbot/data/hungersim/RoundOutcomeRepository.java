@@ -10,9 +10,7 @@ public interface RoundOutcomeRepository extends JpaRepository<RoundOutcome, Long
 
     List<RoundOutcome> findByRound(Round round);
 
-    void deleteByRound(Round round);
-
-    void deleteByOutcome(Outcome outcome);
+    List<RoundOutcome> findByOutcome(Outcome outcome);
 
     boolean existsByRoundAndOutcome(Round round, Outcome outcome);
 
