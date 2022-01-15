@@ -32,7 +32,8 @@ CREATE TABLE hg_player (
     name TEXT UNIQUE,
     game_id BIGINT,
     CONSTRAINT fk_hg_player_discord_id FOREIGN KEY (discord_user_id) REFERENCES discord_user(id),
-    CONSTRAINT fk_hg_player_pronoun_id FOREIGN KEY (pronoun_id) REFERENCES hg_pronoun(id)
+    CONSTRAINT fk_hg_player_pronoun_id FOREIGN KEY (pronoun_id) REFERENCES hg_pronoun(id),
+    CONSTRAINT fk_hg_player_game_id FOREIGN KEY (game_id) REFERENCES hg_game(id)
 );
 
 CREATE TABLE hg_outcome (
@@ -54,3 +55,5 @@ CREATE TABLE hg_round_outcome (
 );
 
 CREATE INDEX ON hg_round_outcome(round_id);
+CREATE INDEX ON hg_round_outcome(outcome_id);
+CREATE INDEX ON hg_round_outcome(round_id, outcome_id);

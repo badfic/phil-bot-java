@@ -44,6 +44,11 @@ public class HungerSimService extends BaseService {
                 .collect(Collectors.toCollection(ArrayDeque::new));
 
         if (alivePlayers.size() <= 1) {
+            if (alivePlayers.size() <= 0) {
+                game.setCurrentOutcomes(Collections.singletonList("Everybody died!"));
+                return gameRepository.save(game);
+            }
+
             Player winner = alivePlayers.pop();
             winner.setEffectiveNameViaJda(philJda);
             game.setCurrentOutcomes(Collections.singletonList(winner.getEffectiveName() + " has won!"));

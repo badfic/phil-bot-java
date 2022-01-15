@@ -365,16 +365,16 @@ public class HungerSimRestController extends BaseMembersController {
             }
         }
 
-        if (outcome.player1Hp < -10 || outcome.player1Hp > 10) {
+        if (outcome.player1Hp != null && (outcome.player1Hp < -10 || outcome.player1Hp > 10)) {
             throw new IllegalArgumentException("player1Hp must be between -10 and 10 inclusive");
         }
-        if (outcome.player2Hp < -10 || outcome.player2Hp > 10) {
+        if (outcome.player2Hp != null && (outcome.player2Hp < -10 || outcome.player2Hp > 10)) {
             throw new IllegalArgumentException("player2Hp must be between -10 and 10 inclusive");
         }
-        if (outcome.player3Hp < -10 || outcome.player3Hp > 10) {
+        if (outcome.player3Hp != null && (outcome.player3Hp < -10 || outcome.player3Hp > 10)) {
             throw new IllegalArgumentException("player3Hp must be between -10 and 10 inclusive");
         }
-        if (outcome.player4Hp < -10 || outcome.player4Hp > 10) {
+        if (outcome.player4Hp != null && (outcome.player4Hp < -10 || outcome.player4Hp > 10)) {
             throw new IllegalArgumentException("player4Hp must be between -10 and 10 inclusive");
         }
     }

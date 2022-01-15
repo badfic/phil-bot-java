@@ -59,11 +59,11 @@
                 </div>
                 <div class="form-group">
                     <label for="outcomeText">Outcome Text</label>
-                    <input type="text" class="form-control" id="outcomeText">
+                    <input type="text" class="form-control" id="outcomeText" required>
                 </div>
                 <div class="form-group">
                     <label for="player1Hp">Player 1 HP Effect</label>
-                    <input type="number" step="1" min="-10" max="10" class="form-control" id="player1Hp">
+                    <input type="number" step="1" min="-10" max="10" class="form-control" id="player1Hp" value="0">
                 </div>
                 <div class="form-group" v-if="numPlayers >= 2">
                     <label for="player2Hp">Player 2 HP Effect</label>
