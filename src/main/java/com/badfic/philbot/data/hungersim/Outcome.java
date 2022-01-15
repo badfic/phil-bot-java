@@ -151,7 +151,9 @@ public class Outcome {
         for (int i = 0; i < playerList.size(); i++) {
             Player player = playerList.get(i);
 
-            result = StringUtils.replace(result, "{player" + (i + 1) + '}', player.getEffectiveName(jda));
+            player.setEffectiveNameViaJda(jda);
+
+            result = StringUtils.replace(result, "{player" + (i + 1) + '}', player.getEffectiveName());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_subject}", player.getPronoun().getSubject());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_object}", player.getPronoun().getObject());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_possessive}", player.getPronoun().getPossessive());

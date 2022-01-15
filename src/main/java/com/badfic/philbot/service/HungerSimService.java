@@ -13,6 +13,7 @@ import com.badfic.philbot.data.hungersim.RoundRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
@@ -31,18 +32,21 @@ public class HungerSimService extends BaseService {
     @Resource
     private PlayerRepository playerRepository;
 
-    public synchronized Step runStep() {
+    public synchronized Game runNextStep() {
         Game game = gameRepository.findById(Game.SINGLETON_ID)
                 .orElseThrow(() -> new IllegalArgumentException("You must start a new game before running a step"));
 
         List<Player> alivePlayers = game.getPlayers()
                 .stream()
                 .filter(p -> p.getHp() > 0)
-                .toList();
+                .collect(Collectors.toList());
         Collections.shuffle(alivePlayers);
 
         if (alivePlayers.size() <= 1) {
-            return new Step("Winner!", alivePlayers.get(0).getEffectiveName(philJda) + " has won!", Collections.emptyList());
+            Player winner = alivePlayers.get(0);
+            winner.setEffectiveNameViaJda(philJda);
+            game.setCurrentOutcomes(Collections.singletonList(winner.getEffectiveName() + " has won!"));
+            return gameRepository.save(game);
         }
 
         // If this is the beginning of the game
@@ -61,8 +65,8 @@ public class HungerSimService extends BaseService {
         return runRoundAndGetResult(game, alivePlayers, round);
     }
 
-    private Step runRoundAndGetResult(Game game, List<Player> activePlayers, Round openingRound) {
-        List<Outcome> outcomes = roundOutcomeRepository.findByRound(openingRound).stream().map(RoundOutcome::getOutcome).toList();
+    private Game runRoundAndGetResult(Game game, List<Player> activePlayers, Round round) {
+        List<Outcome> outcomes = roundOutcomeRepository.findByRound(round).stream().map(RoundOutcome::getOutcome).toList();
         List<String> appliedOutcomes = new ArrayList<>();
 
         while (!activePlayers.isEmpty()) {
@@ -98,12 +102,10 @@ public class HungerSimService extends BaseService {
             playerRepository.saveAll(outcomePlayerSet);
         }
 
+        game.setRound(round);
+        game.setCurrentOutcomes(appliedOutcomes);
         game.setRoundCounter(game.getRoundCounter() + 1);
-        gameRepository.save(game);
-
-        return new Step(openingRound.getName(), openingRound.getDescription(), appliedOutcomes);
+        return gameRepository.save(game);
     }
-
-    public record Step(String roundName, String roundDescription, List<String> outcomes) {}
 
 }

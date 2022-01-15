@@ -15,6 +15,7 @@ import com.badfic.philbot.data.hungersim.RoundOutcome;
 import com.badfic.philbot.data.hungersim.RoundOutcomeRepository;
 import com.badfic.philbot.data.hungersim.RoundRepository;
 import com.badfic.philbot.service.HungerSimService;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -105,7 +106,9 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/player", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Player> getPlayers(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        return playerRepository.findAll();
+        List<Player> players = playerRepository.findAll();
+        players.forEach(p -> p.setEffectiveNameViaJda(philJda));
+        return players;
     }
 
     @PostMapping(value = "/hunger-sim/player", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -298,15 +301,16 @@ public class HungerSimRestController extends BaseMembersController {
     public Game newGame(HttpServletRequest httpServletRequest, @RequestBody GameDto game) throws Exception {
         checkSession(httpServletRequest, true);
 
-        if (gameRepository.existsById(Game.SINGLETON_ID)) {
-            throw new IllegalArgumentException("You must delete the existing game before creating a new one");
+        Game gameEntity = gameRepository.findById(Game.SINGLETON_ID).orElse(new Game());
+
+        List<Round> openingRound = roundRepository.findByOpeningRound(true);
+        if (CollectionUtils.isEmpty(openingRound)) {
+            throw new IllegalArgumentException("You must make one round and mark it as \"Opening Round\"");
         }
 
         if (game.playerIds.size() < 2) {
             throw new IllegalArgumentException("You can't start a game with less than 2 players");
         }
-
-        gameRepository.deleteAll();
 
         List<Player> players = playerRepository.findAllById(game.playerIds);
 
@@ -316,26 +320,33 @@ public class HungerSimRestController extends BaseMembersController {
 
         playerRepository.saveAll(players);
 
-        return gameRepository.save(new Game(game.name, players));
+        gameEntity.setId(Game.SINGLETON_ID);
+        gameEntity.setName(game.name);
+        gameEntity.setRound(openingRound.get(0));
+        gameEntity.setCurrentOutcomes(Collections.singletonList("Game has not started"));
+        gameEntity.setPlayers(playerRepository.findAllById(game.playerIds));
+
+        return gameRepository.save(gameEntity);
     }
 
     @GetMapping(value = "/hunger-sim/game", produces = MediaType.APPLICATION_JSON_VALUE)
     public Game getGame(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        return gameRepository.findById(Game.SINGLETON_ID).orElse(null);
+        Game game = gameRepository.findById(Game.SINGLETON_ID).orElseThrow(() -> new IllegalArgumentException("Unable to load game"));
+
+        if (game == null) {
+            return null;
+        }
+
+        game.getPlayers().forEach(p -> p.setEffectiveNameViaJda(philJda));
+
+        return game;
     }
 
-    @DeleteMapping(value = "/hunger-sim/game", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteGame(HttpServletRequest httpServletRequest) throws Exception {
+    @PostMapping(value = "/hunger-sim/game/step", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Game runStep(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        Game game = gameRepository.findById(Game.SINGLETON_ID).orElseThrow(() -> new IllegalArgumentException("There is no active game"));
-        gameRepository.delete(game);
-    }
-
-    @GetMapping(value = "/hunger-sim/game/step", produces = MediaType.APPLICATION_JSON_VALUE)
-    public HungerSimService.Step runStep(HttpServletRequest httpServletRequest) throws Exception {
-        checkSession(httpServletRequest, true);
-        return hungerSimService.runStep();
+        return hungerSimService.runNextStep();
     }
 
     private void validateOutcome(OutcomeDto outcome) {

@@ -1,15 +1,19 @@
 package com.badfic.philbot.data.hungersim;
 
+import com.badfic.philbot.data.JsonListConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -25,19 +29,28 @@ public class Game {
     @Column
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "id", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "game_id")
     private List<Player> players = new ArrayList<>();
 
     @Column
     private Integer roundCounter = 0;
 
+    @OneToOne
+    private Round round;
+
+    @Column
+    @Convert(converter = JsonListConverter.class)
+    private List<String> currentOutcomes = new ArrayList<>();
+
     public Game() {
     }
 
-    public Game(String name, List<Player> players) {
+    public Game(String name, List<Player> players, Round round) {
         this.id = SINGLETON_ID;
         this.name = name;
         this.players = players;
+        this.round = round;
     }
 
     public Short getId() {
@@ -70,6 +83,22 @@ public class Game {
 
     public void setRoundCounter(Integer roundCounter) {
         this.roundCounter = roundCounter;
+    }
+
+    public Round getRound() {
+        return round;
+    }
+
+    public void setRound(Round currentRound) {
+        this.round = currentRound;
+    }
+
+    public List<String> getCurrentOutcomes() {
+        return currentOutcomes;
+    }
+
+    public void setCurrentOutcomes(List<String> currentOutcomes) {
+        this.currentOutcomes = currentOutcomes;
     }
 
     @Override

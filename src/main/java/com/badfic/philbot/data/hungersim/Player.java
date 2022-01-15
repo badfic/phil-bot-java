@@ -34,6 +34,9 @@ public class Player {
     @Column
     private String name;
 
+    @Transient
+    private String effectiveName;
+
     public Player() {
     }
 
@@ -83,23 +86,29 @@ public class Player {
         this.name = name;
     }
 
-    @Transient
-    public String getEffectiveName(JDA jda) {
+    public String getEffectiveName() {
+        return effectiveName;
+    }
+
+    public void setEffectiveNameViaJda(JDA jda) {
         if (discordUser != null) {
             Member memberById = jda.getGuilds().get(0).getMemberById(discordUser.getId());
             if (memberById != null) {
-                return memberById.getEffectiveName();
+                effectiveName = memberById.getEffectiveName();
+                return;
             }
 
             User userById = jda.getUserById(discordUser.getId());
             if (userById != null) {
-                return userById.getName();
+                effectiveName = userById.getName();
+                return;
             }
 
-            return "<@!" + discordUser.getId() + ">";
+            effectiveName = "<@!" + discordUser.getId() + ">";
+            return;
         }
 
-        return name;
+        effectiveName = name;
     }
 
     @Override

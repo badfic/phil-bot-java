@@ -68,12 +68,23 @@ public class HungerSimController extends BaseMembersController {
         return new ModelAndView("hunger-sim-rounds", props);
     }
 
-    @GetMapping(value = "/hunger-sim-game", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getGamePage(HttpServletRequest httpServletRequest) throws Exception {
+    @GetMapping(value = "/hunger-sim-new-game", produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getNewGamePage(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
         Map<String, Object> props = new HashMap<>();
-        props.put("pageTitle", "Hunger Sim - Game");
+        props.put("pageTitle", "Hunger Sim - New Game");
+        addCommonProps(httpServletRequest, props);
+
+        return new ModelAndView("hunger-sim-new-game", props);
+    }
+
+    @GetMapping(value = "/hunger-sim-game", produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getRunGamePage(HttpServletRequest httpServletRequest) throws Exception {
+        checkSession(httpServletRequest, true);
+
+        Map<String, Object> props = new HashMap<>();
+        props.put("pageTitle", "Hunger Sim - Run Game");
         addCommonProps(httpServletRequest, props);
 
         return new ModelAndView("hunger-sim-game", props);

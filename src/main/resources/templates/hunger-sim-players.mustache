@@ -19,7 +19,10 @@
             <a class="nav-link" href="/members/hunger-sim-rounds">Rounds</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/members/hunger-sim-game">Game</a>
+            <a class="nav-link" href="/members/hunger-sim-new-game">New Game</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-game">Run Game</a>
         </li>
     </ul>
 
@@ -48,6 +51,7 @@
                 <div class="card-body">
                     <p>ID: [[ player.id ]]</p>
                     <p v-if="player.discordUser">Discord ID: [[ player.discordUser.id ]]</p>
+                    <p v-if="player.discordUser">Effective Name: [[ player.effectiveName ]]</p>
                     <p v-if="player.name">Name: [[ player.name ]]</p>
                     <p>Pronouns: [[ player.pronoun.subject ]] / [[ player.pronoun.object ]]</p>
                     <form :id="player.id" class="deleteForm">
