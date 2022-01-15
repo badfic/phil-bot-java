@@ -318,13 +318,13 @@ public class HungerSimRestController extends BaseMembersController {
             player.setHp(10);
         }
 
-        playerRepository.saveAll(players);
+        players = playerRepository.saveAll(players);
 
         gameEntity.setId(Game.SINGLETON_ID);
         gameEntity.setName(game.name);
         gameEntity.setRound(openingRound.get(0));
         gameEntity.setCurrentOutcomes(Collections.singletonList("Game has not started"));
-        gameEntity.setPlayers(playerRepository.findAllById(game.playerIds));
+        gameEntity.setPlayers(players);
 
         return gameRepository.save(gameEntity);
     }
@@ -358,6 +358,19 @@ public class HungerSimRestController extends BaseMembersController {
             if (!StringUtils.contains(outcome.outcomeText, "{player" + i + '}')) {
                 throw new IllegalArgumentException("Outcome must mention {player" + i + '}');
             }
+        }
+
+        if (outcome.player1Hp < -10 || outcome.player1Hp > 10) {
+            throw new IllegalArgumentException("player1Hp must be between -10 and 10 inclusive");
+        }
+        if (outcome.player2Hp < -10 || outcome.player2Hp > 10) {
+            throw new IllegalArgumentException("player2Hp must be between -10 and 10 inclusive");
+        }
+        if (outcome.player3Hp < -10 || outcome.player3Hp > 10) {
+            throw new IllegalArgumentException("player3Hp must be between -10 and 10 inclusive");
+        }
+        if (outcome.player4Hp < -10 || outcome.player4Hp > 10) {
+            throw new IllegalArgumentException("player4Hp must be between -10 and 10 inclusive");
         }
     }
 

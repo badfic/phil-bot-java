@@ -28,6 +28,10 @@
 
     <div class="row">
         <div id="app">
+            <br/>
+            <h4>NOTE: Every player starts the game with 10 health points. If you want your outcome to "kill", set the player hp who is supposed to die to "-10"</h4>
+            <br/>
+
             <form id="newOutcome">
                 <div class="form-group">
                     <label for="numPlayers">Number Of Players</label>
@@ -59,19 +63,19 @@
                 </div>
                 <div class="form-group">
                     <label for="player1Hp">Player 1 HP Effect</label>
-                    <input type="number" step="1" class="form-control" id="player1Hp">
+                    <input type="number" step="1" min="-10" max="10" class="form-control" id="player1Hp">
                 </div>
                 <div class="form-group" v-if="numPlayers >= 2">
                     <label for="player2Hp">Player 2 HP Effect</label>
-                    <input type="number" step="1" class="form-control" id="player2Hp">
+                    <input type="number" step="1" min="-10" max="10" class="form-control" id="player2Hp">
                 </div>
                 <div class="form-group" v-if="numPlayers >= 3">
                     <label for="player3Hp">Player 3 HP Effect</label>
-                    <input type="number" step="1" class="form-control" id="player3Hp">
+                    <input type="number" step="1" min="-10" max="10" class="form-control" id="player3Hp">
                 </div>
                 <div class="form-group" v-if="numPlayers >= 4">
                     <label for="player4Hp">Player 4 HP Effect</label>
-                    <input type="number" step="1" class="form-control" id="player4Hp">
+                    <input type="number" step="1" min="-10" max="10" class="form-control" id="player4Hp">
                 </div>
 
                 <button type="submit" class="btn btn-dark mb-2">Save</button>

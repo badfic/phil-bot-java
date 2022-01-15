@@ -10,8 +10,10 @@ import com.badfic.philbot.data.hungersim.Round;
 import com.badfic.philbot.data.hungersim.RoundOutcome;
 import com.badfic.philbot.data.hungersim.RoundOutcomeRepository;
 import com.badfic.philbot.data.hungersim.RoundRepository;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -36,14 +38,13 @@ public class HungerSimService extends BaseService {
         Game game = gameRepository.findById(Game.SINGLETON_ID)
                 .orElseThrow(() -> new IllegalArgumentException("You must start a new game before running a step"));
 
-        List<Player> alivePlayers = game.getPlayers()
+        Deque<Player> alivePlayers = game.getPlayers()
                 .stream()
                 .filter(p -> p.getHp() > 0)
-                .collect(Collectors.toList());
-        Collections.shuffle(alivePlayers);
+                .collect(Collectors.toCollection(ArrayDeque::new));
 
         if (alivePlayers.size() <= 1) {
-            Player winner = alivePlayers.get(0);
+            Player winner = alivePlayers.pop();
             winner.setEffectiveNameViaJda(philJda);
             game.setCurrentOutcomes(Collections.singletonList(winner.getEffectiveName() + " has won!"));
             return gameRepository.save(game);
@@ -65,7 +66,7 @@ public class HungerSimService extends BaseService {
         return runRoundAndGetResult(game, alivePlayers, round);
     }
 
-    private Game runRoundAndGetResult(Game game, List<Player> activePlayers, Round round) {
+    private Game runRoundAndGetResult(Game game, Deque<Player> activePlayers, Round round) {
         List<Outcome> outcomes = roundOutcomeRepository.findByRound(round).stream().map(RoundOutcome::getOutcome).toList();
         List<String> appliedOutcomes = new ArrayList<>();
 
@@ -78,7 +79,7 @@ public class HungerSimService extends BaseService {
             }
 
             for (int i = 0; i < outcome.getNumPlayers(); i++) {
-                outcomePlayerSet.add(activePlayers.remove(i));
+                outcomePlayerSet.add(activePlayers.pop());
             }
 
             switch (outcome.getNumPlayers()) {

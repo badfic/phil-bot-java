@@ -18,7 +18,7 @@ CREATE UNIQUE INDEX ON hg_round(opening_round) WHERE opening_round = true;
 CREATE TABLE hg_game (
     id SMALLINT PRIMARY KEY,
     name TEXT NOT NULL,
-    round_id BIGSERIAL,
+    round_id BIGINT,
     CONSTRAINT fk_hg_game_round_id FOREIGN KEY (round_id) REFERENCES hg_round(id),
     round_counter INTEGER DEFAULT 0,
     current_outcomes JSON
@@ -27,10 +27,10 @@ CREATE TABLE hg_game (
 CREATE TABLE hg_player (
     id BIGSERIAL PRIMARY KEY,
     hp INTEGER NOT NULL,
-    pronoun_id BIGSERIAL NOT NULL,
+    pronoun_id BIGINT NOT NULL,
     discord_user_id VARCHAR(255) UNIQUE,
     name TEXT UNIQUE,
-    game_id BIGSERIAL,
+    game_id BIGINT,
     CONSTRAINT fk_hg_player_discord_id FOREIGN KEY (discord_user_id) REFERENCES discord_user(id),
     CONSTRAINT fk_hg_player_pronoun_id FOREIGN KEY (pronoun_id) REFERENCES hg_pronoun(id)
 );
@@ -47,8 +47,8 @@ CREATE TABLE hg_outcome (
 
 CREATE TABLE hg_round_outcome (
     id BIGSERIAL PRIMARY KEY,
-    outcome_id BIGSERIAL NOT NULL,
-    round_id BIGSERIAL NOT NULL,
+    outcome_id BIGINT NOT NULL,
+    round_id BIGINT NOT NULL,
     CONSTRAINT fk_hg_round_outcome_outcome_id FOREIGN KEY (outcome_id) REFERENCES hg_outcome(id),
     CONSTRAINT fk_hg_round_outcome_round_id FOREIGN KEY (round_id) REFERENCES hg_round(id)
 );

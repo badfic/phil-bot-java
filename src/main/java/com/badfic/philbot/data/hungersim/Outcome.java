@@ -112,37 +112,45 @@ public class Outcome {
     }
 
     public String apply(Player player1, JDA jda) {
-        player1.setHp(player1.getHp() + player1Hp);
+        player1.setHp(minMaxHp(player1.getHp() + player1Hp));
 
         List<Player> playerList = ImmutableList.of(player1);
         return getOutcomeResultString(jda, playerList);
     }
 
     public String apply(Player player1, Player player2, JDA jda) {
-        player1.setHp(player1.getHp() + player1Hp);
-        player2.setHp(player2.getHp() + player2Hp);
+        player1.setHp(minMaxHp(player1.getHp() + player1Hp));
+        player2.setHp(minMaxHp(player2.getHp() + player2Hp));
 
         List<Player> playerList = ImmutableList.of(player1, player2);
         return getOutcomeResultString(jda, playerList);
     }
 
     public String apply(Player player1, Player player2, Player player3, JDA jda) {
-        player1.setHp(player1.getHp() + player1Hp);
-        player2.setHp(player2.getHp() + player2Hp);
-        player3.setHp(player3.getHp() + player3Hp);
+        player1.setHp(minMaxHp(player1.getHp() + player1Hp));
+        player2.setHp(minMaxHp(player2.getHp() + player2Hp));
+        player3.setHp(minMaxHp(player3.getHp() + player3Hp));
 
         List<Player> playerList = ImmutableList.of(player1, player2, player3);
         return getOutcomeResultString(jda, playerList);
     }
 
     public String apply(Player player1, Player player2, Player player3, Player player4, JDA jda) {
-        player1.setHp(player1.getHp() + player1Hp);
-        player2.setHp(player2.getHp() + player2Hp);
-        player3.setHp(player3.getHp() + player3Hp);
-        player4.setHp(player4.getHp() + player4Hp);
+        player1.setHp(minMaxHp(player1.getHp() + player1Hp));
+        player2.setHp(minMaxHp(player2.getHp() + player2Hp));
+        player3.setHp(minMaxHp(player3.getHp() + player3Hp));
+        player4.setHp(minMaxHp(player4.getHp() + player4Hp));
 
         List<Player> playerList = ImmutableList.of(player1, player2, player3, player4);
         return getOutcomeResultString(jda, playerList);
+    }
+
+    private int minMaxHp(int hp) {
+        if (hp < -10) {
+            return -10;
+        } else {
+            return Math.min(hp, 10);
+        }
     }
 
     private String getOutcomeResultString(JDA jda, List<Player> playerList) {
