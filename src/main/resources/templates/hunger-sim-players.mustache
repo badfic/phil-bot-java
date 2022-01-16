@@ -125,6 +125,10 @@
     function deleteSubmit(e) {
         e.preventDefault();
 
+        if (!confirm("Are you sure you want to delete?")) {
+            return;
+        }
+
         const idToDelete = e.target.id;
 
         fetch("/members/hunger-sim/player/" + idToDelete, {
