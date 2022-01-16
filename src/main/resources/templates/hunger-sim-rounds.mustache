@@ -209,7 +209,7 @@
             return;
         }
 
-        const idToDelete = e.target.id;
+        const idToDelete = e.target.id.replace("deleteRound-", "");
 
         fetch("/members/hunger-sim/round/" + idToDelete, {
             method: "DELETE"
