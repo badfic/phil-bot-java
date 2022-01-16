@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,7 +75,7 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/pronoun", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Pronoun> getPronouns(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        return pronounRepository.findAll();
+        return pronounRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     @PostMapping(value = "/hunger-sim/pronoun", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -106,7 +107,7 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/player", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Player> getPlayers(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        List<Player> players = playerRepository.findAll();
+        List<Player> players = playerRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         players.forEach(p -> p.setEffectiveNameViaJda(philJda));
         return players;
     }
@@ -138,29 +139,6 @@ public class HungerSimRestController extends BaseMembersController {
         throw new IllegalArgumentException("Unable to save player, please set either name or discordId to a non-null value");
     }
 
-    @PutMapping(value = "/hunger-sim/player/{playerId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Player updatePlayer(HttpServletRequest httpServletRequest, @PathVariable("playerId") Long playerId, @RequestBody PlayerDto player) throws Exception {
-        checkSession(httpServletRequest, true);
-
-        Player playerEntity = playerRepository.findById(playerId).orElseThrow(() -> new IllegalArgumentException("Player by that ID not found"));
-
-        Pronoun pronouns = pronounRepository.findById(Objects.requireNonNull(player.pronounId)).orElseThrow(() -> new IllegalArgumentException("Pronouns not found by id"));
-        playerEntity.setPronoun(pronouns);
-
-        if (player.discordId != null) {
-            DiscordUser discordUser = discordUserRepository.findById(String.valueOf(player.discordId))
-                    .orElseThrow(() -> new IllegalArgumentException("discordId not recognized"));
-
-            playerEntity.setDiscordUser(discordUser);
-        } else if (StringUtils.isNotBlank(player.name)) {
-            playerEntity.setName(player.name);
-        } else {
-            throw new IllegalArgumentException("Unable to update player, please set either name or discorId");
-        }
-
-        return playerRepository.save(playerEntity);
-    }
-
     @DeleteMapping(value = "/hunger-sim/player/{playerId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deletePlayer(HttpServletRequest httpServletRequest, @PathVariable("playerId") Long playerId) throws Exception {
         checkSession(httpServletRequest, true);
@@ -174,7 +152,7 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/outcome", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Outcome> getOutcomes(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        return outcomeRepository.findAll();
+        return outcomeRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     @GetMapping(value = "/hunger-sim/outcome/variables", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -193,25 +171,6 @@ public class HungerSimRestController extends BaseMembersController {
                 outcome.outcomeText, outcome.numPlayers, outcome.player1Hp, outcome.player2Hp, outcome.player3Hp, outcome.player4Hp));
     }
 
-    @PutMapping(value = "/hunger-sim/outcome/{outcomeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Outcome updateOutcome(HttpServletRequest httpServletRequest, @PathVariable("outcomeId") Long outcomeId, @RequestBody OutcomeDto outcome)
-            throws Exception {
-        checkSession(httpServletRequest, true);
-
-        validateOutcome(outcome);
-
-        Outcome outcomeEntity = outcomeRepository.findById(outcomeId).orElseThrow(() -> new IllegalArgumentException("Outcome by that ID does not exist"));
-
-        outcomeEntity.setNumPlayers(outcome.numPlayers);
-        outcomeEntity.setOutcomeText(outcome.outcomeText);
-        outcomeEntity.setPlayer1Hp(outcome.player1Hp);
-        outcomeEntity.setPlayer2Hp(outcome.player2Hp);
-        outcomeEntity.setPlayer3Hp(outcome.player3Hp);
-        outcomeEntity.setPlayer4Hp(outcome.player4Hp);
-
-        return outcomeRepository.save(outcomeEntity);
-    }
-
     @DeleteMapping(value = "/hunger-sim/outcome/{outcomeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteOutcome(HttpServletRequest httpServletRequest, @PathVariable("outcomeId") Long outcomeId) throws Exception {
         checkSession(httpServletRequest, true);
@@ -225,7 +184,7 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/round", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Round> getRounds(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        List<Round> rounds = roundRepository.findAll();
+        List<Round> rounds = roundRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
         for (Round round : rounds) {
             List<Outcome> outcomes = roundOutcomeRepository.findByRound(round).stream().map(RoundOutcome::getOutcome).toList();

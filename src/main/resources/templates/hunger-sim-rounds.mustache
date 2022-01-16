@@ -59,13 +59,33 @@
             <div class="card" v-for="round in rounds">
                 <div class="card-body">
                     <p>ID: [[ round.id ]]</p>
-                    <p>Name: [[ round.name ]]</p>
-                    <p>Description: [[ round.description ]]</p>
-                    <p>Opening Round?: [[ round.openingRound ]]</p>
-                    <p>Outcomes:</p>
-                    <p v-for="outcome in round.outcomes">[[ outcome.outcomeText ]]</p>
-                    <form :id="round.id" class="deleteForm">
-                        <button type="submit" class="btn btn-dark mb-2">Delete Round</button>
+                    <form>
+                        <div class="form-group">
+                            <label v-bind:for="'name-' + round.id">Round Name</label>
+                            <input type="text" class="form-control" :id="'name-' + round.id" :value="round.name">
+                        </div>
+                        <div class="form-group">
+                            <label v-bind:for="'description-' + round.id">Round Description</label>
+                            <input type="text" class="form-control" :id="'description-' + round.id" :value="round.description">
+                        </div>
+                        <div class="form-group">
+                            <label v-bind:for="'openingRound-' + round.id">Opening Round?</label>
+                            <select class="form-control" :id="'openingRound-' + round.id" required>
+                                <option value="false" :selected="round.openingRound">No</option>
+                                <option value="true" :selected="round.openingRound">Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label v-bind:for="'outcomes-' + round.id">Outcomes</label>
+                            <select class="form-control" :id="'outcomes-' + round.id" required multiple>
+                                <option v-for="outcome in outcomes" :value="outcome.id" v-bind:selected="determineSelectedOutcomes(round.outcomes, outcome.id)">[[ outcome.outcomeText ]]</option>
+                            </select>
+                        </div>
+                        <p>Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
+
+                        <button :id="'editRound-' + round.id" type="button" class="btn btn-dark mb-2 editForm">Save Edits</button>
+                        <button :id="'deleteRound-' + round.id" type="button" class="btn btn-danger mb-2 deleteForm">Delete</button>
                     </form>
                 </div>
             </div>
@@ -87,11 +107,24 @@
             pasteValue: function(textPaste) {
                 const outcomeTextElement = document.querySelector("#outcomeText");
                 outcomeTextElement.value = outcomeTextElement.value + textPaste;
+            },
+            determineSelectedOutcomes: function(selectedOutcomes, outcomeId) {
+                for (let i = 0; i < selectedOutcomes.length; i++) {
+                    if (selectedOutcomes[i].id === outcomeId) {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         },
         updated: function () {
             document.querySelectorAll(".deleteForm").forEach(f => {
-                f.addEventListener("submit", deleteSubmit);
+                f.addEventListener("click", deleteSubmit);
+            });
+
+            document.querySelectorAll(".editForm").forEach(f => {
+                f.addEventListener("click", editSubmit);
             });
         },
         created: refreshMethod
@@ -137,8 +170,44 @@
         .catch(result => alert(result));
     }
 
+    function editSubmit(e) {
+        e.preventDefault();
+
+        const idToEdit = e.target.id.replace("editRound-", "");
+
+        const postData = {
+            name: document.querySelector("#name-" + idToEdit).value,
+            description: document.querySelector("#description-" + idToEdit).value,
+            openingRound: document.querySelector("#openingRound-" + idToEdit).value,
+            outcomeIds: Array.from(document.querySelector("#outcomes-" + idToEdit).selectedOptions).map(o => o.value)
+        };
+
+        fetch("/members/hunger-sim/round/" + idToEdit, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => {
+            if (response.ok) {
+                app.refresh();
+            } else {
+                alert("Failed to save round");
+            }
+
+            return response.text();
+        })
+        .then(responseText => console.log(responseText))
+        .catch(result => alert(result));
+    }
+
     function deleteSubmit(e) {
         e.preventDefault();
+
+        if (!confirm("Are you sure you want to delete?")) {
+            return;
+        }
 
         const idToDelete = e.target.id;
 

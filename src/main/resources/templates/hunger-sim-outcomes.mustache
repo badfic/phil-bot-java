@@ -32,6 +32,7 @@
             <h4>NOTE: Every player starts the game with 10 health points. If you want your outcome to "kill", set the player hp who is supposed to die to "-10"</h4>
             <br/>
 
+            <h3>New Outcome</h3>
             <form id="newOutcome">
                 <div class="form-group">
                     <label for="numPlayers">Number Of Players</label>
@@ -175,6 +176,10 @@
 
     function deleteSubmit(e) {
         e.preventDefault();
+
+        if (!confirm("Are you sure you want to delete?")) {
+            return;
+        }
 
         const idToDelete = e.target.id;
 

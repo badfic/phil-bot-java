@@ -68,6 +68,10 @@
     function newGame(e) {
         e.preventDefault();
 
+        if (!confirm("Are you sure you want to start a new game? This will destroy any existing running game.")) {
+            return;
+        }
+
         const postData = {
             name: document.querySelector("#name").value,
             playerIds: Array.from(document.querySelector("#players").selectedOptions).map(o => o.value)
