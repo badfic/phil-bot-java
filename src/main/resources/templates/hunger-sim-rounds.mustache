@@ -1,0 +1,163 @@
+{{> members-header}}
+<div class="container">
+    <h1>Hunger Sim</h1>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-pronouns">Pronouns</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-players">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-outcomes">Outcomes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/members/hunger-sim-rounds">Rounds</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-new-game">New Game</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-game">Run Game</a>
+        </li>
+    </ul>
+
+    <div class="row">
+        <div id="app">
+            <form id="newRound">
+                <div class="form-group">
+                    <label for="name">Round Name</label>
+                    <input type="text" class="form-control" id="name">
+                </div>
+                <div class="form-group">
+                    <label for="description">Round Description</label>
+                    <input type="text" class="form-control" id="description">
+                </div>
+                <div class="form-group">
+                    <label for="openingRound">Opening Round?</label>
+                    <select class="form-control" id="openingRound" required>
+                        <option value="false" selected>No</option>
+                        <option value="true">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="outcomes">Outcomes</label>
+                    <select class="form-control" id="outcomes" required multiple>
+                        <option v-for="outcome in outcomes" :value="outcome.id">[[ outcome.outcomeText ]]</option>
+                    </select>
+                </div>
+                <p>Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
+
+                <button type="submit" class="btn btn-dark mb-2">Save</button>
+            </form>
+
+            <div class="card" v-for="round in rounds">
+                <div class="card-body">
+                    <p>ID: [[ round.id ]]</p>
+                    <p>Name: [[ round.name ]]</p>
+                    <p>Description: [[ round.description ]]</p>
+                    <p>Opening Round?: [[ round.openingRound ]]</p>
+                    <p>Outcomes:</p>
+                    <p v-for="outcome in round.outcomes">[[ outcome.outcomeText ]]</p>
+                    <form :id="round.id" class="deleteForm">
+                        <button type="submit" class="btn btn-dark mb-2">Delete Round</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const app = new Vue({
+        el: "#app",
+        delimiters: ["[[", "]]"],
+        data: {
+            outcomes: [],
+            rounds: []
+        },
+        methods: {
+            refresh: refreshMethod,
+            pasteValue: function(textPaste) {
+                const outcomeTextElement = document.querySelector("#outcomeText");
+                outcomeTextElement.value = outcomeTextElement.value + textPaste;
+            }
+        },
+        updated: function () {
+            document.querySelectorAll(".deleteForm").forEach(f => {
+                f.addEventListener("submit", deleteSubmit);
+            });
+        },
+        created: refreshMethod
+    });
+
+    function refreshMethod() {
+        fetch("/members/hunger-sim/outcome")
+                .then(response => response.json())
+                .then(result => app.outcomes = result);
+
+        fetch("/members/hunger-sim/round")
+                .then(response => response.json())
+                .then(result => app.rounds = result);
+    }
+
+    function formSubmit(e) {
+        e.preventDefault();
+
+        const postData = {
+            name: document.querySelector("#name").value,
+            description: document.querySelector("#description").value,
+            openingRound: document.querySelector("#openingRound").value,
+            outcomeIds: Array.from(document.querySelector("#outcomes").selectedOptions).map(o => o.value)
+        };
+
+        fetch("/members/hunger-sim/round", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => {
+            if (response.ok) {
+                app.refresh();
+            } else {
+                alert("Failed to save round");
+            }
+
+            return response.text();
+        })
+        .then(responseText => console.log(responseText))
+        .catch(result => alert(result));
+    }
+
+    function deleteSubmit(e) {
+        e.preventDefault();
+
+        const idToDelete = e.target.id;
+
+        fetch("/members/hunger-sim/round/" + idToDelete, {
+            method: "DELETE"
+        })
+        .then(response => {
+            if (response.ok) {
+                app.refresh();
+            } else {
+                alert("Failed to delete round");
+            }
+
+            return response.text();
+        })
+        .then(responseText => console.log(responseText))
+        .catch(result => alert(result));
+    }
+
+    document.querySelector("#newRound").addEventListener("submit", formSubmit);
+</script>
+{{> footer}}

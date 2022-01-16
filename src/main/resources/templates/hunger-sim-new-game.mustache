@@ -1,0 +1,98 @@
+{{> members-header}}
+<div class="container">
+    <h1>Hunger Sim</h1>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-pronouns">Pronouns</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-players">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-outcomes">Outcomes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-rounds">Rounds</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/members/hunger-sim-new-game">New Game</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-game">Run Game</a>
+        </li>
+    </ul>
+
+    <div class="row">
+        <div id="app">
+            <form id="newGame">
+                <div class="form-group">
+                    <label for="name">Game Name</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="players">Players</label>
+                    <select class="form-control" id="players" required multiple>
+                        <option v-for="player in players" :value="player.id">[[ player.effectiveName ]]</option>
+                    </select>
+                </div>
+                <p>Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
+
+                <button type="submit" class="btn btn-dark mb-2">Create New Game</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const app = new Vue({
+        el: "#app",
+        delimiters: ["[[", "]]"],
+        data: {
+            players: []
+        },
+        created: refreshMethod
+    });
+
+    function refreshMethod() {
+        fetch("/members/hunger-sim/player")
+                .then(response => response.json())
+                .then(result => app.players = result);
+    }
+
+    function newGame(e) {
+        e.preventDefault();
+
+        const postData = {
+            name: document.querySelector("#name").value,
+            playerIds: Array.from(document.querySelector("#players").selectedOptions).map(o => o.value)
+        };
+
+        fetch("/members/hunger-sim/game", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Successfully created new game. Go to next tab \"Run Game\" to run the simulator");
+            } else {
+                alert("Failed to create new game");
+            }
+
+            return response.text();
+        })
+        .then(responseText => console.log(responseText))
+        .catch(result => alert(result));
+    }
+
+    document.querySelector("#newGame").addEventListener("submit", newGame);
+</script>
+{{> footer}}

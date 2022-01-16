@@ -1,0 +1,93 @@
+{{> members-header}}
+<div class="container">
+    <h1>Hunger Sim</h1>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-pronouns">Pronouns</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-players">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-outcomes">Outcomes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-rounds">Rounds</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/members/hunger-sim-new-game">New Game</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/members/hunger-sim-game">Run Game</a>
+        </li>
+    </ul>
+
+    <div class="row">
+        <div id="app">
+            <h1>[[ game.name ]]</h1>
+
+            <label for="gamePlayers">All Players In Game (With HP values)</label>
+            <select class="form-control" id="gamePlayers">
+                <option v-for="player in game.players">[[ player.effectiveName ]] | [[ player.hp ]]hp</option>
+            </select>
+
+            <br/><br/>
+
+            <div v-if="game.round">
+                <h3>Round [[ game.roundCounter ]]: [[ game.round.name ]]</h3>
+                <h4>[[ game.round.description ]]</h4>
+                <p v-for="outcome in game.currentOutcomes">[[ outcome ]]</p>
+            </div>
+
+            <form id="runGame">
+                <button type="submit" class="btn btn-dark mb-2">Next Round</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const app = new Vue({
+        el: "#app",
+        delimiters: ["[[", "]]"],
+        data: {
+            game: {}
+        },
+        methods: {
+            refresh: refreshMethod
+        },
+        created: refreshMethod
+    });
+
+    function refreshMethod() {
+        fetch("/members/hunger-sim/game")
+                .then(response => response.json())
+                .then(result => app.game = result);
+    }
+
+    function runGame(e) {
+        e.preventDefault();
+
+        fetch("/members/hunger-sim/game/step", {
+            method: "POST"
+        }).then(response => {
+            if (response.ok) {
+                app.refresh();
+            } else {
+                alert("Failed to run next round");
+            }
+
+            return response.text();
+        })
+        .then(responseText => console.log(responseText))
+        .catch(result => alert(result));
+    }
+
+    document.querySelector("#runGame").addEventListener("submit", runGame);
+</script>
+{{> footer}}

@@ -15,7 +15,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class DiscordUser {
 
     @Id
-    @JsonIgnore
     private String id;
 
     @Transient
