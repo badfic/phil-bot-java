@@ -40,7 +40,9 @@
             <div v-if="game.round">
                 <h3>Round [[ game.roundCounter ]]: [[ game.round.name ]]</h3>
                 <h4>[[ game.round.description ]]</h4>
-                <p v-for="outcome in game.currentOutcomes">[[ outcome ]]</p>
+                <p v-for="outcome in game.currentOutcomes">
+                    <span v-html="outcome"></span>
+                </p>
             </div>
 
             <form id="runGame">

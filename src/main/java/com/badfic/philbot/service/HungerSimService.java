@@ -10,6 +10,7 @@ import com.badfic.philbot.data.hungersim.Round;
 import com.badfic.philbot.data.hungersim.RoundOutcome;
 import com.badfic.philbot.data.hungersim.RoundOutcomeRepository;
 import com.badfic.philbot.data.hungersim.RoundRepository;
+import com.google.common.html.HtmlEscapers;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +52,7 @@ public class HungerSimService extends BaseService {
 
             Player winner = alivePlayers.pop();
             winner.setEffectiveNameViaJda(philJda);
-            game.setCurrentOutcomes(Collections.singletonList(winner.getEffectiveName() + " has won!"));
+            game.setCurrentOutcomes(Collections.singletonList("<b>" + HtmlEscapers.htmlEscaper().escape(winner.getEffectiveName()) + "</b> has won!"));
             return gameRepository.save(game);
         }
 

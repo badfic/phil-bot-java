@@ -2,6 +2,7 @@ package com.badfic.philbot.data.hungersim;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.html.HtmlEscapers;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -161,7 +162,7 @@ public class Outcome {
 
             player.setEffectiveNameViaJda(jda);
 
-            result = StringUtils.replace(result, "{player" + (i + 1) + '}', player.getEffectiveName());
+            result = StringUtils.replace(result, "{player" + (i + 1) + '}', "<b>" + HtmlEscapers.htmlEscaper().escape(player.getEffectiveName()) + "</b>");
             result = StringUtils.replace(result, "{player" + (i + 1) + "_subject}", player.getPronoun().getSubject());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_object}", player.getPronoun().getObject());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_possessive}", player.getPronoun().getPossessive());
