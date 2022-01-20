@@ -89,6 +89,25 @@ public class HungerSimRestController extends BaseMembersController {
         return pronounRepository.save(new Pronoun(pronoun.subject, pronoun.object, pronoun.possessive, pronoun.self));
     }
 
+    @PutMapping(value = "/hunger-sim/pronoun/{pronounId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Pronoun editPronoun(HttpServletRequest httpServletRequest, @PathVariable("pronounId") Long pronounId, @RequestBody PronounDto pronoun)
+            throws Exception {
+        checkSession(httpServletRequest, true);
+
+        if (Stream.of(pronoun.subject, pronoun.object, pronoun.possessive, pronoun.self).anyMatch(StringUtils::isBlank)) {
+            throw new IllegalArgumentException("subject, object, possessive, and self must not be empty");
+        }
+
+        Pronoun existingPronoun = pronounRepository.findById(pronounId).orElseThrow(() -> new IllegalArgumentException("pronoun by that id not found"));
+
+        existingPronoun.setSubject(pronoun.subject);
+        existingPronoun.setObject(pronoun.object);
+        existingPronoun.setPossessive(pronoun.possessive);
+        existingPronoun.setSelf(pronoun.self);
+
+        return pronounRepository.save(existingPronoun);
+    }
+
     @DeleteMapping(value = "/hunger-sim/pronoun/{pronounId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deletePronoun(HttpServletRequest httpServletRequest, @PathVariable("pronounId") Long pronounId) throws Exception {
         checkSession(httpServletRequest, true);

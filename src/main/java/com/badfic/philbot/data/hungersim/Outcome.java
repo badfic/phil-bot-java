@@ -165,6 +165,7 @@ public class Outcome {
             result = StringUtils.replace(result, "{player" + (i + 1) + "_subject}", player.getPronoun().getSubject());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_object}", player.getPronoun().getObject());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_possessive}", player.getPronoun().getPossessive());
+            result = StringUtils.replace(result, "{player" + (i + 1) + "_self}", player.getPronoun().getSelf());
         }
 
         return result;
