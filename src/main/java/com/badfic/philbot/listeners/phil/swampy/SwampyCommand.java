@@ -593,10 +593,15 @@ public class SwampyCommand extends BaseSwampy {
         discordUser.setLastVote(now);
         discordUserRepository.save(discordUser);
 
-        takePointsFromMember(swampyGamesConfig.getDownvotePointsFromDownvotee(), mentionedMember, PointsStat.DOWNVOTED);
-        givePointsToMember(swampyGamesConfig.getDownvotePointsToDownvoter(), event.getMember(), PointsStat.DOWNVOTER);
-
-        event.replySuccess("Successfully downvoted " + mentionedMember.getEffectiveName());
+        if (mentionedMember.getUser().isBot()) {
+            takePointsFromMember(swampyGamesConfig.getDownvotePointsFromDownvotee(), event.getMember(), PointsStat.DOWNVOTED);
+            givePointsToMember(swampyGamesConfig.getDownvotePointsToDownvoter(), mentionedMember, PointsStat.DOWNVOTER);
+            event.replySuccess("Successfully downvoted " + event.getMember().getEffectiveName() + " \uD83D\uDE08");
+        } else {
+            takePointsFromMember(swampyGamesConfig.getDownvotePointsFromDownvotee(), mentionedMember, PointsStat.DOWNVOTED);
+            givePointsToMember(swampyGamesConfig.getDownvotePointsToDownvoter(), event.getMember(), PointsStat.DOWNVOTER);
+            event.replySuccess("Successfully downvoted " + mentionedMember.getEffectiveName());
+        }
     }
 
     private void give(CommandEvent event) {
