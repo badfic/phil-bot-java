@@ -15,7 +15,7 @@ import com.badfic.philbot.data.hungersim.RoundOutcome;
 import com.badfic.philbot.data.hungersim.RoundOutcomeRepository;
 import com.badfic.philbot.data.hungersim.RoundRepository;
 import com.badfic.philbot.service.HungerSimService;
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -302,11 +302,20 @@ public class HungerSimRestController extends BaseMembersController {
 
         players = playerRepository.saveAll(players);
 
+        for (Player player : players) {
+            player.setEffectiveNameViaJda(philJda);
+        }
+
+        ImmutableList<String> outcomes = ImmutableList.<String>builder()
+                .add("Here are our tributes!")
+                .addAll(players.stream().map(Player::getEffectiveName).toList())
+                .build();
+
         gameEntity.setId(Game.SINGLETON_ID);
         gameEntity.setName(game.name);
         gameEntity.setRound(openingRound.get(0));
         gameEntity.setRoundCounter(0);
-        gameEntity.setCurrentOutcomes(Collections.singletonList("Game has not started"));
+        gameEntity.setCurrentOutcomes(outcomes);
         gameEntity.setPlayers(players);
 
         return gameRepository.save(gameEntity);
