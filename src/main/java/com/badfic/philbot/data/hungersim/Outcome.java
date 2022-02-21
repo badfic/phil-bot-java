@@ -167,6 +167,10 @@ public class Outcome {
             result = StringUtils.replace(result, "{player" + (i + 1) + "_object}", player.getPronoun().getObject());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_possessive}", player.getPronoun().getPossessive());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_self}", player.getPronoun().getSelf());
+
+            if (player.getHp() <= 0) {
+                result += " (<b>" + HtmlEscapers.htmlEscaper().escape(player.getEffectiveName()) + "</b> died)";
+            }
         }
 
         return result;

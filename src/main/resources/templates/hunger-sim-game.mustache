@@ -32,7 +32,7 @@
 
             <label for="gamePlayers">All Players In Game (With HP values)</label>
             <select class="form-control" id="gamePlayers">
-                <option v-for="player in game.players">[[ player.effectiveName ]] | [[ player.hp ]]hp</option>
+                <option v-for="player in sortedPlayers">[[ player.effectiveName ]] | [[ player.hp ]]hp</option>
             </select>
 
             <br/><br/>
@@ -62,6 +62,17 @@
         },
         methods: {
             refresh: refreshMethod
+        },
+        computed: {
+            sortedPlayers: function() {
+                if (!this.game || !this.game.players) {
+                    return {};
+                }
+
+                return this.game.players.sort((a, b) => {
+                    return b.hp - a.hp;
+                });
+            }
         },
         created: refreshMethod
     });
