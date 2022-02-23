@@ -53,10 +53,10 @@ public class Swiper extends BaseSwampy {
             .put("Simper No Simping", new TheSwiper(
                     "Simper No Simping",
                     "Simps Spotted Nearby",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882898247545405460/simper_comes.png",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882898256202453022/simper_lose.png",
+                    "https://cdn.discordapp.com/attachments/771565238624845846/945840242383003698/simpssightsset.png",
+                    "https://cdn.discordapp.com/attachments/771565238624845846/945836068375244840/simpsneverprosper.png",
                     "The Simps Prospered!",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882899136859492392/simper_wins2.png"
+                    "https://cdn.discordapp.com/attachments/771565238624845846/945841854484734023/simpersarewinners.png"
             ))
             .put("Shrimper No Shrimping", new TheSwiper(
                     "Shrimper No Shrimping",

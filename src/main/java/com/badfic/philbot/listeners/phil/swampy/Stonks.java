@@ -28,10 +28,9 @@ public class Stonks extends BaseSwampy {
 
     // TODO: Put in SwampyGamesConfig table
     private static final Set<String> STONKS = ImmutableSet.of(
-            "https://cdn.discordapp.com/attachments/783445794568142879/805580386172141608/7fv2my960qd61.png",
             "https://cdn.discordapp.com/attachments/794506942906761226/882825319722143784/stonky_bellala.png",
             "https://cdn.discordapp.com/attachments/794506942906761226/882825323308269598/stonky_betty.png",
-            "https://cdn.discordapp.com/attachments/794506942906761226/882825326206545940/stonky_leaf.png",
+            "https://cdn.discordapp.com/attachments/718561729105363075/945846713254576239/IMG_1832.png",
             "https://cdn.discordapp.com/attachments/741030569307275436/902294248597098557/IMG_2446.jpg"
     );
 
