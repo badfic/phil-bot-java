@@ -32,7 +32,7 @@ public class Swiper extends BaseSwampy {
                     "https://cdn.discordapp.com/attachments/741024218938081340/922969160345059328/SPOILER_swiper.png",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882837094685360179/swiper_lose.png",
                     "Swiper Escaped!",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882837105825443930/swiper_win.png"
+                    "https://cdn.discordapp.com/attachments/917315206009483294/946217897800396830/image0.jpg"
             ))
             .put("Snarter No Snarting", new TheSwiper(
                     "Snarter No Snarting",
@@ -109,10 +109,10 @@ public class Swiper extends BaseSwampy {
             .put("Loki No Larceny", new TheSwiper(
                     "Loki No Larceny",
                     "Loki Spotted Nearby!",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882859510832709652/loki_coming.png",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882859517455515678/loki_lose.png",
+                    "https://cdn.discordapp.com/attachments/323666308107599872/947617999869849662/loki-arrives-edit.png",
+                    "https://cdn.discordapp.com/attachments/707453916882665552/947616510409576488/loki-lost.png",
                     "WOW, You just got Loki'd",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882859525512773662/loki_win.png"
+                    "https://cdn.discordapp.com/attachments/746148999144407211/946171616155541594/F4ABFC69-BACD-4285-9725-1FBFA94A21DC.jpg"
             ))
             .build();
 
