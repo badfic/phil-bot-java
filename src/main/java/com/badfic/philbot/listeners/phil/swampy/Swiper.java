@@ -77,8 +77,8 @@ public class Swiper extends BaseSwampy {
             .put("Chooster No Choosting", new TheSwiper(
                     "Chooster No Choosting",
                     "Thomas The Tank Engine Spotted",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882872146995597312/thomas_comes.png",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882872155161886730/thomas_lose.png",
+                    "https://cdn.discordapp.com/attachments/771565238624845846/945863411730907186/choochoocomingforyou.png",
+                    "https://cdn.discordapp.com/attachments/771565238624845846/945864978475384842/caboose.png",
                     "Sweet Sweet Murder",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882872163697324113/thomas_wins.png"
             ))
