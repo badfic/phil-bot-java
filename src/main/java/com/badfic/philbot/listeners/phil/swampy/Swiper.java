@@ -30,7 +30,7 @@ public class Swiper extends BaseSwampy {
                     "Swiper No Swiping",
                     "Swiper Was Spotted Nearby",
                     "https://cdn.discordapp.com/attachments/741024218938081340/922969160345059328/SPOILER_swiper.png",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882837094685360179/swiper_lose.png",
+                    "https://cdn.discordapp.com/attachments/917315206009483294/946224026144084008/image0.jpg",
                     "Swiper Escaped!",
                     "https://cdn.discordapp.com/attachments/917315206009483294/946217897800396830/image0.jpg"
             ))
