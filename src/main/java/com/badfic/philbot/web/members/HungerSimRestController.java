@@ -75,7 +75,7 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/pronoun", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Pronoun> getPronouns(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        return pronounRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        return pronounRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
     @PostMapping(value = "/hunger-sim/pronoun", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -126,7 +126,7 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/player", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Player> getPlayers(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        List<Player> players = playerRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        List<Player> players = playerRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
         players.forEach(p -> p.setEffectiveNameViaJda(philJda));
         return players;
     }
@@ -140,7 +140,7 @@ public class HungerSimRestController extends BaseMembersController {
 
         if (player.discordId != null) {
             DiscordUser discordUser = discordUserRepository.findById(String.valueOf(player.discordId))
-                    .orElseThrow(() -> new IllegalArgumentException("discordId not recognized"));
+                    .orElseThrow(() -> new IllegalArgumentException("discordId not recognized as a member of this server"));
 
             try {
                 return playerRepository.save(new Player(discordUser, pronouns));
@@ -171,7 +171,7 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/outcome", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Outcome> getOutcomes(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        return outcomeRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        return outcomeRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
     @GetMapping(value = "/hunger-sim/outcome/variables", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -203,7 +203,7 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/round", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Round> getRounds(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        List<Round> rounds = roundRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        List<Round> rounds = roundRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 
         for (Round round : rounds) {
             List<Outcome> outcomes = roundOutcomeRepository.findByRound(round).stream().map(RoundOutcome::getOutcome).toList();

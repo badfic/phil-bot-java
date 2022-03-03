@@ -75,7 +75,7 @@
         methods: {
             refresh: refreshMethod
         },
-        updated: function () {
+        updated: function() {
             document.querySelectorAll(".deleteForm").forEach(f => {
                 f.addEventListener("submit", deleteSubmit);
             });
@@ -96,30 +96,43 @@
     function formSubmit(e) {
         e.preventDefault();
 
+        const nameElement = document.querySelector("#name");
+        const discordIdElement = document.querySelector("#discordId");
+        const pronounElement = document.querySelector("#pronoun");
+
+        if ((!nameElement.value && !discordIdElement.value) || (nameElement.value && discordIdElement.value)) {
+            alert("Please provide either a Name or a Discord ID. At least one is required, but not both.");
+            return;
+        }
+
         const postData = {
-            name: document.querySelector("#name").value,
-            discordId: document.querySelector("#discordId").value,
-            pronounId: document.querySelector("#pronoun").value,
+            name: nameElement.value,
+            discordId: discordIdElement.value,
+            pronounId: pronounElement.value,
         };
 
-        fetch("/members/hunger-sim/player", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            body: JSON.stringify(postData)
-        })
-        .then(response => {
-            if (response.ok) {
-                app.refresh();
-            } else {
-                alert("Failed to save player");
-            }
+        const request = new XMLHttpRequest();
+        request.open("POST", "/members/hunger-sim/player", true);
+        request.setRequestHeader("Content-Type", "application/json");
 
-            return response.text();
-        })
-        .then(responseText => console.log(responseText))
-        .catch(result => alert(result));
+        request.onload = function() {
+            console.log(this.response);
+
+            if (this.status >= 200 && this.status <= 299) {
+                app.refresh();
+                nameElement.value = "";
+                discordIdElement.value = "";
+                alert("Player Saved!");
+            } else {
+                alert("ERROR: " + this.response);
+            }
+        };
+
+        request.onerror = function() {
+            alert("ERROR: Failed to save player. Could not contact server, phil might be down :(");
+        };
+
+        request.send(JSON.stringify(postData));
     }
 
     function deleteSubmit(e) {
@@ -131,20 +144,25 @@
 
         const idToDelete = e.target.id;
 
-        fetch("/members/hunger-sim/player/" + idToDelete, {
-            method: "DELETE"
-        })
-        .then(response => {
-            if (response.ok) {
-                app.refresh();
-            } else {
-                alert("Failed to delete player");
-            }
+        const request = new XMLHttpRequest();
+        request.open("DELETE", "/members/hunger-sim/player/" + idToDelete, true);
 
-            return response.text();
-        })
-        .then(responseText => console.log(responseText))
-        .catch(result => alert(result));
+        request.onload = function() {
+            console.log(this.response);
+
+            if (this.status >= 200 && this.status <= 299) {
+                app.refresh();
+                alert("Player Deleted!");
+            } else {
+                alert("ERROR: " + this.response);
+            }
+        };
+
+        request.onerror = function() {
+            alert("ERROR: Failed to delete player. Could not contact server, phil might be down :(");
+        };
+
+        request.send();
     }
 
     document.querySelector("#newPlayer").addEventListener("submit", formSubmit);
