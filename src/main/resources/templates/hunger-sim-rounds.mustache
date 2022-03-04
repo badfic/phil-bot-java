@@ -143,31 +143,44 @@
     function formSubmit(e) {
         e.preventDefault();
 
+        const nameElement = document.querySelector("#name");
+        const descriptionElement = document.querySelector("#description");
+        const openingRoundElement = document.querySelector("#openingRound");
+        const outcomeIdsElement = document.querySelector("#outcomes");
+
         const postData = {
-            name: document.querySelector("#name").value,
-            description: document.querySelector("#description").value,
-            openingRound: document.querySelector("#openingRound").value,
-            outcomeIds: Array.from(document.querySelector("#outcomes").selectedOptions).map(o => o.value)
+            name: nameElement.value,
+            description: descriptionElement.value,
+            openingRound: openingRoundElement.value,
+            outcomeIds: Array.from(outcomeIdsElement.selectedOptions).map(o => o.value)
         };
 
-        fetch("/members/hunger-sim/round", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            body: JSON.stringify(postData)
-        })
-        .then(response => {
-            if (response.ok) {
-                app.refresh();
-            } else {
-                alert("Failed to save round");
-            }
+        const request = new XMLHttpRequest();
+        request.open("POST", "/members/hunger-sim/round", true);
+        request.setRequestHeader("Content-Type", "application/json");
 
-            return response.text();
-        })
-        .then(responseText => console.log(responseText))
-        .catch(result => alert(result));
+        request.onload = function() {
+            console.log(this.response);
+
+            if (this.status >= 200 && this.status <= 299) {
+                app.refresh();
+
+                nameElement.value = "";
+                descriptionElement.value = "";
+                openingRoundElement.value = "false";
+                outcomeIdsElement.value = "";
+
+                alert("Round Saved!");
+            } else {
+                alert("ERROR: " + this.response);
+            }
+        };
+
+        request.onerror = function() {
+            alert("ERROR: Failed to save round. Could not contact server, phil might be down :(");
+        };
+
+        request.send(JSON.stringify(postData));
     }
 
     function editSubmit(e) {
@@ -182,24 +195,26 @@
             outcomeIds: Array.from(document.querySelector("#outcomes-" + idToEdit).selectedOptions).map(o => o.value)
         };
 
-        fetch("/members/hunger-sim/round/" + idToEdit, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            body: JSON.stringify(postData)
-        })
-        .then(response => {
-            if (response.ok) {
-                app.refresh();
-            } else {
-                alert("Failed to save round");
-            }
+        const request = new XMLHttpRequest();
+        request.open("PUT", "/members/hunger-sim/round/" + idToEdit, true);
+        request.setRequestHeader("Content-Type", "application/json");
 
-            return response.text();
-        })
-        .then(responseText => console.log(responseText))
-        .catch(result => alert(result));
+        request.onload = function() {
+            console.log(this.response);
+
+            if (this.status >= 200 && this.status <= 299) {
+                app.refresh();
+                alert("Round Updated!");
+            } else {
+                alert("ERROR: " + this.response);
+            }
+        };
+
+        request.onerror = function() {
+            alert("ERROR: Failed to update round. Could not contact server, phil might be down :(");
+        };
+
+        request.send(JSON.stringify(postData));
     }
 
     function deleteSubmit(e) {
@@ -211,20 +226,25 @@
 
         const idToDelete = e.target.id.replace("deleteRound-", "");
 
-        fetch("/members/hunger-sim/round/" + idToDelete, {
-            method: "DELETE"
-        })
-        .then(response => {
-            if (response.ok) {
-                app.refresh();
-            } else {
-                alert("Failed to delete round");
-            }
+        const request = new XMLHttpRequest();
+        request.open("DELETE", "/members/hunger-sim/round/" + idToDelete, true);
 
-            return response.text();
-        })
-        .then(responseText => console.log(responseText))
-        .catch(result => alert(result));
+        request.onload = function() {
+            console.log(this.response);
+
+            if (this.status >= 200 && this.status <= 299) {
+                app.refresh();
+                alert("Round Deleted!");
+            } else {
+                alert("ERROR: " + this.response);
+            }
+        };
+
+        request.onerror = function() {
+            alert("ERROR: Failed to delete round. Could not contact server, phil might be down :(");
+        };
+
+        request.send();
     }
 
     document.querySelector("#newRound").addEventListener("submit", formSubmit);

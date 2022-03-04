@@ -132,45 +132,64 @@
         fetch("/members/hunger-sim/outcome/variables")
                 .then(response => response.json())
                 .then(result => app.outcomeVariables = result);
+
+        app.numPlayers = 1;
     }
 
     function formSubmit(e) {
         e.preventDefault();
 
+        const outcomeTextElement = document.querySelector("#outcomeText");
+        const numPlayersElement = document.querySelector("#numPlayers");
+        const player1HpElement = document.querySelector("#player1Hp");
+        const player2HpElement = document.querySelector("#player2Hp");
+        const player3HpElement = document.querySelector("#player3Hp");
+        const player4HpElement = document.querySelector("#player4Hp");
+
         const postData = {
-            outcomeText: document.querySelector("#outcomeText").value,
-            numPlayers: document.querySelector("#numPlayers").value,
-            player1Hp: document.querySelector("#player1Hp").value,
+            outcomeText: outcomeTextElement.value,
+            numPlayers: numPlayersElement.value,
+            player1Hp: player1HpElement.value,
         };
 
         if (postData.numPlayers >= 2) {
-            postData.player2Hp = document.querySelector("#player2Hp").value;
+            postData.player2Hp = player2HpElement.value;
         }
         if (postData.numPlayers >= 3) {
-            postData.player3Hp = document.querySelector("#player3Hp").value;
+            postData.player3Hp = player3HpElement.value;
         }
         if (postData.numPlayers >= 4) {
-            postData.player4Hp = document.querySelector("#player4Hp").value;
+            postData.player4Hp = player4HpElement.value;
         }
 
-        fetch("/members/hunger-sim/outcome", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            },
-            body: JSON.stringify(postData)
-        })
-        .then(response => {
-            if (response.ok) {
-                app.refresh();
-            } else {
-                alert("Failed to save outcome");
-            }
+        const request = new XMLHttpRequest();
+        request.open("POST", "/members/hunger-sim/outcome", true);
+        request.setRequestHeader("Content-Type", "application/json");
 
-            return response.text();
-        })
-        .then(responseText => console.log(responseText))
-        .catch(result => alert(result));
+        request.onload = function() {
+            console.log(this.response);
+
+            if (this.status >= 200 && this.status <= 299) {
+                app.refresh();
+
+                outcomeTextElement.value = "";
+                numPlayersElement.value = 1;
+                player1HpElement.value = 0;
+                player2HpElement.value = 0;
+                player3HpElement.value = 0;
+                player4HpElement.value = 0;
+
+                alert("Outcome Saved!");
+            } else {
+                alert("ERROR: " + this.response);
+            }
+        };
+
+        request.onerror = function() {
+            alert("ERROR: Failed to save outcome. Could not contact server, phil might be down :(");
+        };
+
+        request.send(JSON.stringify(postData));
     }
 
     function deleteSubmit(e) {
@@ -182,20 +201,25 @@
 
         const idToDelete = e.target.id;
 
-        fetch("/members/hunger-sim/outcome/" + idToDelete, {
-            method: "DELETE"
-        })
-        .then(response => {
-            if (response.ok) {
-                app.refresh();
-            } else {
-                alert("Failed to delete outcome");
-            }
+        const request = new XMLHttpRequest();
+        request.open("DELETE", "/members/hunger-sim/outcome/" + idToDelete, true);
 
-            return response.text();
-        })
-        .then(responseText => console.log(responseText))
-        .catch(result => alert(result));
+        request.onload = function() {
+            console.log(this.response);
+
+            if (this.status >= 200 && this.status <= 299) {
+                app.refresh();
+                alert("Outcome Deleted!");
+            } else {
+                alert("ERROR: " + this.response);
+            }
+        };
+
+        request.onerror = function() {
+            alert("ERROR: Failed to delete outcome. Could not contact server, phil might be down :(");
+        };
+
+        request.send();
     }
 
     document.querySelector("#newOutcome").addEventListener("submit", formSubmit);

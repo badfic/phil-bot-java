@@ -86,7 +86,11 @@ public class HungerSimRestController extends BaseMembersController {
             throw new IllegalArgumentException("subject, object, possessive, and self must not be empty");
         }
 
-        return pronounRepository.save(new Pronoun(pronoun.subject, pronoun.object, pronoun.possessive, pronoun.self));
+        try {
+            return pronounRepository.save(new Pronoun(pronoun.subject, pronoun.object, pronoun.possessive, pronoun.self));
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Failed to save pronoun, it's likely a pronoun with these values already exists", e);
+        }
     }
 
     @PutMapping(value = "/hunger-sim/pronoun/{pronounId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -186,15 +190,32 @@ public class HungerSimRestController extends BaseMembersController {
 
         validateOutcome(outcome);
 
-        return outcomeRepository.save(new Outcome(
-                outcome.outcomeText, outcome.numPlayers, outcome.player1Hp, outcome.player2Hp, outcome.player3Hp, outcome.player4Hp));
+        try {
+            return outcomeRepository.save(new Outcome(
+                    outcome.outcomeText, outcome.numPlayers, outcome.player1Hp, outcome.player2Hp, outcome.player3Hp, outcome.player4Hp));
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Failed to save outcome, it's likely an outcome with this outcomeText already exists", e);
+        }
     }
 
     @DeleteMapping(value = "/hunger-sim/outcome/{outcomeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteOutcome(HttpServletRequest httpServletRequest, @PathVariable("outcomeId") Long outcomeId) throws Exception {
         checkSession(httpServletRequest, true);
         Outcome outcome = outcomeRepository.findById(outcomeId).orElseThrow(() -> new IllegalArgumentException("Outcome by that ID does not exist"));
-        roundOutcomeRepository.deleteAll(roundOutcomeRepository.findByOutcome(outcome));
+        List<RoundOutcome> roundOutcomes = roundOutcomeRepository.findByOutcome(outcome);
+
+        for (RoundOutcome roundOutcome : roundOutcomes) {
+            Round round = roundOutcome.getRound();
+
+            List<Outcome> outcomes = roundOutcomeRepository.findByRound(round).stream().map(RoundOutcome::getOutcome).toList();
+
+            if (outcomes.size() <= 1) {
+                throw new IllegalArgumentException(String.format(
+                        "Cannot delete this outcome as it is the sole outcome of RoundId=%d. Please delete RoundId=%d first.", round.getId(), round.getId()));
+            }
+        }
+
+        roundOutcomeRepository.deleteAll(roundOutcomes);
         outcomeRepository.delete(outcome);
     }
 
@@ -221,14 +242,18 @@ public class HungerSimRestController extends BaseMembersController {
             throw new IllegalArgumentException("A round must include at least one outcome");
         }
 
-        Round savedRound = roundRepository.save(new Round(round.name, round.description, round.openingRound));
+        try {
+            Round savedRound = roundRepository.save(new Round(round.name, round.description, round.openingRound));
 
-        List<Outcome> outcomes = outcomeRepository.findAllById(round.outcomeIds.stream().map(Long::parseLong).toList());
-        for (Outcome outcome : outcomes) {
-            roundOutcomeRepository.save(new RoundOutcome(savedRound, outcome));
+            List<Outcome> outcomes = outcomeRepository.findAllById(round.outcomeIds.stream().map(Long::parseLong).toList());
+            for (Outcome outcome : outcomes) {
+                roundOutcomeRepository.save(new RoundOutcome(savedRound, outcome));
+            }
+
+            return roundRepository.findById(savedRound.getId()).orElseThrow(() -> new IllegalArgumentException("Failed to save round"));
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Failed to save round, it's likely a round with this same name or OpeningRound=YES already exists", e);
         }
-
-        return roundRepository.findById(savedRound.getId()).orElseThrow(() -> new IllegalArgumentException("Failed to save round"));
     }
 
     @PutMapping(value = "/hunger-sim/round/{roundId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -241,27 +266,31 @@ public class HungerSimRestController extends BaseMembersController {
 
         Round existingRound = roundRepository.findById(roundId).orElseThrow(() -> new IllegalArgumentException("Could not found round with that ID"));
 
-        existingRound.setName(round.name);
-        existingRound.setDescription(round.description);
-        existingRound.setOpeningRound(round.openingRound);
+        try {
+            existingRound.setName(round.name);
+            existingRound.setDescription(round.description);
+            existingRound.setOpeningRound(round.openingRound);
 
-        Set<Long> outcomeIds = round.outcomeIds.stream().map(Long::parseLong).collect(Collectors.toSet());
-        for (RoundOutcome roundOutcome : roundOutcomeRepository.findByRound(existingRound)) {
-            if (!outcomeIds.contains(roundOutcome.getOutcome().getId())) {
-                roundOutcomeRepository.delete(roundOutcome);
+            Set<Long> outcomeIds = round.outcomeIds.stream().map(Long::parseLong).collect(Collectors.toSet());
+            for (RoundOutcome roundOutcome : roundOutcomeRepository.findByRound(existingRound)) {
+                if (!outcomeIds.contains(roundOutcome.getOutcome().getId())) {
+                    roundOutcomeRepository.delete(roundOutcome);
+                }
             }
-        }
 
-        for (Long outcomeId : outcomeIds) {
-            Outcome outcome = outcomeRepository.findById(outcomeId)
-                    .orElseThrow(() -> new IllegalArgumentException("Outcome id " + outcomeId + " does not exist"));
+            for (Long outcomeId : outcomeIds) {
+                Outcome outcome = outcomeRepository.findById(outcomeId)
+                        .orElseThrow(() -> new IllegalArgumentException("Outcome id " + outcomeId + " does not exist"));
 
-            if (!roundOutcomeRepository.existsByRoundAndOutcome(existingRound, outcome)) {
-                roundOutcomeRepository.save(new RoundOutcome(existingRound, outcome));
+                if (!roundOutcomeRepository.existsByRoundAndOutcome(existingRound, outcome)) {
+                    roundOutcomeRepository.save(new RoundOutcome(existingRound, outcome));
+                }
             }
-        }
 
-        return roundRepository.save(existingRound);
+            return roundRepository.save(existingRound);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Failed to update round, it's likely a round with this same name or OpeningRound=YES already exists", e);
+        }
     }
 
     @DeleteMapping(value = "/hunger-sim/round/{roundId}", produces = MediaType.APPLICATION_JSON_VALUE)
