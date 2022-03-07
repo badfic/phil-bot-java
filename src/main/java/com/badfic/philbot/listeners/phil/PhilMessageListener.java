@@ -28,12 +28,12 @@ import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateAvatarEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.lang3.StringUtils;
@@ -230,10 +230,10 @@ public class PhilMessageListener extends ListenerAdapter {
     public void onGuildBan(@NotNull GuildBanEvent event) {
         swampyCommand.removeFromGames(event.getUser().getId());
 
-        event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
+        event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).stream().findAny().ifPresent(channel -> {
             channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
                             event.getUser().getName() + " Was Banned",
-                            String.format("%s\nAka = %s\nWas Banned", event.getUser().getAsMention(), event.getUser().getName()),
+                            String.format("%s\nWas Banned", event.getUser().getAsMention()),
                             event.getUser().getEffectiveAvatarUrl()))
                     .queue();
         });
@@ -248,10 +248,10 @@ public class PhilMessageListener extends ListenerAdapter {
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
         swampyCommand.removeFromGames(event.getUser().getId());
 
-        event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
+        event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).stream().findAny().ifPresent(channel -> {
             channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
                             event.getUser().getName() + " Has Left",
-                            String.format("%s\nAka = %s\nHas left the server", event.getUser().getAsMention(), event.getUser().getName()),
+                            String.format("%s\nHas left the server", event.getUser().getAsMention()),
                             event.getUser().getEffectiveAvatarUrl()))
                     .queue();
         });
@@ -268,7 +268,7 @@ public class PhilMessageListener extends ListenerAdapter {
     public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
         event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
             channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
-                            event.getOldNickname() + " Updated Nickname",
+                            event.getUser().getName() + " Updated Nickname",
                             String.format("%s\nOld Nickname = %s\nNew Nickname = %s",
                                     event.getUser().getAsMention(), event.getOldNickname(), event.getNewNickname()),
                             event.getUser().getEffectiveAvatarUrl()))
@@ -288,13 +288,13 @@ public class PhilMessageListener extends ListenerAdapter {
     }
 
     @Override
-    public void onUserUpdateAvatar(@NotNull UserUpdateAvatarEvent event) {
+    public void onGuildMemberUpdateAvatar(@NotNull GuildMemberUpdateAvatarEvent event) {
         event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
             channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
-                    event.getUser().getName() + " Updated Avatar",
-                    event.getUser().getAsMention() + "\nOld avatar is thumbnail (unless phil didn't have it cached)\nNew avatar is larger image",
-                    event.getNewAvatarUrl(),
-                    event.getOldAvatarUrl()))
+                            event.getMember().getEffectiveName() + " Updated Avatar",
+                            event.getUser().getAsMention() + "\nOld avatar is thumbnail (unless phil didn't have it cached)\nNew avatar is larger image",
+                            event.getNewAvatarUrl(),
+                            event.getOldAvatarUrl()))
                     .queue();
         });
     }
