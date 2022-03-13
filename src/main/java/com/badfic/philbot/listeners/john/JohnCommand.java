@@ -6,6 +6,7 @@ import com.badfic.philbot.data.john.JohnResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,9 +26,10 @@ public class JohnCommand extends BasicResponsesBot<JohnResponsesConfig> {
     private JDA johnJda;
 
     @Autowired
-    public JohnCommand(ObjectMapper objectMapper, JohnResponsesConfigRepository johnResponsesConfigRepository) throws Exception {
-        super(johnResponsesConfigRepository, objectMapper, "john",
-                "john-kidFriendlyConfig.json", "john-nsfwConfig.json", JohnResponsesConfig::new);
+    public JohnCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, JohnResponsesConfigRepository johnResponsesConfigRepository)
+            throws Exception {
+        super(johnResponsesConfigRepository, objectMapper, honeybadgerReporter, "john", "john-kidFriendlyConfig.json", "john-nsfwConfig.json",
+                JohnResponsesConfig::new);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -54,9 +55,10 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
     private JDA behradJda;
 
     @Autowired
-    public BehradCommand(ObjectMapper objectMapper, BehradResponsesConfigRepository behradResponsesConfigRepository) throws Exception {
-        super(behradResponsesConfigRepository, objectMapper, "behrad",
-                "behrad-kidFriendlyConfig.json", "behrad-nsfwConfig.json", BehradResponsesConfig::new);
+    public BehradCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, BehradResponsesConfigRepository behradResponsesConfigRepository)
+            throws Exception {
+        super(behradResponsesConfigRepository, objectMapper, honeybadgerReporter, "behrad", "behrad-kidFriendlyConfig.json", "behrad-nsfwConfig.json",
+                BehradResponsesConfig::new);
     }
 
     @Scheduled(cron = "${swampy.schedule.behrad.humpday}", zone = "${swampy.schedule.timezone}")

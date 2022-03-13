@@ -6,6 +6,7 @@ import com.badfic.philbot.data.antonia.AntoniaResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,9 +26,10 @@ public class AntoniaCommand extends BasicResponsesBot<AntoniaResponsesConfig> {
     private JDA antoniaJda;
 
     @Autowired
-    public AntoniaCommand(ObjectMapper objectMapper, AntoniaResponsesConfigRepository antoniaResponsesConfigRepository) throws Exception {
-        super(antoniaResponsesConfigRepository, objectMapper, "antonia",
-                "antonia-kidFriendlyConfig.json", "antonia-nsfwConfig.json", AntoniaResponsesConfig::new);
+    public AntoniaCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter,
+                          AntoniaResponsesConfigRepository antoniaResponsesConfigRepository) throws Exception {
+        super(antoniaResponsesConfigRepository, objectMapper, honeybadgerReporter, "antonia", "antonia-kidFriendlyConfig.json", "antonia-nsfwConfig.json",
+                AntoniaResponsesConfig::new);
     }
 
     @Override

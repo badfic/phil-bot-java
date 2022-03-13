@@ -7,6 +7,7 @@ import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -69,9 +70,10 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
     private JDA keanuJda;
 
     @Autowired
-    public KeanuCommand(ObjectMapper objectMapper, KeanuResponsesConfigRepository keanuResponsesConfigRepository) throws Exception {
-        super(keanuResponsesConfigRepository, objectMapper, "keanu",
-                "keanu-kidFriendlyConfig.json", "keanu-nsfwConfig.json", KeanuResponsesConfig::new);
+    public KeanuCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, KeanuResponsesConfigRepository keanuResponsesConfigRepository)
+            throws Exception {
+        super(keanuResponsesConfigRepository, objectMapper, honeybadgerReporter, "keanu", "keanu-kidFriendlyConfig.json", "keanu-nsfwConfig.json",
+                KeanuResponsesConfig::new);
     }
 
     @Scheduled(cron = "${swampy.schedule.keanu.goodmorning}", zone = "${swampy.schedule.timezone}")

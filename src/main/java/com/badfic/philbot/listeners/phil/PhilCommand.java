@@ -6,6 +6,7 @@ import com.badfic.philbot.data.phil.PhilResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -28,9 +29,10 @@ public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> {
     private JDA philJda;
 
     @Autowired
-    public PhilCommand(ObjectMapper objectMapper, PhilResponsesConfigRepository philResponsesConfigRepository) throws Exception {
-        super(philResponsesConfigRepository, objectMapper, "phil",
-                "phil-kidFriendlyConfig.json", "phil-nsfwConfig.json", PhilResponsesConfig::new);
+    public PhilCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, PhilResponsesConfigRepository philResponsesConfigRepository)
+            throws Exception {
+        super(philResponsesConfigRepository, objectMapper, honeybadgerReporter, "phil", "phil-kidFriendlyConfig.json", "phil-nsfwConfig.json",
+                PhilResponsesConfig::new);
     }
 
     @Scheduled(cron = "${swampy.schedule.phil.humpday}", zone = "${swampy.schedule.timezone}")

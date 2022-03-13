@@ -8,10 +8,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import io.honeybadger.reporter.HoneybadgerReporter;
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+import javax.imageio.ImageIO;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
@@ -19,17 +32,29 @@ import org.apache.commons.lang3.StringUtils;
 
 public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends Command {
 
+    private static final BufferedImage HUG;
+
     private final BaseResponsesConfigRepository<T> configRepository;
     private final ObjectMapper objectMapper;
+    private final HoneybadgerReporter honeybadgerReporter;
     private final String fullCmdPrefix;
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final String modHelp;
 
+    static {
+        try {
+            HUG = ImageIO.read(Objects.requireNonNull(BasicResponsesBot.class.getClassLoader().getResourceAsStream("flags/hug.png")));
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not load hug.png");
+        }
+    }
+
     public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository,
-                             ObjectMapper objectMapper, String name, String sfwBootstrapJson, String nsfwBootstrapJson,
+                             ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, String name, String sfwBootstrapJson, String nsfwBootstrapJson,
                              Supplier<T> responsesConfigConstructor) throws Exception {
         this.configRepository = configRepository;
         this.objectMapper = objectMapper;
+        this.honeybadgerReporter = honeybadgerReporter;
 
         this.name = name;
         this.fullCmdPrefix = Constants.PREFIX + name;
@@ -71,11 +96,14 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
             return;
         }
 
+        final JDA selfJda = event.getJDA();
+        final Guild guild = selfJda.getGuilds().get(0);
+
         Optional<T> optionalConfig = configRepository.findById(BaseResponsesConfig.SINGLETON_ID);
         if (optionalConfig.isEmpty()) {
-            event.getJDA().getGuilds().get(0)
-                    .getTextChannelById(event.getChannel().getId())
-                    .sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name).queue();
+            guild.getTextChannelById(event.getChannel().getId())
+                    .sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name)
+                    .queue();
             return;
         }
 
@@ -260,12 +288,77 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
             return;
         }
 
+        if (StringUtils.containsIgnoreCase(msgContent, "hug")) {
+            // Width and Height for scaled profile images: 160px
+            // Left image coordinates: (27, 63)
+            // Right image coordinate: (187, 24)
+
+            try {
+                String selfAvatarUrl = selfJda.getSelfUser().getEffectiveAvatarUrl();
+
+                long authorId = event.getAuthor().getIdLong();
+                Member authorMember = guild.getMemberById(authorId);
+                String authorAvatarUrl = authorMember != null ? authorMember.getEffectiveAvatarUrl() : event.getAuthor().getEffectiveAvatarUrl();
+
+                BufferedImage scaledProfileImage = scaleProfileTo160(selfAvatarUrl);
+                BufferedImage scaledAuthorImage = scaleProfileTo160(authorAvatarUrl);
+
+                BufferedImage outputImg = new BufferedImage(HUG.getWidth(), HUG.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                Graphics2D graphics = outputImg.createGraphics();
+
+                // clear
+                graphics.setComposite(AlphaComposite.Clear);
+                graphics.fillRect(0, 0, outputImg.getWidth(), outputImg.getHeight());
+
+                // draw profile image
+                graphics.setComposite(AlphaComposite.SrcOver);
+                graphics.drawImage(scaledProfileImage, 27, 63, null);
+
+                // draw author image
+                graphics.setComposite(AlphaComposite.SrcOver);
+                graphics.drawImage(scaledAuthorImage, 187, 24, null);
+
+                // draw hug over top
+                graphics.setComposite(AlphaComposite.SrcOver);
+                graphics.drawImage(HUG, 0, 0, null);
+
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ImageIO.write(outputImg, "png", outputStream);
+                graphics.dispose();
+
+                guild.getTextChannelById(event.getChannel().getId())
+                        .sendMessage(" ")
+                        .addFile(outputStream.toByteArray(), "hug.png")
+                        .queue();
+
+                return;
+            } catch (Exception e) {
+                guild.getTextChannelById(event.getChannel().getId()).sendMessage("\uD83E\uDD17").queue();
+
+                honeybadgerReporter.reportError(e, null, getClass().getSimpleName() + " could not hug user " + event.getAuthor().getAsMention());
+            }
+        }
+
         getResponse(event, responsesConfig).ifPresent(response -> {
-            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+            guild.getTextChannelById(event.getChannel().getId())
                     .sendMessage(StringUtils.startsWithIgnoreCase(response, "http") ? response : (event.getAuthor().getAsMention() + ", " + response)).queue();
         });
     }
 
     protected abstract Optional<String> getResponse(CommandEvent event, T responsesConfig);
+
+    private BufferedImage scaleProfileTo160(String effectiveAvatarUrl) throws Exception {
+        BufferedImage profilePic = ImageIO.read(new URL(effectiveAvatarUrl));
+
+        // scale it to 160x160
+        Image scaledProfileTmp = profilePic.getScaledInstance(160, 160, Image.SCALE_SMOOTH);
+        BufferedImage scaledProfile = new BufferedImage(160, 160, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D graphicsScaledProfile = scaledProfile.createGraphics();
+        graphicsScaledProfile.drawImage(scaledProfileTmp, 0, 0, null);
+        graphicsScaledProfile.dispose();
+
+        return scaledProfile;
+    }
 
 }
