@@ -4,15 +4,13 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.BaseResponsesConfig;
 import com.badfic.philbot.data.BaseResponsesConfigRepository;
 import com.badfic.philbot.data.GenericBotResponsesConfigJson;
+import com.badfic.philbot.listeners.phil.swampy.BaseTwoUserImageMeme;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import io.honeybadger.reporter.HoneybadgerReporter;
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -298,35 +296,11 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                 Member authorMember = guild.getMemberById(authorId);
                 String authorAvatarUrl = authorMember != null ? authorMember.getEffectiveAvatarUrl() : event.getAuthor().getEffectiveAvatarUrl();
 
-                BufferedImage scaledProfileImage = Constants.scaleImageUrlTo(160, 160, selfAvatarUrl);
-                BufferedImage scaledAuthorImage = Constants.scaleImageUrlTo(160, 160, authorAvatarUrl);
-
-                BufferedImage outputImg = new BufferedImage(HUG.getWidth(), HUG.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                Graphics2D graphics = outputImg.createGraphics();
-
-                // clear
-                graphics.setComposite(AlphaComposite.Clear);
-                graphics.fillRect(0, 0, outputImg.getWidth(), outputImg.getHeight());
-
-                // draw profile image
-                graphics.setComposite(AlphaComposite.SrcOver);
-                graphics.drawImage(scaledProfileImage, 27, 63, null);
-
-                // draw author image
-                graphics.setComposite(AlphaComposite.SrcOver);
-                graphics.drawImage(scaledAuthorImage, 187, 24, null);
-
-                // draw hug over top
-                graphics.setComposite(AlphaComposite.SrcOver);
-                graphics.drawImage(HUG, 0, 0, null);
-
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                ImageIO.write(outputImg, "png", outputStream);
-                graphics.dispose();
+                byte[] bytes = BaseTwoUserImageMeme.makeTwoUserMemeImageBytes(selfAvatarUrl, 160, 27, 63, authorAvatarUrl, 160, 187, 24, HUG);
 
                 guild.getTextChannelById(event.getChannel().getId())
                         .sendMessage(" ")
-                        .addFile(outputStream.toByteArray(), "hug.png")
+                        .addFile(bytes, "hug.png")
                         .queue();
 
                 return;
