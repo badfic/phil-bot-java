@@ -13,16 +13,15 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 @Service
-public class Rip extends BaseSwampy {
+public class Crown extends BaseSwampy {
 
     private final BufferedImage mainImage;
 
-    public Rip() throws Exception {
-        name = "rip";
-        aliases = new String[] {"grave"};
-        help = "`!!rip @someone` to display the barry allen grave meme on their profile picture";
+    public Crown() throws Exception {
+        name = "crown";
+        help = "`!!crown @someone` to crown them";
 
-        mainImage = ImageIO.read(Objects.requireNonNull(BasicResponsesBot.class.getClassLoader().getResourceAsStream("flags/rip.png")));
+        mainImage = ImageIO.read(Objects.requireNonNull(BasicResponsesBot.class.getClassLoader().getResourceAsStream("flags/crown.png")));
     }
 
     @Override
@@ -34,11 +33,11 @@ public class Rip extends BaseSwampy {
         }
 
         try {
-            // Barry face coordinates: (264, 185) square 74px
-            // Grave face coordinates: (74, 115) square 128px
+            // Mario face coordinates: (447, 274) square 304px
+            // Crown face coordinates: (211, 699) square 351px
 
-            BufferedImage scaledAuthorImage = Constants.scaleImageUrlTo(74, 74, authorFaceUrl);
-            BufferedImage scaledRecipientImage = Constants.scaleImageUrlTo(128, 128, recipientFaceUrl);
+            BufferedImage scaledAuthorImage = Constants.scaleImageUrlTo(304, 304, authorFaceUrl);
+            BufferedImage scaledRecipientImage = Constants.scaleImageUrlTo(351, 351, recipientFaceUrl);
 
             BufferedImage outputImg = new BufferedImage(mainImage.getWidth(), mainImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = outputImg.createGraphics();
@@ -47,10 +46,10 @@ public class Rip extends BaseSwampy {
             graphics.fillRect(0, 0, outputImg.getWidth(), outputImg.getHeight());
 
             graphics.setComposite(AlphaComposite.SrcOver);
-            graphics.drawImage(scaledAuthorImage, 264, 185, null);
+            graphics.drawImage(scaledAuthorImage, 447, 274, null);
 
             graphics.setComposite(AlphaComposite.SrcOver);
-            graphics.drawImage(scaledRecipientImage, 74, 115, null);
+            graphics.drawImage(scaledRecipientImage, 211, 699, null);
 
             graphics.setComposite(AlphaComposite.SrcOver);
             graphics.drawImage(mainImage, 0, 0, null);
@@ -61,11 +60,11 @@ public class Rip extends BaseSwampy {
 
             event.getTextChannel()
                     .sendMessage(" ")
-                    .addFile(outputStream.toByteArray(), "rip.png")
+                    .addFile(outputStream.toByteArray(), "crown.png")
                     .queue();
         } catch (Exception e) {
-            event.replyError("Failed to generate 'rip' meme");
-            honeybadgerReporter.reportError(e, null, getClass().getSimpleName() + " could not rip user " + event.getAuthor().getAsMention());
+            event.replyError("Failed to generate 'crown' meme");
+            honeybadgerReporter.reportError(e, null, getClass().getSimpleName() + " could not crown user " + event.getAuthor().getAsMention());
         }
     }
 }
