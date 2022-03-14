@@ -11,11 +11,9 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -300,8 +298,8 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                 Member authorMember = guild.getMemberById(authorId);
                 String authorAvatarUrl = authorMember != null ? authorMember.getEffectiveAvatarUrl() : event.getAuthor().getEffectiveAvatarUrl();
 
-                BufferedImage scaledProfileImage = scaleProfileTo160(selfAvatarUrl);
-                BufferedImage scaledAuthorImage = scaleProfileTo160(authorAvatarUrl);
+                BufferedImage scaledProfileImage = Constants.scaleImageUrlTo(160, 160, selfAvatarUrl);
+                BufferedImage scaledAuthorImage = Constants.scaleImageUrlTo(160, 160, authorAvatarUrl);
 
                 BufferedImage outputImg = new BufferedImage(HUG.getWidth(), HUG.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 Graphics2D graphics = outputImg.createGraphics();
@@ -346,19 +344,5 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
     }
 
     protected abstract Optional<String> getResponse(CommandEvent event, T responsesConfig);
-
-    private BufferedImage scaleProfileTo160(String effectiveAvatarUrl) throws Exception {
-        BufferedImage profilePic = ImageIO.read(new URL(effectiveAvatarUrl));
-
-        // scale it to 160x160
-        Image scaledProfileTmp = profilePic.getScaledInstance(160, 160, Image.SCALE_SMOOTH);
-        BufferedImage scaledProfile = new BufferedImage(160, 160, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics2D graphicsScaledProfile = scaledProfile.createGraphics();
-        graphicsScaledProfile.drawImage(scaledProfileTmp, 0, 0, null);
-        graphicsScaledProfile.dispose();
-
-        return scaledProfile;
-    }
 
 }

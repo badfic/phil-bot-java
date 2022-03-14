@@ -3,7 +3,11 @@ package com.badfic.philbot.config;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.lang.invoke.MethodHandles;
+import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.util.Collection;
@@ -12,6 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
+import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -52,6 +57,23 @@ public interface Constants {
     static boolean urlIsImage(String url) {
         String fileExtension = FilenameUtils.getExtension(url);
         return Constants.IMAGE_EXTENSION_PATTERN.matcher(fileExtension).find();
+    }
+
+    static BufferedImage scaleImageUrlTo(int width, int height, String imageUrl) throws Exception {
+        BufferedImage image = ImageIO.read(new URL(imageUrl));
+
+        if (image.getWidth() == width && image.getHeight() == height) {
+            return image;
+        }
+
+        Image scaledTmp = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D graphics = scaledImage.createGraphics();
+        graphics.drawImage(scaledTmp, 0, 0, null);
+        graphics.dispose();
+
+        return scaledImage;
     }
 
     static <T> T pickRandom(Collection<T> collection) {
