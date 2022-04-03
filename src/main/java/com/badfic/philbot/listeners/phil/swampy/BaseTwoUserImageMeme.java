@@ -67,8 +67,10 @@ public abstract class BaseTwoUserImageMeme extends BaseSwampy {
         graphics.setComposite(AlphaComposite.Clear);
         graphics.fillRect(0, 0, outputImg.getWidth(), outputImg.getHeight());
 
-        graphics.setComposite(AlphaComposite.SrcOver);
-        graphics.drawImage(scaledAuthorImage, authorX, authorY, null);
+        if (scaledAuthorImage != null) {
+            graphics.setComposite(AlphaComposite.SrcOver);
+            graphics.drawImage(scaledAuthorImage, authorX, authorY, null);
+        }
 
         graphics.setComposite(AlphaComposite.SrcOver);
         graphics.drawImage(scaledRecipientImage, recipientX, recipientY, null);

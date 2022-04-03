@@ -50,7 +50,7 @@ public interface Constants {
     String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
 
     Color SWAMP_GREEN = new Color(89, 145, 17);
-    Color COLOR_OF_THE_MONTH = new Color(239, 173, 0);
+    Color COLOR_OF_THE_MONTH = new Color(228, 127, 48);
 
     Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
 
@@ -60,6 +60,10 @@ public interface Constants {
     }
 
     static BufferedImage scaleImageUrlTo(int width, int height, String imageUrl) throws Exception {
+        if (width <= 0) {
+            return null;
+        }
+
         BufferedImage image = ImageIO.read(new URL(imageUrl));
 
         if (image.getWidth() == width && image.getHeight() == height) {
