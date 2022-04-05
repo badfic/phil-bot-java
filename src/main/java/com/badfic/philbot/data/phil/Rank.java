@@ -66,10 +66,10 @@ public class Rank {
         for (int i = 1; i < lines.size(); i++) {
             String line = lines.get(i);
             String[] values = StringUtils.split(line, '\t');
-            String roleName = values[0];
+            String roleName = StringUtils.strip(values[0]);
             long level = Long.parseLong(values[1]);
-            String rankUpMessage = values[2];
-            String rankUpImage = values[3];
+            String rankUpMessage = StringUtils.strip(values[2]);
+            String rankUpImage = StringUtils.strip(values[3]);
 
             Rank rank = new Rank(i - 1, roleName, level, rankUpImage, rankUpMessage);
 
