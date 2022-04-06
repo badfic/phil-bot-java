@@ -2,6 +2,7 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
+import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -18,9 +19,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class Carrot extends BaseSwampy {
 
-    private static final int POINTS_TO_GIVE = 1000;
-    private static final String CARROT_IMAGE = "https://cdn.discordapp.com/attachments/718561729105363075/945771126129311814/phonto.jpg";
-
     public Carrot() {
         name = "carrot";
         aliases = new String[] {"carrots"};
@@ -34,6 +32,9 @@ public class Carrot extends BaseSwampy {
 
     @Scheduled(cron = "${swampy.schedule.events.carrot}", zone = "${swampy.schedule.timezone}")
     public void carrot() {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        int carrotEventPoints = swampyGamesConfig.getCarrotEventPoints();
+
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         Guild guild = philJda.getGuilds().get(0);
 
@@ -58,10 +59,10 @@ public class Carrot extends BaseSwampy {
             try {
                 Member memberById = guild.getMemberById(user.getId());
                 if (memberById != null) {
-                    futures.add(givePointsToMember(POINTS_TO_GIVE, memberById, PointsStat.STONKS));
-                    totalPointsGiven.add(POINTS_TO_GIVE);
+                    futures.add(givePointsToMember(carrotEventPoints, memberById, PointsStat.STONKS));
+                    totalPointsGiven.add(carrotEventPoints);
                     description
-                            .append(NumberFormat.getIntegerInstance().format(POINTS_TO_GIVE))
+                            .append(NumberFormat.getIntegerInstance().format(carrotEventPoints))
                             .append(" \uD83E\uDD55")
                             .append(" for <@!")
                             .append(user.getId())
@@ -79,7 +80,7 @@ public class Carrot extends BaseSwampy {
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessageEmbeds(Constants.simpleEmbed("WOW, CARROTS!", description.toString(), CARROT_IMAGE))
+                    .sendMessageEmbeds(Constants.simpleEmbed("WOW, CARROTS!", description.toString(), swampyGamesConfig.getCarrotImg()))
                     .queue();
         });
     }

@@ -2,6 +2,7 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
+import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -18,9 +19,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class Potato extends BaseSwampy {
 
-    private static final int POINTS_TO_GIVE = 1000;
-    private static final String IMAGE = "https://cdn.discordapp.com/attachments/794506942906761226/882828802001096754/potato_man.png";
-
     public Potato() {
         name = "potato";
         aliases = new String[] {"potatoes"};
@@ -34,6 +32,9 @@ public class Potato extends BaseSwampy {
 
     @Scheduled(cron = "${swampy.schedule.events.potato}", zone = "${swampy.schedule.timezone}")
     public void potato() {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        int potatoEventPoints = swampyGamesConfig.getPotatoEventPoints();
+
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         Guild guild = philJda.getGuilds().get(0);
 
@@ -58,10 +59,10 @@ public class Potato extends BaseSwampy {
             try {
                 Member memberById = guild.getMemberById(user.getId());
                 if (memberById != null) {
-                    futures.add(givePointsToMember(POINTS_TO_GIVE, memberById, PointsStat.STONKS));
-                    totalPointsGiven.add(POINTS_TO_GIVE);
+                    futures.add(givePointsToMember(potatoEventPoints, memberById, PointsStat.STONKS));
+                    totalPointsGiven.add(potatoEventPoints);
                     description
-                            .append(NumberFormat.getIntegerInstance().format(POINTS_TO_GIVE))
+                            .append(NumberFormat.getIntegerInstance().format(potatoEventPoints))
                             .append(" \uD83E\uDD54")
                             .append(" for <@!")
                             .append(user.getId())
@@ -79,7 +80,7 @@ public class Potato extends BaseSwampy {
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessageEmbeds(Constants.simpleEmbed("GET MASHED!", description.toString(), IMAGE))
+                    .sendMessageEmbeds(Constants.simpleEmbed("GET MASHED!", description.toString(), swampyGamesConfig.getPotatoImg()))
                     .queue();
         });
     }

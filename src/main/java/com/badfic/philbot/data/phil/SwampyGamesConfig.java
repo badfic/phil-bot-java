@@ -132,6 +132,22 @@ public class SwampyGamesConfig {
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int carrotEventPoints = 1000;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String carrotImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int potatoEventPoints = 1000;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String potatoImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int boostEventPoints = 1000;
 
     @Column
@@ -564,6 +580,38 @@ public class SwampyGamesConfig {
 
     public void setSlotsTimeoutMinutes(int slotsTimeoutMinutes) {
         this.slotsTimeoutMinutes = slotsTimeoutMinutes;
+    }
+
+    public int getCarrotEventPoints() {
+        return carrotEventPoints;
+    }
+
+    public void setCarrotEventPoints(int carrotEventPoints) {
+        this.carrotEventPoints = carrotEventPoints;
+    }
+
+    public String getCarrotImg() {
+        return carrotImg;
+    }
+
+    public void setCarrotImg(String carrotImg) {
+        this.carrotImg = carrotImg;
+    }
+
+    public int getPotatoEventPoints() {
+        return potatoEventPoints;
+    }
+
+    public void setPotatoEventPoints(int potatoEventPoints) {
+        this.potatoEventPoints = potatoEventPoints;
+    }
+
+    public String getPotatoImg() {
+        return potatoImg;
+    }
+
+    public void setPotatoImg(String potatoImg) {
+        this.potatoImg = potatoImg;
     }
 
     public int getBoostEventPoints() {
