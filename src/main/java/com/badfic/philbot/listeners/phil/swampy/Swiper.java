@@ -50,14 +50,6 @@ public class Swiper extends BaseSwampy {
                     "Squidward Squidded Away With Yo Points!",
                     "https://cdn.discordapp.com/attachments/741024218938081340/924150658540638208/phonto.jpg"
             ))
-            .put("Simper No Simping", new TheSwiper(
-                    "Simper No Simping",
-                    "Simps Spotted Nearby",
-                    "https://cdn.discordapp.com/attachments/771565238624845846/945840242383003698/simpssightsset.png",
-                    "https://cdn.discordapp.com/attachments/771565238624845846/945836068375244840/simpsneverprosper.png",
-                    "The Simps Prospered!",
-                    "https://cdn.discordapp.com/attachments/771565238624845846/945841854484734023/simpersarewinners.png"
-            ))
             .put("Shrimper No Shrimping", new TheSwiper(
                     "Shrimper No Shrimping",
                     "Shrimp Spotted Nearby",
