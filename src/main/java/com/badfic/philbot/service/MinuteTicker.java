@@ -2,6 +2,8 @@ package com.badfic.philbot.service;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MinuteTicker extends BaseService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Executor MINUTE_TICKER_EXECUTOR = Executors.newSingleThreadExecutor();
 
     @Resource
     private List<MinuteTickable> minuteTickables;
@@ -24,12 +27,14 @@ public class MinuteTicker extends BaseService {
         }
 
         for (MinuteTickable tickable : minuteTickables) {
-            try {
-                tickable.runMinutelyTask();
-            } catch (Exception e) {
-                logger.error("Exception in minute tickable [{}]", tickable.getClass().getName(), e);
-                honeybadgerReporter.reportError(e, null, "Exception in minute tickable: " + tickable.getClass().getName());
-            }
+            MINUTE_TICKER_EXECUTOR.execute(() -> {
+                try {
+                    tickable.runMinutelyTask();
+                } catch (Exception e) {
+                    logger.error("Exception in minute tickable [{}]", tickable.getClass().getName(), e);
+                    honeybadgerReporter.reportError(e, null, "Exception in minute tickable: " + tickable.getClass().getName());
+                }
+            });
         }
     }
 }
