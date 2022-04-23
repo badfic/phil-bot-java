@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -56,7 +57,7 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
 
             Message msg;
             try {
-                msg = swampysChannel.retrieveMessageById(triviaMsgId).complete();
+                msg = swampysChannel.retrieveMessageById(triviaMsgId).timeout(30, TimeUnit.SECONDS).complete();
             } catch (Exception e) {
                 swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
                 return;
@@ -66,13 +67,13 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
 
             List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-            List<User> users = msg.retrieveReactionUsers("\uD83C\uDDE6").complete();
+            List<User> users = msg.retrieveReactionUsers("\uD83C\uDDE6").timeout(30, TimeUnit.SECONDS).complete();
             awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 0 ? (long) triviaEventPoints : wrongPoints, futures, guild);
 
-            users = msg.retrieveReactionUsers("\uD83C\uDDE7").complete();
+            users = msg.retrieveReactionUsers("\uD83C\uDDE7").timeout(30, TimeUnit.SECONDS).complete();
             awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 1 ? (long) triviaEventPoints : wrongPoints, futures, guild);
 
-            users = msg.retrieveReactionUsers("\uD83C\uDDE8").complete();
+            users = msg.retrieveReactionUsers("\uD83C\uDDE8").timeout(30, TimeUnit.SECONDS).complete();
             awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 2 ? (long) triviaEventPoints : wrongPoints, futures, guild);
 
             msg.clearReactions().queue();

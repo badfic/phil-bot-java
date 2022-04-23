@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -41,7 +42,7 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
             try {
                 if (courtCase.getTrialDate() != null && courtCase.getTrialDate().isBefore(now)) {
                     try {
-                        Message trialMessage = swampysChannel.retrieveMessageById(courtCase.getTrialMessageId()).complete();
+                        Message trialMessage = swampysChannel.retrieveMessageById(courtCase.getTrialMessageId()).timeout(30, TimeUnit.SECONDS).complete();
 
                         Map<JudgeCommand.Sentence, MutableInt> sentenceMap = ImmutableMap.of(
                                 JudgeCommand.Sentence.ACQUIT, new MutableInt(-1),

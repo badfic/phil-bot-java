@@ -10,6 +10,7 @@ import java.time.DayOfWeek;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -73,9 +74,9 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
             while (lastMsgId != -1) {
                 MessageHistory history;
                 if (lastMsgId == 0) {
-                    history = philLookedUpChannel.getHistoryFromBeginning(100).complete();
+                    history = philLookedUpChannel.getHistoryFromBeginning(100).timeout(30, TimeUnit.SECONDS).complete();
                 } else {
-                    history = philLookedUpChannel.getHistoryAfter(lastMsgId, 100).complete();
+                    history = philLookedUpChannel.getHistoryAfter(lastMsgId, 100).timeout(30, TimeUnit.SECONDS).complete();
                 }
 
                 lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())

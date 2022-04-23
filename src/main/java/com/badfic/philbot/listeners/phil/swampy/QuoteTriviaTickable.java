@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -40,7 +41,7 @@ public class QuoteTriviaTickable extends NonCommandSwampy implements MinuteTicka
 
             Message msg;
             try {
-                msg = swampysChannel.retrieveMessageById(quoteTriviaMsgId).complete();
+                msg = swampysChannel.retrieveMessageById(quoteTriviaMsgId).timeout(30, TimeUnit.SECONDS).complete();
             } catch (Exception e) {
                 swampysChannel.sendMessage("Could not find quote trivia question anymore. Failed to award points.").queue();
                 return;
@@ -50,13 +51,13 @@ public class QuoteTriviaTickable extends NonCommandSwampy implements MinuteTicka
 
             List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-            List<User> users = msg.retrieveReactionUsers("\uD83C\uDDE6").complete();
+            List<User> users = msg.retrieveReactionUsers("\uD83C\uDDE6").timeout(30, TimeUnit.SECONDS).complete();
             awardPoints(description, users, quoteTriviaCorrectAnswer == 0 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
 
-            users = msg.retrieveReactionUsers("\uD83C\uDDE7").complete();
+            users = msg.retrieveReactionUsers("\uD83C\uDDE7").timeout(30, TimeUnit.SECONDS).complete();
             awardPoints(description, users, quoteTriviaCorrectAnswer == 1 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
 
-            users = msg.retrieveReactionUsers("\uD83C\uDDE8").complete();
+            users = msg.retrieveReactionUsers("\uD83C\uDDE8").timeout(30, TimeUnit.SECONDS).complete();
             awardPoints(description, users, quoteTriviaCorrectAnswer == 2 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
 
             msg.clearReactions().queue();

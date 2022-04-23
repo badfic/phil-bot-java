@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Emote;
@@ -59,9 +60,9 @@ public class HungerGamesWinnersService extends BaseSwampy implements DailyTickab
         while (lastMsgId != -1) {
             MessageHistory history;
             if (lastMsgId == 0) {
-                history = channel.getHistoryFromBeginning(100).complete();
+                history = channel.getHistoryFromBeginning(100).timeout(30, TimeUnit.SECONDS).complete();
             } else {
-                history = channel.getHistoryAfter(lastMsgId, 100).complete();
+                history = channel.getHistoryAfter(lastMsgId, 100).timeout(30, TimeUnit.SECONDS).complete();
             }
 
             lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())

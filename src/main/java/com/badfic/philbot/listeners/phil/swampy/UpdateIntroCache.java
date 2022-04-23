@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -48,9 +49,9 @@ public class UpdateIntroCache extends BaseSwampy implements DailyTickable {
         while (lastMsgId != -1) {
             MessageHistory history;
             if (lastMsgId == 0) {
-                history = introChannel.getHistoryFromBeginning(100).complete();
+                history = introChannel.getHistoryFromBeginning(100).timeout(30, TimeUnit.SECONDS).complete();
             } else {
-                history = introChannel.getHistoryAfter(lastMsgId, 100).complete();
+                history = introChannel.getHistoryAfter(lastMsgId, 100).timeout(30, TimeUnit.SECONDS).complete();
             }
 
             lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())
