@@ -2,7 +2,7 @@ package com.badfic.philbot.service;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DailyTicker extends BaseService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final Executor DAILY_TICKER_EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final ExecutorService DAILY_TICKER_EXECUTOR = Executors.newSingleThreadExecutor();
 
     @Resource
     private List<DailyTickable> dailyTickables;

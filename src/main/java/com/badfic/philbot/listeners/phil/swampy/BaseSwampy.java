@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -29,7 +30,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
 public abstract class BaseSwampy extends Command {
@@ -67,7 +67,7 @@ public abstract class BaseSwampy extends Command {
     protected OkHttpClient okHttpClient;
 
     @Resource
-    protected ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    protected ExecutorService userTriggeredTasksExecutor;
 
     protected DiscordUser getDiscordUserByMember(Member member) {
         String userId = member.getId();

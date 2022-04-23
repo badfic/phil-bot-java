@@ -38,7 +38,7 @@ public class DailyMarvelMemeService extends BaseSwampy implements DailyTickable 
 
     @Override
     protected void execute(CommandEvent event) {
-        threadPoolTaskExecutor.submit(this::runDailyTask);
+        userTriggeredTasksExecutor.execute(this::runDailyTask);
     }
 
     @Override

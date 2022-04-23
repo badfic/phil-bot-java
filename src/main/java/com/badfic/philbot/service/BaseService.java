@@ -3,10 +3,10 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.BaseConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.honeybadger.reporter.HoneybadgerReporter;
+import java.util.concurrent.ExecutorService;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
 public abstract class BaseService {
@@ -25,7 +25,7 @@ public abstract class BaseService {
     protected RestTemplate restTemplate;
 
     @Resource
-    protected ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    protected ExecutorService userTriggeredTasksExecutor;
 
     @Resource
     protected ObjectMapper objectMapper;

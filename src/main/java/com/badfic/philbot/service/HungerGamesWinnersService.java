@@ -41,7 +41,7 @@ public class HungerGamesWinnersService extends BaseSwampy implements DailyTickab
 
     @Override
     protected void execute(CommandEvent event) {
-        threadPoolTaskExecutor.submit(this::runDailyTask);
+        userTriggeredTasksExecutor.execute(this::runDailyTask);
     }
 
     @Override

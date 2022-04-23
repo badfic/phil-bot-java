@@ -55,9 +55,7 @@ public class MemberCount extends BaseSwampy implements DailyTickable {
         } else if (StringUtils.containsIgnoreCase(args, "update")) {
             boolean success = updateCount();
 
-            if (success) {
-                event.replySuccess("Successfully updated member count");
-            } else {
+            if (!success) {
                 event.replyError("Failed to update count. Try setting voice channel with `!!memberCount set 12345`");
             }
         } else {

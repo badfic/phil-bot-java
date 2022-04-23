@@ -106,7 +106,7 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
                 return;
             }
 
-            threadPoolTaskExecutor.submit(this::runDailyTask);
+            userTriggeredTasksExecutor.execute(this::runDailyTask);
             return;
         }
 

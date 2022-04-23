@@ -38,7 +38,7 @@ public class DailyRiverdaleMemeService extends BaseSwampy {
 
     @Override
     protected void execute(CommandEvent event) {
-        threadPoolTaskExecutor.submit(this::runTask);
+        userTriggeredTasksExecutor.execute(this::runTask);
     }
 
     private void runTask() {
