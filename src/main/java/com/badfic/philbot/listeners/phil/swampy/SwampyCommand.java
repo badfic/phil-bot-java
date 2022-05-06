@@ -45,7 +45,7 @@ public class SwampyCommand extends BaseSwampy {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     // soft point bans
-    private static final Pattern NO_NO_WORDS = Constants.compileWords("snowflake|eternals|captain|witch|christmas|santa|grinch");
+    private static final Pattern NO_NO_WORDS = Constants.compileWords("snowflake|eternals|captain|witch|christmas|santa|grinch|sex");
 
     // emoji
     public static final String[] LEADERBOARD_MEDALS = {
