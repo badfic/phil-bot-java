@@ -72,7 +72,7 @@ public class Swiper extends BaseSwampy {
                     "https://cdn.discordapp.com/attachments/771565238624845846/945863411730907186/choochoocomingforyou.png",
                     "https://cdn.discordapp.com/attachments/771565238624845846/945864978475384842/caboose.png",
                     "Sweet Sweet Murder",
-                    "https://cdn.discordapp.com/attachments/794506942906761226/882872163697324113/thomas_wins.png"
+                    "https://cdn.discordapp.com/attachments/323666308107599872/972380655658872872/chooster-won.png"
             ))
             .put("Panic No Discoing", new TheSwiper(
                     "Panic No Discoing",
