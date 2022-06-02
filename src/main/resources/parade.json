@@ -1,0 +1,162 @@
+[
+  {
+    "day": 1,
+    "name": "Rainbow",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795668806991882/1.png",
+    "description": "Happy Pride Month!"
+  },
+  {
+    "day": 2,
+    "name": "Lesbian",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795680978882590/2.png",
+    "description": "Lesbian, a term with multiple definitions, is most often defined as a woman who is attracted to other women romantically, sexually, or both. The term is generally used as a self-identification of sexual or romantic orientation. Although lesbians are frequently defined as women who are exclusively attracted to women, another definition is women primarily attracted to other women. Some prefer to use or additionally use \"gay\" or \"gay woman\" as an identifier."
+  },
+  {
+    "day": 3,
+    "name": "Bisexual",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795692148301824/3.png",
+    "description": "Bisexual is a label that describes an attraction to two or more genders on the gender spectrum. Some bisexual people have a preference toward one or several genders and some do not. An alternate definition is the sexual attraction to one's own gender and different gender(s)."
+  },
+  {
+    "day": 4,
+    "name": "Pansexual",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795703712002048/4.png",
+    "description": "Pansexuality is the sexual attraction toward people regardless of their sex or gender identity. Since gender or sex are not determining factors in who a pansexual person is attracted to, some pansexuals might call themselves gender-blind, therefore rejecting the gender binary."
+  },
+  {
+    "day": 5,
+    "name": "Asexual",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795714843693086/5.png",
+    "description": "Asexual refers to people who do not experience sexual attraction toward others. They may experience other forms of attraction, such as romantic, sensual, or aesthetic attraction. Asexuality is a sexual orientation, not a gender identity, behavior, or medical condition. Some asexual people choose to engage in sexual activities for various reasons despite not experiencing sexual feelings and desire toward any particular person. Asexuality is part of the asexual spectrum (abbreviated \"ace\"), an umbrella term and a broad community of identities that are closely related to asexuality when placed on a spectrum ranging from asexual to sexual."
+  },
+  {
+    "day": 6,
+    "name": "Aromantic",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795731335696464/6.png",
+    "description": "Aromantic, often shortened to aro, describes people who do not experience romantic attraction, or if not strictly aromantic, little to no romantic attraction. Aromanticism is a romantic orientation and may involve forms of attraction that are not necessarily romantic, or interests in relationships that are intimate in other ways. There is no singular experience of aromanticism."
+  },
+  {
+    "day": 7,
+    "name": "Polysexual",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795742626766848/7.png",
+    "description": "Polysexuality is the sexual attraction to various, but not necessarily all, genders. A polysexual person may experience sexual attraction to any number of genders, varying between (at least) two and many. Polysexual individuals may have a preference when it comes to which gender they are attracted to, but this is not necessarily the case."
+  },
+  {
+    "day": 8,
+    "name": "Demisexual",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795753263529994/8.png",
+    "description": "Demisexual is a term used to describe those who do not experience sexual attraction to others unless they form a strong emotional bond with someone first. Demisexual people may still experience romantic attraction, but until a deep connection is formed, there is no sexual attraction involved. They may have little to no interest in sex and may only experience sexual attraction rarely, but that is not the case with all demisexuals. Demisexuality is included on the asexual spectrum, but demisexual people can be gay, straight, bisexual, or any other orientation in addition to being demisexual."
+  },
+  {
+    "day": 9,
+    "name": "Omnisexual",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795766110679110/9.png",
+    "description": "Omnisexuality is most often defined as the sexual attraction to people of all gender identities, wherein gender plays a role in one's attraction, and it can more broadly be described simply as the sexual attraction to all genders. Some omnisexual people may be more attracted to certain genders, but that is not always the case."
+  },
+  {
+    "day": 10,
+    "name": "Butch Lesbian",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795778001534996/10.png",
+    "description": "Butch Lesbian: A female-identified person who likes other female-identified people and presents more traditionally \"masculine\" in appearance."
+  },
+  {
+    "day": 11,
+    "name": "Questioning",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795788051083294/11.png"
+  },
+  {
+    "day": 12,
+    "name": "Aroace",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795800558477312/12.png"
+  },
+  {
+    "day": 13,
+    "name": "Bishreksual",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795811576913960/13.png"
+  },
+  {
+    "day": 14,
+    "name": "Trans",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795821878128650/14.png"
+  },
+  {
+    "day": 15,
+    "name": "Nonbinary",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795832900751370/15.png"
+  },
+  {
+    "day": 16,
+    "name": "Genderqueer",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795842858024980/16.png"
+  },
+  {
+    "day": 17,
+    "name": "Genderfluid",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795853377343528/17.png"
+  },
+  {
+    "day": 18,
+    "name": "Agender",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795865175941170/18.png"
+  },
+  {
+    "day": 19,
+    "name": "Intersex",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795874885746748/19.png"
+  },
+  {
+    "day": 20,
+    "name": "Polyamorous",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795884251615253/20.png"
+  },
+  {
+    "day": 21,
+    "name": "Greyromantic",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795894200500224/21.png"
+  },
+  {
+    "day": 22,
+    "name": "Pangender",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795902459101205/22.png"
+  },
+  {
+    "day": 23,
+    "name": "Genderflux",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795913242644521/23.png"
+  },
+  {
+    "day": 24,
+    "name": "MLM",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795923459977256/24.png"
+  },
+  {
+    "day": 25,
+    "name": "Bigender",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795933115277342/25.png"
+  },
+  {
+    "day": 26,
+    "name": "Desinoromantic",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795942061707274/26.png"
+  },
+  {
+    "day": 27,
+    "name": "Gendercreative",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795951201103933/27.png"
+  },
+  {
+    "day": 28,
+    "name": "Drag",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795959208026183/28.png"
+  },
+  {
+    "day": 29,
+    "name": "Maverique",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795966506131516/29.png"
+  },
+  {
+    "day": 30,
+    "name": "Twink",
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795975041540156/30.png"
+  }
+]
