@@ -50,9 +50,20 @@ public interface Constants {
     String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
 
     Color SWAMP_GREEN = new Color(89, 145, 17);
-    Color COLOR_OF_THE_MONTH = new Color(178, 164, 212);
+
+    Color RED = new Color(228, 3, 3);
+    Color ORANGE = new Color(255, 140, 0);
+    Color YELLOW = new Color(252, 237, 0);
+    Color GREEN = new Color(0, 128, 38);
+    Color BLUE = new Color(0, 77, 255);
+    Color VIOLET = new Color(117, 7, 135);
+    Set<Color> COLORS = ImmutableSet.of(RED, ORANGE, YELLOW, GREEN, BLUE, VIOLET);
 
     Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
+
+    static Color colorOfTheMonth() {
+        return pickRandom(COLORS);
+    }
 
     static boolean urlIsImage(String url) {
         String fileExtension = FilenameUtils.getExtension(url);
@@ -195,7 +206,7 @@ public interface Constants {
                 .setTitle(title)
                 .setDescription(finalDesc)
                 .setImage(image)
-                .setColor(color != null ? color : COLOR_OF_THE_MONTH)
+                .setColor(color != null ? color : colorOfTheMonth())
                 .setFooter(footer)
                 .setThumbnail(thumbnail)
                 .build();

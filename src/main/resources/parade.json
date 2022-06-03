@@ -62,101 +62,121 @@
   {
     "day": 11,
     "name": "Questioning",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795788051083294/11.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795788051083294/11.png",
+    "description": "enter description here"
   },
   {
     "day": 12,
     "name": "Aroace",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795800558477312/12.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795800558477312/12.png",
+    "description": "enter description here"
   },
   {
     "day": 13,
     "name": "Bishreksual",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795811576913960/13.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795811576913960/13.png",
+    "description": "enter description here"
   },
   {
     "day": 14,
     "name": "Trans",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795821878128650/14.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795821878128650/14.png",
+    "description": "enter description here"
   },
   {
     "day": 15,
     "name": "Nonbinary",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795832900751370/15.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795832900751370/15.png",
+    "description": "enter description here"
   },
   {
     "day": 16,
     "name": "Genderqueer",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795842858024980/16.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795842858024980/16.png",
+    "description": "enter description here"
   },
   {
     "day": 17,
     "name": "Genderfluid",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795853377343528/17.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795853377343528/17.png",
+    "description": "enter description here"
   },
   {
     "day": 18,
     "name": "Agender",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795865175941170/18.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795865175941170/18.png",
+    "description": "enter description here"
   },
   {
     "day": 19,
     "name": "Intersex",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795874885746748/19.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795874885746748/19.png",
+    "description": "enter description here"
   },
   {
     "day": 20,
     "name": "Polyamorous",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795884251615253/20.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795884251615253/20.png",
+    "description": "enter description here"
   },
   {
     "day": 21,
     "name": "Greyromantic",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795894200500224/21.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795894200500224/21.png",
+    "description": "enter description here"
   },
   {
     "day": 22,
     "name": "Pangender",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795902459101205/22.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795902459101205/22.png",
+    "description": "enter description here"
   },
   {
     "day": 23,
     "name": "Genderflux",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795913242644521/23.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795913242644521/23.png",
+    "description": "enter description here"
   },
   {
     "day": 24,
     "name": "MLM",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795923459977256/24.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795923459977256/24.png",
+    "description": "enter description here"
   },
   {
     "day": 25,
     "name": "Bigender",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795933115277342/25.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795933115277342/25.png",
+    "description": "enter description here"
   },
   {
     "day": 26,
     "name": "Desinoromantic",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795942061707274/26.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795942061707274/26.png",
+    "description": "enter description here"
   },
   {
     "day": 27,
     "name": "Gendercreative",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795951201103933/27.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795951201103933/27.png",
+    "description": "enter description here"
   },
   {
     "day": 28,
     "name": "Drag",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795959208026183/28.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795959208026183/28.png",
+    "description": "enter description here"
   },
   {
     "day": 29,
     "name": "Maverique",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795966506131516/29.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795966506131516/29.png",
+    "description": "enter description here"
   },
   {
     "day": 30,
     "name": "Twink",
-    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795975041540156/30.png"
+    "thumbnail": "https://cdn.discordapp.com/attachments/794506942906761226/981795975041540156/30.png",
+    "description": "enter description here"
   }
 ]

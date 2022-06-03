@@ -79,6 +79,6 @@ public class GamesConfigController extends BaseMembersController {
         return ResponseEntity.ok("Saved. If it was an image you'll have to refresh to see the new image.");
     }
 
-    private static record ConfigEntry(String fieldName, String fieldValue, Boolean valueIsImg) {}
+    private record ConfigEntry(String fieldName, String fieldValue, Boolean valueIsImg) {}
 
 }

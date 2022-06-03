@@ -24,7 +24,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Member;
@@ -54,9 +53,9 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83E\uDEB4", "\uD83C\uDF31", "\uD83C\uDF34",
-            "\uD83E\uDD40", "\uD83C\uDF3B", "\uD83C\uDF39",
-            "\uD83C\uDF37", "\uD83D\uDC90", "\uD83C\uDFE1"
+            "\uD83C\uDFF3️\u200D\uD83C\uDF08", "\uD83D\uDC96", "✨",
+            "\uD83C\uDF51", "\uD83E\uDD7A", "✌️",
+            "\uD83D\uDC49", "\uD83C\uDF08", "\uD83D\uDE3D"
     );
 
     private volatile boolean awaitingResetConfirmation = false;
@@ -68,20 +67,6 @@ public class SwampyCommand extends BaseSwampy {
 
     public SwampyCommand() {
         name = "swampy";
-        aliases = Stream.of(
-                "swamp", "bastard", "spooky", "cursed", "gay", "aww", "moist", "moisten", "gobble", "sin", "shrimp", "shrimpy", "shremp",
-                "daddy", "punny", "dakota", "grapefruit", "stregg", "destiel", "foot", "oleo", "shack", "pit", "jolly", "shrantiago", "shrek", "billy",
-                "deer", "hot", "frosty", "glogg", "beam", "oof", "booty", "love", "chuck", "farm", "nut", "rat", "giraffe", "possum", "lena", "santiago",
-                "riverdale", "matthew", "murder", "book", "salami", "spicy", "spice", "salt", "yeet", "wah", "crafty", "bingus", "snarky", "crisco",
-                "mint", "spooder", "shark", "latte", "sahar", "obama", "selfcare", "nelly", "void", "baskin", "perry", "british", "duck", "shut", "waffle",
-                "vamp", "dap", "dab", "wap", "butter", "mullet", "vax", "vaxx", "steve", "shronk", "oliver", "ophelia", "lisa", "rock", "buck", "bucky", "caw",
-                "sucky", "cap", "lesbian", "bi", "ace", "aro", "aroace", "demi", "enby", "nb", "intersex", "pan", "questioning", "trans", "megan", "goat",
-                "sam", "rise", "wow", "kachow", "loki", "jetski", "summer", "jeff", "wowki", "pog", "minutes", "yeehaw", "hug", "funny", "mobius", "mobi",
-                "chaos", "cool", "awesome", "lila", "tally", "yay", "step", "goop", "mash", "meow", "hold", "stick", "giddy", "meme", "marvel", "rio",
-                "fill", "sweet", "suite", "mommy", "halloween", "pumpkin", "ghost", "witch", "sports", "crime", "elle", "birthday", "party", "bottoms",
-                "phellen", "phillip", "zaddy", "table", "cornflake", "walk", "pick", "make", "sum", "throw", "catch", "mess", "button", "pull", "roll",
-                "glow", "dress", "donut", "turn", "thirst", "thirsty", "boogie", "nice", "butt", "eggplant"
-        ).sorted().toArray(String[]::new);
         help =
                 "NOTE: the \"help\", \"rank\", \"up\", \"down\", and \"slots\" swampy commands can now be used with ANY `!!` alias you want.\n\n" +
                 "`!!swampy up @Santiago` upvote a user for the swampys\n" +
@@ -396,7 +381,7 @@ public class SwampyCommand extends BaseSwampy {
         MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + rank.getLevel() + ": " + rank.getRoleName(),
                 description,
                 rank.getRankUpImage(),
-                role != null ? role.getColor() : Constants.COLOR_OF_THE_MONTH);
+                role != null ? role.getColor() : Constants.colorOfTheMonth());
 
         event.reply(messageEmbed);
     }

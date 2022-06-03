@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -24,11 +25,12 @@ import org.springframework.stereotype.Component;
 public class Boost extends BaseSwampy {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final Set<String> BOOST_WORDS = ImmutableSet.of(
+    private static final Set<String> BOOST_WORDS = ImmutableSet.<String>builder().add(
             "butter", "oleo", "olio", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "word", "kitten", "naughty", "nice",
             "nut", "feet", "yeet", "missouri", "shrek", "swamp", "drench", "florida", "moist", "void", "bird", "legends", "plants", "nuggets", "pride",
-            "kachow", "daddy", "murder", "hunger", "lisa", "lungwort", "ragweed", "succulent", "dandelion", "sunflower", "rose", "carnation", "honeysuckle",
-            "sakura", "spring", "summer", "windy");
+            "kachow", "daddy", "murder", "hunger")
+            .addAll(Arrays.asList(BaseFlagCommand.FLAG_NAMES))
+            .build();
 
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;

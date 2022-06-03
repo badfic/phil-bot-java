@@ -45,6 +45,6 @@ public class NsfwQuoteController extends BaseMembersController {
         return new ModelAndView("nsfw-quotes", props);
     }
 
-    public static record SimpleQuote(String name, long id, String quote, String image, long channelId, long messageId, long timestamp) {}
+    public record SimpleQuote(String name, long id, String quote, String image, long channelId, long messageId, long timestamp) {}
 
 }
