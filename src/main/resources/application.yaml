@@ -58,3 +58,5 @@ swampy:
       stonks: "0 17 16 * * ?"
       taxes: "0 35 16 * * ?"
       shrekoning: "0 47 16 * * ?"
+
+      parade: "0 5 12 * * ?"

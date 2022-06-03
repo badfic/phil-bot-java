@@ -45,6 +45,10 @@ public abstract class BaseSwampy extends Command {
     @Lazy
     protected JDA philJda;
 
+    @Resource(name = "antoniaJda")
+    @Lazy
+    protected JDA antoniaJda;
+
     @Resource
     protected DiscordUserRepository discordUserRepository;
 

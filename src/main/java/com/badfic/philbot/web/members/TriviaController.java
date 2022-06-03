@@ -65,7 +65,7 @@ public class TriviaController extends BaseMembersController {
         return ResponseEntity.ok("Successfully created new trivia question! Thank you for your submission! Refresh to see it below.");
     }
 
-    public static record TriviaForm(UUID uuid, String question, String answerA, String answerB, String answerC, TriviaAnswer correctAnswer) {
+    public record TriviaForm(UUID uuid, String question, String answerA, String answerB, String answerC, TriviaAnswer correctAnswer) {
         public enum TriviaAnswer {
             A, B, C
         }

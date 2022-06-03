@@ -9,7 +9,7 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 
 public abstract class BaseFlagCommand extends BaseSwampy {
-    protected static final String[] FLAG_NAMES = new String[] {
+    public static final String[] FLAG_NAMES = new String[] {
             "lesbian",
             "gay",
             "bi",

@@ -78,7 +78,7 @@ public class ChatWebsocketListener {
         messagingTemplate.convertAndSend("/topic/online", ONLINE_MEMBERS.keySet());
     }
 
-    public static record ChatMessage(MessageType type, String content, String sender, String avatar) {
+    public record ChatMessage(MessageType type, String content, String sender, String avatar) {
         public enum MessageType {
             CHAT, JOIN, LEAVE
         }

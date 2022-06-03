@@ -98,6 +98,6 @@ public class CommandsController extends BaseMembersController {
         return modHelp;
     }
 
-    public static record SimpleCommand(String name, String aliases, String requiredRole, String help, String modHelp) {}
+    public record SimpleCommand(String name, String aliases, String requiredRole, String help, String modHelp) {}
 
 }

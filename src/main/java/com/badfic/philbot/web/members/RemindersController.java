@@ -44,6 +44,6 @@ public class RemindersController extends BaseMembersController {
         return new ModelAndView("reminders", props);
     }
 
-    private static record SimpleReminder(long id, String name, String reminder, long dueDate) {}
+    private record SimpleReminder(long id, String name, String reminder, long dueDate) {}
 
 }
