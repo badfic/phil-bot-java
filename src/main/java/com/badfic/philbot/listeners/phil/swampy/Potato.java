@@ -41,7 +41,7 @@ public class Potato extends BaseSwampy {
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder("""
-                Tommy Lee Sebastian has infiltrated the swamp,
+                The Potato Person has infiltrated the swamp,
                 giving \uD83E\uDD54 \uD83E\uDD54 \uD83E\uDD54 to every active swampling!
 
                 """);

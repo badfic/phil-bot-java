@@ -41,7 +41,7 @@ public class Carrot extends BaseSwampy {
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder("""
-                Owen Wilson has infiltrated the swamp,
+                The Carrot Person has infiltrated the swamp,
                 giving \uD83E\uDD55 \uD83E\uDD55 \uD83E\uDD55 to every active swampling!
 
                 """);
