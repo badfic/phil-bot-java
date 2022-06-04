@@ -73,14 +73,14 @@ public class Carrot extends BaseSwampy {
             }
         }
 
-        description.append("\nOwen Wilson gave a total of ")
+        description.append("\nThe Carrot Person gave a total of ")
                 .append(NumberFormat.getIntegerInstance().format(totalPointsGiven.getValue()))
                 .append(" \uD83E\uDD55 to the swamplings!");
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessageEmbeds(Constants.simpleEmbed("WOW, CARROTS!", description.toString(), swampyGamesConfig.getCarrotImg()))
+                    .sendMessageEmbeds(Constants.simpleEmbed("CARROTS!", description.toString(), swampyGamesConfig.getCarrotImg()))
                     .queue();
         });
     }

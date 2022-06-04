@@ -73,14 +73,14 @@ public class Potato extends BaseSwampy {
             }
         }
 
-        description.append("\nTommy Lee Sebastian gave a total of ")
+        description.append("\nThe Potato Person gave a total of ")
                 .append(NumberFormat.getIntegerInstance().format(totalPointsGiven.getValue()))
                 .append(" \uD83E\uDD54 to the swamplings!");
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessageEmbeds(Constants.simpleEmbed("GET MASHED!", description.toString(), swampyGamesConfig.getPotatoImg()))
+                    .sendMessageEmbeds(Constants.simpleEmbed("Potatoes!", description.toString(), swampyGamesConfig.getPotatoImg()))
                     .queue();
         });
     }
