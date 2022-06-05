@@ -34,14 +34,15 @@ public class Carrot extends BaseSwampy {
     public void carrot() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         int carrotEventPoints = swampyGamesConfig.getCarrotEventPoints();
+        String carrotName = swampyGamesConfig.getCarrotName();
 
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         Guild guild = philJda.getGuilds().get(0);
 
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
-        StringBuilder description = new StringBuilder("""
-                The Carrot Person has infiltrated the swamp,
+        StringBuilder description = new StringBuilder(carrotName + """
+                 has infiltrated the swamp,
                 giving \uD83E\uDD55 \uD83E\uDD55 \uD83E\uDD55 to every active swampling!
 
                 """);
@@ -73,7 +74,9 @@ public class Carrot extends BaseSwampy {
             }
         }
 
-        description.append("\nThe Carrot Person gave a total of ")
+        description.append('\n')
+                .append(carrotName)
+                .append(" gave a total of ")
                 .append(NumberFormat.getIntegerInstance().format(totalPointsGiven.getValue()))
                 .append(" \uD83E\uDD55 to the swamplings!");
 

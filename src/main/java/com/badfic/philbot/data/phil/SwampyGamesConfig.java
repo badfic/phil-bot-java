@@ -139,12 +139,20 @@ public class SwampyGamesConfig {
     private String carrotImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String carrotName = "The Carrot Person";
+
+    @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int potatoEventPoints = 1000;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
     private String potatoImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String potatoName = "The Potato Person";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
@@ -598,6 +606,14 @@ public class SwampyGamesConfig {
         this.carrotImg = carrotImg;
     }
 
+    public String getCarrotName() {
+        return carrotName;
+    }
+
+    public void setCarrotName(String carrotName) {
+        this.carrotName = carrotName;
+    }
+
     public int getPotatoEventPoints() {
         return potatoEventPoints;
     }
@@ -612,6 +628,14 @@ public class SwampyGamesConfig {
 
     public void setPotatoImg(String potatoImg) {
         this.potatoImg = potatoImg;
+    }
+
+    public String getPotatoName() {
+        return potatoName;
+    }
+
+    public void setPotatoName(String potatoName) {
+        this.potatoName = potatoName;
     }
 
     public int getBoostEventPoints() {

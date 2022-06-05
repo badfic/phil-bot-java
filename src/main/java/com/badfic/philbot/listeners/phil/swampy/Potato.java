@@ -34,14 +34,15 @@ public class Potato extends BaseSwampy {
     public void potato() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         int potatoEventPoints = swampyGamesConfig.getPotatoEventPoints();
+        String potatoName = swampyGamesConfig.getPotatoName();
 
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         Guild guild = philJda.getGuilds().get(0);
 
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
-        StringBuilder description = new StringBuilder("""
-                The Potato Person has infiltrated the swamp,
+        StringBuilder description = new StringBuilder(potatoName + """
+                 has infiltrated the swamp,
                 giving \uD83E\uDD54 \uD83E\uDD54 \uD83E\uDD54 to every active swampling!
 
                 """);
@@ -73,7 +74,9 @@ public class Potato extends BaseSwampy {
             }
         }
 
-        description.append("\nThe Potato Person gave a total of ")
+        description.append('\n')
+                .append(potatoName)
+                .append(" gave a total of ")
                 .append(NumberFormat.getIntegerInstance().format(totalPointsGiven.getValue()))
                 .append(" \uD83E\uDD54 to the swamplings!");
 
