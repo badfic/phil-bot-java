@@ -51,6 +51,8 @@ swampy:
 
       trickortreat: "0 3 9 * * ?"
       carrot: "0 5 11 * * ?"
+      parade: "0 5 12 * * ?"
+      glitter: "0 35 12 * * ?"
       potato: "0 5 13 * * ?"
       sweepstakes18: "0 3 16 * * ?"
       sweepstakeschaos: "0 7 16 * * ?"
@@ -58,5 +60,3 @@ swampy:
       stonks: "0 17 16 * * ?"
       taxes: "0 35 16 * * ?"
       shrekoning: "0 47 16 * * ?"
-
-      parade: "0 5 12 * * ?"

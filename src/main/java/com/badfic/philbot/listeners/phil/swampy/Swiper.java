@@ -29,7 +29,7 @@ public class Swiper extends BaseSwampy {
             .put("Swiper No Swiping", new TheSwiper(
                     "Swiper No Swiping",
                     "Swiper Was Spotted Nearby",
-                    "https://cdn.discordapp.com/attachments/741024218938081340/922969160345059328/SPOILER_swiper.png",
+                    "https://cdn.discordapp.com/attachments/794506942906761226/986488638370107452/SwiperArrives.png",
                     "https://cdn.discordapp.com/attachments/917315206009483294/946224026144084008/image0.jpg",
                     "Swiper Escaped!",
                     "https://cdn.discordapp.com/attachments/917315206009483294/946217897800396830/image0.jpg"
@@ -105,6 +105,14 @@ public class Swiper extends BaseSwampy {
                     "https://cdn.discordapp.com/attachments/707453916882665552/947616510409576488/loki-lost.png",
                     "WOW, You just got Loki'd",
                     "https://cdn.discordapp.com/attachments/746148999144407211/946171616155541594/F4ABFC69-BACD-4285-9725-1FBFA94A21DC.jpg"
+            ))
+            .put("Peggy No Pegging", new TheSwiper(
+                    "Peggy No Pegging",
+                    "Peggy Spotted Nearby!",
+                    "https://cdn.discordapp.com/attachments/746148999144407211/984139370950959124/peggyarrives.png",
+                    "https://cdn.discordapp.com/attachments/746148999144407211/984139371244564520/peggyloses.png",
+                    "Get Pegged",
+                    "https://cdn.discordapp.com/attachments/746148999144407211/984139371504631848/peggywins.png"
             ))
             .build();
 

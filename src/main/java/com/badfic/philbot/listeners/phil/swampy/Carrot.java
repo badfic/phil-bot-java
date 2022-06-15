@@ -64,8 +64,7 @@ public class Carrot extends BaseSwampy {
                     totalPointsGiven.add(carrotEventPoints);
                     description
                             .append(NumberFormat.getIntegerInstance().format(carrotEventPoints))
-                            .append(" \uD83E\uDD55")
-                            .append(" for <@!")
+                            .append(" \uD83E\uDD55 for <@!")
                             .append(user.getId())
                             .append(">\n");
                 }

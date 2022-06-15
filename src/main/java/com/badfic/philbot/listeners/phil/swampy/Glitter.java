@@ -17,33 +17,32 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Potato extends BaseSwampy {
+public class Glitter extends BaseSwampy {
 
-    public Potato() {
-        name = "potato";
-        aliases = new String[] {"potatoes"};
+    public Glitter() {
+        name = "glitter";
         requiredRole = Constants.ADMIN_ROLE;
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        potato();
+        glitter();
     }
 
-    @Scheduled(cron = "${swampy.schedule.events.potato}", zone = "${swampy.schedule.timezone}")
-    public void potato() {
+    @Scheduled(cron = "${swampy.schedule.events.glitter}", zone = "${swampy.schedule.timezone}")
+    public void glitter() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        int potatoEventPoints = swampyGamesConfig.getPotatoEventPoints();
-        String potatoName = swampyGamesConfig.getPotatoName();
+        int glitterEventPoints = swampyGamesConfig.getGlitterEventPoints();
+        String glitterName = swampyGamesConfig.getGlitterName();
 
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         Guild guild = philJda.getGuilds().get(0);
 
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
-        StringBuilder description = new StringBuilder(potatoName + """
+        StringBuilder description = new StringBuilder(glitterName + """
                  has infiltrated the swamp,
-                giving \uD83E\uDD54 \uD83E\uDD54 \uD83E\uDD54 to every active swampling!
+                giving ✨ GLITTER ✨ to every active swampling!
 
                 """);
 
@@ -60,29 +59,29 @@ public class Potato extends BaseSwampy {
             try {
                 Member memberById = guild.getMemberById(user.getId());
                 if (memberById != null) {
-                    futures.add(givePointsToMember(potatoEventPoints, memberById, PointsStat.STONKS));
-                    totalPointsGiven.add(potatoEventPoints);
+                    futures.add(givePointsToMember(glitterEventPoints, memberById, PointsStat.STONKS));
+                    totalPointsGiven.add(glitterEventPoints);
                     description
-                            .append(NumberFormat.getIntegerInstance().format(potatoEventPoints))
-                            .append(" \uD83E\uDD54 for <@!")
+                            .append(NumberFormat.getIntegerInstance().format(glitterEventPoints))
+                            .append(" ✨ for <@!")
                             .append(user.getId())
                             .append(">\n");
                 }
             } catch (Exception e) {
-                honeybadgerReporter.reportError(e, "Failed to potato user: " + user.getId());
+                honeybadgerReporter.reportError(e, "Failed to glitter user: " + user.getId());
             }
         }
 
         description.append('\n')
-                .append(potatoName)
+                .append(glitterName)
                 .append(" gave a total of ")
                 .append(NumberFormat.getIntegerInstance().format(totalPointsGiven.getValue()))
-                .append(" \uD83E\uDD54 to the swamplings!");
+                .append(" ✨ to the swamplings!");
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
-                    .sendMessageEmbeds(Constants.simpleEmbed("Potatoes!", description.toString(), swampyGamesConfig.getPotatoImg()))
+                    .sendMessageEmbeds(Constants.simpleEmbed("✨ GLITTER ✨", description.toString(), swampyGamesConfig.getGlitterImg()))
                     .queue();
         });
     }

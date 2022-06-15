@@ -156,6 +156,18 @@ public class SwampyGamesConfig {
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    private int glitterEventPoints = 1000;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String glitterImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String glitterName = "The Glitter Person";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
     private int boostEventPoints = 1000;
 
     @Column
@@ -636,6 +648,30 @@ public class SwampyGamesConfig {
 
     public void setPotatoName(String potatoName) {
         this.potatoName = potatoName;
+    }
+
+    public int getGlitterEventPoints() {
+        return glitterEventPoints;
+    }
+
+    public void setGlitterEventPoints(int glitterEventPoints) {
+        this.glitterEventPoints = glitterEventPoints;
+    }
+
+    public String getGlitterImg() {
+        return glitterImg;
+    }
+
+    public void setGlitterImg(String glitterImg) {
+        this.glitterImg = glitterImg;
+    }
+
+    public String getGlitterName() {
+        return glitterName;
+    }
+
+    public void setGlitterName(String glitterName) {
+        this.glitterName = glitterName;
     }
 
     public int getBoostEventPoints() {
