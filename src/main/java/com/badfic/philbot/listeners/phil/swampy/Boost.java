@@ -28,7 +28,7 @@ public class Boost extends BaseSwampy {
             "butter", "oleo", "olio", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "word", "kitten", "naughty", "nice",
             "nut", "feet", "yeet", "missouri", "shrek", "swamp", "drench", "florida", "moist", "void", "bird", "legends", "plants", "nuggets", "pride",
             "kachow", "daddy", "murder", "hunger", "damp", "wet", "fuck scotus", "no independence", "ding dongs", "cap", "captain america",
-            "cawcaw on the scotus", "stab")
+            "cawcaw on the scotus", "stab", "ding dongs out for the uk", "is the uk ok", "pray for the uk")
             .build();
 
     public Boost() {
