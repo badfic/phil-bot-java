@@ -51,10 +51,11 @@ public interface Constants {
 
     Color SWAMP_GREEN = new Color(89, 145, 17);
 
-    Color WHITE = new Color(255, 255, 255);
-    Color RED = new Color(179, 25, 66);
-    Color BLUE = new Color(10, 49, 97);
-    Set<Color> COLORS = ImmutableSet.of(RED, WHITE, BLUE);
+    Set<Color> COLORS = ImmutableSet.of(
+            new Color(250, 166, 123), new Color(245, 177, 161), new Color(205, 131, 131), new Color(177, 117, 113),
+            new Color(204, 175, 142), new Color(158, 121, 178), new Color(44, 24, 12), new Color(244, 195, 187),
+            new Color(250, 228, 199), new Color(198, 137, 113), new Color(55, 82, 119), new Color(131, 138, 131),
+            new Color(149, 142, 123));
 
     Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
 

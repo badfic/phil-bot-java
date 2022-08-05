@@ -14,19 +14,14 @@ import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import okhttp3.OkHttpClient;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -86,20 +81,38 @@ public abstract class BaseSwampy extends Command {
         return optionalUserEntity.get();
     }
 
-    protected CompletableFuture<Void> givePointsToMember(long pointsToGive, Member member, DiscordUser user, PointsStat pointsStat) {
+    protected CompletableFuture<?> givePointsToMember(long pointsToGive, Member member, DiscordUser user, PointsStat pointsStat) {
         if (isNotParticipating(member)) {
             return CompletableFuture.completedFuture(null);
         }
 
-        user.setXp(Math.max(0, user.getXp() + pointsToGive));
+        long existingXp = user.getXp();
+        long newXp = Math.max(0, user.getXp() + pointsToGive);
+
+        user.setXp(newXp);
         long pointsStatsCurrent = pointsStat.getter().applyAsLong(user);
         pointsStatsCurrent += pointsToGive;
         pointsStat.setter().accept(user, pointsStatsCurrent);
-        user = discordUserRepository.save(user);
-        return assignRolesIfNeeded(member, user).getRight();
+        discordUserRepository.save(user);
+
+        Rank rankZero = Rank.byXp(0);
+        Rank existingRank = Rank.byXp(existingXp);
+        Rank newRank = Rank.byXp(newXp);
+
+        if (newRank != rankZero && existingRank != newRank) {
+            TextChannel announcementsChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+
+            MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + newRank.getLevel() + '!',
+                    newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()),
+                    newRank.getRankUpImage(), newRank.getColor());
+
+            return announcementsChannel.sendMessageEmbeds(messageEmbed).submit();
+        }
+
+        return CompletableFuture.completedFuture(null);
     }
 
-    protected CompletableFuture<Void> givePointsToMember(long pointsToGive, Member member, PointsStat pointsStat) {
+    protected CompletableFuture<?> givePointsToMember(long pointsToGive, Member member, PointsStat pointsStat) {
         if (isNotParticipating(member)) {
             return CompletableFuture.completedFuture(null);
         }
@@ -107,58 +120,8 @@ public abstract class BaseSwampy extends Command {
         return givePointsToMember(pointsToGive, member, getDiscordUserByMember(member), pointsStat);
     }
 
-    protected CompletableFuture<Void> takePointsFromMember(long pointsToTake, Member member, PointsStat pointsStat) {
+    protected CompletableFuture<?> takePointsFromMember(long pointsToTake, Member member, PointsStat pointsStat) {
         return givePointsToMember(-pointsToTake, member, pointsStat);
-    }
-
-    protected Pair<Role, CompletableFuture<Void>> assignRolesIfNeeded(Member member, DiscordUser user) {
-        if (isNotParticipating(member)) {
-            return ImmutablePair.of(null, CompletableFuture.completedFuture(null));
-        }
-
-        Rank newRank = Rank.byXp(user.getXp());
-        Optional<Role> newRoleOpt = member.getGuild().getRolesByName(newRank.getRoleName(), true).stream().findFirst();
-
-        if (newRoleOpt.isEmpty()) {
-            Constants.debugToTestChannel(philJda, "ERROR Could not find swampy level role: " + newRank.getRoleName());
-            return ImmutablePair.of(null, CompletableFuture.completedFuture(null));
-        }
-
-        Role newRole = newRoleOpt.get();
-
-        CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
-        if (!hasRole(member, newRank)) {
-            Set<String> allRoleNames = Rank.getAllRoleNames();
-            Guild guild = member.getGuild();
-
-            for (Role r : member.getRoles()) {
-                if (allRoleNames.contains(r.getName())) {
-                    try {
-                        future = future.thenCompose(c -> guild.removeRoleFromMember(member, r).submit());
-                    } catch (Exception e) {
-                        logger.error("Failed to remove role {} from member {}", r.getName(), member.getEffectiveName(), e);
-                    }
-                }
-            }
-
-            try {
-                future = future.thenCompose(c -> guild.addRoleToMember(member, newRole).submit());
-            } catch (Exception e) {
-                logger.error("Failed to add new role {} to member {}", newRole.getName(), member.getEffectiveName(), e);
-            }
-
-            if (newRank.ordinal() != 0) {
-                TextChannel announcementsChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
-
-                MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + newRank.getLevel() + '!',
-                        newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()),
-                        newRank.getRankUpImage(), newRole.getColor());
-
-                future = future.thenRun(() -> announcementsChannel.sendMessageEmbeds(messageEmbed).queue());
-            }
-        }
-
-        return ImmutablePair.of(newRole, future);
     }
 
     protected boolean isNotParticipating(Member member) {
@@ -166,10 +129,6 @@ public abstract class BaseSwampy extends Command {
             String roleName = r.getName();
             return Constants.CHAOS_CHILDREN_ROLE.equalsIgnoreCase(roleName) || Constants.EIGHTEEN_PLUS_ROLE.equalsIgnoreCase(roleName);
         });
-    }
-
-    protected boolean hasRole(Member member, Rank rank) {
-        return hasRole(member, rank.getRoleName());
     }
 
     protected boolean hasRole(Member member, String role) {

@@ -47,7 +47,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                     "Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points",
                     theSwiper.getSwiperLostImage(), null, null, philJda.getSelfUser().getEffectiveAvatarUrl());
 
-            CompletableFuture<Void> future = CompletableFuture.completedFuture(null);
+            CompletableFuture<?> future = CompletableFuture.completedFuture(null);
             if (victim.isPresent()) {
                 if (swiperSavior != null) {
                     try {

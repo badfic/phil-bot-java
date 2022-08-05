@@ -64,7 +64,7 @@ public class Taxes extends BaseSwampy {
         allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
         long totalTaxes = 0;
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        List<CompletableFuture<?>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder();
         Guild guild = philJda.getGuilds().get(0);
         for (DiscordUser user : allUsers) {
