@@ -47,7 +47,7 @@ public class Shrekoning extends BaseSwampy {
         Guild guild = philJda.getGuilds().get(0);
 
         MutableLong totalPointsGiven = new MutableLong(0);
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        List<CompletableFuture<?>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder("Shrek has infiltrated the swamp! He's giving \uD83E\uDDC5 \uD83E\uDDC5 \uD83E\uDDC5 " +
                 "to all of the chaos children!\n\n");
 

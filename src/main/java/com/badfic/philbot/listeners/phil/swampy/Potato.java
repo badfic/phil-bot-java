@@ -40,7 +40,7 @@ public class Potato extends BaseSwampy {
         Guild guild = philJda.getGuilds().get(0);
 
         MutableLong totalPointsGiven = new MutableLong(0);
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        List<CompletableFuture<?>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder(potatoName + """
                  has infiltrated the swamp,
                 giving \uD83E\uDD54 \uD83E\uDD54 \uD83E\uDD54 to every active swampling!

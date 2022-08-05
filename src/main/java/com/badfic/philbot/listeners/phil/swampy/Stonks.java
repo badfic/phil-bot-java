@@ -53,7 +53,7 @@ public class Stonks extends BaseSwampy {
         Guild guild = philJda.getGuilds().get(0);
 
         MutableLong totalPointsGiven = new MutableLong(0);
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        List<CompletableFuture<?>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder("Stonky? has infiltrated the swamp, giving \uD83D\uDCC8 \uD83D\uDCC8 \uD83D\uDCC8 " +
                 "to all of the not-top-5 bastards!\n" +
                 "There's a very complicated formula involving how many taxes were paid, but the min per user is 500 and the max is " +

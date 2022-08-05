@@ -14,13 +14,11 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -30,7 +28,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageReaction;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.apache.commons.collections4.CollectionUtils;
@@ -53,9 +50,9 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83E\uDDC1", "\uD83E\uDEA8", "\uD83D\uDE20",
-            "\uD83C\uDF08", "\uD83C\uDF69", "\uD83C\uDF2D",
-            "\uD83C\uDF09", "\uD83C\uDF86", "\uD83C\uDF87"
+            "\uD83D\uDC5E", "\uD83D\uDC68\uD83C\uDFFB", "\uD83D\uDC74\uD83C\uDFFB",
+            "\uD83E\uDD35\uD83C\uDFFB\u200D♂️", "\uD83E\uDD37\uD83C\uDFFB\u200D♂️", "\uD83D\uDC68\uD83C\uDFFB\u200D\uD83D\uDD27",
+            "\uD83D\uDE4D\uD83C\uDFFB\u200D♂️", "\uD83D\uDC68\uD83C\uDFFB\u200D\uD83D\uDE80", "\uD83E\uDD26\uD83C\uDFFB\u200D♂️"
     );
 
     private volatile boolean awaitingResetConfirmation = false;
@@ -361,7 +358,6 @@ public class SwampyCommand extends BaseSwampy {
         }
 
         DiscordUser user = getDiscordUserByMember(member);
-        Role role = assignRolesIfNeeded(member, user).getLeft();
 
         Rank[] allRanks = Rank.getAllRanks();
         Rank rank = Rank.byXp(user.getXp());
@@ -381,7 +377,7 @@ public class SwampyCommand extends BaseSwampy {
         MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + rank.getLevel() + ": " + rank.getRoleName(),
                 description,
                 rank.getRankUpImage(),
-                role != null ? role.getColor() : Constants.colorOfTheMonth());
+                rank.getColor());
 
         event.reply(messageEmbed);
     }
@@ -689,7 +685,6 @@ public class SwampyCommand extends BaseSwampy {
         }
 
         event.reply("Resetting, please wait...");
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
         for (DiscordUser discordUser : discordUserRepository.findAll()) {
             discordUser.setXp(0);
 
@@ -705,15 +700,13 @@ public class SwampyCommand extends BaseSwampy {
                 if (memberById == null) {
                     event.replyError("Failed to reset roles for user with discord id: <@!" + discordUser.getId() + '>');
                 }
-
-                futures.add(assignRolesIfNeeded(memberById, discordUser).getRight());
             } catch (Exception e) {
                 logger.error("Failed to reset roles for user with [id={}]", discordUser.getId(), e);
                 event.replyError("Failed to reset roles for user with discord id: <@!" + discordUser.getId() + '>');
             }
         }
 
-        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> event.replySuccess("Reset the Swampys"));
+        event.replySuccess("Reset the Swampys");
     }
 
 }

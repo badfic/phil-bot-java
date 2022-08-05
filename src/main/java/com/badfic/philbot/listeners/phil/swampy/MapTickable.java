@@ -37,7 +37,7 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
             TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
             Guild guild = philJda.getGuilds().get(0);
 
-            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            List<CompletableFuture<?>> futures = new ArrayList<>();
             LocalDateTime startTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(15);
             StringBuilder description = new StringBuilder();
             discordUserRepository.findAll()

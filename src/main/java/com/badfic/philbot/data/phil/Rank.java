@@ -31,15 +31,17 @@ public class Rank {
     private final long level;
     private final String rankUpImage;
     private final String rankUpMessage;
+    private final Color color;
     @SuppressWarnings("FieldCanBeLocal")
     private final boolean newCardDeck;
 
-    private Rank(int ordinal, String roleName, long level, String rankUpImage, String rankupMessage) {
+    private Rank(int ordinal, String roleName, long level, String rankUpImage, String rankupMessage, Color color) {
         this.ordinal = ordinal;
         this.roleName = roleName;
         this.level = level;
         this.rankUpImage = rankUpImage;
         this.rankUpMessage = rankupMessage;
+        this.color = color;
         this.newCardDeck = ordinal % 3 == 0;
     }
 
@@ -61,6 +63,10 @@ public class Rank {
 
     public String getRankUpMessage() {
         return rankUpMessage;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public boolean isNewCardDeck() {
@@ -88,7 +94,7 @@ public class Rank {
             String rankUpImage = StringUtils.strip(values[3]);
             String color = StringUtils.strip(values[4]);
 
-            Rank rank = new Rank(i - 1, roleName, level, rankUpImage, rankUpMessage);
+            Rank rank = new Rank(i - 1, roleName, level, rankUpImage, rankUpMessage, hex2Rgb(color));
 
             if (LEVEL_MAP.get(level) != null) {
                 throw new IllegalStateException("Check rank.tsv, there's a duplicate level: " + level);
@@ -117,6 +123,14 @@ public class Rank {
 
     public static Rank[] getAllRanks() {
         return LEVEL_MAP.values().toArray(Rank[]::new);
+    }
+
+    // Accepts colors as #FFFFFF hex notation
+    private static Color hex2Rgb(String colorStr) {
+        return new Color(
+                Integer.parseInt(colorStr.substring(1, 3), 16),
+                Integer.parseInt(colorStr.substring(3, 5), 16),
+                Integer.parseInt(colorStr.substring(5, 7), 16));
     }
 
     @Deprecated
@@ -161,14 +175,6 @@ public class Rank {
         }
 
         return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
-    }
-
-    // Accepts colors as #FFFFFF hex notation
-    private static Color hex2Rgb(String colorStr) {
-        return new Color(
-                Integer.parseInt(colorStr.substring(1, 3), 16),
-                Integer.parseInt(colorStr.substring(3, 5), 16),
-                Integer.parseInt(colorStr.substring(5, 7), 16));
     }
 
 }

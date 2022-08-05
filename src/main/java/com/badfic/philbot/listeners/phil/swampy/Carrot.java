@@ -40,7 +40,7 @@ public class Carrot extends BaseSwampy {
         Guild guild = philJda.getGuilds().get(0);
 
         MutableLong totalPointsGiven = new MutableLong(0);
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        List<CompletableFuture<?>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder(carrotName + """
                  has infiltrated the swamp,
                 giving \uD83E\uDD55 \uD83E\uDD55 \uD83E\uDD55 to every active swampling!

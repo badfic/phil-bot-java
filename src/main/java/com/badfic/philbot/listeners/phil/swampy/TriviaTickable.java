@@ -65,7 +65,7 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
 
             long wrongPoints = triviaEventPoints * -1;
 
-            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            List<CompletableFuture<?>> futures = new ArrayList<>();
 
             List<User> users = msg.retrieveReactionUsers("\uD83C\uDDE6").timeout(30, TimeUnit.SECONDS).complete();
             awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 0 ? (long) triviaEventPoints : wrongPoints, futures, guild);
@@ -84,7 +84,7 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
         }
     }
 
-    private void awardPoints(StringBuilder description, List<User> users, long points, List<CompletableFuture<Void>> futures, Guild guild) {
+    private void awardPoints(StringBuilder description, List<User> users, long points, List<CompletableFuture<?>> futures, Guild guild) {
         for (User user : users) {
             if (user.getId().equals(philJda.getSelfUser().getId())) {
                 continue;

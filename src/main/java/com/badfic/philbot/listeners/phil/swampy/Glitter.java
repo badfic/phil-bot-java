@@ -39,7 +39,7 @@ public class Glitter extends BaseSwampy {
         Guild guild = philJda.getGuilds().get(0);
 
         MutableLong totalPointsGiven = new MutableLong(0);
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        List<CompletableFuture<?>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder(glitterName + """
                  has infiltrated the swamp,
                 giving ✨ GLITTER ✨ to every active swampling!

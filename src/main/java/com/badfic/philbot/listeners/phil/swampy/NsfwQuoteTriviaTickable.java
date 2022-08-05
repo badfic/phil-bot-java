@@ -49,7 +49,7 @@ public class NsfwQuoteTriviaTickable extends NonCommandSwampy implements MinuteT
 
             long wrongPoints = quoteTriviaEventPoints * -1;
 
-            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            List<CompletableFuture<?>> futures = new ArrayList<>();
 
             List<User> users = msg.retrieveReactionUsers("\uD83C\uDDE6").timeout(30, TimeUnit.SECONDS).complete();
             awardPoints(description, users, quoteTriviaCorrectAnswer == 0 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
@@ -68,7 +68,7 @@ public class NsfwQuoteTriviaTickable extends NonCommandSwampy implements MinuteT
         }
     }
 
-    private void awardPoints(StringBuilder description, List<User> users, long points, List<CompletableFuture<Void>> futures, Guild guild) {
+    private void awardPoints(StringBuilder description, List<User> users, long points, List<CompletableFuture<?>> futures, Guild guild) {
         for (User user : users) {
             if (user.getId().equals(philJda.getSelfUser().getId())) {
                 continue;

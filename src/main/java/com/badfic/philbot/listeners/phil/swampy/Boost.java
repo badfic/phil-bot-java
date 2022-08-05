@@ -57,7 +57,7 @@ public class Boost extends BaseSwampy {
             swampyGamesConfig.setBoostPhrase(null);
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
-            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            List<CompletableFuture<?>> futures = new ArrayList<>();
             LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
             StringBuilder description = new StringBuilder();
             discordUserRepository.findAll()
