@@ -692,7 +692,18 @@ public class SwampyCommand extends BaseSwampy {
                 stat.setter().accept(discordUser, 0L);
             }
 
-            discordUserRepository.save(discordUser);
+            discordUser = discordUserRepository.save(discordUser);
+
+            try {
+                Member memberById = event.getGuild().getMemberById(discordUser.getId());
+
+                if (memberById == null) {
+                    event.replyError("Failed to reset roles for user with discord id: <@!" + discordUser.getId() + '>');
+                }
+            } catch (Exception e) {
+                logger.error("Failed to reset roles for user with [id={}]", discordUser.getId(), e);
+                event.replyError("Failed to reset roles for user with discord id: <@!" + discordUser.getId() + '>');
+            }
         }
 
         event.replySuccess("Reset the Swampys");
