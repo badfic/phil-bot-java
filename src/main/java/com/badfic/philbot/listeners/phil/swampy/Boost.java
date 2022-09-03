@@ -27,8 +27,8 @@ public class Boost extends BaseSwampy {
     private static final Set<String> BOOST_WORDS = ImmutableSet.<String>builder().add(
             "butter", "oleo", "olio", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "word", "kitten", "naughty", "nice",
             "nut", "feet", "yeet", "missouri", "shrek", "swamp", "drench", "florida", "moist", "void", "bird", "legends", "plants", "nuggets", "pride",
-            "kachow", "daddy", "murder", "hunger", "damp", "wet", "fuck scotus", "no independence", "ding dongs", "cap", "captain america",
-            "cawcaw on the scotus", "stab", "ding dongs out for the uk", "is the uk ok", "pray for the uk")
+            "kachow", "daddy", "murder", "hunger", "damp", "wet", "phil-daddy", "our philther who art in heaven", "philtron", "phalls", "phil-wins",
+            "phil-the only bot", "philster of the universe", "the philapse of the cosmos", "the year of our phil-2022")
             .build();
 
     public Boost() {
