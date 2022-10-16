@@ -230,6 +230,10 @@ public class SwampyCommand extends BaseSwampy {
     }
 
     public void emote(GuildMessageReactionAddEvent event) {
+        if (event.getUser().isBot()) {
+            return;
+        }
+
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         if (swampyGamesConfig == null) {
             return;

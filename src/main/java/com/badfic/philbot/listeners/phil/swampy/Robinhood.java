@@ -79,7 +79,10 @@ public class Robinhood extends BaseSwampy {
                     taxRateRecoveryAmountPercentage = Math.max(1, taxRateRecoveryAmountPercentage); // Always make sure it's at least 1 percent.
                     long recoveredTaxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRateRecoveryAmountPercentage)).longValue();
                     Member memberById = guild.getMemberById(user.getId());
-                    if (memberById != null && !isNotParticipating(memberById) && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
+                    if (memberById != null
+                            && !memberById.getUser().isBot()
+                            && !isNotParticipating(memberById)
+                            && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
                         futures.add(givePointsToMember(recoveredTaxes, memberById, PointsStat.ROBINHOOD));
                         totalRecovered += recoveredTaxes;
 

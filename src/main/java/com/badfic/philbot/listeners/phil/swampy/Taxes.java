@@ -74,7 +74,9 @@ public class Taxes extends BaseSwampy {
                     taxRate = Math.max(1, taxRate); // Always make sure it's at least 1 percent.
                     long taxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRate)).longValue();
                     Member memberById = guild.getMemberById(user.getId());
-                    if (memberById != null && !isNotParticipating(memberById) && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
+                    if (memberById != null
+                            && !isNotParticipating(memberById)
+                            && hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE)) {
                         futures.add(takePointsFromMember(taxes, memberById, PointsStat.TAXES));
                         totalTaxes += taxes;
 
