@@ -19,7 +19,9 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -88,6 +90,13 @@ public interface Constants {
         graphics.dispose();
 
         return scaledImage;
+    }
+
+    static Optional<Role> hasRole(Member member, String roleName) {
+        return member.getRoles()
+                .stream()
+                .filter(r -> r.getName().equalsIgnoreCase(roleName))
+                .findAny();
     }
 
     static <T> T pickRandom(Collection<T> collection) {

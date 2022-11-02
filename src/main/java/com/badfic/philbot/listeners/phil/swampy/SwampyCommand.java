@@ -24,10 +24,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageReaction;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.apache.commons.collections4.CollectionUtils;
@@ -269,7 +271,13 @@ public class SwampyCommand extends BaseSwampy {
         Constants.debugToModLogsChannel(event.getJDA(), messageEmbed);
     }
 
-    public void removeFromGames(String id) {
+    public void removeFromGames(Guild guild, String id) {
+        Role roleById = guild.getRoleById(id);
+
+        if (roleById != null) {
+            roleById.delete().queue();
+        }
+
         Optional<Player> optionalPlayer = playerRepository.findByDiscordUser_id(id);
         optionalPlayer.ifPresent(player -> playerRepository.delete(player));
 
