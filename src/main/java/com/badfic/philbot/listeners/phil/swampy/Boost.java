@@ -25,11 +25,10 @@ public class Boost extends BaseSwampy {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final Set<String> BOOST_WORDS = ImmutableSet.<String>builder().add(
-            "butter", "oleo", "olio", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "word", "kitten", "naughty", "nice",
-            "nut", "feet", "yeet", "missouri", "shrek", "swamp", "drench", "florida", "moist", "void", "bird", "legends", "plants", "nuggets", "pride",
-            "kachow", "daddy", "murder", "hunger", "damp", "wet", "milk", "spider", "candy corn", "candy apple", "apple cider", "pumpkin", "worm", "fear",
-            "ghost", "spooky", "clown", "monster", "vampire", "zombie", "bat", "haunted house", "candle", "blood", "esteban harrington", "ghostbusters",
-            "latinos against spooky shit", "los heebie jibbities", "kas")
+            "boost")
+//            "butter", "oleo", "olio", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "word", "kitten", "naughty", "nice",
+//            "nut", "feet", "yeet", "missouri", "shrek", "swamp", "drench", "florida", "moist", "void", "bird", "legends", "plants", "nuggets", "pride",
+//            "kachow", "daddy", "murder", "hunger", "damp", "wet", "milk")
             .build();
 
     public Boost() {

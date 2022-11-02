@@ -52,9 +52,9 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83C\uDF6C", "\uD83D\uDE31", "\uD83D\uDE28",
-            "\uD83D\uDE08", "☠️", "\uD83E\uDD21",
-            "\uD83E\uDDDB", "\uD83E\uDDDF", "\uD83D\uDD78️"
+            "7️", "\uD83C\uDF4C", "\uD83C\uDF53",
+            "\uD83C\uDF4B", "\uD83E\uDD5D", "\uD83C\uDF49",
+            "\uD83C\uDF40", "\uD83D\uDCB2", "\uD83C\uDF52️"
     );
 
     private volatile boolean awaitingResetConfirmation = false;
