@@ -228,7 +228,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
     @Override
     public void onGuildBan(@NotNull GuildBanEvent event) {
-        swampyCommand.removeFromGames(event.getUser().getId());
+        swampyCommand.removeFromGames(event.getGuild(), event.getUser().getId());
 
         event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).stream().findAny().ifPresent(channel -> {
             channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
@@ -246,7 +246,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
-        swampyCommand.removeFromGames(event.getUser().getId());
+        swampyCommand.removeFromGames(event.getGuild(), event.getUser().getId());
 
         event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).stream().findAny().ifPresent(channel -> {
             channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
