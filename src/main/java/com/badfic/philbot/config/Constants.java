@@ -7,11 +7,13 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.lang.invoke.MethodHandles;
+import java.net.URI;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -67,6 +69,16 @@ public interface Constants {
 
     static Color colorOfTheMonth() {
         return pickRandom(COLORS);
+    }
+
+    static boolean isUrl(String string) {
+        try {
+            URL url = new URL(string);
+            URI uri = url.toURI();
+            return Objects.nonNull(uri.toString());
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     static boolean urlIsImage(String url) {

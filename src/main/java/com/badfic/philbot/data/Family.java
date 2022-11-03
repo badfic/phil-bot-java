@@ -8,6 +8,7 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Family {
     private String intro;
+    private String image;
     private Set<String> spouses = new HashSet<>();
     private Set<String> exes = new HashSet<>();
     private Set<String> children = new HashSet<>();
@@ -25,6 +26,14 @@ public class Family {
 
     public void setIntro(String intro) {
         this.intro = intro;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Set<String> getSpouses() {
@@ -113,6 +122,7 @@ public class Family {
         if (o == null || getClass() != o.getClass()) return false;
         Family family = (Family) o;
         return Objects.equals(intro, family.intro) &&
+                Objects.equals(image, family.image) &&
                 Objects.equals(spouses, family.spouses) &&
                 Objects.equals(exes, family.exes) &&
                 Objects.equals(children, family.children) &&
@@ -127,6 +137,6 @@ public class Family {
 
     @Override
     public int hashCode() {
-        return Objects.hash(intro, spouses, exes, children, grandchildren, grandparents, parents, siblings, niblings, piblings, cousins);
+        return Objects.hash(intro, image, spouses, exes, children, grandchildren, grandparents, parents, siblings, niblings, piblings, cousins);
     }
 }
