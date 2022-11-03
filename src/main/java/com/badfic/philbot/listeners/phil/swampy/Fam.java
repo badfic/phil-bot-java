@@ -37,6 +37,7 @@ public class Fam extends BaseSwampy {
 
                 `!!fam`: Show your fam
                 `!!fam show @Santiago`: Show somebody else's fam
+                `!!fam image image-url-here`: Change the featured image for your "fam show" command
                 `!!fam tag there's a boost`: Tags all your fam, telling them "there's a boost"
                 `!!fam propose Somebody`: Add a spouse
                 `!!fam divorce Somebody`: Remove a spouse
@@ -79,6 +80,8 @@ public class Fam extends BaseSwampy {
             }
         } else if (args.startsWith("show")) {
             show(event);
+        } else if (args.startsWith("image")){
+            image(event);
         } else if (args.startsWith("tag")) {
             tag(event);
         } else if (args.startsWith("nuke")) {
@@ -376,6 +379,25 @@ public class Fam extends BaseSwampy {
         event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + right);
     }
 
+    private void image(CommandEvent event) {
+        final Member member = event.getMember();
+        final String image = event.getArgs().replace("image", "").trim();
+
+        if (isNotEligible(member, event)) {
+            return;
+        }
+
+        DiscordUser discordUser = getUserAndFamily(member);
+
+        if (Constants.isUrl(image) && Constants.urlIsImage(image)) {
+            discordUser.getFamily().setImage(image);
+            discordUserRepository.save(discordUser);
+            event.replySuccess("Successfully set image");
+        } else {
+            event.replyError("Could not recognize image as a url");
+        }
+    }
+
     private void show(CommandEvent event) {
         Member member = event.getMember();
         if (CollectionUtils.size(event.getMessage().getMentionedMembers()) == 1) {
@@ -407,14 +429,11 @@ public class Fam extends BaseSwampy {
         append(family::getCousins, "**Cousins**", description);
         append(family::getNiblings, "**Niblings**", description);
         append(family::getPiblings, "**Piblings**", description);
-        description.append("\n\nRandom family member spotlight: ");
 
         try {
-            Member familyMember = getRandomFamilyMember(family, event, member);
-            description.append(familyMember.getAsMention());
             MessageEmbed msg = Constants.simpleEmbed(member.getEffectiveName() + "'s Family",
                     description.toString(),
-                    familyMember.getEffectiveAvatarUrl());
+                    Objects.nonNull(family.getImage()) ? family.getImage() : member.getEffectiveAvatarUrl());
 
             event.reply(msg);
         } catch (Exception e) {
