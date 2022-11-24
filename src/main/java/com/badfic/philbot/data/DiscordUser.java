@@ -73,7 +73,13 @@ public class DiscordUser {
     private long upvotedPoints;
 
     @Column
+    private long lifetimeUpvotesReceived;
+
+    @Column
     private long upvoterPoints;
+
+    @Column
+    private long lifetimeUpvotesGiven;
 
     @Column
     private long downvotedPoints;
@@ -91,16 +97,31 @@ public class DiscordUser {
     private long slotsWinnerWinnerPoints;
 
     @Column
+    private long lifetimeSlotsWins;
+
+    @Column
     private long slotsLosses;
+
+    @Column
+    private long lifetimeSlotsLosses;
 
     @Column
     private long mapsPoints;
 
     @Column
+    private long lifetimeMapsCorrect;
+
+    @Column
     private long triviaPoints;
 
     @Column
+    private long lifetimeTriviasCorrect;
+
+    @Column
     private long quoteTriviaPoints;
+
+    @Column
+    private long lifetimeQuoteTriviasCorrect;
 
     @Column
     private long trickOrTreatPoints;
@@ -112,19 +133,37 @@ public class DiscordUser {
     private long sweepstakesPoints;
 
     @Column
+    private long lifetimeSweepstakesWins;
+
+    @Column
     private long noNoPoints;
+
+    @Column
+    private long lifetimeNoNoWords;
 
     @Column
     private long messagePoints;
 
     @Column
+    private long lifetimeMessages;
+
+    @Column
     private long pictureMessagePoints;
+
+    @Column
+    private long lifetimePictures;
 
     @Column
     private long boostPoints;
 
     @Column
+    private long lifetimeBoostParticipations;
+
+    @Column
     private long voiceChatPoints;
+
+    @Column
+    private long lifetimeVoiceChatMinutes;
 
     @Column
     private long reactPoints;
@@ -279,6 +318,11 @@ public class DiscordUser {
 
     public void setUpvotedPoints(long upvotedPoints) {
         this.upvotedPoints = upvotedPoints;
+        lifetimeUpvotesReceived++;
+    }
+
+    public long getLifetimeUpvotesReceived() {
+        return lifetimeUpvotesReceived;
     }
 
     public long getUpvoterPoints() {
@@ -287,6 +331,11 @@ public class DiscordUser {
 
     public void setUpvoterPoints(long upvoterPoints) {
         this.upvoterPoints = upvoterPoints;
+        lifetimeUpvotesGiven++;
+    }
+
+    public long getLifetimeUpvotesGiven() {
+        return lifetimeUpvotesGiven;
     }
 
     public long getDownvotedPoints() {
@@ -319,6 +368,7 @@ public class DiscordUser {
 
     public void setSlotsCloseEnoughPoints(long slotsPoints) {
         this.slotsCloseEnoughPoints = slotsPoints;
+        lifetimeSlotsLosses++;
     }
 
     public long getSlotsWinnerWinnerPoints() {
@@ -327,6 +377,11 @@ public class DiscordUser {
 
     public void setSlotsWinnerWinnerPoints(long slotsWinnerWinnerPoints) {
         this.slotsWinnerWinnerPoints = slotsWinnerWinnerPoints;
+        lifetimeSlotsWins++;
+    }
+
+    public long getLifetimeSlotsWins() {
+        return lifetimeSlotsWins;
     }
 
     public long getSlotsLosses() {
@@ -335,6 +390,11 @@ public class DiscordUser {
 
     public void setSlotsLosses(long slotsLosses) {
         this.slotsLosses = slotsLosses;
+        lifetimeSlotsLosses++;
+    }
+
+    public long getLifetimeSlotsLosses() {
+        return lifetimeSlotsLosses;
     }
 
     public long getMapsPoints() {
@@ -342,7 +402,15 @@ public class DiscordUser {
     }
 
     public void setMapsPoints(long mapsPoints) {
+        if (mapsPoints > this.mapsPoints) {
+            lifetimeMapsCorrect++;
+        }
+
         this.mapsPoints = mapsPoints;
+    }
+
+    public long getLifetimeMapsCorrect() {
+        return lifetimeMapsCorrect;
     }
 
     public long getTriviaPoints() {
@@ -350,7 +418,15 @@ public class DiscordUser {
     }
 
     public void setTriviaPoints(long triviaPoints) {
+        if (triviaPoints > this.triviaPoints) {
+            lifetimeTriviasCorrect++;
+        }
+
         this.triviaPoints = triviaPoints;
+    }
+
+    public long getLifetimeTriviasCorrect() {
+        return lifetimeTriviasCorrect;
     }
 
     public long getQuoteTriviaPoints() {
@@ -358,7 +434,15 @@ public class DiscordUser {
     }
 
     public void setQuoteTriviaPoints(long quoteTriviaPoints) {
+        if (quoteTriviaPoints > this.quoteTriviaPoints) {
+            lifetimeQuoteTriviasCorrect++;
+        }
+
         this.quoteTriviaPoints = quoteTriviaPoints;
+    }
+
+    public long getLifetimeQuoteTriviasCorrect() {
+        return lifetimeQuoteTriviasCorrect;
     }
 
     public long getTrickOrTreatPoints() {
@@ -383,6 +467,11 @@ public class DiscordUser {
 
     public void setSweepstakesPoints(long sweepstakesPoints) {
         this.sweepstakesPoints = sweepstakesPoints;
+        lifetimeSweepstakesWins++;
+    }
+
+    public long getLifetimeSweepstakesWins() {
+        return lifetimeSweepstakesWins;
     }
 
     public long getNoNoPoints() {
@@ -391,6 +480,11 @@ public class DiscordUser {
 
     public void setNoNoPoints(long noNoPoints) {
         this.noNoPoints = noNoPoints;
+        lifetimeNoNoWords++;
+    }
+
+    public long getLifetimeNoNoWords() {
+        return lifetimeNoNoWords;
     }
 
     public long getMessagePoints() {
@@ -399,6 +493,11 @@ public class DiscordUser {
 
     public void setMessagePoints(long messagePoints) {
         this.messagePoints = messagePoints;
+        lifetimeMessages++;
+    }
+
+    public long getLifetimeMessages() {
+        return lifetimeMessages;
     }
 
     public long getPictureMessagePoints() {
@@ -407,6 +506,11 @@ public class DiscordUser {
 
     public void setPictureMessagePoints(long pictureMessagePoints) {
         this.pictureMessagePoints = pictureMessagePoints;
+        lifetimePictures++;
+    }
+
+    public long getLifetimePictures() {
+        return lifetimePictures;
     }
 
     public long getBoostPoints() {
@@ -415,6 +519,11 @@ public class DiscordUser {
 
     public void setBoostPoints(long boostPoints) {
         this.boostPoints = boostPoints;
+        lifetimeBoostParticipations++;
+    }
+
+    public long getLifetimeBoostParticipations() {
+        return lifetimeBoostParticipations;
     }
 
     public long getVoiceChatPoints() {
@@ -423,6 +532,14 @@ public class DiscordUser {
 
     public void setVoiceChatPoints(long voiceChatPoints) {
         this.voiceChatPoints = voiceChatPoints;
+    }
+
+    public long getLifetimeVoiceChatMinutes() {
+        return lifetimeVoiceChatMinutes;
+    }
+
+    public void setLifetimeVoiceChatMinutes(long lifetimeVoiceChatMinutes) {
+        this.lifetimeVoiceChatMinutes = lifetimeVoiceChatMinutes;
     }
 
     public long getReactPoints() {
