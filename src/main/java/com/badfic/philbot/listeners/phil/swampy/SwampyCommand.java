@@ -226,6 +226,7 @@ public class SwampyCommand extends BaseSwampy {
         long minutes = ChronoUnit.MINUTES.between(timeTheyJoinedVoice, LocalDateTime.now());
         long points = minutes * swampyGamesConfig.getVcPointsPerMinute();
         user.setVoiceJoined(null);
+        user.setLifetimeVoiceChatMinutes(user.getLifetimeVoiceChatMinutes() + minutes);
         discordUserRepository.save(user);
 
         givePointsToMember(points, member, PointsStat.VOICE_CHAT);
