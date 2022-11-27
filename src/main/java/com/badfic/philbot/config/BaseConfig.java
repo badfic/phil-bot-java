@@ -12,6 +12,7 @@ import com.badfic.philbot.listeners.phil.MemeCommandsService;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
@@ -199,7 +200,10 @@ public class BaseConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        return objectMapper;
     }
 
     @Bean

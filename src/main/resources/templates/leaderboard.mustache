@@ -44,6 +44,7 @@
                             <th class="user-select-none both" v-on:click="{{.}}Sort('triviaPoints')" v-bind:class="{ asc: {{.}}SortKey === 'triviaPoints' && {{.}}Order, desc: {{.}}SortKey === 'triviaPoints' && !{{.}}Order}">Trivia</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('quoteTriviaPoints')" v-bind:class="{ asc: {{.}}SortKey === 'quoteTriviaPoints' && {{.}}Order, desc: {{.}}SortKey === 'quoteTriviaPoints' && !{{.}}Order}">💬 Trivia</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('fightPoints')" v-bind:class="{ asc: {{.}}SortKey === 'fightPoints' && {{.}}Order, desc: {{.}}SortKey === 'fightPoints' && !{{.}}Order}">Fight</th>
+                            <th class="user-select-none both" v-on:click="{{.}}Sort('adventPoints')" v-bind:class="{ asc: {{.}}SortKey === 'adventPoints' && {{.}}Order, desc: {{.}}SortKey === 'adventPoints' && !{{.}}Order}">Advent</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('swiperPoints')" v-bind:class="{ asc: {{.}}SortKey === 'swiperPoints' && {{.}}Order, desc: {{.}}SortKey === 'swiperPoints' && !{{.}}Order}">Swiper'd</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('scooterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'scooterPoints' && {{.}}Order, desc: {{.}}SortKey === 'scooterPoints' && !{{.}}Order}">🛴</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('noNoPoints')" v-bind:class="{ asc: {{.}}SortKey === 'noNoPoints' && {{.}}Order, desc: {{.}}SortKey === 'noNoPoints' && !{{.}}Order}">No No</th>
@@ -81,6 +82,7 @@
                             <td>[[ item.triviaPoints ]]</td>
                             <td>[[ item.quoteTriviaPoints ]]</td>
                             <td>[[ item.fightPoints ]]</td>
+                            <td>[[ item.adventPoints ]]</td>
                             <td>[[ item.swiperPoints ]]</td>
                             <td>[[ item.scooterPoints ]]</td>
                             <td>[[ item.noNoPoints ]]</td>
