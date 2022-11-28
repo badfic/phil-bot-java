@@ -10,18 +10,19 @@ import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Emote;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AntoniaCommand extends BasicResponsesBot<AntoniaResponsesConfig> {
 
-    @Resource(name = "antoniaJda")
+    @Autowired
+    @Qualifier("antoniaJda")
     @Lazy
     private JDA antoniaJda;
 

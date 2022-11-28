@@ -7,16 +7,17 @@ import com.badfic.philbot.config.UnauthorizedException;
 import com.badfic.philbot.data.DiscordApiIdentityResponse;
 import com.badfic.philbot.data.DiscordApiLoginResponse;
 import com.badfic.philbot.data.DiscordUserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -37,16 +38,17 @@ public abstract class BaseMembersController {
     protected static final String AWAITING_REDIRECT_URL = "AwaitingRedirectUrl";
     protected static final String CHROMECAST_AUTH = "ChromecastAuth";
 
-    @Resource
+    @Autowired
     protected BaseConfig baseConfig;
 
-    @Resource
+    @Autowired
     protected RestTemplate restTemplate;
 
-    @Resource
+    @Autowired
     protected DiscordUserRepository discordUserRepository;
 
-    @Resource(name = "philJda")
+    @Autowired
+    @Qualifier("philJda")
     protected JDA philJda;
 
     protected void checkSession(HttpServletRequest httpServletRequest, boolean requiresAdmin) throws UnsupportedEncodingException {

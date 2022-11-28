@@ -11,11 +11,11 @@ import com.rometools.rome.io.XmlReader;
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.Set;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -33,10 +33,10 @@ public class RssSubscriber extends BaseService {
             "https://archiveofourown.org/tags/41072152/feed.atom"
     );
 
-    @Resource
+    @Autowired
     private RssEntryRepository rssEntryRepository;
 
-    @Resource
+    @Autowired
     private Ao3MetadataParser ao3MetadataParser;
 
     @Scheduled(cron = "${swampy.schedule.rss}", zone = "${swampy.schedule.timezone}")

@@ -1,14 +1,16 @@
 package com.badfic.philbot.listeners.keanu;
 
 import com.badfic.philbot.listeners.BaseTalk;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class KeanuTalk extends BaseTalk {
 
-    @Resource(name = "keanuJda")
+    @Autowired
+    @Qualifier("keanuJda")
     private JDA keanuJda;
 
     public KeanuTalk() {

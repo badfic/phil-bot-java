@@ -10,16 +10,16 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TriviaCommand extends BaseSwampy {
 
-    @Resource
+    @Autowired
     private TriviaRepository triviaRepository;
 
     public TriviaCommand() {

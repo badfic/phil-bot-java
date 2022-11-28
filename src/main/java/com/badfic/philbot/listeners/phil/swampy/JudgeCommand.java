@@ -8,11 +8,11 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,7 +34,7 @@ public class JudgeCommand extends BaseSwampy {
         }
     }
 
-    @Resource
+    @Autowired
     private CourtCaseRepository courtCaseRepository;
 
     public JudgeCommand() {

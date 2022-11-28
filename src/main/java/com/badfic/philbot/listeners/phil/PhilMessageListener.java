@@ -20,7 +20,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -40,6 +39,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -57,64 +58,69 @@ public class PhilMessageListener extends ListenerAdapter {
             .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
             .build();
 
-    @Resource
+    @Autowired
     @Lazy
     private BehradMessageListener behradMessageListener;
 
-    @Resource
+    @Autowired
     @Lazy
     private KeanuMessageListener keanuMessageListener;
 
-    @Resource
+    @Autowired
     @Lazy
     private AntoniaMessageListener antoniaMessageListener;
 
-    @Resource
+    @Autowired
     @Lazy
     private JohnMessageListener johnMessageListener;
 
-    @Resource(name = "behradJda")
+    @Autowired
+    @Qualifier("behradJda")
     @Lazy
     private JDA behradJda;
 
-    @Resource(name = "keanuJda")
+    @Autowired
+    @Qualifier("keanuJda")
     @Lazy
     private JDA keanuJda;
 
-    @Resource(name = "antoniaJda")
+    @Autowired
+    @Qualifier("antoniaJda")
     @Lazy
     private JDA antoniaJda;
 
-    @Resource(name = "johnJda")
+    @Autowired
+    @Qualifier("johnJda")
     @Lazy
     private JDA johnJda;
 
-    @Resource
+    @Autowired
     @Lazy
     private NsfwQuoteCommand nsfwQuoteCommand;
 
-    @Resource
+    @Autowired
     @Lazy
     private QuoteCommand quoteCommand;
 
-    @Resource
+    @Autowired
     private PhilCommand philCommand;
 
-    @Resource
+    @Autowired
     private SwampyCommand swampyCommand;
 
-    @Resource
+    @Autowired
     private MemeCommandsService memeCommandsService;
 
-    @Resource
+    @Autowired
     @Lazy
     private Ao3MetadataParser ao3MetadataParser;
 
-    @Resource
+    @Autowired
     @Lazy
     private MemberCount memberCount;
 
-    @Resource(name = "philCommandClient")
+    @Autowired
+    @Qualifier("philCommandClient")
     private CommandClient philCommandClient;
 
     public static void addReactionTask(String messageId, Function<GuildMessageReactionAddEvent, Boolean> function) {

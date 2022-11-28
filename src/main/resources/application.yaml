@@ -7,8 +7,6 @@ spring:
       maximum-pool-size: 4
   jpa:
     open-in-view: false
-  session:
-    store-type: "jdbc"
   main:
     banner-mode: "off"
 

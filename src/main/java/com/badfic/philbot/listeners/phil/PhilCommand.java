@@ -10,13 +10,13 @@ import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> {
 
-    @Resource(name = "philJda")
+    @Autowired
+    @Qualifier("philJda")
     @Lazy
     private JDA philJda;
 

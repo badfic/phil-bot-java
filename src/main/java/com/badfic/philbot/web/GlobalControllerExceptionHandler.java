@@ -5,14 +5,14 @@ import com.badfic.philbot.config.LoginRedirectException;
 import com.badfic.philbot.config.NewSessionException;
 import com.badfic.philbot.config.UnauthorizedException;
 import io.honeybadger.reporter.HoneybadgerReporter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalControllerExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Resource
+    @Autowired
     private BaseConfig baseConfig;
 
-    @Resource
+    @Autowired
     private HoneybadgerReporter honeybadgerReporter;
 
     @ExceptionHandler(NewSessionException.class)

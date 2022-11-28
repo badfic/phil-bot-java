@@ -4,16 +4,18 @@ import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 
 public abstract class BaseTalk extends Command {
 
-    @Resource(name = "philJda")
+    @Autowired
+    @Qualifier("philJda")
     @Lazy
     protected JDA philJda;
 

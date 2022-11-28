@@ -2,17 +2,17 @@ package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.Command;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ReflectionUtils;
@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class CommandsController extends BaseMembersController {
 
-    @Resource
+    @Autowired
     private List<Command> commands;
 
     @GetMapping(value = "/commands", produces = MediaType.TEXT_HTML_VALUE)

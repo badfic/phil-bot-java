@@ -13,13 +13,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -65,7 +65,8 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
             "https://cdn.discordapp.com/attachments/707453916882665552/880260108968394762/john-wick-1.gif"
     );
 
-    @Resource(name = "keanuJda")
+    @Autowired
+    @Qualifier("keanuJda")
     @Lazy
     private JDA keanuJda;
 

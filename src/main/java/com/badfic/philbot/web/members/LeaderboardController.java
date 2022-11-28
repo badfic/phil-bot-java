@@ -2,12 +2,12 @@ package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;

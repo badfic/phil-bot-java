@@ -1,9 +1,9 @@
 package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.UnauthorizedException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

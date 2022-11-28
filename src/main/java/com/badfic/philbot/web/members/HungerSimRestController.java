@@ -16,16 +16,16 @@ import com.badfic.philbot.data.hungersim.RoundOutcomeRepository;
 import com.badfic.philbot.data.hungersim.RoundRepository;
 import com.badfic.philbot.service.HungerSimService;
 import com.google.common.collect.ImmutableList;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -46,28 +46,28 @@ public class HungerSimRestController extends BaseMembersController {
     public record PronounDto(String subject, String object, String possessive, String self) {}
     public record RoundDto(String name, String description, Boolean openingRound, List<String> outcomeIds) {}
 
-    @Resource
+    @Autowired
     private HungerSimService hungerSimService;
 
-    @Resource
+    @Autowired
     private GameRepository gameRepository;
 
-    @Resource
+    @Autowired
     private PlayerRepository playerRepository;
 
-    @Resource
+    @Autowired
     private DiscordUserRepository discordUserRepository;
 
-    @Resource
+    @Autowired
     private PronounRepository pronounRepository;
 
-    @Resource
+    @Autowired
     private OutcomeRepository outcomeRepository;
 
-    @Resource
+    @Autowired
     private RoundRepository roundRepository;
 
-    @Resource
+    @Autowired
     private RoundOutcomeRepository roundOutcomeRepository;
 
     /** PRONOUNS **/

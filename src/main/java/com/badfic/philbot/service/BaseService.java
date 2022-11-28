@@ -4,30 +4,32 @@ import com.badfic.philbot.config.BaseConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.concurrent.ExecutorService;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.client.RestTemplate;
 
 public abstract class BaseService {
 
-    @Resource
+    @Autowired
     protected BaseConfig baseConfig;
 
-    @Resource
+    @Autowired
     protected HoneybadgerReporter honeybadgerReporter;
 
-    @Resource(name = "philJda")
+    @Autowired
+    @Qualifier("philJda")
     @Lazy
     protected JDA philJda;
 
-    @Resource
+    @Autowired
     protected RestTemplate restTemplate;
 
-    @Resource
+    @Autowired
     protected ExecutorService userTriggeredTasksExecutor;
 
-    @Resource
+    @Autowired
     protected ObjectMapper objectMapper;
 
 }

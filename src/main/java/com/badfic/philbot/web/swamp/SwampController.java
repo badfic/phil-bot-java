@@ -5,10 +5,10 @@ import com.badfic.philbot.service.DailyMarvelMemeService;
 import com.badfic.philbot.service.DailyRiverdaleMemeService;
 import com.badfic.philbot.service.HowWeBecameCursedService;
 import com.badfic.philbot.service.HungerGamesWinnersService;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,19 +20,19 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class SwampController {
 
-    @Resource
+    @Autowired
     private BaseConfig baseConfig;
 
-    @Resource
+    @Autowired
     private HungerGamesWinnersService hungerGamesWinnersService;
 
-    @Resource
+    @Autowired
     private HowWeBecameCursedService howWeBecameCursedService;
 
-    @Resource
+    @Autowired
     private DailyMarvelMemeService dailyMarvelMemeService;
 
-    @Resource
+    @Autowired
     private DailyRiverdaleMemeService dailyRiverdaleMemeService;
 
     @GetMapping(value = {

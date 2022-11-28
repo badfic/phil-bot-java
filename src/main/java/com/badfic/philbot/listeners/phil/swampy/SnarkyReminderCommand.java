@@ -4,17 +4,17 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.SnarkyReminderResponse;
 import com.badfic.philbot.data.phil.SnarkyReminderResponseRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SnarkyReminderCommand extends BaseSwampy {
 
-    @Resource
+    @Autowired
     private SnarkyReminderResponseRepository snarkyReminderResponseRepository;
 
     public SnarkyReminderCommand() {
