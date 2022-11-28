@@ -13,11 +13,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -27,10 +28,11 @@ public class MemeCommandsService extends BaseService {
 
     private static final TypeReference<Set<String>> STRING_LIST = new TypeReference<>() {};
 
-    @Resource
+    @Autowired
     private MemeCommandRepository memeCommandRepository;
 
-    @Resource(name = "behradJda")
+    @Autowired
+    @Qualifier("behradJda")
     @Lazy
     protected JDA behradJda;
 

@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -28,6 +27,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -99,13 +99,13 @@ public class JohnMessageListener extends BaseService {
             .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
             .build();
 
-    @Resource
+    @Autowired
     private JohnCommand johnCommand;
 
-    @Resource
+    @Autowired
     private ReminderRepository reminderRepository;
 
-    @Resource
+    @Autowired
     private SnarkyReminderResponseRepository snarkyReminderResponseRepository;
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {

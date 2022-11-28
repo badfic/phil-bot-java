@@ -15,16 +15,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AdventCommand extends BaseSwampy {
 
-    @Resource
+    @Autowired
     private ReminderRepository reminderRepository;
 
     private final Map<Integer, AdventDay> days;

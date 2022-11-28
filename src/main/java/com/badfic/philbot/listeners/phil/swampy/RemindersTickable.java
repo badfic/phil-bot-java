@@ -4,19 +4,21 @@ import com.badfic.philbot.data.phil.Reminder;
 import com.badfic.philbot.data.phil.ReminderRepository;
 import com.badfic.philbot.service.MinuteTickable;
 import java.time.LocalDateTime;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RemindersTickable implements MinuteTickable {
 
-    @Resource
+    @Autowired
     private ReminderRepository reminderRepository;
 
-    @Resource(name = "johnJda")
+    @Autowired
+    @Qualifier("johnJda")
     @Lazy
     private JDA johnJda;
 

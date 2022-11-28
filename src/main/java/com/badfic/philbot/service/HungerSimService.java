@@ -17,22 +17,22 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class HungerSimService extends BaseService {
 
-    @Resource
+    @Autowired
     private GameRepository gameRepository;
 
-    @Resource
+    @Autowired
     private RoundRepository roundRepository;
 
-    @Resource
+    @Autowired
     private RoundOutcomeRepository roundOutcomeRepository;
 
-    @Resource
+    @Autowired
     private PlayerRepository playerRepository;
 
     public synchronized Game runNextStep() {

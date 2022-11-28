@@ -2,11 +2,11 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -24,6 +23,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,36 +37,38 @@ public abstract class BaseSwampy extends Command {
     public static final long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 999;
     public static final long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 999;
 
-    @Resource(name = "philJda")
+    @Autowired
+    @Qualifier("philJda")
     @Lazy
     protected JDA philJda;
 
-    @Resource(name = "antoniaJda")
+    @Autowired
+    @Qualifier("antoniaJda")
     @Lazy
     protected JDA antoniaJda;
 
-    @Resource
+    @Autowired
     protected DiscordUserRepository discordUserRepository;
 
-    @Resource
+    @Autowired
     protected SwampyGamesConfigRepository swampyGamesConfigRepository;
 
-    @Resource
+    @Autowired
     protected ObjectMapper objectMapper;
 
-    @Resource
+    @Autowired
     protected BaseConfig baseConfig;
 
-    @Resource
+    @Autowired
     protected HoneybadgerReporter honeybadgerReporter;
 
-    @Resource
+    @Autowired
     protected RestTemplate restTemplate;
 
-    @Resource
+    @Autowired
     protected OkHttpClient okHttpClient;
 
-    @Resource
+    @Autowired
     protected ExecutorService userTriggeredTasksExecutor;
 
     protected DiscordUser getDiscordUserByMember(Member member) {

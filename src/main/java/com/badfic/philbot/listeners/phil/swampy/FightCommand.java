@@ -2,10 +2,10 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import javax.annotation.PostConstruct;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RegExUtils;

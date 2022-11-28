@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -23,6 +22,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,11 +34,12 @@ public class QuoteCommand extends BaseSwampy implements DailyTickable {
 
     private static final String SPEECH_BUBBLE_EMOJI = "\uD83D\uDCAC";
 
-    @Resource(name = "johnJda")
+    @Autowired
+    @Qualifier("johnJda")
     @Lazy
     private JDA johnJda;
 
-    @Resource
+    @Autowired
     private QuoteRepository quoteRepository;
 
     public QuoteCommand() {

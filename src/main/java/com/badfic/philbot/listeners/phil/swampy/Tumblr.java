@@ -6,11 +6,11 @@ import com.tumblr.jumblr.types.Blog;
 import com.tumblr.jumblr.types.Post;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
-import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,7 +18,7 @@ public class Tumblr extends BaseSwampy {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Resource
+    @Autowired
     private JumblrClient jumblrClient;
 
     public Tumblr() {

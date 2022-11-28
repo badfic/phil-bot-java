@@ -1,15 +1,15 @@
 package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.data.phil.ReminderRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class RemindersController extends BaseMembersController {
 
-    @Resource
+    @Autowired
     private ReminderRepository reminderRepository;
 
     @GetMapping(value = "/reminders", produces = MediaType.TEXT_HTML_VALUE)

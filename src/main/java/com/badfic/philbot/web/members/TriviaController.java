@@ -2,15 +2,15 @@ package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.data.phil.Trivia;
 import com.badfic.philbot.data.phil.TriviaRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TriviaController extends BaseMembersController {
 
-    @Resource
+    @Autowired
     private TriviaRepository triviaRepository;
 
     @GetMapping(value = "/trivia", produces = MediaType.TEXT_HTML_VALUE)

@@ -8,6 +8,7 @@ import com.badfic.philbot.data.phil.Rank;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import jakarta.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
 import java.time.Duration;
@@ -22,8 +23,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -36,6 +35,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -59,7 +59,7 @@ public class SwampyCommand extends BaseSwampy {
 
     private volatile boolean awaitingResetConfirmation = false;
 
-    @Resource
+    @Autowired
     private PlayerRepository playerRepository;
 
     private final String modHelp;

@@ -1,9 +1,9 @@
 package com.badfic.philbot.data;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public abstract class BaseResponsesConfig {
