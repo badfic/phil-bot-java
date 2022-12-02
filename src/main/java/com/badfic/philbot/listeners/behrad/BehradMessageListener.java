@@ -46,6 +46,11 @@ public class BehradMessageListener {
             event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId()).sendMessage("same").queue();
             return;
         }
+
+        if (StringUtils.containsIgnoreCase(msgContent, "salsa")) {
+            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId()).sendMessage("you know the rule about salsa ( ͡° ͜ʖ ͡°)").queue();
+            return;
+        }
     }
 
 }
