@@ -52,9 +52,9 @@ public class SwampyCommand extends BaseSwampy {
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
     public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "7️", "\uD83C\uDF4C", "\uD83C\uDF53",
-            "\uD83C\uDF4B", "\uD83E\uDD5D", "\uD83C\uDF49",
-            "\uD83C\uDF40", "\uD83D\uDCB2", "\uD83C\uDF52️"
+            "\uD83D\uDD4E", "\uD83C\uDF84", "\uD83E\uDD8C",
+            "\uD83D\uDD6F️", "\uD83D\uDC7C", "\uD83E\uDD67",
+            "\uD83C\uDF6C", "\uD83D\uDC51", "\uD83E\uDD37"
     );
 
     private volatile boolean awaitingResetConfirmation = false;
@@ -699,10 +699,13 @@ public class SwampyCommand extends BaseSwampy {
 
         event.reply("Resetting, please wait...");
         for (DiscordUser discordUser : discordUserRepository.findAll()) {
-            discordUser.setXp(0);
+            long adventPoints = PointsStat.ADVENT.getter().applyAsLong(discordUser);
+            discordUser.setXp(adventPoints);
 
             for (PointsStat stat : PointsStat.values()) {
-                stat.setter().accept(discordUser, 0L);
+                if (stat != PointsStat.ADVENT) {
+                    stat.setter().accept(discordUser, 0L);
+                }
             }
 
             discordUserRepository.save(discordUser);
