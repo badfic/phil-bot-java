@@ -56,13 +56,12 @@ public interface Constants {
     Color SWAMP_GREEN = new Color(89, 145, 17);
 
     Set<Color> COLORS = ImmutableSet.of(
-            new Color(28, 10, 45),
-            new Color(168, 50, 130),
-            new Color(68, 37, 92),
-            new Color(241, 146, 46),
+            new Color(15, 76, 129),
+            new Color(50, 124, 172),
+            new Color(143, 195, 243),
             new Color(255, 255, 255),
-            new Color(121, 224, 0),
-            new Color(213, 30, 40)
+            new Color(35, 104, 43),
+            new Color(177, 30, 49)
     );
 
     Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
@@ -72,6 +71,10 @@ public interface Constants {
     }
 
     static boolean isUrl(String string) {
+        if (StringUtils.isBlank(string)) {
+            return false;
+        }
+
         try {
             URL url = new URL(string);
             URI uri = url.toURI();
@@ -82,8 +85,16 @@ public interface Constants {
     }
 
     static boolean urlIsImage(String url) {
+        if (StringUtils.isBlank(url)) {
+            return false;
+        }
+
         String fileExtension = FilenameUtils.getExtension(url);
         return Constants.IMAGE_EXTENSION_PATTERN.matcher(fileExtension).find();
+    }
+
+    static String imageUrlOrElseNull(String url) {
+        return urlIsImage(url) ? url : null;
     }
 
     static BufferedImage scaleImageUrlTo(int width, int height, String imageUrl) throws Exception {
@@ -228,10 +239,10 @@ public interface Constants {
         return new EmbedBuilder()
                 .setTitle(title)
                 .setDescription(finalDesc)
-                .setImage(image)
+                .setImage(imageUrlOrElseNull(image))
                 .setColor(color != null ? color : colorOfTheMonth())
                 .setFooter(footer)
-                .setThumbnail(thumbnail)
+                .setThumbnail(imageUrlOrElseNull(thumbnail))
                 .build();
     }
 
@@ -244,10 +255,8 @@ public interface Constants {
             "powered by 777 billys",
             "powered by 777 toms",
             "powered by 777 steves",
-            "powered by 777 bettys",
             "powered by 777 jugheads",
             "powered by 777 riverdale memes",
-            "powered by 777 aprils",
             "powered by 777 shrimps",
             "powered by 777 z0mbs",
             "powered by 777 memes",
