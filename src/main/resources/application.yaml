@@ -23,11 +23,11 @@ swampy:
   schedule:
     timezone: "America/Los_Angeles"
 
-    daily: "0 0 2 * * ?"
-    hourly: "0 0 * * * ?"
-    minutely: "0 * * * * ?"
+    daily: "0 0 2 * * *"
+    hourly: "0 0 * * * *"
+    minutely: "0 * * * * *"
 
-    rss: "0 0,30 * * * ?"
+    rss: "0 0,30 * * * *"
 
     phil:
       dadjoke: "0 17 7 * * *"
@@ -37,24 +37,24 @@ swampy:
       humpday: "0 2 7 * * WED"
 
     keanu:
-      goodmorning: "0 0 7 * * ?"
+      goodmorning: "0 0 7 * * *"
 
     events:
-      swiper: "0 20 9,12,15,18,20 * * ?"
+      swiper: "0 20 9,12,15,18,20 * JAN-NOV *"
 
-      map: "0 37 1,5,9,13,17,21 * * ?"
-      quotetrivia: "0 37 2,6,10,14,18,22 * * ?"
-      trivia: "0 37 3,7,11,15,19,23 * * ?"
-      nsfwquotetrivia: "0 37 0,4,8,12,16,20 * * ?"
+      map: "0 37 1,5,9,13,17,21 * * *"
+      quotetrivia: "0 37 2,6,10,14,18,22 * * *"
+      trivia: "0 37 3,7,11,15,19,23 * * *"
+      nsfwquotetrivia: "0 37 0,4,8,12,16,20 * * *"
 
-      trickortreat: "0 3 9 * * ?"
-      carrot: "0 5 11 * * ?"
-      parade: "0 5 12 * * ?"
-      glitter: "0 35 12 * * ?"
-      potato: "0 5 13 * * ?"
-      sweepstakes18: "0 3 16 * * ?"
-      sweepstakeschaos: "0 7 16 * * ?"
-      robinhood: "0 9 16 * * ?"
-      stonks: "0 17 16 * * ?"
-      taxes: "0 35 16 * * ?"
-      shrekoning: "0 47 16 * * ?"
+      trickortreat: "0 3 9 * * *"
+      carrot: "0 5 11 * * *"
+      parade: "-"
+      glitter: "0 35 12 * * *"
+      potato: "0 5 13 * * *"
+      sweepstakes18: "0 3 16 * * *"
+      sweepstakeschaos: "0 7 16 * * *"
+      robinhood: "0 9 16 * * *"
+      stonks: "0 17 16 * * *"
+      taxes: "0 35 16 * * *"
+      shrekoning: "0 47 16 * * *"
