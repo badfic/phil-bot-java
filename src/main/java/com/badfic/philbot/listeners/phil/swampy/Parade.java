@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,7 +33,7 @@ public class Parade extends BaseSwampy {
         }
     }
 
-    // @Scheduled(cron = "${swampy.schedule.events.parade}", zone = "${swampy.schedule.timezone}")
+    @Scheduled(cron = "${swampy.schedule.events.parade}", zone = "${swampy.schedule.timezone}")
     public void runParade() {
         LocalDate today = LocalDate.now(ZoneId.of(swampyTimezone));
         int dayOfMonth = today.getDayOfMonth();
