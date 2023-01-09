@@ -59,9 +59,7 @@ public interface Constants {
             new Color(15, 76, 129),
             new Color(50, 124, 172),
             new Color(143, 195, 243),
-            new Color(255, 255, 255),
-            new Color(35, 104, 43),
-            new Color(177, 30, 49)
+            new Color(255, 255, 255)
     );
 
     Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
