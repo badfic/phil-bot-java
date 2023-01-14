@@ -9,7 +9,7 @@ A multipurpose discord bot for "The Swamp", a community discord server (join at 
 Start up postgres and owncast before running
 
 ```
-docker run --rm --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:12
+docker run --rm --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:15-alpine
 docker run --rm --name owncast -p 8085:8080 -p 1935:1935 -d gabekangas/owncast:0.0.5
 ```
 
