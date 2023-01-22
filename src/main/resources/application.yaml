@@ -40,7 +40,7 @@ swampy:
       goodmorning: "0 0 7 * * *"
 
     events:
-      swiper: "0 20 9,12,15,18,20 * JAN-NOV *"
+      swiper: "0 20 9,12,15,18 * JAN-NOV *"
 
       map: "0 37 1,5,9,13,17,21 * * *"
       quotetrivia: "0 37 2,6,10,14,18,22 * * *"
