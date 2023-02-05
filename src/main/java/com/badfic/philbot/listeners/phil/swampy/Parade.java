@@ -7,7 +7,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
+import net.dv8tion.jda.api.JDA;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +20,11 @@ public class Parade extends BaseSwampy {
 
     @Value("${swampy.schedule.timezone}")
     private String swampyTimezone;
+
+    @Autowired
+    @Qualifier("antoniaJda")
+    @Lazy
+    private JDA antoniaJda;
 
     private static final Map<Integer, ParadeItem> PARADE_ITEMS = new HashMap<>();
 

@@ -56,10 +56,14 @@ public interface Constants {
     Color SWAMP_GREEN = new Color(89, 145, 17);
 
     Set<Color> COLORS = ImmutableSet.of(
-            new Color(15, 76, 129),
-            new Color(50, 124, 172),
-            new Color(143, 195, 243),
-            new Color(255, 255, 255)
+            new Color(49, 49, 195),
+            new Color(210, 1, 147),
+            new Color(217, 7, 215),
+            new Color(221, 12, 13),
+            new Color(40, 248, 248),
+            new Color(45, 253, 45),
+            new Color(233, 233, 27),
+            new Color(220, 220, 220)
     );
 
     Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
