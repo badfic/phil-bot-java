@@ -43,11 +43,6 @@ public abstract class BaseSwampy extends Command {
     protected JDA philJda;
 
     @Autowired
-    @Qualifier("antoniaJda")
-    @Lazy
-    protected JDA antoniaJda;
-
-    @Autowired
     protected DiscordUserRepository discordUserRepository;
 
     @Autowired
