@@ -699,13 +699,10 @@ public class SwampyCommand extends BaseSwampy {
 
         event.reply("Resetting, please wait...");
         for (DiscordUser discordUser : discordUserRepository.findAll()) {
-            long adventPoints = PointsStat.ADVENT.getter().applyAsLong(discordUser);
-            discordUser.setXp(adventPoints);
+            discordUser.setXp(0);
 
             for (PointsStat stat : PointsStat.values()) {
-                if (stat != PointsStat.ADVENT) {
-                    stat.setter().accept(discordUser, 0L);
-                }
+                stat.setter().accept(discordUser, 0L);
             }
 
             discordUserRepository.save(discordUser);
