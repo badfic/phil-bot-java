@@ -23,9 +23,9 @@ import org.springframework.stereotype.Service;
 public class AntoniaMessageListener {
 
     public static final List<String> VALENTINES_WORDS = ImmutableList.of(
-            "love", "romance", "valentine", "valentines", "affection", "adore", "admire", "caress");
+            "love", "romance", "valentine", "affection", "adore", "admire", "caress");
 
-    private static final Pattern ANTONIA_PATTERN = Constants.compileWords("antonia|tony|stark|tash|iron man|tin can");
+    private static final Pattern ANTONIA_PATTERN = Constants.compileWords("anthony|tony|mackie|sam|wilson|falcon");
     private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
             .put("307611036134146080", ImmutablePair.of(Constants.compileWords("I love you"), "I know"))
             .put("323520695550083074", ImmutablePair.of(Constants.compileWords("togna"), "bologna"))
@@ -92,12 +92,12 @@ public class AntoniaMessageListener {
 
         for (String word : VALENTINES_WORDS) {
             if (StringUtils.containsIgnoreCase(msgContent, word)) {
-                long pointsTaken = grinchCommand.takePoints(event.getMember());
+                long pointsGiven = grinchCommand.givePoints(event.getMember());
 
-                String description = pointsTaken > 0 ? ("BING BONG I stole your points. -" + pointsTaken) : ("BING BONG I stole your points. Or did I?");
+                String description = "Love is in the air! I gave " + event.getMember().getEffectiveName() + " " + pointsGiven + " points!";
 
-                MessageEmbed messageEmbed = Constants.simpleEmbed("Love Grinch!", description,
-                        "https://cdn.discordapp.com/attachments/794506942906761226/1071339276945588264/love_grinch.png",
+                MessageEmbed messageEmbed = Constants.simpleEmbed("Love!", description,
+                        "https://cdn.discordapp.com/attachments/794506942906761226/1075705302730686464/anthony-mackie-hearts-big.png",
                         null, Color.RED, event.getAuthor().getEffectiveAvatarUrl());
 
                 antoniaCommand.getAntoniaJda()
