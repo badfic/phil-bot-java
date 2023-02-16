@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GrinchCommand extends NonCommandSwampy {
-    private static final List<Long> POINTS_TO_TAKE = ImmutableList.of(0L, 0L, 0L, 0L, 100L, 500L, 1_000L);
+    private static final List<Long> POINTS_TO_TAKE = ImmutableList.of(3L, 3L, 3L, 100L, 500L, 1_000L);
 
-    public long takePoints(Member member) {
+    public long givePoints(Member member) {
         long points = Constants.pickRandom(POINTS_TO_TAKE);
-        takePointsFromMember(points, member, PointsStat.NO_NO);
+        givePointsToMember(points, member, PointsStat.NO_NO);
         return points;
     }
 
