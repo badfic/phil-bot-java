@@ -33,7 +33,9 @@ jobs:
         with:
           distribution: 'liberica'
           java-version: '17'
-      - run: ./mvnw install
+          cache: 'maven'
+      - name: Build with Maven
+        run: mvn install
 
       # Login to a Docker registry
       # https://github.com/docker/login-action
