@@ -7,13 +7,10 @@ import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import io.honeybadger.reporter.HoneybadgerReporter;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Emote;
-import net.dv8tion.jda.api.entities.TextChannel;
-import org.apache.commons.collections4.CollectionUtils;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,11 +54,6 @@ public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> {
             }
         } else {
             return Optional.empty();
-        }
-
-        List<Emote> emotes = event.getMessage().getEmotes();
-        if (CollectionUtils.isNotEmpty(emotes)) {
-            return Optional.of(emotes.get(0).getAsMention());
         }
 
         boolean isAllUppercase = true;

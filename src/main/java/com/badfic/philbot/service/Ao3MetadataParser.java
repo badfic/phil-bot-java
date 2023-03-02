@@ -5,7 +5,7 @@ import com.google.common.annotations.VisibleForTesting;
 import java.awt.Color;
 import java.lang.invoke.MethodHandles;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.jsoup.Jsoup;

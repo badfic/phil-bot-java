@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +48,14 @@ public class JudgeCommand extends BaseSwampy {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (CollectionUtils.size(event.getMessage().getMentionedMembers()) != 1) {
+        if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) != 1) {
             event.replyError("Please mention a user to accuse. Example `!!judge @user for such and such crime`");
             return;
         }
 
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
         Member accuser = event.getMember();
-        Member defendant = event.getMessage().getMentionedMembers().get(0);
+        Member defendant = event.getMessage().getMentions().getMembers().get(0);
 
         Optional<CourtCase> optionalExistingCase = courtCaseRepository.findById(defendant.getIdLong());
 
@@ -115,10 +116,10 @@ public class JudgeCommand extends BaseSwampy {
                     LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
             courtCaseRepository.save(courtCase);
 
-            msg.addReaction(Sentence.ACQUIT.getEmoji()).queue();
-            msg.addReaction(Sentence.ONE_HOUR.getEmoji()).queue();
-            msg.addReaction(Sentence.FIVE_HOUR.getEmoji()).queue();
-            msg.addReaction(Sentence.ONE_DAY.getEmoji()).queue();
+            msg.addReaction(Emoji.fromUnicode(Sentence.ACQUIT.getEmoji())).queue();
+            msg.addReaction(Emoji.fromUnicode(Sentence.ONE_HOUR.getEmoji())).queue();
+            msg.addReaction(Emoji.fromUnicode(Sentence.FIVE_HOUR.getEmoji())).queue();
+            msg.addReaction(Emoji.fromUnicode(Sentence.ONE_DAY.getEmoji())).queue();
         });
     }
 }

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,10 +28,12 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -232,8 +235,8 @@ public class SwampyCommand extends BaseSwampy {
         givePointsToMember(points, member, PointsStat.VOICE_CHAT);
     }
 
-    public void emote(GuildMessageReactionAddEvent event) {
-        if (event.getUser().isBot()) {
+    public void emote(MessageReactionAddEvent event) {
+        if (event.retrieveUser().timeout(30, TimeUnit.SECONDS).complete().isBot()) {
             return;
         }
 
@@ -244,28 +247,28 @@ public class SwampyCommand extends BaseSwampy {
 
         givePointsToMember(swampyGamesConfig.getReactionPoints(), event.getMember(), PointsStat.REACTOR_POINTS);
         long messageId = event.getMessageIdLong();
-        long reactionGiverId = event.getMember().getIdLong();
-        TextChannel channel = event.getChannel();
+        long reactionGiverId = event.retrieveMember().timeout(30, TimeUnit.SECONDS).complete().getIdLong();
+        TextChannel channel = event.getChannel().asTextChannel();
         channel.retrieveMessageById(messageId).queue(msg -> {
             if (msg != null && msg.getMember() != null && msg.getMember().getIdLong() != reactionGiverId) {
                 givePointsToMember(swampyGamesConfig.getReactionPoints(), msg.getMember(), PointsStat.REACTED_POINTS);
             }
         });
 
-        MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
+        EmojiUnion reactionEmote = event.getReaction().getEmoji();
         long guildId = event.getGuild().getIdLong();
 
         MessageEmbed messageEmbed;
-        if (reactionEmote.isEmote()) {
+        if (reactionEmote.getType() == Emoji.Type.CUSTOM) {
             messageEmbed = Constants.simpleEmbedThumbnail("Reaction Event",
                     String.format("<@!%d> reacted %s (see thumbnail) to\n%s\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
-                            reactionGiverId, reactionEmote.getName(), channel.getAsMention(), guildId, channel.getIdLong(), messageId,
+                            reactionGiverId, reactionEmote.asCustom().getName(), channel.getAsMention(), guildId, channel.getIdLong(), messageId,
                             DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())),
-                    reactionEmote.getEmote().getImageUrl());
+                    reactionEmote.asCustom().getImageUrl());
         } else {
             messageEmbed = Constants.simpleEmbed("Reaction Event",
                     String.format("<@!%d> reacted %s to\n%s\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
-                            reactionGiverId, reactionEmote.getName(), channel.getAsMention(), guildId, channel.getIdLong(), messageId,
+                            reactionGiverId, reactionEmote.asUnicode().getName(), channel.getAsMention(), guildId, channel.getIdLong(), messageId,
                             DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())));
         }
 
@@ -361,8 +364,8 @@ public class SwampyCommand extends BaseSwampy {
 
     private void showRank(CommandEvent event) {
         Member member = event.getMember();
-        if (CollectionUtils.size(event.getMessage().getMentionedMembers()) == 1) {
-            member = event.getMessage().getMentionedMembers().get(0);
+        if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) == 1) {
+            member = event.getMessage().getMentions().getMembers().get(0);
         }
 
         if (isNotParticipating(member)) {
@@ -434,7 +437,7 @@ public class SwampyCommand extends BaseSwampy {
                         }
                     });
 
-            event.getChannel().sendFile(description.toString().getBytes(), "leaderboard.txt").queue();
+            event.getChannel().sendFiles(FileUpload.fromData(description.toString().getBytes(), "leaderboard.txt")).queue();
             return;
         }
 
@@ -495,7 +498,7 @@ public class SwampyCommand extends BaseSwampy {
             return;
         }
 
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
+        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
 
         if (CollectionUtils.isEmpty(mentionedMembers)) {
             event.replyError("Please mention at least one user to upvote. Example `!!swampy up @Santiago`");
@@ -547,7 +550,7 @@ public class SwampyCommand extends BaseSwampy {
     }
 
     private void downvote(CommandEvent event) {
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
+        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
             event.replyError("Please mention one user to downvote. Example `!!swampy down @Santiago`");
@@ -623,7 +626,7 @@ public class SwampyCommand extends BaseSwampy {
             return;
         }
 
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
+        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
             event.replyError("Please specify only one user. Example `!!swampy give 100 @Santiago`");
@@ -666,7 +669,7 @@ public class SwampyCommand extends BaseSwampy {
             return;
         }
 
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
+        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
             event.replyError("Please specify only one user. Example `!!swampy take 100 @Santiago`");

@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.Objects;
 import javax.imageio.ImageIO;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
 
 public abstract class BaseTwoUserImageMeme extends BaseSwampy {
@@ -38,8 +39,8 @@ public abstract class BaseTwoUserImageMeme extends BaseSwampy {
     protected void execute(CommandEvent event) {
         String authorFaceUrl = event.getMember().getEffectiveAvatarUrl();
         String recipientFaceUrl = authorFaceUrl;
-        if (CollectionUtils.size(event.getMessage().getMentionedMembers()) == 1) {
-            recipientFaceUrl = event.getMessage().getMentionedMembers().get(0).getEffectiveAvatarUrl();
+        if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) == 1) {
+            recipientFaceUrl = event.getMessage().getMentions().getMembers().get(0).getEffectiveAvatarUrl();
         }
 
         try {
@@ -47,7 +48,7 @@ public abstract class BaseTwoUserImageMeme extends BaseSwampy {
 
             event.getTextChannel()
                     .sendMessage(" ")
-                    .addFile(bytes, memeName + ".png")
+                    .addFiles(FileUpload.fromData(bytes, memeName + ".png"))
                     .queue();
         } catch (Exception e) {
             event.replyError("Failed to generate '" + memeName + "' meme");

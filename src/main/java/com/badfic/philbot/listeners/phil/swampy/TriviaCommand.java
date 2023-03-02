@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,7 +37,7 @@ public class TriviaCommand extends BaseSwampy {
         if (event.getArgs().startsWith("dump")) {
             List<Trivia> all = triviaRepository.findAll();
             try {
-                event.getChannel().sendFile(objectMapper.writeValueAsBytes(all), "trivia.json").queue();
+                event.getChannel().sendFiles(FileUpload.fromData(objectMapper.writeValueAsBytes(all), "trivia.json")).queue();
             } catch (JsonProcessingException e) {
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send trivia dump to you").queue();
             }
@@ -88,9 +90,9 @@ public class TriviaCommand extends BaseSwampy {
             swampyGamesConfig.setTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
-            success.addReaction("\uD83C\uDDE6").queue();
-            success.addReaction("\uD83C\uDDE7").queue();
-            success.addReaction("\uD83C\uDDE8").queue();
+            success.addReaction(Emoji.fromUnicode("\uD83C\uDDE6")).queue();
+            success.addReaction(Emoji.fromUnicode("\uD83C\uDDE7")).queue();
+            success.addReaction(Emoji.fromUnicode("\uD83C\uDDE8")).queue();
         });
     }
 }

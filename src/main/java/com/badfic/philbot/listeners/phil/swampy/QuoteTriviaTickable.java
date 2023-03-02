@@ -12,8 +12,9 @@ import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -51,13 +52,13 @@ public class QuoteTriviaTickable extends NonCommandSwampy implements MinuteTicka
 
             List<CompletableFuture<?>> futures = new ArrayList<>();
 
-            List<User> users = msg.retrieveReactionUsers("\uD83C\uDDE6").timeout(30, TimeUnit.SECONDS).complete();
+            List<User> users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE6")).timeout(30, TimeUnit.SECONDS).complete();
             awardPoints(description, users, quoteTriviaCorrectAnswer == 0 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
 
-            users = msg.retrieveReactionUsers("\uD83C\uDDE7").timeout(30, TimeUnit.SECONDS).complete();
+            users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE7")).timeout(30, TimeUnit.SECONDS).complete();
             awardPoints(description, users, quoteTriviaCorrectAnswer == 1 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
 
-            users = msg.retrieveReactionUsers("\uD83C\uDDE8").timeout(30, TimeUnit.SECONDS).complete();
+            users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE8")).timeout(30, TimeUnit.SECONDS).complete();
             awardPoints(description, users, quoteTriviaCorrectAnswer == 2 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
 
             msg.clearReactions().queue();

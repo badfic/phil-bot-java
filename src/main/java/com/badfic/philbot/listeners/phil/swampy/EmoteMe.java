@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
+import net.dv8tion.jda.api.utils.FileUpload;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -102,7 +103,7 @@ public class EmoteMe extends BaseSwampy {
     @Override
     protected void execute(CommandEvent event) {
         Member member = event.getMember();
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
+        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
         if (CollectionUtils.size(mentionedMembers) == 1) {
             member = mentionedMembers.get(0);
         }
@@ -164,12 +165,12 @@ public class EmoteMe extends BaseSwampy {
                     return;
                 }
             } else {
-                if (CollectionUtils.size(event.getMessage().getEmotes()) != 1) {
+                if (CollectionUtils.size(event.getMessage().getMentions().getCustomEmojis()) != 1) {
                     event.replyError("Please only specify one emote");
                     return;
                 }
 
-                Emote emote = event.getMessage().getEmotes().get(0);
+                CustomEmoji emote = event.getMessage().getMentions().getCustomEmojis().get(0);
 
                 if (StringUtils.isBlank(emote.getImageUrl())) {
                     event.replyError("Could not load url for emote");
@@ -199,7 +200,7 @@ public class EmoteMe extends BaseSwampy {
             graphics.dispose();
 
             event.getTextChannel().sendMessage(" ")
-                    .addFile(outputStream.toByteArray(), "emote.png")
+                    .addFiles(FileUpload.fromData(outputStream.toByteArray(), "emote.png"))
                     .queue();
         } catch (Exception e) {
             honeybadgerReporter.reportError(e, null, "Failed to emoteme user [" + member.getEffectiveName() + "], args: " + event.getArgs());

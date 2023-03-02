@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.imageio.ImageIO;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -62,7 +63,7 @@ public class Heart extends BaseFlagCommand {
             graphics.dispose();
 
             event.getTextChannel().sendMessage(" ")
-                    .addFile(outputStream.toByteArray(), "heart.png")
+                    .addFiles(FileUpload.fromData(outputStream.toByteArray(), "heart.png"))
                     .queue();
         } catch (Exception e) {
             honeybadgerReporter.reportError(e, null, "Failed to make heart, args: " + event.getArgs());

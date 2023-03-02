@@ -178,8 +178,8 @@ public class JohnMessageListener extends BaseService {
             int remindIdx = StringUtils.indexOfIgnoreCase(message.getContentRaw(), "remind");
 
             Member member = message.getMember();
-            if (CollectionUtils.isNotEmpty(message.getMentionedMembers())) {
-                member = message.getMentionedMembers().get(0);
+            if (CollectionUtils.isNotEmpty(message.getMentions().getMembers())) {
+                member = message.getMentions().getMembers().get(0);
 
                 reminder = message.getContentRaw().substring(remindIdx + ("remind <@!" + member.getIdLong() + "> in ").length());
             } else {

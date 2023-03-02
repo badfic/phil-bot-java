@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public class Pride extends BaseFlagCommand {
     @Override
     protected void execute(CommandEvent event) {
         Member member = event.getMember();
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
+        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
         if (CollectionUtils.size(mentionedMembers) == 1) {
             member = mentionedMembers.get(0);
         }
@@ -73,7 +74,7 @@ public class Pride extends BaseFlagCommand {
             graphics.dispose();
 
             event.getTextChannel().sendMessage(" ")
-                    .addFile(outputStream.toByteArray(), "pride.png")
+                    .addFiles(FileUpload.fromData(outputStream.toByteArray(), "pride.png"))
                     .queue();
         } catch (Exception e) {
             honeybadgerReporter.reportError(e, null, "Failed to pride user [" + member.getEffectiveName() + "], args: " + event.getArgs());

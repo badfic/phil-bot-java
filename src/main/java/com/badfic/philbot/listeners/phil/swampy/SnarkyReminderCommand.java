@@ -7,6 +7,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -56,7 +57,7 @@ public class SnarkyReminderCommand extends BaseSwampy {
 
             String finalString = description.toString();
             if (finalString.length() > 2_000) {
-                event.getChannel().sendFile(finalString.getBytes(), "snarky-responses.txt").queue();
+                event.getChannel().sendFiles(FileUpload.fromData(finalString.getBytes(), "snarky-responses.txt")).queue();
             } else {
                 event.reply(finalString);
             }

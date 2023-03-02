@@ -11,7 +11,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +88,7 @@ public class MapCommand extends BaseSwampy {
                 ResponseEntity<byte[]> imageResponse = restTemplate.exchange(image, HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
 
                 swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Map Trivia", description))
-                        .addFile(imageResponse.getBody(), "image." + imageExtension)
+                        .addFiles(FileUpload.fromData(imageResponse.getBody(), "image." + imageExtension))
                         .queue();
             } catch (Exception e) {
                 logger.error("Failed to load [image={}] for map trivia", image, e);

@@ -14,12 +14,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.MessageReaction;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ public class HungerGamesWinnersService extends BaseSwampy implements DailyTickab
                     : -1;
 
             for (Message message : history.getRetrievedHistory()) {
-                MessageReaction.ReactionEmote reaction = message.getReactionByUnicode(REACTION_EMOJI);
+                MessageReaction reaction = message.getReaction(Emoji.fromUnicode(REACTION_EMOJI));
 
                 if (reaction != null) {
                     messageIds.add(message.getIdLong());
@@ -161,8 +162,8 @@ public class HungerGamesWinnersService extends BaseSwampy implements DailyTickab
         }
 
         String content = contentBuilder.toString();
-        if (CollectionUtils.isNotEmpty(message.getEmotes())) {
-            for (Emote emote : message.getEmotes()) {
+        if (CollectionUtils.isNotEmpty(message.getMentions().getCustomEmojis())) {
+            for (CustomEmoji emote : message.getMentions().getCustomEmojis()) {
                 String imageUrl = emote.getImageUrl();
                 content = RegExUtils.replaceAll(
                         content,
