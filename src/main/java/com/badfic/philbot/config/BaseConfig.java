@@ -1,11 +1,13 @@
 package com.badfic.philbot.config;
 
 import static net.dv8tion.jda.api.requests.GatewayIntent.DIRECT_MESSAGES;
+import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_EMOJIS_AND_STICKERS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MEMBERS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGE_REACTIONS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MODERATION;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
+import static net.dv8tion.jda.api.requests.GatewayIntent.MESSAGE_CONTENT;
 
 import com.badfic.philbot.listeners.phil.MemeCommandsService;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
@@ -32,6 +34,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.utils.IOUtil;
 import okhttp3.OkHttpClient;
@@ -340,7 +343,10 @@ public class BaseConfig {
                        OkHttpClient okHttpClient,
                        PhilMessageListener philMessageListener,
                        @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
-        return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_MODERATION, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES))
+        List<GatewayIntent> intents = Arrays.asList(GUILD_MEMBERS, GUILD_MODERATION, GUILD_MESSAGES, MESSAGE_CONTENT, GUILD_VOICE_STATES,
+                GUILD_MESSAGE_REACTIONS, GUILD_EMOJIS_AND_STICKERS, DIRECT_MESSAGES);
+
+        return JDABuilder.create(philBotToken, intents)
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
                 .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
                 .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)

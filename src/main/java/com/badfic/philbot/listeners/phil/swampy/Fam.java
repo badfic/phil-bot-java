@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.internal.entities.emoji.UnicodeEmojiImpl;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -325,8 +325,8 @@ public class Fam extends BaseSwampy {
                     Constants.SWAMP_GREEN);
 
             event.getChannel().sendMessageEmbeds(message).queue(msg -> {
-                msg.addReaction(new UnicodeEmojiImpl("✅")).queue();
-                msg.addReaction(new UnicodeEmojiImpl("❌")).queue();
+                msg.addReaction(Emoji.fromUnicode("✅")).queue();
+                msg.addReaction(Emoji.fromUnicode("❌")).queue();
 
                 PhilMessageListener.addReactionTask(msg.getId(), messageReactionAddEvent -> {
                     if (messageReactionAddEvent.getUserId().equalsIgnoreCase(mentionedMember.getId())) {

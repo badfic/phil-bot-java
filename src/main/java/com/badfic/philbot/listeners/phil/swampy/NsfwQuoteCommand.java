@@ -17,8 +17,8 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.internal.entities.emoji.UnicodeEmojiImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -164,7 +164,8 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
             DayOfWeek day = mode.getLeft();
             int count = mode.getRight();
 
-            long mostQuotedUserId = nsfwQuoteRepository.getMostQuotedUser();
+//            long mostQuotedUserId = nsfwQuoteRepository.getMostQuotedUser();
+            long mostQuotedUserId = philJda.getSelfUser().getIdLong(); // TODO: Fix
             Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
 
             keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Cursed Quote Statistics",
@@ -242,7 +243,7 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
                 NsfwQuote savedQuote = nsfwQuoteRepository.save(new NsfwQuote(messageId, channelId, msg.getContentRaw(), image,
                         msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
 
-                msg.addReaction(new UnicodeEmojiImpl(EGGPLANT_EMOJI)).queue();
+                msg.addReaction(Emoji.fromUnicode(EGGPLANT_EMOJI)).queue();
 
                 String msgLink = " [(jump)](https://discordapp.com/channels/" + guildId + '/' + channelId + '/' + messageId + ')';
 

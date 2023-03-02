@@ -10,7 +10,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.internal.entities.emoji.UnicodeEmojiImpl;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,10 +116,10 @@ public class JudgeCommand extends BaseSwampy {
                     LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
             courtCaseRepository.save(courtCase);
 
-            msg.addReaction(new UnicodeEmojiImpl(Sentence.ACQUIT.getEmoji())).queue();
-            msg.addReaction(new UnicodeEmojiImpl(Sentence.ONE_HOUR.getEmoji())).queue();
-            msg.addReaction(new UnicodeEmojiImpl(Sentence.FIVE_HOUR.getEmoji())).queue();
-            msg.addReaction(new UnicodeEmojiImpl(Sentence.ONE_DAY.getEmoji())).queue();
+            msg.addReaction(Emoji.fromUnicode(Sentence.ACQUIT.getEmoji())).queue();
+            msg.addReaction(Emoji.fromUnicode(Sentence.ONE_HOUR.getEmoji())).queue();
+            msg.addReaction(Emoji.fromUnicode(Sentence.FIVE_HOUR.getEmoji())).queue();
+            msg.addReaction(Emoji.fromUnicode(Sentence.ONE_DAY.getEmoji())).queue();
         });
     }
 }
