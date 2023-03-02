@@ -17,7 +17,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,9 +119,9 @@ public class QuoteTrivia extends BaseSwampy {
             swampyGamesConfig.setQuoteTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
-            success.addReaction("\uD83C\uDDE6").queue();
-            success.addReaction("\uD83C\uDDE7").queue();
-            success.addReaction("\uD83C\uDDE8").queue();
+            success.addReaction(Emoji.fromUnicode("\uD83C\uDDE6")).queue();
+            success.addReaction(Emoji.fromUnicode("\uD83C\uDDE7")).queue();
+            success.addReaction(Emoji.fromUnicode("\uD83C\uDDE8")).queue();
         });
     }
 

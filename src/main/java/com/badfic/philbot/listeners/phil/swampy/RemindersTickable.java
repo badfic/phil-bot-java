@@ -5,7 +5,7 @@ import com.badfic.philbot.data.phil.ReminderRepository;
 import com.badfic.philbot.service.MinuteTickable;
 import java.time.LocalDateTime;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;

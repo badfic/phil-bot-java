@@ -7,12 +7,9 @@ import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import io.honeybadger.reporter.HoneybadgerReporter;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Emote;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -43,11 +40,6 @@ public class AntoniaCommand extends BasicResponsesBot<AntoniaResponsesConfig> {
             responses = responsesConfig.getNsfwConfig().getResponses();
         } else {
             return Optional.empty();
-        }
-
-        List<Emote> emotes = event.getMessage().getEmotes();
-        if (CollectionUtils.isNotEmpty(emotes)) {
-            return Optional.of(emotes.get(0).getAsMention());
         }
 
         return Optional.of(Constants.pickRandom(responses));

@@ -28,7 +28,7 @@ public class FightCommand extends BaseSwampy {
 
     @Override
     protected void execute(CommandEvent event) {
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
+        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
             event.replyError("Please mention a user to fight");

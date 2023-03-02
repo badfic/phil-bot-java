@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.0</version>
+		<version>3.0.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.badfic</groupId>
@@ -21,11 +21,11 @@
 		<emoji-java.version>5.1.1</emoji-java.version>
 		<guava.version>31.1-jre</guava.version>
 		<honeybadger.version>2.1.0</honeybadger.version>
-		<jda.version>4.4.0_352</jda.version>
-		<jda-utilities.version>1.24.1</jda-utilities.version>
-		<jsoup.version>1.15.3</jsoup.version>
+		<jda.version>5.0.0-beta.5</jda.version>
+		<jda-utilities.version>2.0-SNAPSHOT</jda-utilities.version>
+		<jsoup.version>1.15.4</jsoup.version>
 		<jumblr.version>0.0.13</jumblr.version>
-		<rome.version>1.18.0</rome.version>
+		<rome.version>1.19.0</rome.version>
 	</properties>
 
 	<dependencies>
@@ -153,13 +153,8 @@
 			<url>https://repo.maven.apache.org/maven2</url>
 		</repository>
 		<repository>
-			<id>dv8tion</id>
-			<name>m2-dv8tion</name>
-			<url>https://m2.dv8tion.net/releases</url>
-		</repository>
-		<repository>
 			<id>chew-m2</id>
-			<url>https://m2.chew.pro/releases</url>
+			<url>https://m2.chew.pro/snapshots</url>
 		</repository>
 	</repositories>
 

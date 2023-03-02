@@ -3,9 +3,9 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Optional;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.stereotype.Component;
 
 @Component

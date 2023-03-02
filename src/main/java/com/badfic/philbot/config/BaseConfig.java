@@ -1,13 +1,12 @@
 package com.badfic.philbot.config;
 
 import static net.dv8tion.jda.api.requests.GatewayIntent.DIRECT_MESSAGES;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_BANS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MEMBERS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGE_REACTIONS;
+import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MODERATION;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
 
-import com.badfic.philbot.listeners.GenericReadyListener;
 import com.badfic.philbot.listeners.phil.MemeCommandsService;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
@@ -324,7 +323,7 @@ public class BaseConfig {
                                         }
                                     }
 
-                                    memeCommandsService.executeCustomCommand(parts[0], event.getTextChannel());
+                                    memeCommandsService.executeCustomCommand(parts[0], event.getChannel().asTextChannel());
                                 }
                             }
                         }
@@ -339,17 +338,16 @@ public class BaseConfig {
     public JDA philJda(ThreadPoolTaskScheduler taskScheduler,
                        ThreadPoolTaskExecutor threadPoolTaskExecutor,
                        OkHttpClient okHttpClient,
-                       GenericReadyListener genericReadyListener,
                        PhilMessageListener philMessageListener,
                        @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
-        return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_BANS, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES))
-                .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
+        return JDABuilder.create(philBotToken, Arrays.asList(GUILD_MEMBERS, GUILD_MODERATION, GUILD_MESSAGES, GUILD_VOICE_STATES, GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES))
+                .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
                 .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
                 .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
                 .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
                 .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
                 .setHttpClient(okHttpClient)
-                .addEventListeners(genericReadyListener, philMessageListener, philCommandClient)
+                .addEventListeners(philMessageListener, philCommandClient)
                 .setActivity(Activity.playing("with our feelings"))
                 .build();
     }

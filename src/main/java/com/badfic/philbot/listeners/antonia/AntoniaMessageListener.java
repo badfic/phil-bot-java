@@ -102,7 +102,7 @@ public class AntoniaMessageListener {
 
                 antoniaCommand.getAntoniaJda()
                         .getTextChannelById(channelId)
-                        .sendMessage(messageEmbed)
+                        .sendMessageEmbeds(messageEmbed)
                         .queue();
             }
         }

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.internal.entities.emoji.UnicodeEmojiImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -163,12 +163,12 @@ public class Fam extends BaseSwampy {
             return;
         }
 
-        if (CollectionUtils.size(event.getMessage().getMentionedMembers()) != 1) {
+        if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) != 1) {
             event.replyError("Please mention a user to nuke. Example `!!fam nuke @Santiago`");
             return;
         }
 
-        Member memberToNuke = event.getMessage().getMentionedMembers().get(0);
+        Member memberToNuke = event.getMessage().getMentions().getMembers().get(0);
         DiscordUser discordUserToNuke = getUserAndFamily(memberToNuke);
         discordUserToNuke.setFamily(new Family());
         discordUserRepository.save(discordUserToNuke);
@@ -287,10 +287,10 @@ public class Fam extends BaseSwampy {
             return;
         }
 
-        if (CollectionUtils.size(event.getMessage().getMentionedUsers()) == 1) {
-            User mentionedMember = event.getMessage().getMentionedUsers().get(0);
+        if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) == 1) {
+            Member mentionedMember = event.getMessage().getMentions().getMembers().get(0);
 
-            if (mentionedMember.isBot()) {
+            if (mentionedMember.getUser().isBot()) {
                 if (add) {
                     set.add(mentionedMember.getId());
                 } else {
@@ -298,19 +298,19 @@ public class Fam extends BaseSwampy {
                 }
 
                 discordUserRepository.save(discordUser);
-                event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + mentionedMember.getName());
+                event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + mentionedMember.getEffectiveName());
                 return;
             }
 
             if (!add) {
                 set.remove(mentionedMember.getId());
                 discordUserRepository.save(discordUser);
-                event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + mentionedMember.getName());
+                event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + mentionedMember.getEffectiveName());
                 return;
             }
 
             if (set.contains(mentionedMember.getId())) {
-                event.replySuccess(event.getMember().getAsMention() + ", " + mentionedMember.getName() + " is already `" + argName + "`'d");
+                event.replySuccess(event.getMember().getAsMention() + ", " + mentionedMember.getEffectiveName() + " is already `" + argName + "`'d");
                 return;
             }
 
@@ -325,12 +325,12 @@ public class Fam extends BaseSwampy {
                     Constants.SWAMP_GREEN);
 
             event.getChannel().sendMessageEmbeds(message).queue(msg -> {
-                msg.addReaction("✅").queue();
-                msg.addReaction("❌").queue();
+                msg.addReaction(new UnicodeEmojiImpl("✅")).queue();
+                msg.addReaction(new UnicodeEmojiImpl("❌")).queue();
 
                 PhilMessageListener.addReactionTask(msg.getId(), messageReactionAddEvent -> {
                     if (messageReactionAddEvent.getUserId().equalsIgnoreCase(mentionedMember.getId())) {
-                        if ("✅".equals(messageReactionAddEvent.getReactionEmote().getName())) {
+                        if ("✅".equals(messageReactionAddEvent.getReaction().getEmoji().getName())) {
                             DiscordUser relookupUser = discordUserRepository.findById(discordUser.getId()).orElse(null);
 
                             if (relookupUser == null) {
@@ -348,7 +348,7 @@ public class Fam extends BaseSwampy {
 
                             msg.editMessageEmbeds(messageSuccess).queue();
                             return true;
-                        } else if ("❌".equals(messageReactionAddEvent.getReactionEmote().getName())) {
+                        } else if ("❌".equals(messageReactionAddEvent.getReaction().getEmoji().getName())) {
                             MessageEmbed messageFail = Constants.simpleEmbed(argName,
                                     mentionedMember.getAsMention() + " rejected " + event.getMember().getAsMention() + "'s `" + argName + '`',
                                     Color.RED);
@@ -400,8 +400,8 @@ public class Fam extends BaseSwampy {
 
     private void show(CommandEvent event) {
         Member member = event.getMember();
-        if (CollectionUtils.size(event.getMessage().getMentionedMembers()) == 1) {
-            member = event.getMessage().getMentionedMembers().get(0);
+        if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) == 1) {
+            member = event.getMessage().getMentions().getMembers().get(0);
         }
 
         if (isNotEligible(member, event)) {

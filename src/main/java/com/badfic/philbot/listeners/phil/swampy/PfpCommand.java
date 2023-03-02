@@ -19,7 +19,7 @@ public class PfpCommand extends BaseSwampy {
     @Override
     protected void execute(CommandEvent event) {
         Member member = event.getMember();
-        List<Member> mentionedMembers = event.getMessage().getMentionedMembers();
+        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
         if (CollectionUtils.isNotEmpty(mentionedMembers)) {
             member = mentionedMembers.get(0);
         }

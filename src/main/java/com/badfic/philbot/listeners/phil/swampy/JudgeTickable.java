@@ -16,7 +16,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +53,8 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
                                 JudgeCommand.Sentence.ONE_DAY, new MutableInt(-1));
                         List<MessageReaction> reactions = trialMessage.getReactions();
                         for (MessageReaction reaction : reactions) {
-                            if (reaction.getReactionEmote().isEmoji()) {
-                                String emoji = reaction.getReactionEmote().getEmoji();
+                            if (reaction.getEmoji().getType() == Emoji.Type.UNICODE) {
+                                String emoji = reaction.getEmoji().asUnicode().getName();
 
                                 if (JudgeCommand.Sentence.ACQUIT.getEmoji().equals(emoji)) {
                                     sentenceMap.get(JudgeCommand.Sentence.ACQUIT).add(reaction.getCount());
@@ -84,7 +86,7 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
                                 courtCaseRepository.deleteById(courtCase.getDefendantId());
                             }
                             case ONE_HOUR -> {
-                                guild.addRoleToMember(courtCase.getDefendantId(), megaHellRole).queue();
+                                guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusHours(1));
                                 courtCaseRepository.save(courtCase);
@@ -94,7 +96,7 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
                                         + courtCase.getCrime()).queue();
                             }
                             case FIVE_HOUR -> {
-                                guild.addRoleToMember(courtCase.getDefendantId(), megaHellRole).queue();
+                                guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusHours(5));
                                 courtCaseRepository.save(courtCase);
@@ -104,7 +106,7 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
                                         + courtCase.getCrime()).queue();
                             }
                             case ONE_DAY -> {
-                                guild.addRoleToMember(courtCase.getDefendantId(), megaHellRole).queue();
+                                guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusDays(1));
                                 courtCaseRepository.save(courtCase);
@@ -124,7 +126,7 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
                     courtCaseRepository.deleteById(courtCase.getDefendantId());
 
                     try {
-                        guild.removeRoleFromMember(courtCase.getDefendantId(), megaHellRole).queue();
+                        guild.removeRoleFromMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
                         megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been released from mega-hell").queue();
                     } catch (Exception e) {
                         logger.error("Error with release date for [userId={}]", courtCase.getDefendantId(), e);

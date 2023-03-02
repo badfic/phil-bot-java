@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners.phil;
 
+import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.listeners.antonia.AntoniaMessageListener;
 import com.badfic.philbot.listeners.behrad.BehradMessageListener;
@@ -16,29 +17,35 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateAvatarEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -46,8 +53,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PhilMessageListener extends ListenerAdapter {
-
-    private static final Cache<String, Function<GuildMessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = CacheBuilder.newBuilder()
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Cache<String, Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = CacheBuilder.newBuilder()
             .maximumSize(200)
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .build();
@@ -120,10 +127,13 @@ public class PhilMessageListener extends ListenerAdapter {
     private MemberCount memberCount;
 
     @Autowired
+    private BaseConfig baseConfig;
+
+    @Autowired
     @Qualifier("philCommandClient")
     private CommandClient philCommandClient;
 
-    public static void addReactionTask(String messageId, Function<GuildMessageReactionAddEvent, Boolean> function) {
+    public static void addReactionTask(String messageId, Function<MessageReactionAddEvent, Boolean> function) {
         OUTSTANDING_REACTION_TASKS.put(messageId, function);
     }
 
@@ -145,7 +155,7 @@ public class PhilMessageListener extends ListenerAdapter {
         }
 
         if (StringUtils.startsWith(msgContent, "!") && !StringUtils.trim(msgContent).equals("!")) {
-            memeCommandsService.executeCustomCommand(StringUtils.trim(StringUtils.substring(msgContent, 1)), event.getTextChannel());
+            memeCommandsService.executeCustomCommand(StringUtils.trim(StringUtils.substring(msgContent, 1)), event.getChannel().asTextChannel());
         }
 
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
@@ -163,23 +173,31 @@ public class PhilMessageListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-        swampyCommand.voiceJoined(event.getMember());
+    public void onReady(@NotNull ReadyEvent event) {
+        logger.info("Received ready event for [user={}]", event.getJDA().getSelfUser());
+        MessageEmbed messageEmbed = Constants.simpleEmbed("Restarted",
+                String.format("We just restarted\ngit sha: %s\ncommit msg: %s", baseConfig.commitSha, baseConfig.commitMessage), Constants.SWAMP_GREEN);
+        event.getJDA().getTextChannelsByName("test-channel", false).get(0).sendMessageEmbeds(messageEmbed).queue();
     }
 
     @Override
-    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        swampyCommand.voiceLeft(event.getMember());
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+        if (event.getChannelJoined() != null) {
+            swampyCommand.voiceJoined(event.getMember());
+        } else if (event.getChannelLeft() != null) {
+            swampyCommand.voiceLeft(event.getMember());
+        }
     }
 
     @Override
-    public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
-        if (event.getReactionEmote().isEmoji()) {
-            if (quoteCommand.getEmoji().equals(event.getReactionEmote().getEmoji())) {
+    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
+        EmojiUnion emoji = event.getReaction().getEmoji();
+        if (emoji.getType() == Emoji.Type.UNICODE) {
+            if (quoteCommand.getEmoji().equals(emoji.asUnicode().getName())) {
                 quoteCommand.saveQuote(event);
             }
 
-            if (nsfwQuoteCommand.getEmoji().equals(event.getReactionEmote().getEmoji())) {
+            if (nsfwQuoteCommand.getEmoji().equals(emoji.asUnicode().getName())) {
                 nsfwQuoteCommand.saveQuote(event);
             }
         }

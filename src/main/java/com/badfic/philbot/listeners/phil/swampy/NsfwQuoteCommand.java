@@ -16,8 +16,9 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.internal.entities.emoji.UnicodeEmojiImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -131,8 +132,8 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
         }
 
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "stat")) {
-            if (CollectionUtils.isNotEmpty(event.getMessage().getMentionedMembers())) {
-                Member member = event.getMessage().getMentionedMembers().get(0);
+            if (CollectionUtils.isNotEmpty(event.getMessage().getMentions().getMembers())) {
+                Member member = event.getMessage().getMentions().getMembers().get(0);
                 long memberId = member.getIdLong();
                 int[] quoteDaysOfWeekForUser = nsfwQuoteRepository.getQuoteDaysOfWeekForUser(memberId);
                 Pair<DayOfWeek, Integer> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeekForUser);
@@ -222,7 +223,7 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
         return EGGPLANT_EMOJI;
     }
 
-    public void saveQuote(GenericGuildMessageReactionEvent event) {
+    public void saveQuote(MessageReactionAddEvent event) {
         long messageId = event.getMessageIdLong();
         long channelId = event.getChannel().getIdLong();
         long guildId = event.getGuild().getIdLong();
@@ -241,7 +242,7 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
                 NsfwQuote savedQuote = nsfwQuoteRepository.save(new NsfwQuote(messageId, channelId, msg.getContentRaw(), image,
                         msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
 
-                msg.addReaction(EGGPLANT_EMOJI).queue();
+                msg.addReaction(new UnicodeEmojiImpl(EGGPLANT_EMOJI)).queue();
 
                 String msgLink = " [(jump)](https://discordapp.com/channels/" + guildId + '/' + channelId + '/' + messageId + ')';
 

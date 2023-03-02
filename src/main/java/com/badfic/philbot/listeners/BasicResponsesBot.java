@@ -18,11 +18,12 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -119,7 +120,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                 event.replyInDm(Constants.simpleEmbed(name + " Help", help));
                 return;
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw add channel")) {
-                List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
+                List<TextChannel> mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
                     event.getChannel().sendMessageFormat("%s, please specify a channel. `%s nsfw add channel #cursed`",
                             event.getAuthor().getAsMention(), fullCmdPrefix).queue();
@@ -137,7 +138,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                 event.getChannel().sendMessageFormat("%s, saved %s to nsfw config", event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention())
                         .queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw remove channel")) {
-                List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
+                List<TextChannel> mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
                     String channelName = msgContent.replace(fullCmdPrefix + " nsfw remove channel", "").trim();
 
@@ -164,7 +165,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                 event.getChannel().sendMessageFormat("%s, removed %s from nsfw config",
                         event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention()).queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw add channel")) {
-                List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
+                List<TextChannel> mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
                     event.getChannel().sendMessageFormat("%s, please specify a channel. `%s sfw add channel #general`",
                             event.getAuthor().getAsMention(), fullCmdPrefix).queue();
@@ -182,7 +183,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                 event.getChannel().sendMessageFormat("%s, saved %s to sfw config", event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention())
                         .queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw remove channel")) {
-                List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
+                List<TextChannel> mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
                     String channelName = msgContent.replace(fullCmdPrefix + " sfw remove channel", "").trim();
 
@@ -260,19 +261,21 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed `" + saying + "` from sfw config").queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw config")) {
                 try {
-                    event.getChannel().sendFile(objectMapper.writeValueAsBytes(responsesConfig.getNsfwConfig()), name + "-nsfwconfig.json").queue();
+                    event.getChannel().sendFiles(FileUpload.fromData(objectMapper.writeValueAsBytes(responsesConfig.getNsfwConfig()), name + "-nsfwconfig.json")).queue();
                 } catch (JsonProcessingException e) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send nsfw config to you").queue();
                 }
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw config")) {
                 try {
-                    event.getChannel().sendFile(objectMapper.writeValueAsBytes(responsesConfig.getSfwConfig()), name + "-sfwconfig.json").queue();
+                    event.getChannel().sendFiles(FileUpload.fromData(objectMapper.writeValueAsBytes(responsesConfig.getSfwConfig()), name + "-sfwconfig.json")).queue();
                 } catch (JsonProcessingException e) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send sfw config to you").queue();
                 }
             } else if (msgContent.startsWith(fullCmdPrefix + " tts")) {
                 getResponse(event, responsesConfig).ifPresent(response -> {
-                    Message outboundMessage = new MessageBuilder(event.getAuthor().getAsMention() + ", " + response)
+
+                    MessageCreateData outboundMessage = new MessageCreateBuilder()
+                            .addContent(event.getAuthor().getAsMention() + ", " + response)
                             .setTTS(true)
                             .build();
 
@@ -300,7 +303,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
                 guild.getTextChannelById(event.getChannel().getId())
                         .sendMessage(" ")
-                        .addFile(bytes, "hug.png")
+                        .addFiles(FileUpload.fromData(bytes, "hug.png"))
                         .queue();
 
                 return;

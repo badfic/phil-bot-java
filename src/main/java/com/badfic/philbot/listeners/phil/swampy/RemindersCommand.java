@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -82,7 +83,7 @@ public class RemindersCommand extends BaseSwampy {
 
                     String finalString = description.toString();
                     if (finalString.length() > 2_000) {
-                        event.getChannel().sendFile(finalString.getBytes(), "active-reminders.txt").queue();
+                        event.getChannel().sendFiles(FileUpload.fromData(finalString.getBytes(), "active-reminders.txt")).queue();
                     } else {
                         event.reply(finalString);
                     }

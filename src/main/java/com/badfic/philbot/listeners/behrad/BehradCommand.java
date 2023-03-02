@@ -8,17 +8,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import io.honeybadger.reporter.HoneybadgerReporter;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Emote;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
-import org.apache.commons.collections4.CollectionUtils;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -97,17 +94,13 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
             MessageEmbed messageEmbed = Constants.simpleEmbed(null, null,
                     "https://cdn.discordapp.com/attachments/323666308107599872/750575541266022410/cfff6b4479a51d245d26cd82e16d4f3f.png",
                     Constants.SWAMP_GREEN);
-            Message message = new MessageBuilder(messageEmbed)
+            MessageCreateData message = new MessageCreateBuilder()
+                    .setEmbeds(messageEmbed)
                     .setContent("420 whatcha smokin?")
                     .build();
             event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
                     .sendMessage(message).queue();
             return Optional.empty();
-        }
-
-        List<Emote> emotes = event.getMessage().getEmotes();
-        if (CollectionUtils.isNotEmpty(emotes)) {
-            return Optional.of(emotes.get(0).getAsMention());
         }
 
         return Optional.of(Constants.pickRandom(responses));

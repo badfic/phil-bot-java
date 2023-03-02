@@ -27,7 +27,7 @@ public class Sweepstakes extends BaseSwampy {
 
     @Override
     public void execute(CommandEvent event) {
-        List<Role> mentionedRoles = event.getMessage().getMentionedRoles();
+        List<Role> mentionedRoles = event.getMessage().getMentions().getRoles();
 
         Role role = null;
         if (CollectionUtils.size(mentionedRoles) == 1) {
