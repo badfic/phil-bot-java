@@ -24,7 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DailyMarvelMemeService extends BaseSwampy implements DailyTickable {
+public class DailyMarvelMemeService extends BaseSwampy {
 
     private static final String SEARCH_STRING = "Out of context Marvel meme";
 
@@ -41,7 +41,6 @@ public class DailyMarvelMemeService extends BaseSwampy implements DailyTickable 
         userTriggeredTasksExecutor.execute(this::runDailyTask);
     }
 
-    @Override
     public void runDailyTask() {
         List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
