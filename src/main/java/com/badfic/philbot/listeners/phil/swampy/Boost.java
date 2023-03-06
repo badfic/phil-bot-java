@@ -2,7 +2,6 @@ package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
-import com.badfic.philbot.listeners.antonia.AntoniaMessageListener;
 import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.lang.invoke.MethodHandles;
@@ -29,7 +28,7 @@ public class Boost extends BaseSwampy {
             "boost", "butter", "oleo", "olio", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "word", "kitten", "naughty",
             "nice", "nut", "feet", "yeet", "missouri", "shrek", "swamp", "drench", "florida", "moist", "void", "bird", "legends", "plants", "nuggets", "pride",
             "kachow", "daddy", "murder", "hunger", "damp", "wet", "milk")
-            .addAll(AntoniaMessageListener.VALENTINES_WORDS)
+            .add("frog", "woman", "patrick", "amphibian", "lucio", "thane", "shamrock", "lucky charms")
             .build();
 
     public Boost() {

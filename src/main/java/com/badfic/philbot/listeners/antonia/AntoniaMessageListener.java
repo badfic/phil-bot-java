@@ -1,16 +1,12 @@
 package com.badfic.philbot.listeners.antonia;
 
 import com.badfic.philbot.config.Constants;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.awt.Color;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -22,10 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AntoniaMessageListener {
 
-    public static final List<String> VALENTINES_WORDS = ImmutableList.of(
-            "love", "romance", "valentine", "affection", "adore", "admire", "caress");
-
-    private static final Pattern ANTONIA_PATTERN = Constants.compileWords("anthony|tony|mackie|sam|wilson|falcon");
+    private static final Pattern ANTONIA_PATTERN = Constants.compileWords("antonia|toni|tony|stark|tash|iron man|tin can");
     private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
             .put("307611036134146080", ImmutablePair.of(Constants.compileWords("I love you"), "I know"))
             .put("323520695550083074", ImmutablePair.of(Constants.compileWords("togna"), "bologna"))
@@ -34,12 +27,10 @@ public class AntoniaMessageListener {
     private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
 
     private final AntoniaCommand antoniaCommand;
-    private final GrinchCommand grinchCommand;
 
     @Autowired
-    public AntoniaMessageListener(AntoniaCommand antoniaCommand, GrinchCommand grinchCommand) {
+    public AntoniaMessageListener(AntoniaCommand antoniaCommand) {
         this.antoniaCommand = antoniaCommand;
-        this.grinchCommand = grinchCommand;
     }
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -89,23 +80,6 @@ public class AntoniaMessageListener {
         }
 
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
-
-        for (String word : VALENTINES_WORDS) {
-            if (StringUtils.containsIgnoreCase(msgContent, word)) {
-                long pointsGiven = grinchCommand.givePoints(event.getMember());
-
-                String description = "Love is in the air! I gave " + event.getMember().getEffectiveName() + " " + pointsGiven + " points!";
-
-                MessageEmbed messageEmbed = Constants.simpleEmbed("Love!", description,
-                        "https://cdn.discordapp.com/attachments/794506942906761226/1075705302730686464/anthony-mackie-hearts-big.png",
-                        null, Color.RED, event.getAuthor().getEffectiveAvatarUrl());
-
-                antoniaCommand.getAntoniaJda()
-                        .getTextChannelById(channelId)
-                        .sendMessageEmbeds(messageEmbed)
-                        .queue();
-            }
-        }
 
         if (ANTONIA_PATTERN.matcher(msgContent).find()) {
             antoniaCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
