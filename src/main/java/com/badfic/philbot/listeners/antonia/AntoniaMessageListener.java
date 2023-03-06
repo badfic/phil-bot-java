@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AntoniaMessageListener {
 
-    private static final Pattern ANTONIA_PATTERN = Constants.compileWords("anthony|tony|mackie|sam|wilson|falcon");
+    private static final Pattern ANTONIA_PATTERN = Constants.compileWords("antonia|toni|tony|stark|tash|iron man|tin can");
     private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
             .put("307611036134146080", ImmutablePair.of(Constants.compileWords("I love you"), "I know"))
             .put("323520695550083074", ImmutablePair.of(Constants.compileWords("togna"), "bologna"))
