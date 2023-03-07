@@ -162,7 +162,8 @@ public class SwampyCommand extends BaseSwampy {
                 acceptedBoost(event.getMember());
             }
 
-            if (swampyGamesConfig.getMapPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getMapPhrase())) {
+            if (swampyGamesConfig.getMapPhrase() != null
+                    && Pattern.compile(swampyGamesConfig.getMapPhrase(), Pattern.CASE_INSENSITIVE).matcher(msgContent).find()) {
                 acceptedMap(event.getMember());
             }
 

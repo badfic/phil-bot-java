@@ -132,6 +132,11 @@ public interface Constants {
         return iterator.next();
     }
 
+    static <T> T pickRandom(T[] collection) {
+        int index = ThreadLocalRandom.current().nextInt(collection.length);
+        return collection[index];
+    }
+
     static String prettyPrintDuration(Duration duration) {
         return duration.toString()
                 .substring(2)

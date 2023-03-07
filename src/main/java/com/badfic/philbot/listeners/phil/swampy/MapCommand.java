@@ -1,33 +1,35 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.phil.MapQuestionJson;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.collect.ImmutableList;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.FileUpload;
+import net.lingala.zip4j.io.inputstream.ZipInputStream;
+import net.lingala.zip4j.model.LocalFileHeader;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
 
 @Component
 public class MapCommand extends BaseSwampy {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private List<MapQuestionJson> questions;
+    private static final String MAP_ZIP_FILENAME = "map-trivia-flags.zip";
+    private List<MapTriviaObject> countries;
 
     public MapCommand() {
         name = "map";
@@ -37,7 +39,29 @@ public class MapCommand extends BaseSwampy {
 
     @PostConstruct
     public void init() throws Exception {
-        questions = Arrays.asList(objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("map-trivia.json"), MapQuestionJson[].class));
+        countries = ImmutableList.copyOf(objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("map-trivia.json"),
+                new TypeReference<List<MapTriviaObject>>() {}));
+
+        if (countries.stream()
+                .anyMatch(country -> StringUtils.isBlank(country.code()) || StringUtils.isBlank(country.capital()) || StringUtils.isBlank(country.regex()))) {
+            throw new IllegalArgumentException("Map Trivia JSON is malformed");
+        }
+
+        Set<String> flagCodes = new HashSet<>();
+
+        try (ZipInputStream zipFile = new ZipInputStream(getClass().getClassLoader().getResourceAsStream(MAP_ZIP_FILENAME))) {
+            LocalFileHeader fileHeader;
+            while ((fileHeader = zipFile.getNextEntry()) != null) {
+                String countryCode = fileHeader.getFileName().substring(0, fileHeader.getFileName().length() - 4);
+                flagCodes.add(countryCode);
+            }
+        }
+
+        Collection<String> disjunction = CollectionUtils.disjunction(flagCodes, countries.stream().map(MapTriviaObject::code).collect(Collectors.toList()));
+
+        if (CollectionUtils.isNotEmpty(disjunction)) {
+            throw new IllegalArgumentException("Map Trivia JSON does not match Map Trivia Flags, Disjunction: " + disjunction);
+        }
     }
 
     @Override
@@ -57,46 +81,50 @@ public class MapCommand extends BaseSwampy {
             return;
         }
 
-        MapQuestionJson chosenQuestion = Constants.pickRandom(questions);
-        swampyGamesConfig.setMapPhrase(chosenQuestion.getAnswer());
+        MapTriviaObject mapTriviaObject = Constants.pickRandom(countries);
+        TriviaType triviaType = Constants.pickRandom(TriviaType.values());
+
+        swampyGamesConfig.setMapPhrase(mapTriviaObject.regex());
         swampyGamesConfig.setMapTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
         swampyGamesConfigRepository.save(swampyGamesConfig);
 
-        String description = null;
-        String image = null;
-        switch (ThreadLocalRandom.current().nextInt(1, 5)) {
-            case 1 -> description = '"' + chosenQuestion.getNickname() + "\" is the nickname of what " + chosenQuestion.getIdentifier() + "?";
-            case 2 -> description = chosenQuestion.getCapital() + " is the capital of what " + chosenQuestion.getIdentifier() + "?";
-            case 3 -> {
-                description = "This flag represents what " + chosenQuestion.getIdentifier() + "?";
-                image = chosenQuestion.getFlagUrl();
-            }
-            case 4 -> {
-                description = "What " + chosenQuestion.getIdentifier() + " is highlighted on this map?";
-                image = chosenQuestion.getMapUrl();
-            }
-        }
-
+        String type = mapTriviaObject.code().startsWith("us-") ? "US State?" : "Country";
+        String description = switch (triviaType) {
+            case CAPITAL -> mapTriviaObject.capital() + " is the capital of what " + type + "?";
+            case FLAG -> "This flag represents what " + type + "?";
+        };
         description += "\n\nType your answer here in this channel within the next 15 minutes for " + swampyGamesConfig.getMapEventPoints() + " points.";
 
-        String imageExtension = StringUtils.substring(image, -3);
-
-        if (image != null) {
-            try {
-                LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-                headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
-                ResponseEntity<byte[]> imageResponse = restTemplate.exchange(image, HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
-
-                swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Map Trivia", description))
-                        .addFiles(FileUpload.fromData(imageResponse.getBody(), "image." + imageExtension))
-                        .queue();
-            } catch (Exception e) {
-                logger.error("Failed to load [image={}] for map trivia", image, e);
-                honeybadgerReporter.reportError(e, null, "Failed to load image for map trivia: " + image);
-                swampysChannel.sendMessage("Failed to load image for map trivia. The answer is " + chosenQuestion.getAnswer()).queue();
-            }
-        } else {
+        if (triviaType == TriviaType.CAPITAL) {
             swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Map Trivia", description)).queue();
+            return;
         }
+
+        try (ZipInputStream zipFile = new ZipInputStream(getClass().getClassLoader().getResourceAsStream(MAP_ZIP_FILENAME))) {
+            LocalFileHeader fileHeader;
+            while ((fileHeader = zipFile.getNextEntry()) != null) {
+                if (fileHeader.getFileName().equalsIgnoreCase(mapTriviaObject.code() + ".png")) {
+                    break;
+                }
+            }
+
+            if (fileHeader == null) {
+                swampysChannel.sendMessage("Failed to load image for map trivia. The answer is " + mapTriviaObject.regex()).queue();
+                return;
+            }
+
+            swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Map Trivia", description))
+                    .addFiles(FileUpload.fromData(zipFile.readAllBytes(), "map-trivia.png"))
+                    .queue();
+        } catch (Exception e) {
+            logger.error("Failed to load map image", e);
+            honeybadgerReporter.reportError(e, null, "Failed to load image for map trivia");
+            swampysChannel.sendMessage("Failed to load image for map trivia. The answer is " + mapTriviaObject.regex()).queue();
+        }
+    }
+
+    private record MapTriviaObject(String code, String regex, String capital) {}
+    private enum TriviaType {
+        FLAG, CAPITAL
     }
 }
