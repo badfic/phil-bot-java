@@ -347,7 +347,8 @@ public class BaseConfig {
                 GUILD_MESSAGE_REACTIONS, GUILD_EMOJIS_AND_STICKERS, DIRECT_MESSAGES);
 
         return JDABuilder.create(philBotToken, intents)
-                .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
+                .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.FORUM_TAGS,
+                        CacheFlag.ROLE_TAGS, CacheFlag.SCHEDULED_EVENTS, CacheFlag.STICKER, CacheFlag.MEMBER_OVERRIDES)
                 .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
                 .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
                 .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)

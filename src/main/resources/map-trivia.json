@@ -1,802 +1,1477 @@
 [
-  {
-    "answer": "Alabama",
-    "identifier": "US State",
-    "nickname": "Yellowhammer State",
-    "capital": "Montgomery",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/alabama-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/alabama-large.png"
-  },
-  {
-    "answer": "Alaska",
-    "identifier": "US State",
-    "nickname": "The Last Frontier",
-    "capital": "Juneau",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/alaska-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/alaska-large.png"
-  },
-  {
-    "answer": "Arizona",
-    "identifier": "US State",
-    "nickname": "The Grand Canyon State",
-    "capital": "Phoenix",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/arizona-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/arizona-large.png"
-  },
-  {
-    "answer": "Arkansas",
-    "identifier": "US State",
-    "nickname": "The Natural State",
-    "capital": "Little Rock",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/arkansas-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/arkansas-large.png"
-  },
-  {
-    "answer": "California",
-    "identifier": "US State",
-    "nickname": "Golden State",
-    "capital": "Sacramento",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/california-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/california-large.png"
-  },
-  {
-    "answer": "Colorado",
-    "identifier": "US State",
-    "nickname": "The Centennial State",
-    "capital": "Denver",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/colorado-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/colorado-large.png"
-  },
-  {
-    "answer": "Connecticut",
-    "identifier": "US State",
-    "nickname": "Constitution State",
-    "capital": "Hartford",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/connecticut-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/connecticut-large.png"
-  },
-  {
-    "answer": "Delaware",
-    "identifier": "US State",
-    "nickname": "The First State / The Diamond State",
-    "capital": "Dover",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/delaware-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/delaware-large.png"
-  },
-  {
-    "answer": "Florida",
-    "identifier": "US State",
-    "nickname": "Sunshine State",
-    "capital": "Tallahassee",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/florida-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/florida-large.png"
-  },
-  {
-    "answer": "Georgia",
-    "identifier": "US State",
-    "nickname": "Peach State",
-    "capital": "Atlanta",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/georgia-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/georgia-large.png"
-  },
-  {
-    "answer": "Hawaii",
-    "identifier": "US State",
-    "nickname": "Aloha State",
-    "capital": "Honolulu",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/hawaii-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/hawaii-large.png"
-  },
-  {
-    "answer": "Idaho",
-    "identifier": "US State",
-    "nickname": "Gem State",
-    "capital": "Boise",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/idaho-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/idaho-large.png"
-  },
-  {
-    "answer": "Illinois",
-    "identifier": "US State",
-    "nickname": "Prairie State",
-    "capital": "Springfield",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/illinois-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/illinois-large.png"
-  },
-  {
-    "answer": "Indiana",
-    "identifier": "US State",
-    "nickname": "Hoosier State",
-    "capital": "Indianapolis",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/indiana-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/indiana-large.png"
-  },
-  {
-    "answer": "Iowa",
-    "identifier": "US State",
-    "nickname": "Hawkeye State",
-    "capital": "Des Moines",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/iowa-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/iowa-large.png"
-  },
-  {
-    "answer": "Kansas",
-    "identifier": "US State",
-    "nickname": "Sunflower State",
-    "capital": "Topeka",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/kansas-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/kansas-large.png"
-  },
-  {
-    "answer": "Kentucky",
-    "identifier": "US State",
-    "nickname": "Bluegrass State",
-    "capital": "Frankfort",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/kentucky-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/kentucky-large.png"
-  },
-  {
-    "answer": "Louisiana",
-    "identifier": "US State",
-    "nickname": "Pelican State",
-    "capital": "Baton Rouge",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/louisiana-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/louisiana-large.png"
-  },
-  {
-    "answer": "Maine",
-    "identifier": "US State",
-    "nickname": "Pine Tree State",
-    "capital": "Augusta",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/maine-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/maine-large.png"
-  },
-  {
-    "answer": "Maryland",
-    "identifier": "US State",
-    "nickname": "Old Line State",
-    "capital": "Annapolis",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/maryland-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/maryland-large.png"
-  },
-  {
-    "answer": "Massachusetts",
-    "identifier": "US State",
-    "nickname": "Bay State",
-    "capital": "Boston",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/massachusetts-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/massachusetts-large.png"
-  },
-  {
-    "answer": "Michigan",
-    "identifier": "US State",
-    "nickname": "Wolverine State / Great Lakes State",
-    "capital": "Lansing",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/michigan-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/michigan-large.png"
-  },
-  {
-    "answer": "Minnesota",
-    "identifier": "US State",
-    "nickname": "North Star State / Land of 10,000 Lakes",
-    "capital": "Saint Paul",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/minnesota-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/minnesota-large.png"
-  },
-  {
-    "answer": "Mississippi",
-    "identifier": "US State",
-    "nickname": "Magnolia State",
-    "capital": "Jackson",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/800458762611720262/1920px-Flag_of_Mississippi.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/mississippi-large.png"
-  },
-  {
-    "answer": "Missouri",
-    "identifier": "US State",
-    "nickname": "Show Me State",
-    "capital": "Jefferson City",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/missouri-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/missouri-large.png"
-  },
-  {
-    "answer": "Montana",
-    "identifier": "US State",
-    "nickname": "Treasure State",
-    "capital": "Helena",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/montana-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/montana-large.png"
-  },
-  {
-    "answer": "Nebraska",
-    "identifier": "US State",
-    "nickname": "Cornhusker State",
-    "capital": "Lincoln",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/nebraska-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/nebraska-large.png"
-  },
-  {
-    "answer": "Nevada",
-    "identifier": "US State",
-    "nickname": "The Silver State",
-    "capital": "Carson City",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/nevada-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/nevada-large.png"
-  },
-  {
-    "answer": "New Hampshire",
-    "identifier": "US State",
-    "nickname": "Granite State",
-    "capital": "Concord",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/new-hampshire-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/new-hampshire-large.png"
-  },
-  {
-    "answer": "New Jersey",
-    "identifier": "US State",
-    "nickname": "Garden State",
-    "capital": "Trenton",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/new-jersey-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/new-jersey-large.png"
-  },
-  {
-    "answer": "New Mexico",
-    "identifier": "US State",
-    "nickname": "Land of Enchantment",
-    "capital": "Santa Fe",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/new-mexico-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/new-mexico-large.png"
-  },
-  {
-    "answer": "New York",
-    "identifier": "US State",
-    "nickname": "Empire State",
-    "capital": "Albany",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/new-york-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/new-york-large.png"
-  },
-  {
-    "answer": "North Carolina",
-    "identifier": "US State",
-    "nickname": "Old North State / Tar Heel State",
-    "capital": "Raleigh",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/north-carolina-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/north-carolina-large.png"
-  },
-  {
-    "answer": "North Dakota",
-    "identifier": "US State",
-    "nickname": "Peace Garden State / Flickertail State / Roughrider State",
-    "capital": "Bismarck",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/north-dakota-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/north-dakota-large.png"
-  },
-  {
-    "answer": "Ohio",
-    "identifier": "US State",
-    "nickname": "Buckeye State",
-    "capital": "Columbus",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/ohio-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/ohio-large.png"
-  },
-  {
-    "answer": "Oklahoma",
-    "identifier": "US State",
-    "nickname": "Sooner State",
-    "capital": "Oklahoma City",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/oklahoma-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/oklahoma-large.png"
-  },
-  {
-    "answer": "Oregon",
-    "identifier": "US State",
-    "nickname": "Beaver State",
-    "capital": "Salem",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/oregon-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/oregon-large.png"
-  },
-  {
-    "answer": "Pennsylvania",
-    "identifier": "US State",
-    "nickname": "Keystone State",
-    "capital": "Harrisburg",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/pennsylvania-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/pennsylvania-large.png"
-  },
-  {
-    "answer": "Rhode Island",
-    "identifier": "US State",
-    "nickname": "The Ocean State",
-    "capital": "Providence",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/rhode-island-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/rhode-island-large.png"
-  },
-  {
-    "answer": "South Carolina",
-    "identifier": "US State",
-    "nickname": "Palmetto State",
-    "capital": "Columbia",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/south-carolina-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/south-carolina-large.png"
-  },
-  {
-    "answer": "South Dakota",
-    "identifier": "US State",
-    "nickname": "Mount Rushmore State",
-    "capital": "Pierre",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/south-dakota-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/south-dakota-large.png"
-  },
-  {
-    "answer": "Tennessee",
-    "identifier": "US State",
-    "nickname": "Volunteer State",
-    "capital": "Nashville",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/tennessee-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/tennessee-large.png"
-  },
-  {
-    "answer": "Texas",
-    "identifier": "US State",
-    "nickname": "Lone Star State",
-    "capital": "Austin",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/texas-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/texas-large.png"
-  },
-  {
-    "answer": "Utah",
-    "identifier": "US State",
-    "nickname": "The Beehive State",
-    "capital": "Salt Lake City",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/utah-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/utah-large.png"
-  },
-  {
-    "answer": "Vermont",
-    "identifier": "US State",
-    "nickname": "Green Mountain State",
-    "capital": "Montpelier",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/vermont-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/vermont-large.png"
-  },
-  {
-    "answer": "Virginia",
-    "identifier": "US State",
-    "nickname": "Old Dominion State",
-    "capital": "Richmond",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/virginia-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/virginia-large.png"
-  },
-  {
-    "answer": "Washington",
-    "identifier": "US State",
-    "nickname": "The Evergreen State",
-    "capital": "Olympia",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/washington-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/washington-large.png"
-  },
-  {
-    "answer": "West Virginia",
-    "identifier": "US State",
-    "nickname": "Mountain State",
-    "capital": "Charleston",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/west-virginia-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/west-virginia-large.png"
-  },
-  {
-    "answer": "Wisconsin",
-    "identifier": "US State",
-    "nickname": "Badger State",
-    "capital": "Madison",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/wisconsin-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/wisconsin-large.png"
-  },
-  {
-    "answer": "Wyoming",
-    "identifier": "US State",
-    "nickname": "Equality State",
-    "capital": "Cheyenne",
-    "flagUrl": "https://cdn.civil.services/us-states/flags/wyoming-large.png",
-    "mapUrl": "https://cdn.civil.services/us-states/maps/wyoming-large.png"
-  },
-  {
-    "answer": "Netherlands",
-    "identifier": "European Country",
-    "nickname": "Holland",
-    "capital": "Amsterdam",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/779857119558107146/1280px-Flag_of_the_Netherlands.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/779857396012154920/72318322-map-of-netherlands-highlighted-in-red-on-simple-shiny-metallic-map-with-clear-country-borde.png"
-  },
-  {
-    "answer": "Albania",
-    "identifier": "European Country",
-    "nickname": "Land of the Eagles",
-    "capital": "Tirana",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780658103498178560/1280px-Flag_of_Albania.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780658542675886100/location-map-of-albania-small.png"
-  },
-  {
-    "answer": "Bhutan",
-    "identifier": "Asian Country",
-    "nickname": "Land of the Thunder Dragon",
-    "capital": "Thimphu",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780682423645503498/1920px-Flag_of_Bhutan.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780682580164214784/1920px-Bhutan_in_its_region.png"
-  },
-  {
-    "answer": "Indonesia",
-    "identifier": "Asian Country",
-    "nickname": "The Emerald of the Equator",
-    "capital": "Jakarta",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684182673686528/1920px-Flag_of_Indonesia.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780684372055293952/1024px-Indonesia_28orthographic_projection29.png"
-  },
-  {
-    "answer": "Japan",
-    "identifier": "Asian Country",
-    "nickname": "Land of the Rising Sun",
-    "capital": "Tokyo",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780685253445943296/1920px-Flag_of_Japan.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/780685376388988968/1024px-Japan_28orthographic_projection29.png"
-  },
-  {
-    "answer": "France",
-    "identifier": "European Country",
-    "nickname": "The Hexagon",
-    "capital": "Paris",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832492433073504266/1280px-Flag_of_France.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832492055228841994/1024px-EU-France.png"
-  },
-  {
-    "answer": "Italy",
-    "identifier": "European Country",
-    "nickname": "The Boot",
-    "capital": "Rome",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832493655842619392/1920px-Flag_of_Italy.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832493380809785395/1024px-EU-Italy.png"
-  },
-  {
-    "answer": "Spain",
-    "identifier": "European Country",
-    "nickname": "The Red Fury",
-    "capital": "Madrid",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832494364356902953/1920px-Bandera_de_EspaC3B1a.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832494262016147486/1024px-EU-Spain.png"
-  },
-  {
-    "answer": "Poland",
-    "identifier": "European Country",
-    "nickname": "The Land of Fields",
-    "capital": "Warsaw",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832494751986352158/1920px-Flag_of_Poland.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832494865282629672/1024px-EU-Poland.png"
-  },
-  {
-    "answer": "Romania",
-    "identifier": "European Country",
-    "nickname": "The Land of Count Dracula",
-    "capital": "Bucharest",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832495420924100628/1920px-Flag_of_Romania.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832495476699561984/1024px-EU-Romania.png"
-  },
-  {
-    "answer": "Belgium",
-    "identifier": "European Country",
-    "nickname": "The Flat Country",
-    "capital": "Brussels",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832496736580272128/1024px-Flag_of_Belgium.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832496821879963708/1024px-EU-Belgium.png"
-  },
-  {
-    "answer": "Greece",
-    "identifier": "European Country",
-    "nickname": "Hellas",
-    "capital": "Athens",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832496986232979526/1920px-Flag_of_Greece.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832497087547310080/1024px-EU-Greece.png"
-  },
-  {
-    "answer": "Czech Republic",
-    "identifier": "European Country",
-    "nickname": "Czechia",
-    "capital": "Prague",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832497336788713504/1920px-Flag_of_the_Czech_Republic.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832497469459922944/1024px-EU-Czech_Republic.png"
-  },
-  {
-    "answer": "Sweden",
-    "identifier": "European Country",
-    "nickname": "The Elongated Country / Svedala / Mother Svea",
-    "capital": "Stockholm",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832497993331769374/1920px-Flag_of_Sweden.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498141395550248/1024px-EU-Sweden.png"
-  },
-  {
-    "answer": "Portugal",
-    "identifier": "European Country",
-    "nickname": "Lusitania / The Rectangle",
-    "capital": "Lisbon",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498428239937566/1920px-Flag_of_Portugal.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498564579328030/1024px-EU-Portugal_with_islands_circled.png"
-  },
-  {
-    "answer": "Hungary",
-    "identifier": "European Country",
-    "nickname": "The Land of Magyars",
-    "capital": "Budapest",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498822672154634/1920px-Flag_of_Hungary.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832498916544086056/1024px-EU-Hungary.png"
-  },
-  {
-    "answer": "Austria",
-    "identifier": "European Country",
-    "nickname": "The Musical Centre of Europe",
-    "capital": "Vienna",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832499300579016724/1920px-Flag_of_Austria.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832499432155119667/1024px-EU-Austria.png"
-  },
-  {
-    "answer": "Serbia",
-    "identifier": "European Country",
-    "nickname": "Rascia / The Balkan Tiger",
-    "capital": "Belgrade",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832499572105412618/1920px-Flag_of_Serbia.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832499825362075658/1024px-Europe-Serbia.png"
-  },
-  {
-    "answer": "Finland",
-    "identifier": "European Country",
-    "nickname": "The Land of a Thousand Lakes / The Marsh Land / The Strawberry Land",
-    "capital": "Helsinki",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832500020065730580/1920px-Flag_of_Finland.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832500133581160448/1024px-EU-Finland.png"
-  },
-  {
-    "answer": "Norway",
-    "identifier": "European Country",
-    "nickname": "The Land of the Midnight Sun / Fjords / Trolls / Vikings",
-    "capital": "Oslo",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832500450833203240/1280px-Flag_of_Norway.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832500584560197672/1024px-Europe-Norway.png"
-  },
-  {
-    "answer": "Ireland",
-    "identifier": "European Country",
-    "nickname": "The Emerald Isle",
-    "capital": "Dublin",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832500915910737960/1920px-Flag_of_Ireland.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501037373194250/1024px-EU-Ireland.png"
-  },
-  {
-    "answer": "Croatia",
-    "identifier": "European Country",
-    "nickname": "Our Beautiful",
-    "capital": "Zagreb",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501210413924362/1920px-Flag_of_Croatia.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501356648333312/1024px-EU-Croatia.png"
-  },
-  {
-    "answer": "Lithuania",
-    "identifier": "European Country",
-    "nickname": "The Land Of Storks",
-    "capital": "Vilnius",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501579915067412/1920px-Flag_of_Lithuania.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501644112691250/1024px-EU-Lithuania.png"
-  },
-  {
-    "answer": "Moldova",
-    "identifier": "European Country",
-    "nickname": "Bessarabia",
-    "capital": "Chișinău",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832501866277503006/1920px-Flag_of_Moldova.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502003396640778/1024px-Location_Moldova_Europe.png"
-  },
-  {
-    "answer": "Slovenia",
-    "identifier": "European Country",
-    "nickname": "The Sunny Side of the Alps / Europe in Miniature",
-    "capital": "Ljubljana",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502113589395496/1920px-Flag_of_Slovenia.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502230602743808/1024px-EU-Slovenia.png"
-  },
-  {
-    "answer": "Latvia",
-    "identifier": "European Country",
-    "nickname": "The Land of Blue Lakes",
-    "capital": "Riga",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502435158294558/1920px-Flag_of_Latvia.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502572073877524/1024px-EU-Latvia.png"
-  },
-  {
-    "answer": "Estonia",
-    "identifier": "European Country",
-    "nickname": "Mary’s Land",
-    "capital": "Tallinn",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502790840516628/1920px-Flag_of_Estonia.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832502926840430592/1024px-EU-Estonia.png"
-  },
-  {
-    "answer": "Iceland",
-    "identifier": "European Country",
-    "nickname": "The Land of Fire and Ice / The Reef / The Blue Land / The Beautiful Land of Ice",
-    "capital": "Reykjavík",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832503079127351306/1280px-Flag_of_Iceland.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832503181493796904/1024px-Europe-Iceland.png"
-  },
-  {
-    "answer": "England",
-    "identifier": "European Country",
-    "nickname": "Blighty",
-    "capital": "London",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832503958824026123/1920px-Flag_of_England.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832504205411221514/1024px-England_in_the_UK_and_Europe.png"
-  },
-  {
-    "answer": "Scotland",
-    "identifier": "European Country",
-    "nickname": "The Kingdom of the Gaels",
-    "capital": "Edinburgh",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832504543862456350/1920px-Flag_of_Scotland.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832504652817760266/1024px-Scotland_in_the_UK_and_Europe.png"
-  },
-  {
-    "answer": "Wales",
-    "identifier": "European Country",
-    "nickname": "Cymru / Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch",
-    "capital": "Cardiff",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832505097241493504/1920px-Flag_of_Wales_281959E28093present29.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/832505216355663902/1024px-Wales_in_the_UK_and_Europe.png"
-  },
-  {
-    "answer": "Mexico",
-    "identifier": "North American Country",
-    "nickname": "Tierra Azteca",
-    "capital": "Mexico City",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887191232613322812/800px-Flag_of_Mexico.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887191339819737168/551px-MEX_orthographic.png"
-  },
-  {
-    "answer": "Colombia",
-    "identifier": "South American Country",
-    "nickname": "The Gateway to South America",
-    "capital": "Bogotá",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887192437792079912/800px-Flag_of_Colombia.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887192521782997002/550px-COL_orthographic_28San_AndrC3A9s_and_Providencia_special29.png"
-  },
-  {
-    "answer": "Argentina",
-    "identifier": "South American Country",
-    "nickname": "La Argentina",
-    "capital": "Buenos Aires",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887193140925177886/800px-Flag_of_Argentina.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887193337231187998/551px-ARG_orthographic_282Ball_claims29.png"
-  },
-  {
-    "answer": "Peru",
-    "identifier": "South American Country",
-    "nickname": "(the capital is nicknamed) The Octopus",
-    "capital": "Lima",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887194016985256016/800px-Flag_of_Peru.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887194137953193984/551px-PER_orthographic.png"
-  },
-  {
-    "answer": "Venezuela",
-    "identifier": "South American Country",
-    "nickname": "Tierra de Gracia (Land of Grace)",
-    "capital": "Caracas",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887194649603760148/800px-Flag_of_Venezuela.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887194762204041256/550px-Venezuela_Orthographic_Map.png"
-  },
-  {
-    "answer": "Chile",
-    "identifier": "South American Country",
-    "nickname": "Pais de Los Poetas (Country of poets)",
-    "capital": "Santiago",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887195005125550100/800px-Flag_of_Chile.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887195113439240233/551px-CHL_orthographic_282Ball_claims29.png"
-  },
-  {
-    "answer": "Guatemala",
-    "identifier": "Central American Country",
-    "nickname": "Land of Eternal Spring",
-    "capital": "Guatemala City",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887195678797889606/800px-Flag_of_Guatemala.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887204598438301716/unknown.png"
-  },
-  {
-    "answer": "Ecuador",
-    "identifier": "South American Country",
-    "nickname": "Luz de América (Light of America)",
-    "capital": "Quito",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887196200384757841/800px-Flag_of_Ecuador.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887196262955380746/550px-ECU_orthographic.png"
-  },
-  {
-    "answer": "Bolivia",
-    "identifier": "South American Country",
-    "nickname": "Tibet of the Americas",
-    "capital": "Sucre / La Paz",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887196487640035358/800px-Bandera_de_Bolivia_28Estado29.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887196579835023451/550px-BOL_orthographic.png"
-  },
-  {
-    "answer": "Cuba",
-    "identifier": "North American Country",
-    "nickname": "Pearl of the Antilles",
-    "capital": "Havana",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887197103133192242/800px-Flag_of_Cuba.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887197364656431124/550px-CUB_orthographic.png"
-  },
-  {
-    "answer": "Dominican Republic",
-    "identifier": "North American Country",
-    "nickname": "Quisqueyans / The DR",
-    "capital": "Santo Domingo",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887197725748240424/800px-Flag_of_the_Dominican_Republic.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887197810301210674/550px-Dominican_Republic_28orthographic_projection29.png"
-  },
-  {
-    "answer": "Honduras",
-    "identifier": "Central American Country",
-    "nickname": "(the people are nicknamed) Catracho(a)",
-    "capital": "Tegucigalpa",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887198566110597161/800px-Flag_of_Honduras.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887204281818701864/unknown.png"
-  },
-  {
-    "answer": "Paraguay",
-    "identifier": "South American Country",
-    "nickname": "Corazon de Sudamerica (Heart of South America)",
-    "capital": "Asunción",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887199956677566505/800px-Flag_of_Paraguay.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887200019231428619/550px-PRY_orthographic.png"
-  },
-  {
-    "answer": "El Salvador",
-    "identifier": "Central American Country",
-    "nickname": "(the national football team is nicknamed) La Selecta",
-    "capital": "San Salvador",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887201606427365416/800px-Flag_of_El_Salvador.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887202069092663306/unknown.png"
-  },
-  {
-    "answer": "Nicaragua",
-    "identifier": "Central American Country",
-    "nickname": "The Land of Lakes and Volcanoes",
-    "capital": "Managua",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887203339446681630/800px-Flag_of_Nicaragua.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887203516261736478/unknown.png"
-  },
-  {
-    "answer": "Costa Rica",
-    "identifier": "Central American Country",
-    "nickname": "(the people are nicknamed) Tico(a)",
-    "capital": "San José",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887203890502725662/800px-Flag_of_Costa_Rica_28state29.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887203978088153108/unknown.png"
-  },
-  {
-    "answer": "Panama",
-    "identifier": "Central American Country",
-    "nickname": "(the national football team is nicknamed) Los Canaleros",
-    "capital": "Panama City",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887205124630532096/800px-Flag_of_Panama.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887205197619810304/unknown.png"
-  },
-  {
-    "answer": "Uruguay",
-    "identifier": "South American Country",
-    "nickname": "(the national football team is nicknamed) La Celeste",
-    "capital": "Montevideo",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887205868796518400/800px-Flag_of_Uruguay.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887205744821305384/unknown.png"
-  },
-  {
-    "answer": "Puerto Rico",
-    "identifier": "US Territory",
-    "nickname": "Borinquen / The Island of Enchantment",
-    "capital": "San Juan",
-    "flagUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887206856278286336/800px-Flag_of_Puerto_Rico.png",
-    "mapUrl": "https://cdn.discordapp.com/attachments/707453916882665552/887206929338867722/1024px-Puerto_Rico_28orthographic_projection29.png"
-  }
+    {
+        "code": "ad",
+        "regex": ".*Andorra.*",
+        "capital": "Andorra la Vella"
+    },
+    {
+        "code": "ae",
+        "regex": ".*United Arab Emirates.*|.*UAE.*",
+        "capital": "Abu Dhabi"
+    },
+    {
+        "code": "af",
+        "regex": ".*Afghanistan.*",
+        "capital": "Kabul"
+    },
+    {
+        "code": "ag",
+        "regex": ".*Antigua.*|.*Barbuda.*",
+        "capital": "Saint John's"
+    },
+    {
+        "code": "ai",
+        "regex": ".*Anguilla.*",
+        "capital": "The Valley"
+    },
+    {
+        "code": "al",
+        "regex": ".*Albania.*",
+        "capital": "Tirana"
+    },
+    {
+        "code": "am",
+        "regex": ".*Armenia.*",
+        "capital": "Yerevan"
+    },
+    {
+        "code": "ao",
+        "regex": ".*Angola.*",
+        "capital": "Luanda"
+    },
+    {
+        "code": "ar",
+        "regex": ".*Argentina.*",
+        "capital": "Buenos Aires"
+    },
+    {
+        "code": "as",
+        "regex": ".*American Samoa.*",
+        "capital": "Pago Pago"
+    },
+    {
+        "code": "at",
+        "regex": ".*Austria.*",
+        "capital": "Vienna"
+    },
+    {
+        "code": "au",
+        "regex": ".*Australia.*",
+        "capital": "Canberra"
+    },
+    {
+        "code": "aw",
+        "regex": ".*Aruba.*",
+        "capital": "Oranjestad"
+    },
+    {
+        "code": "ax",
+        "regex": ".*Åland Island.*|.*Aland Island.*",
+        "capital": "Mariehamn"
+    },
+    {
+        "code": "az",
+        "regex": ".*Azerbaijan.*",
+        "capital": "Baku"
+    },
+    {
+        "code": "ba",
+        "regex": ".*Bosnia.*Herzegovina.*|.*Bosnia.*|.*Herzegovina.*",
+        "capital": "Sarajevo"
+    },
+    {
+        "code": "bb",
+        "regex": ".*Barbados.*",
+        "capital": "Bridgetown"
+    },
+    {
+        "code": "bd",
+        "regex": ".*Bangladesh.*",
+        "capital": "Dhaka"
+    },
+    {
+        "code": "be",
+        "regex": ".*Belgium.*",
+        "capital": "Brussels"
+    },
+    {
+        "code": "bf",
+        "regex": ".*Burkina Faso.*",
+        "capital": "Ouagadougou"
+    },
+    {
+        "code": "bg",
+        "regex": ".*Bulgaria.*",
+        "capital": "Sofia"
+    },
+    {
+        "code": "bh",
+        "regex": ".*Bahrain.*",
+        "capital": "Manama"
+    },
+    {
+        "code": "bi",
+        "regex": ".*Burundi.*",
+        "capital": "Gitega"
+    },
+    {
+        "code": "bj",
+        "regex": ".*Benin.*",
+        "capital": "Porto-Novo"
+    },
+    {
+        "code": "bl",
+        "regex": ".*S.*Barthélemy.*|.*S.*Barthelemy.*",
+        "capital": "Gustavia"
+    },
+    {
+        "code": "bm",
+        "regex": ".*Bermuda.*",
+        "capital": "Hamilton"
+    },
+    {
+        "code": "bn",
+        "regex": ".*Brunei.*",
+        "capital": "Bandar Seri Begawan"
+    },
+    {
+        "code": "bo",
+        "regex": ".*Bolivia.*",
+        "capital": "Sucre"
+    },
+    {
+        "code": "bq",
+        "regex": ".*Caribbean Netherlands.*",
+        "capital": "Kralendijk, Bonaire; Oranjestad, Sint Eustatius; and The Bottom, Saba"
+    },
+    {
+        "code": "br",
+        "regex": ".*Brazil.*",
+        "capital": "Brasília"
+    },
+    {
+        "code": "bs",
+        "regex": ".*Bahama.*",
+        "capital": "Nassau"
+    },
+    {
+        "code": "bt",
+        "regex": ".*Bhutan.*",
+        "capital": "Thimphu"
+    },
+    {
+        "code": "bw",
+        "regex": ".*Botswana.*",
+        "capital": "Gaborone"
+    },
+    {
+        "code": "by",
+        "regex": ".*Belarus.*",
+        "capital": "Minsk"
+    },
+    {
+        "code": "bz",
+        "regex": ".*Belize.*",
+        "capital": "Belmopan"
+    },
+    {
+        "code": "ca",
+        "regex": ".*Canada.*",
+        "capital": "Ottawa"
+    },
+    {
+        "code": "cc",
+        "regex": ".*Cocos (Keeling) Island.*|.*Cocos Keeling Island.*|.*Cocos Island.*|.*Keeling Island.*",
+        "capital": "West Island"
+    },
+    {
+        "code": "cd",
+        "regex": ".*DR.*Congo.*|.*DRC.*|.*Democratic Republic.*Congo.*",
+        "capital": "Kinshasa"
+    },
+    {
+        "code": "cf",
+        "regex": ".*Central African Republic.*",
+        "capital": "Bangui"
+    },
+    {
+        "code": "cg",
+        "regex": ".*Republic.*Congo.*|.*Congo.*",
+        "capital": "Brazzaville"
+    },
+    {
+        "code": "ch",
+        "regex": ".*Switzerland.*",
+        "capital": "Bern"
+    },
+    {
+        "code": "ci",
+        "regex": ".*Côte d'Ivoire.*|.*Ivory Coast.*|.*Cote.*Ivoire.*",
+        "capital": "Yamoussoukro"
+    },
+    {
+        "code": "ck",
+        "regex": ".*Cook Island.*",
+        "capital": "Avarua"
+    },
+    {
+        "code": "cl",
+        "regex": ".*Chile.*",
+        "capital": "Santiago"
+    },
+    {
+        "code": "cm",
+        "regex": ".*Cameroon.*",
+        "capital": "Yaoundé"
+    },
+    {
+        "code": "cn",
+        "regex": ".*China.*",
+        "capital": "Beijing"
+    },
+    {
+        "code": "co",
+        "regex": ".*Colombia.*",
+        "capital": "Bogotá"
+    },
+    {
+        "code": "cr",
+        "regex": ".*Costa Rica.*",
+        "capital": "San José"
+    },
+    {
+        "code": "cu",
+        "regex": ".*Cuba.*",
+        "capital": "Havana"
+    },
+    {
+        "code": "cv",
+        "regex": ".*Cape Verde.*",
+        "capital": "Praia"
+    },
+    {
+        "code": "cw",
+        "regex": ".*Curaçao.*|.*Curacao.*",
+        "capital": "Willemstad"
+    },
+    {
+        "code": "cx",
+        "regex": ".*Christmas Island.*",
+        "capital": "Flying Fish Cove"
+    },
+    {
+        "code": "cy",
+        "regex": ".*Cyprus.*",
+        "capital": "Nicosia"
+    },
+    {
+        "code": "cz",
+        "regex": ".*Czechia.*|.*Czech Republic.*",
+        "capital": "Prague"
+    },
+    {
+        "code": "de",
+        "regex": ".*Germany.*",
+        "capital": "Berlin"
+    },
+    {
+        "code": "dj",
+        "regex": ".*Djibouti.*",
+        "capital": "Djibouti"
+    },
+    {
+        "code": "dk",
+        "regex": ".*Denmark.*",
+        "capital": "Copenhagen"
+    },
+    {
+        "code": "dm",
+        "regex": ".*Dominica.*",
+        "capital": "Roseau"
+    },
+    {
+        "code": "do",
+        "regex": ".*Dominican Republic.*|.*DR.*",
+        "capital": "Santo Domingo"
+    },
+    {
+        "code": "dz",
+        "regex": ".*Algeria.*",
+        "capital": "Algiers"
+    },
+    {
+        "code": "ec",
+        "regex": ".*Ecuador.*",
+        "capital": "Quito"
+    },
+    {
+        "code": "ee",
+        "regex": ".*Estonia.*",
+        "capital": "Tallinn"
+    },
+    {
+        "code": "eg",
+        "regex": ".*Egypt.*",
+        "capital": "Cairo"
+    },
+    {
+        "code": "eh",
+        "regex": ".*W.*Sahara.*",
+        "capital": "El Aaiún"
+    },
+    {
+        "code": "er",
+        "regex": ".*Eritrea.*",
+        "capital": "Asmara"
+    },
+    {
+        "code": "es",
+        "regex": ".*Spain.*",
+        "capital": "Madrid"
+    },
+    {
+        "code": "et",
+        "regex": ".*Ethiopia.*",
+        "capital": "Addis Ababa"
+    },
+    {
+        "code": "fi",
+        "regex": ".*Finland.*",
+        "capital": "Helsinki"
+    },
+    {
+        "code": "fj",
+        "regex": ".*Fiji.*",
+        "capital": "Suva"
+    },
+    {
+        "code": "fk",
+        "regex": ".*Falkland Island.*",
+        "capital": "Stanley"
+    },
+    {
+        "code": "fm",
+        "regex": ".*Micronesia.*",
+        "capital": "Palikir"
+    },
+    {
+        "code": "fo",
+        "regex": ".*Faroe Island.*",
+        "capital": "Tórshavn"
+    },
+    {
+        "code": "fr",
+        "regex": ".*France.*",
+        "capital": "Paris"
+    },
+    {
+        "code": "ga",
+        "regex": ".*Gabon.*",
+        "capital": "Libreville"
+    },
+    {
+        "code": "gb-eng",
+        "regex": ".*England.*|.*U.*K.*|.*Britain.*|.*G.*B.*",
+        "capital": "London"
+    },
+    {
+        "code": "gb-nir",
+        "regex": ".*North.*Ireland.*",
+        "capital": "Belfast"
+    },
+    {
+        "code": "gb-sct",
+        "regex": ".*Scotland.*",
+        "capital": "Edinburgh"
+    },
+    {
+        "code": "gb-wls",
+        "regex": ".*Wales.*",
+        "capital": "Cardiff"
+    },
+    {
+        "code": "gd",
+        "regex": ".*Grenada.*",
+        "capital": "St. George's"
+    },
+    {
+        "code": "ge",
+        "regex": ".*Georgia.*",
+        "capital": "Tbilisi"
+    },
+    {
+        "code": "gf",
+        "regex": ".*French Guiana.*",
+        "capital": "Cayenne"
+    },
+    {
+        "code": "gg",
+        "regex": ".*Guernsey.*",
+        "capital": "St. Peter Port"
+    },
+    {
+        "code": "gh",
+        "regex": ".*Ghana.*",
+        "capital": "Accra"
+    },
+    {
+        "code": "gi",
+        "regex": ".*Gibraltar.*",
+        "capital": "Gibraltar"
+    },
+    {
+        "code": "gl",
+        "regex": ".*Greenland.*",
+        "capital": "Nuuk"
+    },
+    {
+        "code": "gm",
+        "regex": ".*Gambia.*",
+        "capital": "Banjul"
+    },
+    {
+        "code": "gn",
+        "regex": ".*Guinea.*",
+        "capital": "Conakry"
+    },
+    {
+        "code": "gp",
+        "regex": ".*Guadeloupe.*",
+        "capital": "Basse-Terre"
+    },
+    {
+        "code": "gq",
+        "regex": ".*Equatorial Guinea.*",
+        "capital": "Malabo"
+    },
+    {
+        "code": "gr",
+        "regex": ".*Greece.*",
+        "capital": "Athens"
+    },
+    {
+        "code": "gs",
+        "regex": ".*S.*Georgia.*",
+        "capital": "King Edward Point"
+    },
+    {
+        "code": "gt",
+        "regex": ".*Guatemala.*",
+        "capital": "Guatemala City"
+    },
+    {
+        "code": "gu",
+        "regex": ".*Guam.*",
+        "capital": "Hagåtña"
+    },
+    {
+        "code": "gw",
+        "regex": ".*Guinea.*Bissau.*|.*Bissau.*",
+        "capital": "Bissau"
+    },
+    {
+        "code": "gy",
+        "regex": ".*Guyana.*",
+        "capital": "Georgetown"
+    },
+    {
+        "code": "hk",
+        "regex": ".*Hong Kong.*",
+        "capital": "City of Victoria"
+    },
+    {
+        "code": "hn",
+        "regex": ".*Honduras.*",
+        "capital": "Tegucigalpa"
+    },
+    {
+        "code": "hr",
+        "regex": ".*Croatia.*",
+        "capital": "Zagreb"
+    },
+    {
+        "code": "ht",
+        "regex": ".*Haiti.*",
+        "capital": "Port-au-Prince"
+    },
+    {
+        "code": "hu",
+        "regex": ".*Hungary.*",
+        "capital": "Budapest"
+    },
+    {
+        "code": "id",
+        "regex": ".*Indonesia.*",
+        "capital": "Jakarta"
+    },
+    {
+        "code": "ie",
+        "regex": ".*Ireland.*",
+        "capital": "Dublin"
+    },
+    {
+        "code": "il",
+        "regex": ".*Israel.*",
+        "capital": "Jerusalem"
+    },
+    {
+        "code": "im",
+        "regex": ".*Isle of Man.*",
+        "capital": "Douglas"
+    },
+    {
+        "code": "in",
+        "regex": ".*India.*",
+        "capital": "New Delhi"
+    },
+    {
+        "code": "io",
+        "regex": ".*British Indian Ocean.*",
+        "capital": "Diego Garcia"
+    },
+    {
+        "code": "iq",
+        "regex": ".*Iraq.*",
+        "capital": "Baghdad"
+    },
+    {
+        "code": "ir",
+        "regex": ".*Iran.*",
+        "capital": "Tehran"
+    },
+    {
+        "code": "is",
+        "regex": ".*Iceland.*",
+        "capital": "Reykjavik"
+    },
+    {
+        "code": "it",
+        "regex": ".*Italy.*",
+        "capital": "Rome"
+    },
+    {
+        "code": "je",
+        "regex": ".*Jersey.*",
+        "capital": "Saint Helier"
+    },
+    {
+        "code": "jm",
+        "regex": ".*Jamaica.*",
+        "capital": "Kingston"
+    },
+    {
+        "code": "jo",
+        "regex": ".*Jordan.*",
+        "capital": "Amman"
+    },
+    {
+        "code": "jp",
+        "regex": ".*Japan.*",
+        "capital": "Tokyo"
+    },
+    {
+        "code": "ke",
+        "regex": ".*Kenya.*",
+        "capital": "Nairobi"
+    },
+    {
+        "code": "kg",
+        "regex": ".*Kyrgyzstan.*",
+        "capital": "Bishkek"
+    },
+    {
+        "code": "kh",
+        "regex": ".*Cambodia.*",
+        "capital": "Phnom Penh"
+    },
+    {
+        "code": "ki",
+        "regex": ".*Kiribati.*",
+        "capital": "South Tarawa"
+    },
+    {
+        "code": "km",
+        "regex": ".*Comoros.*",
+        "capital": "Moroni"
+    },
+    {
+        "code": "kn",
+        "regex": ".*S.*Kitts.*|.*S.*Christopher.*",
+        "capital": "Basseterre"
+    },
+    {
+        "code": "kp",
+        "regex": ".*North Korea.*|.*N.*Korea.*|.*DPRK.*",
+        "capital": "Pyongyang"
+    },
+    {
+        "code": "kr",
+        "regex": ".*South Korea.*|.*Korea.*|.*ROK.*",
+        "capital": "Seoul"
+    },
+    {
+        "code": "kw",
+        "regex": ".*Kuwait.*",
+        "capital": "Kuwait City"
+    },
+    {
+        "code": "ky",
+        "regex": ".*Cayman Islands.*",
+        "capital": "George Town"
+    },
+    {
+        "code": "kz",
+        "regex": ".*Kazakhstan.*",
+        "capital": "Nur-Sultan"
+    },
+    {
+        "code": "la",
+        "regex": ".*Laos.*",
+        "capital": "Vientiane"
+    },
+    {
+        "code": "lb",
+        "regex": ".*Lebanon.*",
+        "capital": "Beirut"
+    },
+    {
+        "code": "lc",
+        "regex": ".*S.*Lucia.*",
+        "capital": "Castries"
+    },
+    {
+        "code": "li",
+        "regex": ".*Liechtenstein.*",
+        "capital": "Vaduz"
+    },
+    {
+        "code": "lk",
+        "regex": ".*Sri Lanka.*",
+        "capital": "Colombo"
+    },
+    {
+        "code": "lr",
+        "regex": ".*Liberia.*",
+        "capital": "Monrovia"
+    },
+    {
+        "code": "ls",
+        "regex": ".*Lesotho.*",
+        "capital": "Maseru"
+    },
+    {
+        "code": "lt",
+        "regex": ".*Lithuania.*",
+        "capital": "Vilnius"
+    },
+    {
+        "code": "lu",
+        "regex": ".*Luxembourg.*",
+        "capital": "Luxembourg"
+    },
+    {
+        "code": "lv",
+        "regex": ".*Latvia.*",
+        "capital": "Riga"
+    },
+    {
+        "code": "ly",
+        "regex": ".*Libya.*",
+        "capital": "Tripoli"
+    },
+    {
+        "code": "ma",
+        "regex": ".*Morocco.*",
+        "capital": "Rabat"
+    },
+    {
+        "code": "mc",
+        "regex": ".*Monaco.*",
+        "capital": "Monaco"
+    },
+    {
+        "code": "md",
+        "regex": ".*Moldova.*",
+        "capital": "Chișinău"
+    },
+    {
+        "code": "me",
+        "regex": ".*Montenegro.*",
+        "capital": "Podgorica"
+    },
+    {
+        "code": "mg",
+        "regex": ".*Madagascar.*",
+        "capital": "Antananarivo"
+    },
+    {
+        "code": "mh",
+        "regex": ".*Marshall Island.*",
+        "capital": "Majuro"
+    },
+    {
+        "code": "mk",
+        "regex": ".*N.*Macedonia.*",
+        "capital": "Skopje"
+    },
+    {
+        "code": "ml",
+        "regex": ".*Mali.*",
+        "capital": "Bamako"
+    },
+    {
+        "code": "mm",
+        "regex": ".*Myanmar.*",
+        "capital": "Naypyidaw"
+    },
+    {
+        "code": "mn",
+        "regex": ".*Mongolia.*",
+        "capital": "Ulan Bator"
+    },
+    {
+        "code": "mp",
+        "regex": ".*N.*Mariana Island.*",
+        "capital": "Saipan"
+    },
+    {
+        "code": "mq",
+        "regex": ".*Martinique.*",
+        "capital": "Fort-de-France"
+    },
+    {
+        "code": "mr",
+        "regex": ".*Mauritania.*",
+        "capital": "Nouakchott"
+    },
+    {
+        "code": "ms",
+        "regex": ".*Montserrat.*",
+        "capital": "Plymouth"
+    },
+    {
+        "code": "mt",
+        "regex": ".*Malta.*",
+        "capital": "Valletta"
+    },
+    {
+        "code": "mu",
+        "regex": ".*Mauritius.*",
+        "capital": "Port Louis"
+    },
+    {
+        "code": "mv",
+        "regex": ".*Maldives.*",
+        "capital": "Malé"
+    },
+    {
+        "code": "mw",
+        "regex": ".*Malawi.*",
+        "capital": "Lilongwe"
+    },
+    {
+        "code": "mx",
+        "regex": ".*Mexico.*",
+        "capital": "Mexico City"
+    },
+    {
+        "code": "my",
+        "regex": ".*Malaysia.*",
+        "capital": "Kuala Lumpur"
+    },
+    {
+        "code": "mz",
+        "regex": ".*Mozambique.*",
+        "capital": "Maputo"
+    },
+    {
+        "code": "na",
+        "regex": ".*Namibia.*",
+        "capital": "Windhoek"
+    },
+    {
+        "code": "nc",
+        "regex": ".*New Caledonia.*",
+        "capital": "Nouméa"
+    },
+    {
+        "code": "ne",
+        "regex": ".*Niger.*",
+        "capital": "Niamey"
+    },
+    {
+        "code": "nf",
+        "regex": ".*Norfolk Island.*",
+        "capital": "Kingston"
+    },
+    {
+        "code": "ng",
+        "regex": ".*Nigeria.*",
+        "capital": "Abuja"
+    },
+    {
+        "code": "ni",
+        "regex": ".*Nicaragua.*",
+        "capital": "Managua"
+    },
+    {
+        "code": "nl",
+        "regex": ".*Netherland.*",
+        "capital": "Amsterdam"
+    },
+    {
+        "code": "no",
+        "regex": ".*Norway.*",
+        "capital": "Oslo"
+    },
+    {
+        "code": "np",
+        "regex": ".*Nepal.*",
+        "capital": "Kathmandu"
+    },
+    {
+        "code": "nr",
+        "regex": ".*Nauru.*",
+        "capital": "Yaren"
+    },
+    {
+        "code": "nu",
+        "regex": ".*Niue.*",
+        "capital": "Alofi"
+    },
+    {
+        "code": "nz",
+        "regex": ".*New Zealand.*",
+        "capital": "Wellington"
+    },
+    {
+        "code": "om",
+        "regex": ".*Oman.*",
+        "capital": "Muscat"
+    },
+    {
+        "code": "pa",
+        "regex": ".*Panama.*",
+        "capital": "Panama City"
+    },
+    {
+        "code": "pe",
+        "regex": ".*Peru.*",
+        "capital": "Lima"
+    },
+    {
+        "code": "pf",
+        "regex": ".*French Polynesia.*",
+        "capital": "Papeetē"
+    },
+    {
+        "code": "pg",
+        "regex": ".*Papua New Guinea.*",
+        "capital": "Port Moresby"
+    },
+    {
+        "code": "ph",
+        "regex": ".*Philippines.*",
+        "capital": "Manila"
+    },
+    {
+        "code": "pk",
+        "regex": ".*Pakistan.*",
+        "capital": "Islamabad"
+    },
+    {
+        "code": "pl",
+        "regex": ".*Poland.*",
+        "capital": "Warsaw"
+    },
+    {
+        "code": "pm",
+        "regex": ".*S.*Pierre.*",
+        "capital": "Saint-Pierre"
+    },
+    {
+        "code": "pn",
+        "regex": ".*Pitcairn Island.*",
+        "capital": "Adamstown"
+    },
+    {
+        "code": "pr",
+        "regex": ".*Puerto Rico.*",
+        "capital": "San Juan"
+    },
+    {
+        "code": "ps",
+        "regex": ".*Palestine.*",
+        "capital": "Ramallah"
+    },
+    {
+        "code": "pt",
+        "regex": ".*Portugal.*",
+        "capital": "Lisbon"
+    },
+    {
+        "code": "pw",
+        "regex": ".*Palau.*",
+        "capital": "Ngerulmud"
+    },
+    {
+        "code": "py",
+        "regex": ".*Paraguay.*",
+        "capital": "Asunción"
+    },
+    {
+        "code": "qa",
+        "regex": ".*Qatar.*",
+        "capital": "Doha"
+    },
+    {
+        "code": "re",
+        "regex": ".*Réunion.*|.*Reunion.*",
+        "capital": "Saint-Denis"
+    },
+    {
+        "code": "ro",
+        "regex": ".*Romania.*",
+        "capital": "Bucharest"
+    },
+    {
+        "code": "rs",
+        "regex": ".*Serbia.*",
+        "capital": "Belgrade"
+    },
+    {
+        "code": "ru",
+        "regex": ".*Russia.*",
+        "capital": "Moscow"
+    },
+    {
+        "code": "rw",
+        "regex": ".*Rwanda.*",
+        "capital": "Kigali"
+    },
+    {
+        "code": "sa",
+        "regex": ".*Saudi Arabia.*",
+        "capital": "Riyadh"
+    },
+    {
+        "code": "sb",
+        "regex": ".*Solomon Island.*",
+        "capital": "Honiara"
+    },
+    {
+        "code": "sc",
+        "regex": ".*Seychelles.*",
+        "capital": "Victoria"
+    },
+    {
+        "code": "sd",
+        "regex": ".*Sudan.*",
+        "capital": "Khartoum"
+    },
+    {
+        "code": "se",
+        "regex": ".*Sweden.*",
+        "capital": "Stockholm"
+    },
+    {
+        "code": "sg",
+        "regex": ".*Singapore.*",
+        "capital": "Singapore"
+    },
+    {
+        "code": "si",
+        "regex": ".*Slovenia.*",
+        "capital": "Ljubljana"
+    },
+    {
+        "code": "sk",
+        "regex": ".*Slovakia.*",
+        "capital": "Bratislava"
+    },
+    {
+        "code": "sl",
+        "regex": ".*Sierra Leone.*",
+        "capital": "Freetown"
+    },
+    {
+        "code": "sm",
+        "regex": ".*S.*Marino.*",
+        "capital": "City of San Marino"
+    },
+    {
+        "code": "sn",
+        "regex": ".*Senegal.*",
+        "capital": "Dakar"
+    },
+    {
+        "code": "so",
+        "regex": ".*Somalia.*",
+        "capital": "Mogadishu"
+    },
+    {
+        "code": "sr",
+        "regex": ".*Suriname.*",
+        "capital": "Paramaribo"
+    },
+    {
+        "code": "ss",
+        "regex": ".*S.*Sudan.*",
+        "capital": "Juba"
+    },
+    {
+        "code": "st",
+        "regex": ".*São Tomé.*Príncipe.*|.*Sao Tome.*|.*Principe.*",
+        "capital": "São Tomé"
+    },
+    {
+        "code": "sv",
+        "regex": ".*El Salvador.*",
+        "capital": "San Salvador"
+    },
+    {
+        "code": "sx",
+        "regex": ".*Sint Maarten.*",
+        "capital": "Philipsburg"
+    },
+    {
+        "code": "sy",
+        "regex": ".*Syria.*",
+        "capital": "Damascus"
+    },
+    {
+        "code": "sz",
+        "regex": ".*Eswatini.*|.*Swaziland.*",
+        "capital": "Lobamba"
+    },
+    {
+        "code": "tc",
+        "regex": ".*Turks.*|.*Caicos.*",
+        "capital": "Cockburn Town"
+    },
+    {
+        "code": "td",
+        "regex": ".*Chad.*",
+        "capital": "N'Djamena"
+    },
+    {
+        "code": "tf",
+        "regex": ".*French Southern.*Antarctic Land.*",
+        "capital": "Port-aux-Français"
+    },
+    {
+        "code": "tg",
+        "regex": ".*Togo.*",
+        "capital": "Lomé"
+    },
+    {
+        "code": "th",
+        "regex": ".*Thailand.*",
+        "capital": "Bangkok"
+    },
+    {
+        "code": "tj",
+        "regex": ".*Tajikistan.*",
+        "capital": "Dushanbe"
+    },
+    {
+        "code": "tk",
+        "regex": ".*Tokelau.*",
+        "capital": "Fakaofo"
+    },
+    {
+        "code": "tl",
+        "regex": ".*Timor.*|.*Leste.*",
+        "capital": "Dili"
+    },
+    {
+        "code": "tm",
+        "regex": ".*Turkmenistan.*",
+        "capital": "Ashgabat"
+    },
+    {
+        "code": "tn",
+        "regex": ".*Tunisia.*",
+        "capital": "Tunis"
+    },
+    {
+        "code": "to",
+        "regex": ".*Tonga.*",
+        "capital": "Nuku'alofa"
+    },
+    {
+        "code": "tr",
+        "regex": ".*Turkey.*",
+        "capital": "Ankara"
+    },
+    {
+        "code": "tt",
+        "regex": ".*Trinidad.*|.*Tobago.*",
+        "capital": "Port of Spain"
+    },
+    {
+        "code": "tv",
+        "regex": ".*Tuvalu.*",
+        "capital": "Funafuti"
+    },
+    {
+        "code": "tw",
+        "regex": ".*Taiwan.*",
+        "capital": "Taipei"
+    },
+    {
+        "code": "tz",
+        "regex": ".*Tanzania.*",
+        "capital": "Dodoma"
+    },
+    {
+        "code": "ua",
+        "regex": ".*Ukraine.*",
+        "capital": "Kyiv"
+    },
+    {
+        "code": "ug",
+        "regex": ".*Uganda.*",
+        "capital": "Kampala"
+    },
+    {
+        "code": "us",
+        "regex": ".*United States.*|.*US.*",
+        "capital": "Washington D.C."
+    },
+    {
+        "code": "us-ak",
+        "regex": ".*Alaska.*",
+        "capital": "Juneau"
+    },
+    {
+        "code": "us-al",
+        "regex": ".*Alabama.*",
+        "capital": "Montgomery"
+    },
+    {
+        "code": "us-ar",
+        "regex": ".*Arkansas.*",
+        "capital": "Little Rock"
+    },
+    {
+        "code": "us-az",
+        "regex": ".*Arizona.*",
+        "capital": "Phoenix"
+    },
+    {
+        "code": "us-ca",
+        "regex": ".*California.*",
+        "capital": "Sacramento"
+    },
+    {
+        "code": "us-co",
+        "regex": ".*Colorado.*",
+        "capital": "Denver"
+    },
+    {
+        "code": "us-ct",
+        "regex": ".*Connecticut.*",
+        "capital": "Hartford"
+    },
+    {
+        "code": "us-de",
+        "regex": ".*Delaware.*",
+        "capital": "Dover"
+    },
+    {
+        "code": "us-fl",
+        "regex": ".*Florida.*",
+        "capital": "Tallahassee"
+    },
+    {
+        "code": "us-ga",
+        "regex": ".*Georgia.*",
+        "capital": "Atlanta"
+    },
+    {
+        "code": "us-hi",
+        "regex": ".*Hawaii.*",
+        "capital": "Honolulu"
+    },
+    {
+        "code": "us-ia",
+        "regex": ".*Iowa.*",
+        "capital": "Des Moines"
+    },
+    {
+        "code": "us-id",
+        "regex": ".*Idaho.*",
+        "capital": "Boise"
+    },
+    {
+        "code": "us-il",
+        "regex": ".*Illinois.*",
+        "capital": "Springfield"
+    },
+    {
+        "code": "us-in",
+        "regex": ".*Indiana.*",
+        "capital": "Indianapolis"
+    },
+    {
+        "code": "us-ks",
+        "regex": ".*Kansas.*",
+        "capital": "Topeka"
+    },
+    {
+        "code": "us-ky",
+        "regex": ".*Kentucky.*",
+        "capital": "Frankfort"
+    },
+    {
+        "code": "us-la",
+        "regex": ".*Louisiana.*",
+        "capital": "Baton Rouge"
+    },
+    {
+        "code": "us-ma",
+        "regex": ".*Massachusetts.*",
+        "capital": "Boston"
+    },
+    {
+        "code": "us-md",
+        "regex": ".*Maryland.*",
+        "capital": "Annapolis"
+    },
+    {
+        "code": "us-me",
+        "regex": ".*Maine.*",
+        "capital": "Augusta"
+    },
+    {
+        "code": "us-mi",
+        "regex": ".*Michigan.*",
+        "capital": "Lansing"
+    },
+    {
+        "code": "us-mn",
+        "regex": ".*Minnesota.*",
+        "capital": "Saint Paul"
+    },
+    {
+        "code": "us-mo",
+        "regex": ".*Missouri.*",
+        "capital": "Jefferson City"
+    },
+    {
+        "code": "us-ms",
+        "regex": ".*Mississippi.*",
+        "capital": "Jackson"
+    },
+    {
+        "code": "us-mt",
+        "regex": ".*Montana.*",
+        "capital": "Helana"
+    },
+    {
+        "code": "us-nc",
+        "regex": ".*N.*Carolina.*",
+        "capital": "Raleigh"
+    },
+    {
+        "code": "us-nd",
+        "regex": ".*N.*Dakota.*",
+        "capital": "Bismarck"
+    },
+    {
+        "code": "us-ne",
+        "regex": ".*Nebraska.*",
+        "capital": "Lincoln"
+    },
+    {
+        "code": "us-nh",
+        "regex": ".*New Hampshire.*",
+        "capital": "Concord"
+    },
+    {
+        "code": "us-nj",
+        "regex": ".*New Jersey.*",
+        "capital": "Trenton"
+    },
+    {
+        "code": "us-nm",
+        "regex": ".*New Mexico.*",
+        "capital": "Santa Fe"
+    },
+    {
+        "code": "us-nv",
+        "regex": ".*Nevada.*",
+        "capital": "Carson City"
+    },
+    {
+        "code": "us-ny",
+        "regex": ".*New York.*",
+        "capital": "Albany"
+    },
+    {
+        "code": "us-oh",
+        "regex": ".*Ohio.*",
+        "capital": "Columbus"
+    },
+    {
+        "code": "us-ok",
+        "regex": ".*Oklahoma.*",
+        "capital": "Oklahoma City"
+    },
+    {
+        "code": "us-or",
+        "regex": ".*Oregon.*",
+        "capital": "Salem"
+    },
+    {
+        "code": "us-pa",
+        "regex": ".*Pennsylvania.*",
+        "capital": "Harrisburg"
+    },
+    {
+        "code": "us-ri",
+        "regex": ".*Rhode Island.*",
+        "capital": "Providence"
+    },
+    {
+        "code": "us-sc",
+        "regex": ".*S.*Carolina.*",
+        "capital": "Columbia"
+    },
+    {
+        "code": "us-sd",
+        "regex": ".*S.*Dakota.*",
+        "capital": "Pierre"
+    },
+    {
+        "code": "us-tn",
+        "regex": ".*Tennessee.*",
+        "capital": "Nashville"
+    },
+    {
+        "code": "us-tx",
+        "regex": ".*Texas.*",
+        "capital": "Austin"
+    },
+    {
+        "code": "us-ut",
+        "regex": ".*Utah.*",
+        "capital": "Salt Lake City"
+    },
+    {
+        "code": "us-va",
+        "regex": ".*Virginia.*",
+        "capital": "Richmond"
+    },
+    {
+        "code": "us-vt",
+        "regex": ".*Vermont.*",
+        "capital": "Montpelier"
+    },
+    {
+        "code": "us-wa",
+        "regex": ".*Washington.*",
+        "capital": "Olympia"
+    },
+    {
+        "code": "us-wi",
+        "regex": ".*Wisconsin.*",
+        "capital": "Madison"
+    },
+    {
+        "code": "us-wv",
+        "regex": ".*W.*Virginia.*",
+        "capital": "Charleston"
+    },
+    {
+        "code": "us-wy",
+        "regex": ".*Wyoming.*",
+        "capital": "Cheyenne"
+    },
+    {
+        "code": "uy",
+        "regex": ".*Uruguay.*",
+        "capital": "Montevideo"
+    },
+    {
+        "code": "uz",
+        "regex": ".*Uzbekistan.*",
+        "capital": "Tashkent"
+    },
+    {
+        "code": "va",
+        "regex": ".*Vatican.*",
+        "capital": "Vatican City"
+    },
+    {
+        "code": "vc",
+        "regex": ".*S.*Vincent.*Grenadines.*|.*S.*Vincent|.*Grenadines.*",
+        "capital": "Kingstown"
+    },
+    {
+        "code": "ve",
+        "regex": ".*Venezuela.*",
+        "capital": "Caracas"
+    },
+    {
+        "code": "vg",
+        "regex": ".*British V.*I.*",
+        "capital": "Road Town"
+    },
+    {
+        "code": "vi",
+        "regex": "U.*S.*V.*I.*",
+        "capital": "Charlotte Amalie"
+    },
+    {
+        "code": "vn",
+        "regex": ".*Vietnam.*",
+        "capital": "Hanoi"
+    },
+    {
+        "code": "vu",
+        "regex": ".*Vanuatu.*",
+        "capital": "Port Vila"
+    },
+    {
+        "code": "wf",
+        "regex": ".*Wallis.*Futuna.*",
+        "capital": "Mata-Utu"
+    },
+    {
+        "code": "ws",
+        "regex": ".*Samoa.*",
+        "capital": "Apia"
+    },
+    {
+        "code": "xk",
+        "regex": ".*Kosovo.*",
+        "capital": "Pristina"
+    },
+    {
+        "code": "ye",
+        "regex": ".*Yemen.*",
+        "capital": "Sana'a"
+    },
+    {
+        "code": "yt",
+        "regex": ".*Mayotte.*",
+        "capital": "Mamoudzou"
+    },
+    {
+        "code": "za",
+        "regex": ".*S.*Africa.*",
+        "capital": "Pretoria"
+    },
+    {
+        "code": "zm",
+        "regex": ".*Zambia.*",
+        "capital": "Lusaka"
+    },
+    {
+        "code": "zw",
+        "regex": ".*Zimbabwe.*",
+        "capital": "Harare"
+    }
 ]
