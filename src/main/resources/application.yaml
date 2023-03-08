@@ -1,4 +1,6 @@
 spring:
+  jmx:
+    enabled: false
   datasource:
     driverClassName: "org.postgresql.Driver"
     hikari:
