@@ -43,9 +43,9 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
             Swiper.TheSwiper theSwiper = Swiper.SWIPERS.get(noSwipingPhrase);
             Optional<DiscordUser> victim = discordUserRepository.findById(swiperAwaiting);
 
-            MessageEmbed message = Constants.simpleEmbed(theSwiper.getNoSwipingPhrase(),
+            MessageEmbed message = Constants.simpleEmbed(theSwiper.noSwipingPhrase(),
                     "Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points",
-                    theSwiper.getSwiperLostImage(), null, null, philJda.getSelfUser().getEffectiveAvatarUrl());
+                    theSwiper.swiperLostImg(), null, null, philJda.getSelfUser().getEffectiveAvatarUrl());
 
             CompletableFuture<?> future = CompletableFuture.completedFuture(null);
             if (victim.isPresent()) {
@@ -55,9 +55,9 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
 
                         String image = savior.isPresent() && savior.get().getId().equalsIgnoreCase(victim.get().getId())
                                 ? Swiper.SPIDERMAN_PNG
-                                : theSwiper.getSwiperLostImage();
+                                : theSwiper.swiperLostImg();
 
-                        message = Constants.simpleEmbed(theSwiper.getNoSwipingPhrase(),
+                        message = Constants.simpleEmbed(theSwiper.noSwipingPhrase(),
                                 "Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
                                         + "> scared them away from <@!" + victim.get().getId() + ">",
                                 image);
@@ -80,9 +80,9 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
 
                         if (memberById != null) {
                             future = takePointsFromMember(swiperPoints, memberById, PointsStat.SWIPER);
-                            message = Constants.simpleEmbed(theSwiper.getSwiperWonPhrase(),
+                            message = Constants.simpleEmbed(theSwiper.swiperWonPhrase(),
                                     "You didn't save <@!" + victim.get().getId() + "> in time, they lost " + swiperPoints + " points",
-                                    theSwiper.getSwiperWonImage());
+                                    theSwiper.swiperWonImg());
                         }
                     } catch (Exception e) {
                         logger.error("Exception looking up swiper victim [id={}] after they were not saved", victim.get().getId(), e);

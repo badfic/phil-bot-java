@@ -169,7 +169,7 @@ public class Swiper extends BaseSwampy {
         TheSwiper theSwiper = Constants.pickRandom(SWIPERS.values());
 
         swampyGamesConfig.setSwiperAwaiting(member.getId());
-        swampyGamesConfig.setNoSwipingPhrase(theSwiper.getNoSwipingPhrase());
+        swampyGamesConfig.setNoSwipingPhrase(theSwiper.noSwipingPhrase());
         swampyGamesConfig.setSwiperSavior(null);
         swampyGamesConfig.setSwiperExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
         swampyGamesConfig = swampyGamesConfigRepository.save(swampyGamesConfig);
@@ -177,53 +177,12 @@ public class Swiper extends BaseSwampy {
         String description = "They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
                 + "' in this channel within 15 minutes to stop them!";
 
-        MessageEmbed message = Constants.simpleEmbed(theSwiper.getSpottedPhrase(), description, theSwiper.getSpottedImage(), null, null,
+        MessageEmbed message = Constants.simpleEmbed(theSwiper.spottedPhrase(), description, theSwiper.spottedImg(), null, null,
                 member.getEffectiveAvatarUrl());
 
         swampysChannel.sendMessageEmbeds(message).queue();
     }
 
-    public static class TheSwiper {
-        private final String noSwipingPhrase;
-        private final String spottedPhrase;
-        private final String spottedImage;
-        private final String swiperLostImage;
-        private final String swiperWonPhrase;
-        private final String swiperWonImage;
-
-        public TheSwiper(String noSwipingPhrase, String spottedPhrase, String spottedImage, String swiperLostImage,
-                         String swiperWonPhrase, String swiperWonImage) {
-            this.noSwipingPhrase = noSwipingPhrase;
-            this.spottedPhrase = spottedPhrase;
-            this.spottedImage = spottedImage;
-            this.swiperLostImage = swiperLostImage;
-            this.swiperWonPhrase = swiperWonPhrase;
-            this.swiperWonImage = swiperWonImage;
-        }
-
-        public String getNoSwipingPhrase() {
-            return noSwipingPhrase;
-        }
-
-        public String getSpottedPhrase() {
-            return spottedPhrase;
-        }
-
-        public String getSpottedImage() {
-            return spottedImage;
-        }
-
-        public String getSwiperLostImage() {
-            return swiperLostImage;
-        }
-
-        public String getSwiperWonPhrase() {
-            return swiperWonPhrase;
-        }
-
-        public String getSwiperWonImage() {
-            return swiperWonImage;
-        }
-    }
+    record TheSwiper(String noSwipingPhrase, String spottedPhrase, String spottedImg, String swiperLostImg, String swiperWonPhrase, String swiperWonImg) {}
 
 }
