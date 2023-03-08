@@ -1,7 +1,6 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
@@ -31,7 +30,7 @@ public abstract class BaseTwoUserImageMeme extends BaseSwampy {
         this.recipientScale = recipientScale;
         this.recipientX = recipientX;
         this.recipientY = recipientY;
-        this.mainImage = ImageIO.read(Objects.requireNonNull(BasicResponsesBot.class.getClassLoader().getResourceAsStream(mainImageLocation)));
+        this.mainImage = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(mainImageLocation)));
         this.memeName = memeName;
     }
 
