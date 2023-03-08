@@ -45,7 +45,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
 
             MessageEmbed message = Constants.simpleEmbed(theSwiper.noSwipingPhrase(),
                     "Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points",
-                    theSwiper.swiperLostImage(), null, null, philJda.getSelfUser().getEffectiveAvatarUrl());
+                    theSwiper.swiperLostImg(), null, null, philJda.getSelfUser().getEffectiveAvatarUrl());
 
             CompletableFuture<?> future = CompletableFuture.completedFuture(null);
             if (victim.isPresent()) {
@@ -55,7 +55,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
 
                         String image = savior.isPresent() && savior.get().getId().equalsIgnoreCase(victim.get().getId())
                                 ? Swiper.SPIDERMAN_PNG
-                                : theSwiper.swiperLostImage();
+                                : theSwiper.swiperLostImg();
 
                         message = Constants.simpleEmbed(theSwiper.noSwipingPhrase(),
                                 "Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
@@ -82,7 +82,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                             future = takePointsFromMember(swiperPoints, memberById, PointsStat.SWIPER);
                             message = Constants.simpleEmbed(theSwiper.swiperWonPhrase(),
                                     "You didn't save <@!" + victim.get().getId() + "> in time, they lost " + swiperPoints + " points",
-                                    theSwiper.swiperWonImage());
+                                    theSwiper.swiperWonImg());
                         }
                     } catch (Exception e) {
                         logger.error("Exception looking up swiper victim [id={}] after they were not saved", victim.get().getId(), e);

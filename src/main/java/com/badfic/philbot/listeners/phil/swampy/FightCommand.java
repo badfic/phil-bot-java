@@ -68,5 +68,5 @@ public class FightCommand extends BaseSwampy {
         AGGRESSOR, VICTIM
     }
 
-    private record FightOutcome(String text, FightWinner winner, int pointsToWinner, int pointsFromLoser){}
+    private record FightOutcome(String text, FightWinner winner, int pointsToWinner, int pointsFromLoser) {}
 }

@@ -177,13 +177,12 @@ public class Swiper extends BaseSwampy {
         String description = "They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
                 + "' in this channel within 15 minutes to stop them!";
 
-        MessageEmbed message = Constants.simpleEmbed(theSwiper.spottedPhrase(), description, theSwiper.spottedImage(), null, null,
+        MessageEmbed message = Constants.simpleEmbed(theSwiper.spottedPhrase(), description, theSwiper.spottedImg(), null, null,
                 member.getEffectiveAvatarUrl());
 
         swampysChannel.sendMessageEmbeds(message).queue();
     }
 
-    public record TheSwiper(
-            String noSwipingPhrase, String spottedPhrase, String spottedImage, String swiperLostImage, String swiperWonPhrase, String swiperWonImage){}
+    record TheSwiper(String noSwipingPhrase, String spottedPhrase, String spottedImg, String swiperLostImg, String swiperWonPhrase, String swiperWonImg) {}
 
 }

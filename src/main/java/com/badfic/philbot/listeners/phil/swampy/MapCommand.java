@@ -23,7 +23,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class MapCommand extends BaseSwampy {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    @VisibleForTesting
     static final String MAP_ZIP_FILENAME = "map-trivia-flags.zip";
+
     private List<MapTriviaObject> countries;
 
     public MapCommand() {
@@ -101,7 +104,9 @@ public class MapCommand extends BaseSwampy {
         return countries;
     }
 
+    @VisibleForTesting
     record MapTriviaObject(String code, String regex, String capital) {}
+
     private enum TriviaType {
         FLAG, CAPITAL
     }
