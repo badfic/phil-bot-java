@@ -35,6 +35,8 @@ jobs:
           java-version: '17'
           cache: 'maven'
       - name: Build with Maven
+        env:
+          AIRTABLE_API_TOKEN: ${{ secrets.AIRTABLE_API_TOKEN }}
         run: mvn install
 
       # Login to a Docker registry

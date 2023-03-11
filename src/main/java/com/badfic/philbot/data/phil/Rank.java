@@ -1,21 +1,21 @@
 package com.badfic.philbot.data.phil;
 
 import java.awt.Color;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 public class Rank {
     public static final long LVL_MULTIPLIER = 2000;
     private static final Map<Long, Rank> LEVEL_MAP = new HashMap<>();
-    private static final Set<String> LEVEL_ROLE_NAMES = new HashSet<>();
+    private static final List<Rank> ALL_RANKS = new ArrayList<>();
 
     private final int ordinal;
     private final String roleName;
@@ -68,31 +68,29 @@ public class Rank {
         return ordinal == 0;
     }
 
-    public static void init() throws Exception {
-        List<String> lines = IOUtils.readLines(Objects.requireNonNull(Rank.class.getClassLoader().getResourceAsStream("rank.tsv")), StandardCharsets.UTF_8);
+    public static void init(RestTemplate restTemplate, String airtableApiToken) throws Exception {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + airtableApiToken);
+        ResponseEntity<RecordList> response = restTemplate.exchange("https://api.airtable.com/v0/appYjP1F2Li4DAR1m/tblDmx7RE0kEP0p48",
+                HttpMethod.GET, new HttpEntity<>(httpHeaders), RecordList.class);
 
-        for (int i = 1; i < lines.size(); i++) {
-            String line = lines.get(i);
-            String[] values = StringUtils.split(line, '\t');
+        RecordList recordList = response.getBody();
 
-            if (ArrayUtils.getLength(values) != 5) {
-                throw new IllegalArgumentException("Rank spreadsheet malformed on line: " + i);
+        List<TableRecord> records = recordList.records();
+
+        records.sort(Comparator.comparingLong(r -> r.fields().level()));
+
+        for (int i = 0; i < records.size(); i++) {
+            TableRecord record = records.get(i);
+            RecordFields fields = record.fields();
+
+            Rank rank = new Rank(i, fields.role(), fields.level(), fields.image(), fields.blurb(), Color.decode(fields.colour()));
+            if (LEVEL_MAP.get(fields.level()) != null) {
+                throw new IllegalStateException("Check swampy levels airtable, there's a duplicate level: " + fields.level());
             }
 
-            String roleName = StringUtils.strip(values[0]);
-            long level = Long.parseLong(values[1]);
-            String rankUpMessage = StringUtils.strip(values[2]);
-            String rankUpImage = StringUtils.strip(values[3]);
-            String color = StringUtils.strip(values[4]);
-
-            Rank rank = new Rank(i - 1, roleName, level, rankUpImage, rankUpMessage, Color.decode(color));
-
-            if (LEVEL_MAP.get(level) != null) {
-                throw new IllegalStateException("Check rank.tsv, there's a duplicate level: " + level);
-            }
-
-            LEVEL_MAP.put(level, rank);
-            LEVEL_ROLE_NAMES.add(roleName);
+            LEVEL_MAP.put(fields.level(), rank);
+            ALL_RANKS.add(rank);
         }
     }
 
@@ -108,12 +106,12 @@ public class Rank {
         return LEVEL_MAP.get(0L);
     }
 
-    public static Set<String> getAllRoleNames() {
-        return LEVEL_ROLE_NAMES;
+    public static List<Rank> getAllRanks() {
+        return ALL_RANKS;
     }
 
-    public static Rank[] getAllRanks() {
-        return LEVEL_MAP.values().toArray(Rank[]::new);
-    }
+    public record RecordFields(String role, long level, String colour, String blurb, String image) {}
+    public record TableRecord(RecordFields fields) {}
+    public record RecordList(List<TableRecord> records) {}
 
 }
