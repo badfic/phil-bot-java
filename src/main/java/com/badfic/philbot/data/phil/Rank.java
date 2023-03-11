@@ -86,7 +86,7 @@ public class Rank {
 
             Rank rank = new Rank(i, fields.role(), fields.level(), fields.image(), fields.blurb(), Color.decode(fields.colour()));
             if (LEVEL_MAP.get(fields.level()) != null) {
-                throw new IllegalStateException("Check rank.tsv, there's a duplicate level: " + fields.level());
+                throw new IllegalStateException("Check swampy levels airtable, there's a duplicate level: " + fields.level());
             }
 
             LEVEL_MAP.put(fields.level(), rank);
