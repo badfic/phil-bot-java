@@ -30,7 +30,7 @@ public class UpdateIntroCache extends BaseSwampy implements DailyTickable {
 
     @Override
     protected void execute(CommandEvent event) {
-        userTriggeredTasksExecutor.execute(this::runDailyTask);
+        threadPoolTaskExecutor.execute(this::runDailyTask);
     }
 
     @Override

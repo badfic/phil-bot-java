@@ -38,7 +38,7 @@ public class DailyMarvelMemeService extends BaseSwampy {
 
     @Override
     protected void execute(CommandEvent event) {
-        userTriggeredTasksExecutor.execute(this::runDailyTask);
+        threadPoolTaskExecutor.execute(this::runDailyTask);
     }
 
     public void runDailyTask() {

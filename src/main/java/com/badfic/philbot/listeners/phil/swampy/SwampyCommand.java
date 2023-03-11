@@ -87,7 +87,7 @@ public class SwampyCommand extends BaseSwampy {
 
     @PostConstruct
     public void init() throws Exception {
-        Rank.init();
+        Rank.init(restTemplate, baseConfig.airtableApiToken);
 
         // seed swampy games config data
         Optional<SwampyGamesConfig> optionalConfig = this.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
@@ -376,9 +376,9 @@ public class SwampyCommand extends BaseSwampy {
 
         DiscordUser user = getDiscordUserByMember(member);
 
-        Rank[] allRanks = Rank.getAllRanks();
+        List<Rank> allRanks = Rank.getAllRanks();
         Rank rank = Rank.byXp(user.getXp());
-        Rank nextRank = (rank.ordinal() >= allRanks.length - 1) ? rank : allRanks[rank.ordinal() + 1];
+        Rank nextRank = (rank.ordinal() >= allRanks.size() - 1) ? rank : allRanks.get(rank.ordinal() + 1);
 
         String description = rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
                 "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total points.\n\n" +
