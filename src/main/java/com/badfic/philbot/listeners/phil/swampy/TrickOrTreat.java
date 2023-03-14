@@ -41,7 +41,7 @@ public class TrickOrTreat extends BaseSwampy {
             return;
         }
 
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 

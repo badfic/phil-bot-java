@@ -25,7 +25,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
     public void runMinutelyTask() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         String swiperAwaiting = swampyGamesConfig.getSwiperAwaiting();
         int swiperPoints = swampyGamesConfig.getSwiperPoints();

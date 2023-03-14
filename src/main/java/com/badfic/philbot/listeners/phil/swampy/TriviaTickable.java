@@ -44,7 +44,7 @@ public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
             TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
-            Guild guild = philJda.getGuilds().get(0);
+            Guild guild = philJda.getGuildById(baseConfig.guildId);
 
             Optional<Trivia> optTriviaQuestion = triviaRepository.findById(triviaGuid);
 

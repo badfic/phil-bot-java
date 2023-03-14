@@ -57,7 +57,7 @@ public class HomeController extends BaseMembersController {
 
             DiscordApiIdentityResponse discordApiIdentityResponse = getDiscordApiIdentityResponse(accessToken);
 
-            Member memberById = philJda.getGuilds().get(0).getMemberById(discordApiIdentityResponse.getId());
+            Member memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(discordApiIdentityResponse.getId());
             if (memberById != null) {
                 Boolean isMod = hasRole(memberById, Constants.ADMIN_ROLE);
                 Boolean is18 = hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE);

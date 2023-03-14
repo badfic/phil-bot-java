@@ -35,7 +35,7 @@ public class UpdateIntroCache extends BaseSwampy implements DailyTickable {
 
     @Override
     public void runDailyTask() {
-        Optional<TextChannel> optionalIntroChannel = philJda.getGuilds().get(0).getTextChannelsByName("introductions", false).stream().findFirst();
+        Optional<TextChannel> optionalIntroChannel = philJda.getTextChannelsByName("introductions", false).stream().findFirst();
 
         if (optionalIntroChannel.isEmpty()) {
             honeybadgerReporter.reportError(new RuntimeException("ERROR: UpdateIntroCache could not find the #introductions channel"));

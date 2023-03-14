@@ -45,7 +45,7 @@ public class NsfwQuoteTrivia extends BaseSwampy {
     public void quoteTrivia() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         TextChannel triviaChannel = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false).get(0);
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         if (swampyGamesConfig.getNsfwQuoteTriviaMsgId() != null) {
             triviaChannel.sendMessage("There is currently an nsfw quote trivia running, you can't trigger another.").queue();

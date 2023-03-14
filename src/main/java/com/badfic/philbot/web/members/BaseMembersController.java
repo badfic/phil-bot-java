@@ -83,7 +83,7 @@ public abstract class BaseMembersController {
             DiscordApiIdentityResponse discordApiIdentityResponse = Objects.requireNonNull(
                     getDiscordApiIdentityResponse((String) httpSession.getAttribute(DISCORD_TOKEN)));
 
-            Member memberById = philJda.getGuilds().get(0).getMemberById(discordApiIdentityResponse.getId());
+            Member memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(discordApiIdentityResponse.getId());
             if (memberById == null || (requiresAdmin && !hasRole(memberById, Constants.ADMIN_ROLE))) {
                 throw new UnauthorizedException(discordApiIdentityResponse.getId() +
                         " You are not authorized, you must be a swamp " + (requiresAdmin ? "admin" : "member") + " to access this page");
@@ -125,7 +125,7 @@ public abstract class BaseMembersController {
 
     protected Member getMemberFromSession(HttpServletRequest httpServletRequest) {
         String discordId = (String) httpServletRequest.getSession().getAttribute(DISCORD_ID);
-        return philJda.getGuilds().get(0).getMemberById(discordId);
+        return philJda.getGuildById(baseConfig.guildId).getMemberById(discordId);
     }
 
 }

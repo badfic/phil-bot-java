@@ -18,7 +18,7 @@ public class LiveController extends BaseMembersController {
         checkSession(httpServletRequest, false);
 
         String discordId = (String) httpServletRequest.getSession().getAttribute(DISCORD_ID);
-        Member member = philJda.getGuilds().get(0).getMemberById(discordId);
+        Member member = philJda.getGuildById(baseConfig.guildId).getMemberById(discordId);
 
         if (member == null) {
             throw new UnauthorizedException("You do not have a valid session. Please refresh and login again");

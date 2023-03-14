@@ -25,8 +25,7 @@ public class ModMail extends BaseSwampy {
 
     @Override
     public void execute(CommandEvent event) {
-        Optional<TextChannel> modChannel = philJda.getGuilds()
-                .get(0)
+        Optional<TextChannel> modChannel = philJda
                 .getTextChannelsByName("mod-chat-and-delegation", false)
                 .stream()
                 .findFirst();

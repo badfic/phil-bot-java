@@ -31,7 +31,9 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
 
     @Override
     public void runDailyTask() {
-        Optional<TextChannel> optionalChannel = philJda.getGuilds().get(0).getTextChannelsByName("how-we-became-cursed", false).stream().findFirst();
+        Optional<TextChannel> optionalChannel = philJda.getGuildById(baseConfig.guildId).getTextChannelsByName("how-we-became-cursed", false)
+                .stream()
+                .findFirst();
 
         if (optionalChannel.isEmpty()) {
             honeybadgerReporter.reportError(new IllegalArgumentException("Could not find how-we-became-cursed channel"));

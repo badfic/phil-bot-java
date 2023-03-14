@@ -37,7 +37,7 @@ public class Carrot extends BaseSwampy {
         String carrotName = swampyGamesConfig.getCarrotName();
 
         List<DiscordUser> allUsers = discordUserRepository.findAll();
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         MutableLong totalPointsGiven = new MutableLong(0);
         List<CompletableFuture<?>> futures = new ArrayList<>();

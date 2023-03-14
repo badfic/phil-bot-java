@@ -37,7 +37,7 @@ public class LeaderboardController extends BaseMembersController {
         checkSession(httpServletRequest, false);
 
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         return swampyUsers.stream()
                 .filter(user -> {
@@ -58,7 +58,7 @@ public class LeaderboardController extends BaseMembersController {
         checkSession(httpServletRequest, false);
 
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         return swampyUsers.stream()
                 .filter(user -> {

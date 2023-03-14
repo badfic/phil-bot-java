@@ -46,7 +46,7 @@ public class Robinhood extends BaseSwampy {
         if (swampyGamesConfig == null) {
             return;
         }
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         if (!force && ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceRobinhoodNotHappen()) {
             MessageEmbed message = Constants.simpleEmbed(swampyGamesConfig.getRobinhoodStopperPhrase(),

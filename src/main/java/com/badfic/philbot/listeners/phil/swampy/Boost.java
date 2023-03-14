@@ -51,7 +51,7 @@ public class Boost extends BaseSwampy {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         if (swampyGamesConfig.getBoostPhrase() != null) {
             swampyGamesConfig.setBoostPhrase(null);
