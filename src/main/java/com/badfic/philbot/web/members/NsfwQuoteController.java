@@ -25,7 +25,7 @@ public class NsfwQuoteController extends BaseMembersController {
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
 
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         Map<String, Object> props = new HashMap<>();
         addCommonProps(httpServletRequest, props);

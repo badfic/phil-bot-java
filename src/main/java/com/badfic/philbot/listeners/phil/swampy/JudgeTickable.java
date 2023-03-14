@@ -34,7 +34,7 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
 
     @Override
     public void runMinutelyTask() {
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
         Role megaHellRole = guild.getRolesByName(Constants.MEGA_HELL_ROLE, false).get(0);
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
         TextChannel megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).get(0);

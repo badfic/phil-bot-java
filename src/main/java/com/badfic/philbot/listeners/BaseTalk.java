@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners;
 
+import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -19,6 +20,9 @@ public abstract class BaseTalk extends Command {
     @Lazy
     protected JDA philJda;
 
+    @Autowired
+    private BaseConfig baseConfig;
+
     public BaseTalk(String name) {
         this.name = name;
         guildOnly = false;
@@ -33,7 +37,7 @@ public abstract class BaseTalk extends Command {
             return;
         }
 
-        Member memberById = philJda.getGuilds().get(0).getMemberById(event.getAuthor().getId());
+        Member memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(event.getAuthor().getId());
         if (memberById == null || memberById.getRoles().stream().noneMatch(r -> r.getName().equalsIgnoreCase(Constants.ADMIN_ROLE))) {
             event.replyError("Failed, either you're not an admin or you left the server or the member cache is broken");
             return;
@@ -50,8 +54,7 @@ public abstract class BaseTalk extends Command {
         msg = msg.replace(split[0], "").trim();
 
         String finalMsg = msg;
-        getJda().getGuilds()
-                .get(0)
+        getJda()
                 .getTextChannelsByName(split[0].replace("#", ""), true)
                 .stream()
                 .findFirst()

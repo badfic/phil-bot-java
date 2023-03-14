@@ -24,7 +24,7 @@ public class QuoteController extends BaseMembersController {
     @GetMapping(value = "/quotes", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "\uD83D\uDCAC Quotes");

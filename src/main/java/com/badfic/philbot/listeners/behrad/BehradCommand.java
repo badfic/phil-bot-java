@@ -74,7 +74,7 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
             responses = responsesConfig.getSfwConfig().getResponses();
         } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
             if (NAME_PATTERN.matcher(msgContent).find()) {
-                event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+                event.getJDA().getTextChannelById(event.getChannel().getId())
                         .sendMessage(Constants.pickRandom(SHAYAN_IMGS)).queue();
                 return Optional.empty();
             }
@@ -85,7 +85,7 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
         }
 
         if (SLOTH_PATTERN.matcher(msgContent).find()) {
-            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+            event.getJDA().getTextChannelById(event.getChannel().getId())
                     .sendMessage(Constants.pickRandom(SLOTH_GIFS)).queue();
             return Optional.empty();
         }
@@ -98,7 +98,7 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
                     .setEmbeds(messageEmbed)
                     .setContent("420 whatcha smokin?")
                     .build();
-            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+            event.getJDA().getTextChannelById(event.getChannel().getId())
                     .sendMessage(message).queue();
             return Optional.empty();
         }

@@ -66,7 +66,7 @@ public class Taxes extends BaseSwampy {
         long totalTaxes = 0;
         List<CompletableFuture<?>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder();
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
         for (DiscordUser user : allUsers) {
             if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD) {
                 try {

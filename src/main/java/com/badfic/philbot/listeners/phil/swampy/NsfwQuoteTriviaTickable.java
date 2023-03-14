@@ -36,7 +36,7 @@ public class NsfwQuoteTriviaTickable extends NonCommandSwampy implements MinuteT
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
             TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false).get(0);
-            Guild guild = philJda.getGuilds().get(0);
+            Guild guild = philJda.getGuildById(baseConfig.guildId);
 
             StringBuilder description = new StringBuilder();
 

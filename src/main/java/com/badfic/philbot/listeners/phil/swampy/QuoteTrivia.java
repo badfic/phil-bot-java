@@ -45,7 +45,7 @@ public class QuoteTrivia extends BaseSwampy {
     public void quoteTrivia() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         if (swampyGamesConfig.getQuoteTriviaMsgId() != null) {
             swampysChannel.sendMessage("There is currently a quote trivia running, you can't trigger another.").queue();

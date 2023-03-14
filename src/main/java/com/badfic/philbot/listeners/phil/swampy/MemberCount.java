@@ -70,8 +70,8 @@ public class MemberCount extends BaseSwampy implements DailyTickable {
 
     public boolean updateCount() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        Guild guild = philJda.getGuilds().get(0);
-        VoiceChannel voiceChannelById = guild.getVoiceChannelById(swampyGamesConfig.getMemberCountChannel());
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
+        VoiceChannel voiceChannelById = philJda.getVoiceChannelById(swampyGamesConfig.getMemberCountChannel());
         if (voiceChannelById != null) {
             voiceChannelById.getManager().setName(guild.getMembers().size() + " members").queue();
             Constants.debugToTestChannel(philJda, "Successfully updated member count channel");

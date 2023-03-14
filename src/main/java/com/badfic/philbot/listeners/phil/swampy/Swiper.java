@@ -138,7 +138,7 @@ public class Swiper extends BaseSwampy {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         if (swampyGamesConfig.getSwiperAwaiting() != null) {
             swampysChannel.sendMessage("There is currently a swiper running, you cannot trigger another").queue();

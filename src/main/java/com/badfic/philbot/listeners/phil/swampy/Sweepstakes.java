@@ -65,7 +65,7 @@ public class Sweepstakes extends BaseSwampy {
             return;
         }
 
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         Collections.shuffle(allUsers);
 

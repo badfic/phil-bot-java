@@ -24,7 +24,7 @@ public class RemindersController extends BaseMembersController {
     @GetMapping(value = "/reminders", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
-        Guild guild = philJda.getGuilds().get(0);
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         List<SimpleReminder> simpleReminderList = reminderRepository.findAll()
                 .stream()

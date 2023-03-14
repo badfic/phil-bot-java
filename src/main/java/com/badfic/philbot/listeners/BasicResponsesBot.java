@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners;
 
+import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.BaseResponsesConfig;
 import com.badfic.philbot.data.BaseResponsesConfigRepository;
@@ -26,6 +27,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends Command {
 
@@ -37,6 +39,9 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
     private final String fullCmdPrefix;
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final String modHelp;
+
+    @Autowired
+    private BaseConfig baseConfig;
 
     static {
         try {
@@ -94,11 +99,11 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         }
 
         final JDA selfJda = event.getJDA();
-        final Guild guild = selfJda.getGuilds().get(0);
+        final Guild guild = selfJda.getGuildById(baseConfig.guildId);
 
         Optional<T> optionalConfig = configRepository.findById(BaseResponsesConfig.SINGLETON_ID);
         if (optionalConfig.isEmpty()) {
-            guild.getTextChannelById(event.getChannel().getId())
+            selfJda.getTextChannelById(event.getChannel().getId())
                     .sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name)
                     .queue();
             return;
@@ -301,21 +306,21 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
                 byte[] bytes = BaseTwoUserImageMeme.makeTwoUserMemeImageBytes(selfAvatarUrl, 160, 27, 63, authorAvatarUrl, 160, 187, 24, HUG);
 
-                guild.getTextChannelById(event.getChannel().getId())
+                selfJda.getTextChannelById(event.getChannel().getId())
                         .sendMessage(" ")
                         .addFiles(FileUpload.fromData(bytes, "hug.png"))
                         .queue();
 
                 return;
             } catch (Exception e) {
-                guild.getTextChannelById(event.getChannel().getId()).sendMessage("\uD83E\uDD17").queue();
+                selfJda.getTextChannelById(event.getChannel().getId()).sendMessage("\uD83E\uDD17").queue();
 
                 honeybadgerReporter.reportError(e, null, getClass().getSimpleName() + " could not hug user " + event.getAuthor().getAsMention());
             }
         }
 
         getResponse(event, responsesConfig).ifPresent(response -> {
-            guild.getTextChannelById(event.getChannel().getId())
+            selfJda.getTextChannelById(event.getChannel().getId())
                     .sendMessage(StringUtils.startsWithIgnoreCase(response, "http") ? response : (event.getAuthor().getAsMention() + ", " + response)).queue();
         });
     }

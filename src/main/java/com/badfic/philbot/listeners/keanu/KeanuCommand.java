@@ -98,19 +98,19 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
         }
 
         if (StringUtils.containsIgnoreCase(msgContent, "hello")) {
-            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+            event.getJDA().getTextChannelById(event.getChannel().getId())
                     .sendMessage(HELLO_GIF).queue();
             return Optional.empty();
         }
 
         if (StringUtils.containsIgnoreCase(msgContent, "fight") || StringUtils.containsIgnoreCase(msgContent, "kill")) {
-            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+            event.getJDA().getTextChannelById(event.getChannel().getId())
                     .sendMessage(Constants.pickRandom(FIGHT_GIFS)).queue();
             return Optional.empty();
         }
 
         if (PUPPY_PATTERN.matcher(msgContent).find()) {
-            event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId())
+            event.getJDA().getTextChannelById(event.getChannel().getId())
                     .sendMessage(PUPPIES_GIF).queue();
             return Optional.empty();
         }

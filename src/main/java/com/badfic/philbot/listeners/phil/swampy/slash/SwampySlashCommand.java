@@ -1,0 +1,22 @@
+package com.badfic.philbot.listeners.phil.swampy.slash;
+
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SwampySlashCommand extends BaseSwampySlash {
+
+    public SwampySlashCommand(LeaderboardSlashCommand leaderboardSlashCommand, UpvoteSlashCommand upvoteSlashCommand,
+                              DownvoteSlashCommand downvoteSlashCommand, RankSlashCommand rankSlashCommand, SlotsSlashCommand slotsSlashCommand) {
+        name = "swampys";
+        children = new SlashCommand[] {leaderboardSlashCommand, upvoteSlashCommand, downvoteSlashCommand, rankSlashCommand, slotsSlashCommand};
+        help = "The Swampys Slash Command: allows you to view leaderboards, upvote users, downvote users, view your swampy level rank, and play slots";
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        event.reply("You must pick a sub-command").queue();
+    }
+
+}

@@ -36,7 +36,7 @@ public class QuoteTriviaTickable extends NonCommandSwampy implements MinuteTicka
             swampyGamesConfigRepository.save(swampyGamesConfig);
 
             TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
-            Guild guild = philJda.getGuilds().get(0);
+            Guild guild = philJda.getGuildById(baseConfig.guildId);
 
             StringBuilder description = new StringBuilder();
 

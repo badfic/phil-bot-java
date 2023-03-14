@@ -177,7 +177,7 @@ public interface Constants {
         if (CollectionUtils.isNotEmpty(userTriggers)) {
             Optional<String> match = userTriggers.stream().filter(t -> t.getLeft().matcher(event.getMessage().getContentRaw()).find()).map(Pair::getRight).findAny();
 
-            match.ifPresent(s -> event.getJDA().getGuilds().get(0).getTextChannelById(event.getChannel().getId()).sendMessage(s).queue());
+            match.ifPresent(s -> event.getJDA().getTextChannelById(event.getChannel().getId()).sendMessage(s).queue());
         }
     }
 

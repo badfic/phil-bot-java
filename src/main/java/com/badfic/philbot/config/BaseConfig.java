@@ -19,6 +19,7 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.CommandListener;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import com.tumblr.jumblr.JumblrClient;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.lang.invoke.MethodHandles;
@@ -136,6 +137,9 @@ public class BaseConfig {
 
     @Value("${OWNER_ID}")
     public String ownerId;
+
+    @Value("${GUILD_ID}")
+    public String guildId;
 
     @Value("${HOSTNAME}")
     public String hostname;
@@ -280,7 +284,7 @@ public class BaseConfig {
                                            HoneybadgerReporter honeybadgerReporter,
                                            MemeCommandsService memeCommandsService) {
         Optional<SwampyCommand> optSwampyCommand = commands.stream()
-                .filter(c -> c instanceof SwampyCommand)
+                .filter(c -> c instanceof SwampyCommand && !(c instanceof SlashCommand))
                 .findAny()
                 .map(c -> (SwampyCommand) c);
 
@@ -289,8 +293,10 @@ public class BaseConfig {
         thisClient.setValue(new CommandClientBuilder()
                 .setOwnerId(ownerId)
                 .setPrefix(Constants.PREFIX)
+                .forceGuildOnly(guildId)
+                .addSlashCommands(commands.stream().filter(c -> c instanceof SlashCommand).toArray(SlashCommand[]::new))
                 .useHelpBuilder(false)
-                .addCommands(commands.toArray(Command[]::new))
+                .addCommands(commands.stream().filter(c -> !(c instanceof SlashCommand)).toArray(Command[]::new))
                 .setScheduleExecutor(taskScheduler.getScheduledExecutor())
                 .setActivity(Activity.playing("with our feelings"))
                 .setEmojis("\uD83D\uDC38", "⚠️", "\uD83C\uDF29️")
