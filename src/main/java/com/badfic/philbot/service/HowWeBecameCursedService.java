@@ -31,7 +31,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
 
     @Override
     public void runDailyTask() {
-        Optional<TextChannel> optionalChannel = philJda.getGuildById(baseConfig.guildId).getTextChannelsByName("how-we-became-cursed", false)
+        Optional<TextChannel> optionalChannel = philJda.getTextChannelsByName("how-we-became-cursed", false)
                 .stream()
                 .findFirst();
 

@@ -55,7 +55,6 @@ public abstract class BaseSwampySlash extends SlashCommand {
     @Autowired
     protected ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-
     protected DiscordUser getDiscordUserByMember(Member member) {
         String userId = member.getId();
         Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);

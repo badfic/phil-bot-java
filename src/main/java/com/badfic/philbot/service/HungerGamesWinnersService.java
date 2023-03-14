@@ -47,7 +47,7 @@ public class HungerGamesWinnersService extends BaseSwampy implements DailyTickab
 
     @Override
     public void runDailyTask() {
-        Optional<TextChannel> optionalChannel = philJda.getGuildById(baseConfig.guildId).getTextChannelsByName(Constants.HUNGERDOME_CHANNEL, false)
+        Optional<TextChannel> optionalChannel = philJda.getTextChannelsByName(Constants.HUNGERDOME_CHANNEL, false)
                 .stream()
                 .findFirst();
 
