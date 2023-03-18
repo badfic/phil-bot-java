@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -35,7 +36,8 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import net.dv8tion.jda.internal.utils.IOUtil;
+import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableObject;
@@ -196,8 +198,14 @@ public class BaseConfig {
     }
 
     @Bean
-    public OkHttpClient okHttpClient() {
-        return IOUtil.newHttpClientBuilder().build();
+    public OkHttpClient okHttpClient(ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+        Dispatcher dispatcher = new Dispatcher(threadPoolTaskExecutor.getThreadPoolExecutor());
+        dispatcher.setMaxRequestsPerHost(25);
+        ConnectionPool connectionPool = new ConnectionPool(4, 10, TimeUnit.SECONDS);
+        return new OkHttpClient.Builder()
+                .connectionPool(connectionPool)
+                .dispatcher(dispatcher)
+                .build();
     }
 
     @Bean
