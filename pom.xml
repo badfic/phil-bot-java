@@ -18,7 +18,6 @@
 		<java.version>17</java.version>
 
 		<commons-io.version>2.11.0</commons-io.version>
-		<emoji-java.version>5.1.1</emoji-java.version>
 		<guava.version>31.1-jre</guava.version>
 		<honeybadger.version>2.1.0</honeybadger.version>
 		<jda.version>5.0.0-beta.5</jda.version>
@@ -120,11 +119,6 @@
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>${jsoup.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.vdurmont</groupId>
-			<artifactId>emoji-java</artifactId>
-			<version>${emoji-java.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>
