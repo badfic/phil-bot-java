@@ -3,9 +3,10 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.google.common.collect.ImmutableMap;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.Objects;
 import javax.imageio.ImageIO;
-import org.springframework.util.ResourceUtils;
 
 public abstract class BaseFlagCommand extends BaseSwampy {
     public static final String[] FLAG_NAMES = new String[] {
@@ -36,7 +37,8 @@ public abstract class BaseFlagCommand extends BaseSwampy {
 
         for (String flagName : FLAG_NAMES) {
             try {
-                BufferedImage image = ImageIO.read(ResourceUtils.getFile("classpath:flags/" + flagName + ".png"));
+                InputStream prideFlagStream = BaseFlagCommand.class.getClassLoader().getResourceAsStream("flags/" + flagName + ".png");
+                BufferedImage image = ImageIO.read(Objects.requireNonNull(prideFlagStream));
                 builder.put(flagName, image);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
