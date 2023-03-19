@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
 @Component
 public class FightCommand extends BaseSwampy {
@@ -24,7 +23,7 @@ public class FightCommand extends BaseSwampy {
 
     @PostConstruct
     public void init() throws Exception {
-        fightOutcomes = objectMapper.readValue(ResourceUtils.getFile("classpath:fight-outcomes.json"), new TypeReference<>() {});
+        fightOutcomes = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("fight-outcomes.json"), new TypeReference<>() {});
     }
 
     @Override

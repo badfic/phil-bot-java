@@ -7,11 +7,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
 @Component
 public class Heart extends BaseFlagCommand {
@@ -25,7 +25,7 @@ public class Heart extends BaseFlagCommand {
                 "\n`!!heart demi`: display a demi heart emote";
 
         try {
-            heart = ImageIO.read(ResourceUtils.getFile("classpath:flags/heart.png"));
+            heart = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("flags/heart.png")));
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load heart png", e);
         }
