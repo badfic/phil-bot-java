@@ -6,10 +6,10 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.util.Objects;
 import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.util.ResourceUtils;
 
 public abstract class BaseTwoUserImageMeme extends BaseSwampy {
 
@@ -30,7 +30,7 @@ public abstract class BaseTwoUserImageMeme extends BaseSwampy {
         this.recipientScale = recipientScale;
         this.recipientX = recipientX;
         this.recipientY = recipientY;
-        this.mainImage = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(mainImageLocation)));
+        this.mainImage = ImageIO.read(ResourceUtils.getFile("classpath:" + mainImageLocation));
         this.memeName = memeName;
     }
 
