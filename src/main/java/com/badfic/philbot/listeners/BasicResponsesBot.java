@@ -14,7 +14,6 @@ import io.honeybadger.reporter.HoneybadgerReporter;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.imageio.ImageIO;
@@ -28,6 +27,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ResourceUtils;
 
 public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends Command {
 
@@ -45,7 +45,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
     static {
         try {
-            HUG = ImageIO.read(Objects.requireNonNull(BasicResponsesBot.class.getClassLoader().getResourceAsStream("flags/hug.png")));
+            HUG = ImageIO.read(ResourceUtils.getFile("classpath:flags/hug.png"));
         } catch (IOException e) {
             throw new IllegalStateException("Could not load hug.png");
         }
@@ -78,9 +78,9 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
         // seed data if needed
         if (configRepository.findById(BaseResponsesConfig.SINGLETON_ID).isEmpty()) {
-            GenericBotResponsesConfigJson kidFriendlyConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(sfwBootstrapJson),
+            GenericBotResponsesConfigJson kidFriendlyConfig = objectMapper.readValue(ResourceUtils.getFile("classpath:" + sfwBootstrapJson),
                     GenericBotResponsesConfigJson.class);
-            GenericBotResponsesConfigJson nsfwConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(nsfwBootstrapJson),
+            GenericBotResponsesConfigJson nsfwConfig = objectMapper.readValue(ResourceUtils.getFile("classpath:" + nsfwBootstrapJson),
                     GenericBotResponsesConfigJson.class);
             nsfwConfig.getResponses().addAll(kidFriendlyConfig.getResponses());
 

@@ -1,6 +1,7 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.FileInputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.util.ResourceUtils;
 
 @ExtendWith(MockitoExtension.class)
 public class MapCommandTest {
@@ -36,7 +38,8 @@ public class MapCommandTest {
 
         Set<String> flagzipCountryCodes = new HashSet<>();
 
-        try (ZipInputStream zipFile = new ZipInputStream(getClass().getClassLoader().getResourceAsStream(MapCommand.MAP_ZIP_FILENAME))) {
+        try (FileInputStream fis = new FileInputStream(ResourceUtils.getFile("classpath:" + MapCommand.MAP_ZIP_FILENAME));
+             ZipInputStream zipFile = new ZipInputStream(fis)) {
             LocalFileHeader fileHeader;
             while ((fileHeader = zipFile.getNextEntry()) != null) {
                 String countryCode = fileHeader.getFileName().substring(0, fileHeader.getFileName().length() - 4);

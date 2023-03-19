@@ -7,6 +7,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
+import java.io.FileInputStream;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 
 @Component
 public class MapCommand extends BaseSwampy {
@@ -37,7 +39,7 @@ public class MapCommand extends BaseSwampy {
 
     @PostConstruct
     public void init() throws Exception {
-        countries = ImmutableList.copyOf(objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("map-trivia.json"),
+        countries = ImmutableList.copyOf(objectMapper.readValue(ResourceUtils.getFile("classpath:map-trivia.json"),
                 new TypeReference<List<MapTriviaObject>>() {}));
     }
 
@@ -76,7 +78,8 @@ public class MapCommand extends BaseSwampy {
             return;
         }
 
-        try (ZipInputStream zipFile = new ZipInputStream(getClass().getClassLoader().getResourceAsStream(MAP_ZIP_FILENAME))) {
+        try (FileInputStream fis = new FileInputStream(ResourceUtils.getFile("classpath:" + MapCommand.MAP_ZIP_FILENAME));
+             ZipInputStream zipFile = new ZipInputStream(fis)) {
             LocalFileHeader fileHeader;
             while ((fileHeader = zipFile.getNextEntry()) != null) {
                 if (fileHeader.getFileName().equalsIgnoreCase(mapTriviaObject.code() + ".png")) {

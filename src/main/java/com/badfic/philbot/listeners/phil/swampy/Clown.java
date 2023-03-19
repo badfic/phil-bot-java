@@ -7,11 +7,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Objects;
 import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 
 @Component
 public class Clown extends BaseFlagCommand {
@@ -25,7 +25,7 @@ public class Clown extends BaseFlagCommand {
                 "\n`!!clown demi`: display a demi clown emote";
 
         try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("flags/clown.png")));
+            image = ImageIO.read(ResourceUtils.getFile("classpath:flags/clown.png"));
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load clown png", e);
         }
