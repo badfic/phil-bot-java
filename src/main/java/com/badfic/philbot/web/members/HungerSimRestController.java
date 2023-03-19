@@ -1,7 +1,6 @@
 package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.data.DiscordUser;
-import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.hungersim.Game;
 import com.badfic.philbot.data.hungersim.GameRepository;
 import com.badfic.philbot.data.hungersim.Outcome;
@@ -54,9 +53,6 @@ public class HungerSimRestController extends BaseMembersController {
 
     @Autowired
     private PlayerRepository playerRepository;
-
-    @Autowired
-    private DiscordUserRepository discordUserRepository;
 
     @Autowired
     private PronounRepository pronounRepository;
