@@ -20,7 +20,7 @@
 		<commons-io.version>2.11.0</commons-io.version>
 		<guava.version>31.1-jre</guava.version>
 		<honeybadger.version>2.1.0</honeybadger.version>
-		<jda.version>5.0.0-beta.5</jda.version>
+		<jda.version>5.0.0-beta.6</jda.version>
 		<jda-utilities.version>2.0-SNAPSHOT</jda-utilities.version>
 		<jsoup.version>1.15.4</jsoup.version>
 		<jumblr.version>0.0.13</jumblr.version>
