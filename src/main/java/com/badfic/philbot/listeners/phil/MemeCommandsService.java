@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -100,7 +100,7 @@ public class MemeCommandsService extends BaseService {
         }
     }
 
-    public void executeCustomCommand(String commandName, TextChannel textChannel) {
+    public void executeCustomCommand(String commandName, GuildMessageChannel textChannel) {
         if (!StringUtils.isAlphanumeric(commandName)) {
             return;
         }
@@ -121,7 +121,7 @@ public class MemeCommandsService extends BaseService {
                 }
             }
 
-            behradJda.getTextChannelById(textChannel.getIdLong())
+            behradJda.getChannelById(textChannel.getClass(), textChannel.getIdLong())
                     .sendMessage(url)
                     .queue();
         }

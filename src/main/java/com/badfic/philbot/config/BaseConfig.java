@@ -332,7 +332,7 @@ public class BaseConfig {
                                         }
                                     }
 
-                                    memeCommandsService.executeCustomCommand(parts[0], event.getChannel().asTextChannel());
+                                    memeCommandsService.executeCustomCommand(parts[0], event.getChannel().asGuildMessageChannel());
                                 }
                             }
                         }

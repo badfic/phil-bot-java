@@ -129,7 +129,7 @@ public class PhilMessageListener extends ListenerAdapter {
         }
 
         if (StringUtils.startsWith(msgContent, "!") && !StringUtils.trim(msgContent).equals("!")) {
-            memeCommandsService.executeCustomCommand(StringUtils.trim(StringUtils.substring(msgContent, 1)), event.getChannel().asTextChannel());
+            memeCommandsService.executeCustomCommand(StringUtils.trim(StringUtils.substring(msgContent, 1)), event.getChannel().asGuildMessageChannel());
         }
 
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
