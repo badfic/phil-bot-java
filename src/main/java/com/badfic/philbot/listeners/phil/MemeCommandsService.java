@@ -17,7 +17,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
@@ -28,13 +27,13 @@ public class MemeCommandsService extends BaseService {
 
     private static final TypeReference<Set<String>> STRING_LIST = new TypeReference<>() {};
 
-    @Autowired
-    private MemeCommandRepository memeCommandRepository;
+    private final MemeCommandRepository memeCommandRepository;
+    private final JDA behradJda;
 
-    @Autowired
-    @Qualifier("behradJda")
-    @Lazy
-    protected JDA behradJda;
+    public MemeCommandsService(MemeCommandRepository memeCommandRepository, @Qualifier("behradJda") @Lazy JDA behradJda) {
+        this.memeCommandRepository = memeCommandRepository;
+        this.behradJda = behradJda;
+    }
 
     public List<MemeCommandEntity> findAll() {
         List<MemeCommandEntity> memes = memeCommandRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
@@ -46,8 +45,8 @@ public class MemeCommandsService extends BaseService {
     }
 
     public void saveMeme(MemeForm form) {
-        String memeUrl = form.getMemeUrl();
-        String memeName = form.getMemeName();
+        String memeUrl = form.memeUrl();
+        String memeName = form.memeName();
 
         if (Stream.of(memeName, memeUrl).anyMatch(StringUtils::isBlank)) {
             throw new IllegalArgumentException("Please provide a valid name and url");
@@ -82,11 +81,7 @@ public class MemeCommandsService extends BaseService {
             throw new IllegalArgumentException("A meme by that name already exists");
         }
 
-        MemeCommandEntity meme = new MemeCommandEntity();
-        meme.setName(lowercaseName);
-        meme.setUrl(memeUrl);
-
-        memeCommandRepository.save(meme);
+        memeCommandRepository.save(new MemeCommandEntity(lowercaseName, memeUrl));
     }
 
     public void deleteMeme(String memeName) {

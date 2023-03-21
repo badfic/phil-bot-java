@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -45,26 +44,25 @@ public class HungerSimRestController extends BaseMembersController {
     public record PronounDto(String subject, String object, String possessive, String self) {}
     public record RoundDto(String name, String description, Boolean openingRound, List<String> outcomeIds) {}
 
-    @Autowired
-    private HungerSimService hungerSimService;
+    private final HungerSimService hungerSimService;
+    private final GameRepository gameRepository;
+    private final PlayerRepository playerRepository;
+    private final PronounRepository pronounRepository;
+    private final OutcomeRepository outcomeRepository;
+    private final RoundRepository roundRepository;
+    private final RoundOutcomeRepository roundOutcomeRepository;
 
-    @Autowired
-    private GameRepository gameRepository;
-
-    @Autowired
-    private PlayerRepository playerRepository;
-
-    @Autowired
-    private PronounRepository pronounRepository;
-
-    @Autowired
-    private OutcomeRepository outcomeRepository;
-
-    @Autowired
-    private RoundRepository roundRepository;
-
-    @Autowired
-    private RoundOutcomeRepository roundOutcomeRepository;
+    public HungerSimRestController(HungerSimService hungerSimService, GameRepository gameRepository, PlayerRepository playerRepository,
+                                   PronounRepository pronounRepository, OutcomeRepository outcomeRepository, RoundRepository roundRepository,
+                                   RoundOutcomeRepository roundOutcomeRepository) {
+        this.hungerSimService = hungerSimService;
+        this.gameRepository = gameRepository;
+        this.playerRepository = playerRepository;
+        this.pronounRepository = pronounRepository;
+        this.outcomeRepository = outcomeRepository;
+        this.roundRepository = roundRepository;
+        this.roundOutcomeRepository = roundOutcomeRepository;
+    }
 
     /** PRONOUNS **/
 

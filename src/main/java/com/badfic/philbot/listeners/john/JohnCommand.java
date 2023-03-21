@@ -10,24 +10,19 @@ import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.Optional;
 import java.util.Set;
 import net.dv8tion.jda.api.JDA;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JohnCommand extends BasicResponsesBot<JohnResponsesConfig> {
+    private final JDA johnJda;
 
-    @Autowired
-    @Qualifier("johnJda")
-    @Lazy
-    private JDA johnJda;
-
-    @Autowired
-    public JohnCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, JohnResponsesConfigRepository johnResponsesConfigRepository)
-            throws Exception {
+    public JohnCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, JohnResponsesConfigRepository johnResponsesConfigRepository,
+                       @Qualifier("johnJda") @Lazy JDA johnJda) throws Exception {
         super(johnResponsesConfigRepository, objectMapper, honeybadgerReporter, "john", "john-kidFriendlyConfig.json", "john-nsfwConfig.json",
                 JohnResponsesConfig::new);
+        this.johnJda = johnJda;
     }
 
     @Override
@@ -35,10 +30,10 @@ public class JohnCommand extends BasicResponsesBot<JohnResponsesConfig> {
         String msgContent = event.getMessage().getContentRaw();
         String channelName = event.getChannel().getName();
         Set<String> responses;
-        if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
-            responses = responsesConfig.getSfwConfig().getResponses();
-        } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
-            responses = responsesConfig.getNsfwConfig().getResponses();
+        if (responsesConfig.getSfwConfig().channels().contains(channelName)) {
+            responses = responsesConfig.getSfwConfig().responses();
+        } else if (responsesConfig.getNsfwConfig().channels().contains(channelName)) {
+            responses = responsesConfig.getNsfwConfig().responses();
         } else {
             return Optional.empty();
         }

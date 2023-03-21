@@ -7,9 +7,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "reminder")
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Reminder {
 
     @Id
@@ -28,9 +36,6 @@ public class Reminder {
     @Column
     private LocalDateTime dueDate;
 
-    public Reminder() {
-    }
-
     public Reminder(long userId, long channelId, String reminder, LocalDateTime dueDate) {
         this.userId = userId;
         this.channelId = channelId;
@@ -38,39 +43,4 @@ public class Reminder {
         this.dueDate = dueDate;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public long getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(long channelId) {
-        this.channelId = channelId;
-    }
-
-    public String getReminder() {
-        return reminder;
-    }
-
-    public void setReminder(String reminder) {
-        this.reminder = reminder;
-    }
-
-    public LocalDateTime getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(LocalDateTime dueDate) {
-        this.dueDate = dueDate;
-    }
 }

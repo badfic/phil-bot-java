@@ -10,7 +10,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,8 +21,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TriviaController extends BaseMembersController {
 
-    @Autowired
-    private TriviaRepository triviaRepository;
+    private final TriviaRepository triviaRepository;
+
+    public TriviaController(TriviaRepository triviaRepository) {
+        this.triviaRepository = triviaRepository;
+    }
 
     @GetMapping(value = "/trivia", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getTriviaForm(HttpServletRequest httpServletRequest) throws Exception {

@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
+import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +39,16 @@ public abstract class BaseMembersController {
     protected static final String AWAITING_REDIRECT_URL = "AwaitingRedirectUrl";
     protected static final String CHROMECAST_AUTH = "ChromecastAuth";
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     protected BaseConfig baseConfig;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     protected RestTemplate restTemplate;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     protected DiscordUserRepository discordUserRepository;
 
-    @Autowired
-    @Qualifier("philJda")
+    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda")})
     protected JDA philJda;
 
     protected void checkSession(HttpServletRequest httpServletRequest, boolean requiresAdmin) throws UnsupportedEncodingException {
@@ -83,9 +83,9 @@ public abstract class BaseMembersController {
             DiscordApiIdentityResponse discordApiIdentityResponse = Objects.requireNonNull(
                     getDiscordApiIdentityResponse((String) httpSession.getAttribute(DISCORD_TOKEN)));
 
-            Member memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(discordApiIdentityResponse.getId());
+            Member memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(discordApiIdentityResponse.id());
             if (memberById == null || (requiresAdmin && !hasRole(memberById, Constants.ADMIN_ROLE))) {
-                throw new UnauthorizedException(discordApiIdentityResponse.getId() +
+                throw new UnauthorizedException(discordApiIdentityResponse.id() +
                         " You are not authorized, you must be a swamp " + (requiresAdmin ? "admin" : "member") + " to access this page");
             }
         } catch (UnauthorizedException e) {
@@ -112,8 +112,8 @@ public abstract class BaseMembersController {
             headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
             ResponseEntity<DiscordApiLoginResponse> loginResponse = restTemplate.exchange(authApi, HttpMethod.POST,
                     new HttpEntity<>(body, headers), DiscordApiLoginResponse.class);
-            httpSession.setAttribute(DISCORD_TOKEN, loginResponse.getBody().getAccessToken());
-            httpSession.setAttribute(DISCORD_REFRESH_TOKEN, loginResponse.getBody().getRefreshToken());
+            httpSession.setAttribute(DISCORD_TOKEN, loginResponse.getBody().accessToken());
+            httpSession.setAttribute(DISCORD_REFRESH_TOKEN, loginResponse.getBody().refreshToken());
         }
     }
 

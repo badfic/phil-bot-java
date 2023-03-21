@@ -36,8 +36,7 @@ public abstract class BaseFlagCommand extends BaseSwampy {
         ImmutableMap.Builder<String, BufferedImage> builder = ImmutableMap.builder();
 
         for (String flagName : FLAG_NAMES) {
-            try {
-                InputStream prideFlagStream = BaseFlagCommand.class.getClassLoader().getResourceAsStream("flags/" + flagName + ".png");
+            try (InputStream prideFlagStream = BaseFlagCommand.class.getClassLoader().getResourceAsStream("flags/" + flagName + ".png")) {
                 BufferedImage image = ImageIO.read(Objects.requireNonNull(prideFlagStream));
                 builder.put(flagName, image);
             } catch (IOException e) {

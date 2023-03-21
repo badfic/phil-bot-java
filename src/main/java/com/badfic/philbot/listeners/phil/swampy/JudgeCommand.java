@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,15 +34,15 @@ public class JudgeCommand extends BaseSwampy {
         }
     }
 
-    @Autowired
-    private CourtCaseRepository courtCaseRepository;
+    private final CourtCaseRepository courtCaseRepository;
 
-    public JudgeCommand() {
+    public JudgeCommand(CourtCaseRepository courtCaseRepository) {
         name = "judge";
         help = """
                 `!!judge @user for such and such crime` To judge a user for various crimes. People then vote on their sentence in mega-hell
                 `!!judge mistrial @user` if you accidentally judged them you can cancel the trial, but only if they have not been convicted yet.
                 `!!judge show @user` to see how much longer the person has for their trial or their sentence.""";
+        this.courtCaseRepository = courtCaseRepository;
     }
 
     @Override

@@ -21,19 +21,18 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class QuoteTrivia extends BaseSwampy {
 
-    @Autowired
-    private QuoteRepository quoteRepository;
+    private final QuoteRepository quoteRepository;
 
-    public QuoteTrivia() {
+    public QuoteTrivia(QuoteRepository quoteRepository) {
         name = "quoteTrivia";
         ownerCommand = true;
+        this.quoteRepository = quoteRepository;
     }
 
     @Override

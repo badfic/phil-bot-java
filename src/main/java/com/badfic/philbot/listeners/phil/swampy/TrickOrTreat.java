@@ -4,25 +4,22 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class TrickOrTreat extends BaseSwampy {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     public TrickOrTreat() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "trickortreat";
@@ -79,7 +76,7 @@ public class TrickOrTreat extends BaseSwampy {
                         }
                     }
                 } catch (Exception e) {
-                    logger.error("Failed to trick or treat user [id={}]", user.getId(), e);
+                    log.error("Failed to trick or treat user [id={}]", user.getId(), e);
                     honeybadgerReporter.reportError(e, "Failed to trick or treat user: " + user.getId());
                 }
             }

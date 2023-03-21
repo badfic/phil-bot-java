@@ -4,26 +4,23 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.lang3.mutable.MutableLong;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class Shrekoning extends BaseSwampy {
-
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public Shrekoning() {
         requiredRole = Constants.ADMIN_ROLE;
@@ -74,7 +71,7 @@ public class Shrekoning extends BaseSwampy {
                                     .append(">\n");
                         }
                     } catch (Exception e) {
-                        logger.error("Failed to shrekoning user [id={}]", user.getId(), e);
+                        log.error("Failed to shrekoning user [id={}]", user.getId(), e);
                         honeybadgerReporter.reportError(e, "Failed to shrekoning user: " + user.getId());
                     }
                 });

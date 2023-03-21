@@ -4,23 +4,19 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.badfic.philbot.service.MinuteTickable;
-import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
-
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     @Override
     public void runMinutelyTask() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
@@ -71,7 +67,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                             }
                         }
                     } catch (Exception e) {
-                        logger.error("Exception with swiper savior branch", e);
+                        log.error("Exception with swiper savior branch", e);
                         honeybadgerReporter.reportError(e, "Exception during swiper savior logic");
                     }
                 } else {
@@ -85,7 +81,7 @@ public class SwiperTickable extends NonCommandSwampy implements MinuteTickable {
                                     theSwiper.swiperWonImg());
                         }
                     } catch (Exception e) {
-                        logger.error("Exception looking up swiper victim [id={}] after they were not saved", victim.get().getId(), e);
+                        log.error("Exception looking up swiper victim [id={}] after they were not saved", victim.get().getId(), e);
                         honeybadgerReporter.reportError(e, "Exception looking up swiper victim after they were not saved: " + victim.get().getId());
                     }
                 }

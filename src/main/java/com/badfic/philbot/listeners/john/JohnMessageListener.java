@@ -10,13 +10,13 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -25,15 +25,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class JohnMessageListener extends BaseService {
-
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final Pattern JOHN_PATTERN = Constants.compileWords("john|constantine|johnno|johnny|hellblazer");
     private static final Pattern REMINDER_PATTER = Pattern.compile("\\b(remind me in |remind <@![0-9]+> in )[0-9]+\\b", Pattern.CASE_INSENSITIVE);
     private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
@@ -99,14 +95,15 @@ public class JohnMessageListener extends BaseService {
             .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
             .build();
 
-    @Autowired
-    private JohnCommand johnCommand;
+    private final JohnCommand johnCommand;
+    private final ReminderRepository reminderRepository;
+    private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
 
-    @Autowired
-    private ReminderRepository reminderRepository;
-
-    @Autowired
-    private SnarkyReminderResponseRepository snarkyReminderResponseRepository;
+    public JohnMessageListener(JohnCommand johnCommand, ReminderRepository reminderRepository, SnarkyReminderResponseRepository snarkyReminderResponseRepository) {
+        this.johnCommand = johnCommand;
+        this.reminderRepository = reminderRepository;
+        this.snarkyReminderResponseRepository = snarkyReminderResponseRepository;
+    }
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw();
@@ -211,7 +208,7 @@ public class JohnMessageListener extends BaseService {
                             snarkyReminderResponse.getResponse().replace("<name>", "<@!" + message.getAuthor().getId() + ">"))
                     .queue();
         } catch (Exception e) {
-            logger.error("Exception trying to parse a reminder. [msgText={}]", message.getContentRaw(), e);
+            log.error("Exception trying to parse a reminder. [msgText={}]", message.getContentRaw(), e);
             honeybadgerReporter.reportError(e, "Exception trying to parse reminder. MsgText=" + message.getContentRaw());
         }
     }

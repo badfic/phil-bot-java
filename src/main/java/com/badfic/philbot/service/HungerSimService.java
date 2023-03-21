@@ -17,23 +17,23 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class HungerSimService extends BaseService {
 
-    @Autowired
-    private GameRepository gameRepository;
+    private final GameRepository gameRepository;
+    private final RoundRepository roundRepository;
+    private final RoundOutcomeRepository roundOutcomeRepository;
+    private final PlayerRepository playerRepository;
 
-    @Autowired
-    private RoundRepository roundRepository;
-
-    @Autowired
-    private RoundOutcomeRepository roundOutcomeRepository;
-
-    @Autowired
-    private PlayerRepository playerRepository;
+    public HungerSimService(GameRepository gameRepository, RoundRepository roundRepository, RoundOutcomeRepository roundOutcomeRepository,
+                            PlayerRepository playerRepository) {
+        this.gameRepository = gameRepository;
+        this.roundRepository = roundRepository;
+        this.roundOutcomeRepository = roundOutcomeRepository;
+        this.playerRepository = playerRepository;
+    }
 
     public synchronized Game runNextStep() {
         Game game = gameRepository.findById(Game.SINGLETON_ID)

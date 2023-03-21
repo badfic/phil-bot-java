@@ -7,12 +7,9 @@ import com.badfic.philbot.config.UnauthorizedException;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,22 +17,23 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalControllerExceptionHandler {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private final BaseConfig baseConfig;
+    private final HoneybadgerReporter honeybadgerReporter;
 
-    @Autowired
-    private BaseConfig baseConfig;
-
-    @Autowired
-    private HoneybadgerReporter honeybadgerReporter;
+    public GlobalControllerExceptionHandler(BaseConfig baseConfig, HoneybadgerReporter honeybadgerReporter) {
+        this.baseConfig = baseConfig;
+        this.honeybadgerReporter = honeybadgerReporter;
+    }
 
     @ExceptionHandler(NewSessionException.class)
-    public ResponseEntity<Object> handleNewSessionException(NewSessionException e) throws Exception {
+    public ResponseEntity<Object> handleNewSessionException(NewSessionException e) {
         StringBuilder urlBuilder = new StringBuilder()
                 .append("https://discord.com/api/oauth2/authorize?client_id=")
                 .append(baseConfig.discordClientId)
                 .append("&redirect_uri=")
-                .append(URLEncoder.encode(baseConfig.hostname + "/members/home", StandardCharsets.UTF_8.name()))
+                .append(URLEncoder.encode(baseConfig.hostname + "/members/home", StandardCharsets.UTF_8))
                 .append("&response_type=code&scope=identify");
         return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, urlBuilder.toString()).build();
     }
@@ -47,7 +45,7 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException e, HttpSession httpSession) {
-        logger.error("Unauthorized Exception caught at top level", e);
+        log.error("Unauthorized Exception caught at top level", e);
         httpSession.invalidate();
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
@@ -59,7 +57,7 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception e, HttpServletRequest request) {
-        logger.error("Exception caught at top level", e);
+        log.error("Exception caught at top level", e);
         honeybadgerReporter.reportError(e, request, "Controller Exception caught at top level");
         return new ResponseEntity<>("Generic Top Level Exception, ask Santiago. Something might have broke.", HttpStatus.UNAUTHORIZED);
     }

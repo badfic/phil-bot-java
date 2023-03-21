@@ -5,9 +5,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "court_case")
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of = "defendantId")
 public class CourtCase {
     @Id
     private long defendantId;
@@ -27,9 +35,6 @@ public class CourtCase {
     @Column
     private LocalDateTime releaseDate;
 
-    public CourtCase() {
-    }
-
     public CourtCase(long defendantId, long accuserId, long trialMessageId, String crime, LocalDateTime trialDate) {
         this.defendantId = defendantId;
         this.accuserId = accuserId;
@@ -38,51 +43,4 @@ public class CourtCase {
         this.trialDate = trialDate;
     }
 
-    public long getDefendantId() {
-        return defendantId;
-    }
-
-    public void setDefendantId(long defendantId) {
-        this.defendantId = defendantId;
-    }
-
-    public long getAccuserId() {
-        return accuserId;
-    }
-
-    public void setAccuserId(long accuserId) {
-        this.accuserId = accuserId;
-    }
-
-    public long getTrialMessageId() {
-        return trialMessageId;
-    }
-
-    public void setTrialMessageId(long trialMessageId) {
-        this.trialMessageId = trialMessageId;
-    }
-
-    public String getCrime() {
-        return crime;
-    }
-
-    public void setCrime(String crime) {
-        this.crime = crime;
-    }
-
-    public LocalDateTime getTrialDate() {
-        return trialDate;
-    }
-
-    public void setTrialDate(LocalDateTime trialDate) {
-        this.trialDate = trialDate;
-    }
-
-    public LocalDateTime getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(LocalDateTime releaseDate) {
-        this.releaseDate = releaseDate;
-    }
 }

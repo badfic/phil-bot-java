@@ -53,23 +53,23 @@ public class HomeController extends BaseMembersController {
                     new HttpEntity<>(body, headers), DiscordApiLoginResponse.class);
 
             DiscordApiLoginResponse discordApiLoginResponse = loginResponse.getBody();
-            String accessToken = discordApiLoginResponse.getAccessToken();
+            String accessToken = discordApiLoginResponse.accessToken();
 
             DiscordApiIdentityResponse discordApiIdentityResponse = getDiscordApiIdentityResponse(accessToken);
 
-            Member memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(discordApiIdentityResponse.getId());
+            Member memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(discordApiIdentityResponse.id());
             if (memberById != null) {
                 Boolean isMod = hasRole(memberById, Constants.ADMIN_ROLE);
                 Boolean is18 = hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE);
 
                 httpServletRequest.getSession().setAttribute(DISCORD_TOKEN, accessToken);
-                httpServletRequest.getSession().setAttribute(DISCORD_REFRESH_TOKEN, discordApiLoginResponse.getRefreshToken());
-                httpServletRequest.getSession().setAttribute(DISCORD_ID, discordApiIdentityResponse.getId());
-                httpServletRequest.getSession().setAttribute(DISCORD_USERNAME, discordApiIdentityResponse.getUsername());
+                httpServletRequest.getSession().setAttribute(DISCORD_REFRESH_TOKEN, discordApiLoginResponse.refreshToken());
+                httpServletRequest.getSession().setAttribute(DISCORD_ID, discordApiIdentityResponse.id());
+                httpServletRequest.getSession().setAttribute(DISCORD_USERNAME, discordApiIdentityResponse.username());
                 httpServletRequest.getSession().setAttribute(DISCORD_IS_MOD, isMod);
                 httpServletRequest.getSession().setAttribute(DISCORD_IS_18, is18);
             } else {
-                throw new UnauthorizedException(discordApiIdentityResponse.getId() +
+                throw new UnauthorizedException(discordApiIdentityResponse.id() +
                         " You are not authorized, you must be a member of the swamp to access this page");
             }
         }

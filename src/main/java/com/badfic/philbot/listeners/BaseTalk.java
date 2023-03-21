@@ -5,6 +5,7 @@ import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.concurrent.TimeUnit;
+import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
@@ -15,12 +16,10 @@ import org.springframework.context.annotation.Lazy;
 
 public abstract class BaseTalk extends Command {
 
-    @Autowired
-    @Qualifier("philJda")
-    @Lazy
+    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
     protected JDA philJda;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     private BaseConfig baseConfig;
 
     public BaseTalk(String name) {

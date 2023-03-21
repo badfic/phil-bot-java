@@ -23,7 +23,6 @@ import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RegExUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -32,12 +31,12 @@ public class HungerGamesWinnersService extends BaseSwampy implements DailyTickab
 
     private static final String REACTION_EMOJI = "\uD83C\uDFC1";
 
-    @Autowired
-    private HungerGamesWinnerRepository hungerGamesWinnerRepository;
+    private final HungerGamesWinnerRepository hungerGamesWinnerRepository;
 
-    public HungerGamesWinnersService() {
+    public HungerGamesWinnersService(HungerGamesWinnerRepository hungerGamesWinnerRepository) {
         name = "updateHungerGamesWinners";
         ownerCommand = true;
+        this.hungerGamesWinnerRepository = hungerGamesWinnerRepository;
     }
 
     @Override

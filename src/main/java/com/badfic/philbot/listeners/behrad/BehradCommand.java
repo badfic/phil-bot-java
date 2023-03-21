@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -47,16 +46,13 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
     private static final Pattern WEED_PATTERN = Constants.compileWords("marijuana|weed|420|stoned|high|stoner|kush");
     private static final Pattern SLOTH_PATTERN = Constants.compileWords("sup sloth");
 
-    @Autowired
-    @Qualifier("behradJda")
-    @Lazy
-    private JDA behradJda;
+    private final JDA behradJda;
 
-    @Autowired
-    public BehradCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, BehradResponsesConfigRepository behradResponsesConfigRepository)
-            throws Exception {
+    public BehradCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, BehradResponsesConfigRepository behradResponsesConfigRepository,
+                         @Qualifier("behradJda") @Lazy JDA behradJda) throws Exception {
         super(behradResponsesConfigRepository, objectMapper, honeybadgerReporter, "behrad", "behrad-kidFriendlyConfig.json", "behrad-nsfwConfig.json",
                 BehradResponsesConfig::new);
+        this.behradJda = behradJda;
     }
 
     @Scheduled(cron = "${swampy.schedule.behrad.humpday}", zone = "${swampy.schedule.timezone}")
@@ -70,16 +66,16 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
         String msgContent = event.getMessage().getContentRaw();
         String channelName = event.getChannel().getName();
         Set<String> responses;
-        if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
-            responses = responsesConfig.getSfwConfig().getResponses();
-        } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
+        if (responsesConfig.getSfwConfig().channels().contains(channelName)) {
+            responses = responsesConfig.getSfwConfig().responses();
+        } else if (responsesConfig.getNsfwConfig().channels().contains(channelName)) {
             if (NAME_PATTERN.matcher(msgContent).find()) {
                 event.getJDA().getTextChannelById(event.getChannel().getId())
                         .sendMessage(Constants.pickRandom(SHAYAN_IMGS)).queue();
                 return Optional.empty();
             }
 
-            responses = responsesConfig.getNsfwConfig().getResponses();
+            responses = responsesConfig.getNsfwConfig().responses();
         } else {
             return Optional.empty();
         }

@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,7 +22,6 @@ public class KeanuMessageListener {
 
     private final KeanuCommand keanuCommand;
 
-    @Autowired
     public KeanuMessageListener(KeanuCommand keanuCommand) {
         this.keanuCommand = keanuCommand;
     }

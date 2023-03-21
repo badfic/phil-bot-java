@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ReflectionUtils;
@@ -22,8 +21,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class CommandsController extends BaseMembersController {
 
-    @Autowired
-    private List<Command> commands;
+    private final List<Command> commands;
+
+    public CommandsController(List<Command> commands) {
+        this.commands = commands;
+    }
 
     @GetMapping(value = "/commands", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {

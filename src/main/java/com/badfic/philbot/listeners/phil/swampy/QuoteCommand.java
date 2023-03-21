@@ -23,7 +23,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -35,15 +34,10 @@ public class QuoteCommand extends BaseSwampy implements DailyTickable {
 
     private static final String SPEECH_BUBBLE_EMOJI = "\uD83D\uDCAC";
 
-    @Autowired
-    @Qualifier("johnJda")
-    @Lazy
-    private JDA johnJda;
+    private final JDA johnJda;
+    private final QuoteRepository quoteRepository;
 
-    @Autowired
-    private QuoteRepository quoteRepository;
-
-    public QuoteCommand() {
+    public QuoteCommand(@Qualifier("johnJda") @Lazy JDA johnJda, QuoteRepository quoteRepository) {
         name = "quote";
         aliases = new String[] {"quotes"};
         help = """
@@ -53,6 +47,8 @@ public class QuoteCommand extends BaseSwampy implements DailyTickable {
                 `!!quote stats` returns statistics about all quotes
                 `!!quote stats @Santiago` returns statistics about Santiago
                 `!!quote cache` runs the meme saver if a channel is configured""";
+        this.johnJda = johnJda;
+        this.quoteRepository = quoteRepository;
     }
 
     @Override

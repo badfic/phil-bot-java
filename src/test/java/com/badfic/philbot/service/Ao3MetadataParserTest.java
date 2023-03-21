@@ -2,6 +2,7 @@ package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
 import io.honeybadger.reporter.HoneybadgerReporter;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Objects;
@@ -37,7 +38,9 @@ public class Ao3MetadataParserTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        work = IOUtils.toString(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("ao3-test.html")), StandardCharsets.UTF_8);
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("ao3-test.html")) {
+            work = IOUtils.toString(Objects.requireNonNull(stream), StandardCharsets.UTF_8);
+        }
     }
 
     @Test

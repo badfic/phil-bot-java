@@ -13,6 +13,7 @@ import com.jagrosh.jdautilities.command.SlashCommand;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -26,33 +27,31 @@ import org.springframework.web.client.RestTemplate;
 
 public abstract class BaseSwampySlash extends SlashCommand {
 
-    @Autowired
-    @Qualifier("philJda")
-    @Lazy
+    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
     protected JDA philJda;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     protected DiscordUserRepository discordUserRepository;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     protected SwampyGamesConfigRepository swampyGamesConfigRepository;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     protected ObjectMapper objectMapper;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     protected BaseConfig baseConfig;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     protected HoneybadgerReporter honeybadgerReporter;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     protected RestTemplate restTemplate;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     protected OkHttpClient okHttpClient;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     protected ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     protected DiscordUser getDiscordUserByMember(Member member) {

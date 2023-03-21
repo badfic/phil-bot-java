@@ -3,26 +3,22 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.badfic.philbot.service.MinuteTickable;
-import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class MapTickable extends NonCommandSwampy implements MinuteTickable {
-
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     @Override
     public void runMinutelyTask() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
@@ -57,7 +53,7 @@ public class MapTickable extends NonCommandSwampy implements MinuteTickable {
                                     .append(u.getId())
                                     .append(">\n");
                         } catch (Exception e) {
-                            logger.error("Failed to give map trivia points to user [id={}]", u.getId(), e);
+                            log.error("Failed to give map trivia points to user [id={}]", u.getId(), e);
                             description.append("OOPS: Unable to give points to <@!")
                                     .append(u.getId())
                                     .append(">\n");

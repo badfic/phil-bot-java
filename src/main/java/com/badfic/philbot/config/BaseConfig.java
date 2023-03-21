@@ -22,7 +22,6 @@ import com.jagrosh.jdautilities.command.CommandListener;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.tumblr.jumblr.JumblrClient;
 import io.honeybadger.reporter.HoneybadgerReporter;
-import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +29,7 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -41,8 +41,6 @@ import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -55,10 +53,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
+@Slf4j
 public class BaseConfig {
-
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     private static final String[] KEANU_STATUS_LIST = {
             "Bill & Ted Face the Music",
             "The SpongeBob Movie: Sponge on the Run",
@@ -175,7 +171,7 @@ public class BaseConfig {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
         threadPoolTaskExecutor.setAllowCoreThreadTimeOut(true);
         threadPoolTaskExecutor.setRejectedExecutionHandler((runnable, executor) -> {
-            logger.error("Rejected task in threadPoolTaskExecutor. [runnable={}]", runnable);
+            log.error("Rejected task in threadPoolTaskExecutor. [runnable={}]", runnable);
             honeybadgerReporter().reportError(new RuntimeException("Rejected task in threadPoolTaskExecutor"), runnable,
                     "Rejected task in threadPoolTaskExecutor");
         });
@@ -187,11 +183,11 @@ public class BaseConfig {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
         threadPoolTaskScheduler.setPoolSize(2);
         threadPoolTaskScheduler.setRejectedExecutionHandler((runnable, executor) -> {
-            logger.error("Rejected task in taskScheduler. [runnable={}]", runnable);
+            log.error("Rejected task in taskScheduler. [runnable={}]", runnable);
             honeybadgerReporter().reportError(new RuntimeException("Rejected task in taskScheduler"), runnable, "Rejected task in taskScheduler");
         });
         threadPoolTaskScheduler.setErrorHandler(t -> {
-            logger.error("Error in scheduled task", t);
+            log.error("Error in scheduled task", t);
             honeybadgerReporter().reportError(t, null, "Error in scheduled task");
         });
         return threadPoolTaskScheduler;
@@ -311,7 +307,7 @@ public class BaseConfig {
                 .setListener(new CommandListener() {
                     @Override
                     public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
-                        logger.error("Exception in command: " + command.getName(), throwable);
+                        log.error("Exception in command: " + command.getName(), throwable);
                         honeybadgerReporter.reportError(throwable, event, "Exception in command: " + command.getName());
                     }
 

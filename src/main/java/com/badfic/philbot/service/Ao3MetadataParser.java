@@ -3,7 +3,7 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.google.common.annotations.VisibleForTesting;
 import java.awt.Color;
-import java.lang.invoke.MethodHandles;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.lang3.StringUtils;
@@ -12,8 +12,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,8 +21,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 
 @Component
+@Slf4j
 public class Ao3MetadataParser extends BaseService {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public boolean parseLink(String link, String channelName) {
         try {
@@ -39,7 +37,7 @@ public class Ao3MetadataParser extends BaseService {
             String work = loginResponse.getBody();
             return parseWork(link, work, channelName);
         } catch (Exception e) {
-            logger.error("Failed to download ao3 [link={}]", link, e);
+            log.error("Failed to download ao3 [link={}]", link, e);
             honeybadgerReporter.reportError(e, null, "Failed to download ao3 link: " + link);
             return false;
         }
@@ -225,7 +223,7 @@ public class Ao3MetadataParser extends BaseService {
             channel.sendMessageEmbeds(messageEmbed).queue();
             return true;
         } catch (Exception e) {
-            logger.error("Failed to parse ao3 [link={}]", originalLink, e);
+            log.error("Failed to parse ao3 [link={}]", originalLink, e);
             honeybadgerReporter.reportError(e, null, "Failed to parse ao3 link " + originalLink);
             return false;
         }

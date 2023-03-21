@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.imageio.ImageIO;
@@ -25,7 +26,9 @@ public class Heart extends BaseFlagCommand {
                 "\n`!!heart demi`: display a demi heart emote";
 
         try {
-            heart = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("flags/heart.png")));
+            try (InputStream stream = getClass().getClassLoader().getResourceAsStream("flags/heart.png")) {
+                heart = ImageIO.read(Objects.requireNonNull(stream));
+            }
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load heart png", e);
         }

@@ -17,11 +17,11 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -45,16 +45,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class PhilMessageListener extends ListenerAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final Cache<String, Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = CacheBuilder.newBuilder()
             .maximumSize(200)
             .expireAfterWrite(15, TimeUnit.MINUTES)
@@ -66,73 +63,49 @@ public class PhilMessageListener extends ListenerAdapter {
             .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
             .build();
 
-    @Autowired
+    private final BehradMessageListener behradMessageListener;
+    private final KeanuMessageListener keanuMessageListener;
+    private final AntoniaMessageListener antoniaMessageListener;
+    private final JohnMessageListener johnMessageListener;
+    private final JDA behradJda;
+    private final JDA keanuJda;
+    private final JDA antoniaJda;
+    private final JDA johnJda;
+    private final NsfwQuoteCommand nsfwQuoteCommand;
+    private final QuoteCommand quoteCommand;
+    private final PhilCommand philCommand;
+    private final SwampyCommand swampyCommand;
+    private final MemeCommandsService memeCommandsService;
+    private final Ao3MetadataParser ao3MetadataParser;
+    private final MemberCount memberCount;
+    private final BaseConfig baseConfig;
+    private final CommandClient philCommandClient;
+
     @Lazy
-    private BehradMessageListener behradMessageListener;
-
-    @Autowired
-    @Lazy
-    private KeanuMessageListener keanuMessageListener;
-
-    @Autowired
-    @Lazy
-    private AntoniaMessageListener antoniaMessageListener;
-
-    @Autowired
-    @Lazy
-    private JohnMessageListener johnMessageListener;
-
-    @Autowired
-    @Qualifier("behradJda")
-    @Lazy
-    private JDA behradJda;
-
-    @Autowired
-    @Qualifier("keanuJda")
-    @Lazy
-    private JDA keanuJda;
-
-    @Autowired
-    @Qualifier("antoniaJda")
-    @Lazy
-    private JDA antoniaJda;
-
-    @Autowired
-    @Qualifier("johnJda")
-    @Lazy
-    private JDA johnJda;
-
-    @Autowired
-    @Lazy
-    private NsfwQuoteCommand nsfwQuoteCommand;
-
-    @Autowired
-    @Lazy
-    private QuoteCommand quoteCommand;
-
-    @Autowired
-    private PhilCommand philCommand;
-
-    @Autowired
-    private SwampyCommand swampyCommand;
-
-    @Autowired
-    private MemeCommandsService memeCommandsService;
-
-    @Autowired
-    @Lazy
-    private Ao3MetadataParser ao3MetadataParser;
-
-    @Autowired
-    @Lazy
-    private MemberCount memberCount;
-
-    @Autowired
-    private BaseConfig baseConfig;
-
-    @Autowired
-    @Qualifier("philCommandClient")
-    private CommandClient philCommandClient;
+    public PhilMessageListener(@Qualifier("behradJda") JDA behradJda, BehradMessageListener behradMessageListener, KeanuMessageListener keanuMessageListener,
+                               AntoniaMessageListener antoniaMessageListener, JohnMessageListener johnMessageListener, @Qualifier("keanuJda") JDA keanuJda,
+                               @Qualifier("antoniaJda") JDA antoniaJda, @Qualifier("johnJda") JDA johnJda, NsfwQuoteCommand nsfwQuoteCommand,
+                               QuoteCommand quoteCommand, MemeCommandsService memeCommandsService, PhilCommand philCommand,
+                               Ao3MetadataParser ao3MetadataParser, @Qualifier("philCommandClient") CommandClient philCommandClient,
+                               MemberCount memberCount, BaseConfig baseConfig, SwampyCommand swampyCommand) {
+        this.behradJda = behradJda;
+        this.behradMessageListener = behradMessageListener;
+        this.keanuMessageListener = keanuMessageListener;
+        this.antoniaMessageListener = antoniaMessageListener;
+        this.johnMessageListener = johnMessageListener;
+        this.keanuJda = keanuJda;
+        this.antoniaJda = antoniaJda;
+        this.johnJda = johnJda;
+        this.nsfwQuoteCommand = nsfwQuoteCommand;
+        this.quoteCommand = quoteCommand;
+        this.memeCommandsService = memeCommandsService;
+        this.philCommand = philCommand;
+        this.ao3MetadataParser = ao3MetadataParser;
+        this.philCommandClient = philCommandClient;
+        this.memberCount = memberCount;
+        this.baseConfig = baseConfig;
+        this.swampyCommand = swampyCommand;
+    }
 
     public static void addReactionTask(String messageId, Function<MessageReactionAddEvent, Boolean> function) {
         OUTSTANDING_REACTION_TASKS.put(messageId, function);
@@ -177,7 +150,7 @@ public class PhilMessageListener extends ListenerAdapter {
     public void onReady(@NotNull ReadyEvent event) {
         Message.suppressContentIntentWarning(); // This is specifically for all the non-phil bots, they'll print a warning without this.
 
-        logger.info("Received ready event for [user={}]", event.getJDA().getSelfUser());
+        log.info("Received ready event for [user={}]", event.getJDA().getSelfUser());
         MessageEmbed messageEmbed = Constants.simpleEmbed("Restarted",
                 String.format("We just restarted\ngit sha: %s\ncommit msg: %s", baseConfig.commitSha, baseConfig.commitMessage), Constants.SWAMP_GREEN);
         event.getJDA().getTextChannelsByName("test-channel", false).get(0).sendMessageEmbeds(messageEmbed).queue();

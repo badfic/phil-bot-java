@@ -1,6 +1,7 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +37,8 @@ public class MapCommandTest {
 
         Set<String> flagzipCountryCodes = new HashSet<>();
 
-        try (ZipInputStream zipFile = new ZipInputStream(getClass().getClassLoader().getResourceAsStream(MapCommand.MAP_ZIP_FILENAME))) {
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream(MapCommand.MAP_ZIP_FILENAME);
+             ZipInputStream zipFile = new ZipInputStream(stream)) {
             LocalFileHeader fileHeader;
             while ((fileHeader = zipFile.getNextEntry()) != null) {
                 String countryCode = fileHeader.getFileName().substring(0, fileHeader.getFileName().length() - 4);

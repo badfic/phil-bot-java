@@ -1,11 +1,8 @@
 package com.badfic.philbot.web.members;
 
-import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -18,17 +15,19 @@ import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 @Controller
+@Slf4j
 public class ChatWebsocketListener {
-
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final ConcurrentMap<String, Integer> ONLINE_MEMBERS = new ConcurrentHashMap<>();
 
-    @Autowired
-    private SimpMessageSendingOperations messagingTemplate;
+    private final SimpMessageSendingOperations messagingTemplate;
+
+    public ChatWebsocketListener(SimpMessageSendingOperations messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        logger.info("Received a new web socket connection");
+        log.info("Received a new web socket connection");
     }
 
     @EventListener
@@ -38,7 +37,7 @@ public class ChatWebsocketListener {
         String username = (String) headerAccessor.getSessionAttributes().get("username");
         String userAvatar = (String) headerAccessor.getSessionAttributes().get("userAvatar");
         if (username != null) {
-            logger.info("User Disconnected : " + username);
+            log.info("User Disconnected : " + username);
             ONLINE_MEMBERS.compute(username, (key, oldValue) -> {
                 if (oldValue != null && oldValue > 1) {
                     return oldValue - 1;

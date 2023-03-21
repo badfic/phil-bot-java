@@ -5,9 +5,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "trivia")
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Trivia {
 
     @Id
@@ -28,51 +36,4 @@ public class Trivia {
     @Column
     private short correctAnswer;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public String getAnswerA() {
-        return answerA;
-    }
-
-    public void setAnswerA(String answerA) {
-        this.answerA = answerA;
-    }
-
-    public String getAnswerB() {
-        return answerB;
-    }
-
-    public void setAnswerB(String answerB) {
-        this.answerB = answerB;
-    }
-
-    public String getAnswerC() {
-        return answerC;
-    }
-
-    public void setAnswerC(String answerC) {
-        this.answerC = answerC;
-    }
-
-    public short getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public void setCorrectAnswer(short correctAnswer) {
-        this.correctAnswer = correctAnswer;
-    }
 }

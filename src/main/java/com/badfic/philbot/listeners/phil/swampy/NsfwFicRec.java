@@ -3,19 +3,18 @@ package com.badfic.philbot.listeners.phil.swampy;
 import com.badfic.philbot.service.Ao3MetadataParser;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NsfwFicRec extends BaseSwampy {
 
-    @Autowired
-    private Ao3MetadataParser ao3MetadataParser;
+    private final Ao3MetadataParser ao3MetadataParser;
 
-    public NsfwFicRec() {
+    public NsfwFicRec(Ao3MetadataParser ao3MetadataParser) {
         name = "nsfwficrec";
         aliases = new String[] {"swampyficrec"};
         help = "`!!nsfwficrec https://example.com` Sends this fic recommendation to the nsfw-fic-recs channel for you.";
+        this.ao3MetadataParser = ao3MetadataParser;
     }
 
     @Override

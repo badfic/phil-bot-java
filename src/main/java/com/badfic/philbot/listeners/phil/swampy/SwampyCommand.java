@@ -9,7 +9,6 @@ import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
-import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -24,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -36,15 +36,11 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class SwampyCommand extends BaseSwampy {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     // soft point bans
     private static final Pattern NO_NO_WORDS = Constants.compileWords("snowflake|eternals|captain|witch|christmas|santa|grinch");
 
@@ -62,15 +58,12 @@ public class SwampyCommand extends BaseSwampy {
 
     private volatile boolean awaitingResetConfirmation = false;
 
-    @Autowired
-    private PlayerRepository playerRepository;
-
+    private final PlayerRepository playerRepository;
     private final String modHelp;
 
-    public SwampyCommand() {
+    public SwampyCommand(PlayerRepository playerRepository) {
         name = "swampy";
-        help =
-                "NOTE: the \"help\", \"rank\", \"up\", \"down\", and \"slots\" swampy commands can now be used with ANY `!!` alias you want.\n\n" +
+        help = "NOTE: the \"help\", \"rank\", \"up\", \"down\", and \"slots\" swampy commands can now be used with ANY `!!` alias you want.\n\n" +
                 "`!!swampy up @Santiago` upvote a user for the swampys\n" +
                 "`!!swampy down @Santiago` downvote a user for the swampys\n\n" +
                 "`!!swampy rank` show your swampy rank\n\n" +
@@ -83,6 +76,7 @@ public class SwampyCommand extends BaseSwampy {
                 "`!!swampy give 120 @Santiago` give 120 points to Santiago\n" +
                 "`!!swampy take 120 @Santiago` remove 120 points from Santiago\n" +
                 "`!!swampy reset` reset everyone back to level 0";
+        this.playerRepository = playerRepository;
     }
 
     @PostConstruct
@@ -378,7 +372,7 @@ public class SwampyCommand extends BaseSwampy {
 
         List<Rank> allRanks = Rank.getAllRanks();
         Rank rank = Rank.byXp(user.getXp());
-        Rank nextRank = (rank.ordinal() >= allRanks.size() - 1) ? rank : allRanks.get(rank.ordinal() + 1);
+        Rank nextRank = (rank.getOrdinal() >= allRanks.size() - 1) ? rank : allRanks.get(rank.getOrdinal() + 1);
 
         String description = rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
                 "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total points.\n\n" +
@@ -474,7 +468,7 @@ public class SwampyCommand extends BaseSwampy {
 
                 return hasRole(member, StringUtils.containsIgnoreCase(split[1], "bastard") ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE);
             } catch (Exception e) {
-                logger.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);
+                log.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);
                 honeybadgerReporter.reportError(e, "unable to lookup user for leaderboard: " + u.getId());
                 return false;
             }

@@ -4,6 +4,7 @@ import com.badfic.philbot.config.Constants;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.dv8tion.jda.api.entities.Member;
@@ -23,7 +24,9 @@ public class FightCommand extends BaseSwampy {
 
     @PostConstruct
     public void init() throws Exception {
-        fightOutcomes = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("fight-outcomes.json"), new TypeReference<>() {});
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("fight-outcomes.json")) {
+            fightOutcomes = objectMapper.readValue(stream, new TypeReference<>() {});
+        }
     }
 
     @Override

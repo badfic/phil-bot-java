@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.PersistenceException;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +13,6 @@ public class JsonListConverter implements AttributeConverter<List<String>, Strin
 
     private static ObjectMapper OBJECT_MAPPER;
 
-    @Autowired
     public JsonListConverter(ObjectMapper objectMapper) {
         OBJECT_MAPPER = objectMapper;
     }

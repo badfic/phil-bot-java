@@ -9,16 +9,14 @@ import java.util.List;
 import java.util.Optional;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SnarkyReminderCommand extends BaseSwampy {
 
-    @Autowired
-    private SnarkyReminderResponseRepository snarkyReminderResponseRepository;
+    private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
 
-    public SnarkyReminderCommand() {
+    public SnarkyReminderCommand(SnarkyReminderResponseRepository snarkyReminderResponseRepository) {
         name = "snarkyReminder";
         aliases = new String[] {"reminderResponse", "reminderResponses", "snarkyReminders", "snarkyResponses", "snarkyResponse"};
         help = """
@@ -28,6 +26,7 @@ public class SnarkyReminderCommand extends BaseSwampy {
                 `!!snarkyReminder 1` shows snarky reminder 1
                 `!!snarkyReminder` shows a list of all snarky reminders""";
         requiredRole = Constants.ADMIN_ROLE;
+        this.snarkyReminderResponseRepository = snarkyReminderResponseRepository;
     }
 
     @PostConstruct

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.PersistenceException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +11,6 @@ public class FamilyJsonConverter implements AttributeConverter<Family, String> {
 
     private static ObjectMapper OBJECT_MAPPER;
 
-    @Autowired
     public FamilyJsonConverter(ObjectMapper objectMapper) {
         OBJECT_MAPPER = objectMapper;
     }
