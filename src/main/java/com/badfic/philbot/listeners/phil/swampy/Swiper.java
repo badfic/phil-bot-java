@@ -5,25 +5,22 @@ import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.google.common.collect.ImmutableMap;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class Swiper extends BaseSwampy {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     // TODO: Investigate putting these in SwampyGamesConfig table
     public static final Map<String, TheSwiper> SWIPERS = ImmutableMap.<String, TheSwiper>builder()
             .put("Swiper No Swiping", new TheSwiper(
@@ -162,7 +159,7 @@ public class Swiper extends BaseSwampy {
         }
 
         if (member == null) {
-            logger.info("Swiper did not find any eligible victim");
+            log.info("Swiper did not find any eligible victim");
             return;
         }
 

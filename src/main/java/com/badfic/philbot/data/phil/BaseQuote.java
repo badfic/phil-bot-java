@@ -7,8 +7,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @MappedSuperclass
+@Getter
+@Setter
+@NoArgsConstructor
 public abstract class BaseQuote {
 
     @Id
@@ -33,67 +39,12 @@ public abstract class BaseQuote {
     @Column
     private LocalDateTime created;
 
-    public BaseQuote() {
-    }
-
     public BaseQuote(long messageId, long channelId, String quote, String image, long userId, LocalDateTime created) {
         this.messageId = messageId;
         this.channelId = channelId;
         this.quote = quote;
         this.image = image;
         this.userId = userId;
-        this.created = created;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public long getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(long messageId) {
-        this.messageId = messageId;
-    }
-
-    public long getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(long channelId) {
-        this.channelId = channelId;
-    }
-
-    public String getQuote() {
-        return quote;
-    }
-
-    public void setQuote(String quote) {
-        this.quote = quote;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public LocalDateTime getCreated() {
-        return created;
-    }
-
-    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 

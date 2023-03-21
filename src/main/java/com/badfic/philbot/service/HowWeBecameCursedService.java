@@ -19,15 +19,17 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RegExUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
 public class HowWeBecameCursedService extends BaseService implements DailyTickable {
 
-    @Autowired
-    private HowWeBecameCursedRepository howWeBecameCursedRepository;
+    private final HowWeBecameCursedRepository howWeBecameCursedRepository;
+
+    public HowWeBecameCursedService(HowWeBecameCursedRepository howWeBecameCursedRepository) {
+        this.howWeBecameCursedRepository = howWeBecameCursedRepository;
+    }
 
     @Override
     public void runDailyTask() {

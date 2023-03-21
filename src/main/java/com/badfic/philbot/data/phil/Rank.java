@@ -6,12 +6,16 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+@Getter
+@EqualsAndHashCode(of = "ordinal")
 public class Rank {
     public static final long LVL_MULTIPLIER = 2000;
     private static final Map<Long, Rank> LEVEL_MAP = new HashMap<>();
@@ -23,8 +27,8 @@ public class Rank {
     private final String rankUpImage;
     private final String rankUpMessage;
     private final Color color;
-    @SuppressWarnings("FieldCanBeLocal")
     private final boolean newCardDeck;
+    private final boolean firstRank;
 
     private Rank(int ordinal, String roleName, long level, String rankUpImage, String rankupMessage, Color color) {
         this.ordinal = ordinal;
@@ -34,38 +38,7 @@ public class Rank {
         this.rankUpMessage = rankupMessage;
         this.color = color;
         this.newCardDeck = ordinal % 3 == 0;
-    }
-
-    public int ordinal() {
-        return ordinal;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public long getLevel() {
-        return level;
-    }
-
-    public String getRankUpImage() {
-        return rankUpImage;
-    }
-
-    public String getRankUpMessage() {
-        return rankUpMessage;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public boolean isNewCardDeck() {
-        return ordinal % 3 == 0;
-    }
-
-    public boolean isFirstRank() {
-        return ordinal == 0;
+        this.firstRank = ordinal == 0;
     }
 
     public static void init(RestTemplate restTemplate, String airtableApiToken) throws Exception {

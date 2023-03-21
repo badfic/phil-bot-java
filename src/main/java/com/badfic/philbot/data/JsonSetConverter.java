@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.PersistenceException;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +13,6 @@ public class JsonSetConverter implements AttributeConverter<Set<String>, String>
 
     private static ObjectMapper OBJECT_MAPPER;
 
-    @Autowired
     public JsonSetConverter(ObjectMapper objectMapper) {
         OBJECT_MAPPER = objectMapper;
     }

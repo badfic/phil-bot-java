@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,8 +19,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class MemeCommandsController extends BaseMembersController {
 
-    @Autowired
-    private MemeCommandsService memeCommandsService;
+    private final MemeCommandsService memeCommandsService;
+
+    public MemeCommandsController(MemeCommandsService memeCommandsService) {
+        this.memeCommandsService = memeCommandsService;
+    }
 
     @GetMapping(value = "/meme-commands", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {

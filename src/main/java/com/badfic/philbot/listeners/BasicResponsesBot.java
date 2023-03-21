@@ -13,11 +13,13 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.imageio.ImageIO;
+import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -40,12 +42,12 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final String modHelp;
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     private BaseConfig baseConfig;
 
     static {
-        try {
-            HUG = ImageIO.read(Objects.requireNonNull(BasicResponsesBot.class.getClassLoader().getResourceAsStream("flags/hug.png")));
+        try (InputStream stream = BasicResponsesBot.class.getClassLoader().getResourceAsStream("flags/hug.png")) {
+            HUG = ImageIO.read(Objects.requireNonNull(stream));
         } catch (IOException e) {
             throw new IllegalStateException("Could not load hug.png");
         }
@@ -78,17 +80,22 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
         // seed data if needed
         if (configRepository.findById(BaseResponsesConfig.SINGLETON_ID).isEmpty()) {
-            GenericBotResponsesConfigJson kidFriendlyConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(sfwBootstrapJson),
-                    GenericBotResponsesConfigJson.class);
-            GenericBotResponsesConfigJson nsfwConfig = objectMapper.readValue(getClass().getClassLoader().getResourceAsStream(nsfwBootstrapJson),
-                    GenericBotResponsesConfigJson.class);
-            nsfwConfig.getResponses().addAll(kidFriendlyConfig.getResponses());
+            try (InputStream sfwStream = getClass().getClassLoader().getResourceAsStream(sfwBootstrapJson);
+                 InputStream nsfwStream = getClass().getClassLoader().getResourceAsStream(nsfwBootstrapJson)) {
+                GenericBotResponsesConfigJson kidFriendlyConfig = objectMapper.readValue(sfwStream,
+                        GenericBotResponsesConfigJson.class);
 
-            T responsesConfig = responsesConfigConstructor.get();
-            responsesConfig.setId(BaseResponsesConfig.SINGLETON_ID);
-            responsesConfig.setSfwConfig(kidFriendlyConfig);
-            responsesConfig.setNsfwConfig(nsfwConfig);
-            configRepository.save(responsesConfig);
+                GenericBotResponsesConfigJson nsfwConfig = objectMapper.readValue(nsfwStream,
+                        GenericBotResponsesConfigJson.class);
+                nsfwConfig.responses().addAll(kidFriendlyConfig.responses());
+
+                T responsesConfig = responsesConfigConstructor.get();
+                responsesConfig.setId(BaseResponsesConfig.SINGLETON_ID);
+                responsesConfig.setSfwConfig(kidFriendlyConfig);
+                responsesConfig.setNsfwConfig(nsfwConfig);
+
+                configRepository.save(responsesConfig);
+            }
         }
     }
 
@@ -138,7 +145,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                     return;
                 }
 
-                responsesConfig.getNsfwConfig().getChannels().add(mentionedChannels.get(0).getName());
+                responsesConfig.getNsfwConfig().channels().add(mentionedChannels.get(0).getName());
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessageFormat("%s, saved %s to nsfw config", event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention())
                         .queue();
@@ -153,7 +160,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                         return;
                     }
 
-                    responsesConfig.getNsfwConfig().getChannels().remove(channelName);
+                    responsesConfig.getNsfwConfig().channels().remove(channelName);
                     configRepository.save(responsesConfig);
                     event.getChannel().sendMessageFormat("%s, removed %s from nsfw config", event.getAuthor().getAsMention(), channelName).queue();
                     return;
@@ -165,7 +172,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                     return;
                 }
 
-                responsesConfig.getNsfwConfig().getChannels().remove(mentionedChannels.get(0).getName());
+                responsesConfig.getNsfwConfig().channels().remove(mentionedChannels.get(0).getName());
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessageFormat("%s, removed %s from nsfw config",
                         event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention()).queue();
@@ -183,7 +190,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                     return;
                 }
 
-                responsesConfig.getSfwConfig().getChannels().add(mentionedChannels.get(0).getName());
+                responsesConfig.getSfwConfig().channels().add(mentionedChannels.get(0).getName());
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessageFormat("%s, saved %s to sfw config", event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention())
                         .queue();
@@ -198,7 +205,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                         return;
                     }
 
-                    responsesConfig.getSfwConfig().getChannels().remove(channelName);
+                    responsesConfig.getSfwConfig().channels().remove(channelName);
                     configRepository.save(responsesConfig);
                     event.getChannel().sendMessageFormat("%s, removed %s from sfw config", event.getAuthor().getAsMention(), channelName).queue();
                     return;
@@ -210,7 +217,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                     return;
                 }
 
-                responsesConfig.getSfwConfig().getChannels().remove(mentionedChannels.get(0).getName());
+                responsesConfig.getSfwConfig().channels().remove(mentionedChannels.get(0).getName());
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessageFormat("%s, removed %s from sfw config",
                         event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention()).queue();
@@ -220,7 +227,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to add").queue();
                     return;
                 }
-                responsesConfig.getNsfwConfig().getResponses().add(saying);
+                responsesConfig.getNsfwConfig().responses().add(saying);
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved `" + saying + "` to nsfw config").queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw remove")) {
@@ -235,7 +242,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                     saying = StringUtils.substringBefore(saying, "`");
                 }
 
-                responsesConfig.getNsfwConfig().getResponses().remove(saying);
+                responsesConfig.getNsfwConfig().responses().remove(saying);
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed `" + saying + "` from nsfw config").queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw add")) {
@@ -244,8 +251,8 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to add").queue();
                     return;
                 }
-                responsesConfig.getSfwConfig().getResponses().add(saying);
-                responsesConfig.getNsfwConfig().getResponses().add(saying);
+                responsesConfig.getSfwConfig().responses().add(saying);
+                responsesConfig.getNsfwConfig().responses().add(saying);
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved `" + saying + "` to sfw config").queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw remove")) {
@@ -260,8 +267,8 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                     saying = StringUtils.substringBefore(saying, "`");
                 }
 
-                responsesConfig.getSfwConfig().getResponses().remove(saying);
-                responsesConfig.getNsfwConfig().getResponses().remove(saying);
+                responsesConfig.getSfwConfig().responses().remove(saying);
+                responsesConfig.getNsfwConfig().responses().remove(saying);
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed `" + saying + "` from sfw config").queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw config")) {

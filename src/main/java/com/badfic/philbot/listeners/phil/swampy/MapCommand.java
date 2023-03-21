@@ -7,23 +7,21 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
-import java.lang.invoke.MethodHandles;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import net.lingala.zip4j.model.LocalFileHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class MapCommand extends BaseSwampy {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     @VisibleForTesting
     static final String MAP_ZIP_FILENAME = "map-trivia-flags.zip";
 
@@ -37,8 +35,9 @@ public class MapCommand extends BaseSwampy {
 
     @PostConstruct
     public void init() throws Exception {
-        countries = ImmutableList.copyOf(objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("map-trivia.json"),
-                new TypeReference<List<MapTriviaObject>>() {}));
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("map-trivia.json")) {
+            countries = ImmutableList.copyOf(objectMapper.readValue(stream, new TypeReference<List<MapTriviaObject>>() {}));
+        }
     }
 
     @Override
@@ -76,7 +75,8 @@ public class MapCommand extends BaseSwampy {
             return;
         }
 
-        try (ZipInputStream zipFile = new ZipInputStream(getClass().getClassLoader().getResourceAsStream(MAP_ZIP_FILENAME))) {
+        try (InputStream mapFileStream = getClass().getClassLoader().getResourceAsStream(MAP_ZIP_FILENAME);
+             ZipInputStream zipFile = new ZipInputStream(mapFileStream)) {
             LocalFileHeader fileHeader;
             while ((fileHeader = zipFile.getNextEntry()) != null) {
                 if (fileHeader.getFileName().equalsIgnoreCase(mapTriviaObject.code() + ".png")) {
@@ -93,7 +93,7 @@ public class MapCommand extends BaseSwampy {
                     .addFiles(FileUpload.fromData(zipFile.readAllBytes(), "map-trivia.png"))
                     .queue();
         } catch (Exception e) {
-            logger.error("Failed to load map image", e);
+            log.error("Failed to load map image", e);
             honeybadgerReporter.reportError(e, null, "Failed to load image for map trivia");
             swampysChannel.sendMessage("Failed to load image for map trivia. The answer is " + mapTriviaObject.regex()).queue();
         }

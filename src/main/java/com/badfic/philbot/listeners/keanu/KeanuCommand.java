@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -62,16 +61,13 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
             "https://cdn.discordapp.com/attachments/707453916882665552/880260108968394762/john-wick-1.gif"
     );
 
-    @Autowired
-    @Qualifier("keanuJda")
-    @Lazy
-    private JDA keanuJda;
+    private final JDA keanuJda;
 
-    @Autowired
-    public KeanuCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, KeanuResponsesConfigRepository keanuResponsesConfigRepository)
-            throws Exception {
+    public KeanuCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, KeanuResponsesConfigRepository keanuResponsesConfigRepository,
+                        @Qualifier("keanuJda") @Lazy JDA keanuJda) throws Exception {
         super(keanuResponsesConfigRepository, objectMapper, honeybadgerReporter, "keanu", "keanu-kidFriendlyConfig.json", "keanu-nsfwConfig.json",
                 KeanuResponsesConfig::new);
+        this.keanuJda = keanuJda;
     }
 
     @Scheduled(cron = "${swampy.schedule.keanu.goodmorning}", zone = "${swampy.schedule.timezone}")
@@ -85,14 +81,14 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
         String msgContent = event.getMessage().getContentRaw();
         String channelName = event.getChannel().getName();
         Set<String> responses;
-        if (responsesConfig.getSfwConfig().getChannels().contains(channelName)) {
+        if (responsesConfig.getSfwConfig().channels().contains(channelName)) {
             if (ThreadLocalRandom.current().nextInt(100) < 28) {
                 responses = GOOD_MORNING_GIFS;
             } else {
-                responses = responsesConfig.getSfwConfig().getResponses();
+                responses = responsesConfig.getSfwConfig().responses();
             }
-        } else if (responsesConfig.getNsfwConfig().getChannels().contains(channelName)) {
-            responses = responsesConfig.getNsfwConfig().getResponses();
+        } else if (responsesConfig.getNsfwConfig().channels().contains(channelName)) {
+            responses = responsesConfig.getNsfwConfig().responses();
         } else {
             return Optional.empty();
         }

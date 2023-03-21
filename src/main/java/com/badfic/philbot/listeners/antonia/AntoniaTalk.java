@@ -2,26 +2,21 @@ package com.badfic.philbot.listeners.antonia;
 
 import com.badfic.philbot.listeners.BaseTalk;
 import net.dv8tion.jda.api.JDA;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AntoniaTalk extends BaseTalk {
+    private final JDA antoniaJda;
 
-    @Autowired
-    @Qualifier("antoniaJda")
-    @Lazy
-    private JDA antoniaJda;
-
-    public AntoniaTalk() {
+    public AntoniaTalk(@Qualifier("antoniaJda") @Lazy JDA antoniaJda) {
         super("antoniaTalk");
+        this.antoniaJda = antoniaJda;
     }
 
     @Override
     public JDA getJda() {
         return antoniaJda;
     }
-
 }

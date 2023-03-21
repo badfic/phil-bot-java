@@ -4,11 +4,11 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
-import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -16,14 +16,11 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class LeaderboardSlashCommand extends BaseSwampySlash {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     public LeaderboardSlashCommand() {
         name = "leaderboard";
         options = List.of(new OptionData(OptionType.STRING, "type", "Bastards or Chaos Children Leaderboard", true, true));
@@ -50,7 +47,7 @@ public class LeaderboardSlashCommand extends BaseSwampySlash {
                         .stream()
                         .anyMatch(r -> r.getName().equalsIgnoreCase(type.getAsLong() == 1 ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE));
             } catch (Exception e) {
-                logger.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);
+                log.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);
                 honeybadgerReporter.reportError(e, "unable to lookup user for leaderboard: " + u.getId());
                 return false;
             }

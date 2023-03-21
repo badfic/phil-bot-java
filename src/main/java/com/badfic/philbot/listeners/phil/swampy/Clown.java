@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.imageio.ImageIO;
@@ -24,8 +25,8 @@ public class Clown extends BaseFlagCommand {
                 Arrays.toString(FLAG_NAMES) +
                 "\n`!!clown demi`: display a demi clown emote";
 
-        try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("flags/clown.png")));
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("flags/clown.png")) {
+            image = ImageIO.read(Objects.requireNonNull(stream));
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load clown png", e);
         }

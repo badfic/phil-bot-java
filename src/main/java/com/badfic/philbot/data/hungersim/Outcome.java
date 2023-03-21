@@ -12,11 +12,19 @@ import jakarta.persistence.Table;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import org.apache.commons.lang3.StringUtils;
 
 @Entity
 @Table(name = "hg_outcome")
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Outcome {
 
     public static final Map<Integer, List<String>> VARIABLES = ImmutableMap.<Integer, List<String>>builder()
@@ -48,9 +56,6 @@ public class Outcome {
     @Column(name = "player_4_hp")
     private Integer player4Hp = 0;
 
-    public Outcome() {
-    }
-
     public Outcome(String outcomeText, Integer numPlayers, Integer player1Hp, Integer player2Hp, Integer player3Hp, Integer player4Hp) {
         this.outcomeText = outcomeText;
         this.numPlayers = Objects.requireNonNullElse(numPlayers, 1);
@@ -58,58 +63,6 @@ public class Outcome {
         this.player2Hp = Objects.requireNonNullElse(player2Hp, 0);
         this.player3Hp = Objects.requireNonNullElse(player3Hp, 0);
         this.player4Hp = Objects.requireNonNullElse(player4Hp, 0);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getOutcomeText() {
-        return outcomeText;
-    }
-
-    public void setOutcomeText(String text) {
-        this.outcomeText = text;
-    }
-
-    public Integer getNumPlayers() {
-        return numPlayers;
-    }
-
-    public void setNumPlayers(Integer numPlayers) {
-        this.numPlayers = numPlayers;
-    }
-
-    public Integer getPlayer1Hp() {
-        return player1Hp;
-    }
-
-    public void setPlayer1Hp(Integer player1Hp) {
-        this.player1Hp = player1Hp;
-    }
-
-    public Integer getPlayer2Hp() {
-        return player2Hp;
-    }
-
-    public void setPlayer2Hp(Integer player2Hp) {
-        this.player2Hp = player2Hp;
-    }
-
-    public Integer getPlayer3Hp() {
-        return player3Hp;
-    }
-
-    public void setPlayer3Hp(Integer player3Hp) {
-        this.player3Hp = player3Hp;
-    }
-
-    public Integer getPlayer4Hp() {
-        return player4Hp;
-    }
-
-    public void setPlayer4Hp(Integer player4Hp) {
-        this.player4Hp = player4Hp;
     }
 
     public String apply(Player player1, JDA jda) {
@@ -174,23 +127,6 @@ public class Outcome {
         }
 
         return result;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Outcome outcome = (Outcome) o;
-        return Objects.equals(id, outcome.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
 }

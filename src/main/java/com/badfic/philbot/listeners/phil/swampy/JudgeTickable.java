@@ -6,12 +6,12 @@ import com.badfic.philbot.data.phil.CourtCaseRepository;
 import com.badfic.philbot.service.BaseService;
 import com.badfic.philbot.service.MinuteTickable;
 import com.google.common.collect.ImmutableMap;
-import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
@@ -20,17 +20,16 @@ import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class JudgeTickable extends BaseService implements MinuteTickable {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private final CourtCaseRepository courtCaseRepository;
 
-    @Autowired
-    private CourtCaseRepository courtCaseRepository;
+    public JudgeTickable(CourtCaseRepository courtCaseRepository) {
+        this.courtCaseRepository = courtCaseRepository;
+    }
 
     @Override
     public void runMinutelyTask() {
@@ -117,7 +116,7 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
                             }
                         }
                     } catch (Exception e) {
-                        logger.error("Error with trial for [userId={}]", courtCase.getDefendantId(), e);
+                        log.error("Error with trial for [userId={}]", courtCase.getDefendantId(), e);
                         honeybadgerReporter.reportError(e, null, "Error with trial for user " + courtCase.getDefendantId());
                         courtCaseRepository.deleteById(courtCase.getDefendantId());
                         swampysChannel.sendMessage("Trial for <@!" + courtCase.getDefendantId() + "> aborted.").queue();
@@ -129,13 +128,13 @@ public class JudgeTickable extends BaseService implements MinuteTickable {
                         guild.removeRoleFromMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
                         megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been released from mega-hell").queue();
                     } catch (Exception e) {
-                        logger.error("Error with release date for [userId={}]", courtCase.getDefendantId(), e);
+                        log.error("Error with release date for [userId={}]", courtCase.getDefendantId(), e);
                         honeybadgerReporter.reportError(e, null, "Error with release date for user " + courtCase.getDefendantId());
                         megaHellChannel.sendMessage("Sentence for <@!" + courtCase.getDefendantId() + "> aborted.").queue();
                     }
                 }
             } catch (Exception e) {
-                logger.error("Error with court case for [userId={}]", courtCase.getDefendantId(), e);
+                log.error("Error with court case for [userId={}]", courtCase.getDefendantId(), e);
                 honeybadgerReporter.reportError(e, null, "Error with court case for user " + courtCase.getDefendantId());
             }
         }

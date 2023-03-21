@@ -4,9 +4,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "rss_entry")
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(of = "link")
 public class RssEntry {
     @Id
     private String link;
@@ -19,22 +27,4 @@ public class RssEntry {
         this.feedUrl = feedUrl;
     }
 
-    public RssEntry() {
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public String getFeedUrl() {
-        return feedUrl;
-    }
-
-    public void setFeedUrl(String feedUrl) {
-        this.feedUrl = feedUrl;
-    }
 }

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,8 +21,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class GamesConfigController extends BaseMembersController {
 
-    @Autowired
-    private SwampyGamesConfigRepository swampyGamesConfigRepository;
+    private final SwampyGamesConfigRepository swampyGamesConfigRepository;
+
+    public GamesConfigController(SwampyGamesConfigRepository swampyGamesConfigRepository) {
+        this.swampyGamesConfigRepository = swampyGamesConfigRepository;
+    }
 
     @GetMapping(value = "/games-config", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {

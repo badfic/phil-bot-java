@@ -19,14 +19,16 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TriviaTickable extends NonCommandSwampy implements MinuteTickable {
 
-    @Autowired
-    private TriviaRepository triviaRepository;
+    private final TriviaRepository triviaRepository;
+
+    public TriviaTickable(TriviaRepository triviaRepository) {
+        this.triviaRepository = triviaRepository;
+    }
 
     @Override
     public void runMinutelyTask() {

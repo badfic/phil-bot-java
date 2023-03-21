@@ -41,7 +41,7 @@ public class RankSlashCommand extends BaseSwampySlash {
 
         List<Rank> allRanks = Rank.getAllRanks();
         Rank rank = Rank.byXp(user.getXp());
-        Rank nextRank = (rank.ordinal() >= allRanks.size() - 1) ? rank : allRanks.get(rank.ordinal() + 1);
+        Rank nextRank = (rank.getOrdinal() >= allRanks.size() - 1) ? rank : allRanks.get(rank.getOrdinal() + 1);
 
         String description = rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
                 "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total points.\n\n" +

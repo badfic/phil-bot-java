@@ -9,13 +9,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
 @Entity
 @Table(name = "hg_player")
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of = "id")
 public class Player {
 
     @Id
@@ -37,9 +44,6 @@ public class Player {
     @Transient
     private String effectiveName;
 
-    public Player() {
-    }
-
     public Player(DiscordUser discordUser, Pronoun pronoun) {
         this.discordUser = discordUser;
         this.pronoun = pronoun;
@@ -48,46 +52,6 @@ public class Player {
     public Player(String name, Pronoun pronoun) {
         this.name = name;
         this.pronoun = pronoun;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Integer getHp() {
-        return hp;
-    }
-
-    public void setHp(Integer hp) {
-        this.hp = hp;
-    }
-
-    public Pronoun getPronoun() {
-        return pronoun;
-    }
-
-    public void setPronoun(Pronoun pronoun) {
-        this.pronoun = pronoun;
-    }
-
-    public DiscordUser getDiscordUser() {
-        return discordUser;
-    }
-
-    public void setDiscordUser(DiscordUser discordUser) {
-        this.discordUser = discordUser;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEffectiveName() {
-        return effectiveName;
     }
 
     public void setEffectiveNameViaJda(JDA jda) {
@@ -109,23 +73,6 @@ public class Player {
         }
 
         effectiveName = name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Player player = (Player) o;
-        return Objects.equals(id, player.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
 }

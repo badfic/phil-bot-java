@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +17,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class RemindersController extends BaseMembersController {
 
-    @Autowired
-    private ReminderRepository reminderRepository;
+    private final ReminderRepository reminderRepository;
+
+    public RemindersController(ReminderRepository reminderRepository) {
+        this.reminderRepository = reminderRepository;
+    }
 
     @GetMapping(value = "/reminders", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {

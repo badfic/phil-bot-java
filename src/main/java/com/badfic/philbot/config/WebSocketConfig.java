@@ -1,5 +1,6 @@
 package com.badfic.philbot.config;
 
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -15,11 +16,10 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    @Autowired
+    @Setter(onMethod_ = {@Autowired})
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-    @Autowired
-    @Qualifier("taskScheduler")
+    @Setter(onMethod_ = {@Autowired, @Qualifier("taskScheduler")})
     private ThreadPoolTaskScheduler taskScheduler;
 
     @Override

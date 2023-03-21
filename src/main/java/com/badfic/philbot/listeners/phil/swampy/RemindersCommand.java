@@ -10,16 +10,14 @@ import java.util.List;
 import java.util.Optional;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RemindersCommand extends BaseSwampy {
 
-    @Autowired
-    private ReminderRepository reminderRepository;
+    private final ReminderRepository reminderRepository;
 
-    public RemindersCommand() {
+    public RemindersCommand(ReminderRepository reminderRepository) {
         name = "reminders";
         aliases = new String[] {"reminder"};
         help = """
@@ -27,6 +25,7 @@ public class RemindersCommand extends BaseSwampy {
                 `!!reminders` lists all reminders
                 `!!reminders 5` Show reminder number 5
                 `!!reminders delete 5` Delete reminder number 5""";
+        this.reminderRepository = reminderRepository;
     }
 
     @Override

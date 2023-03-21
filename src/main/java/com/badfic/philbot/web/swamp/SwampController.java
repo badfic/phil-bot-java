@@ -8,7 +8,6 @@ import com.badfic.philbot.service.HungerGamesWinnersService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,20 +19,20 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class SwampController {
 
-    @Autowired
-    private BaseConfig baseConfig;
+    private final BaseConfig baseConfig;
+    private final HungerGamesWinnersService hungerGamesWinnersService;
+    private final HowWeBecameCursedService howWeBecameCursedService;
+    private final DailyMarvelMemeService dailyMarvelMemeService;
+    private final DailyRiverdaleMemeService dailyRiverdaleMemeService;
 
-    @Autowired
-    private HungerGamesWinnersService hungerGamesWinnersService;
-
-    @Autowired
-    private HowWeBecameCursedService howWeBecameCursedService;
-
-    @Autowired
-    private DailyMarvelMemeService dailyMarvelMemeService;
-
-    @Autowired
-    private DailyRiverdaleMemeService dailyRiverdaleMemeService;
+    public SwampController(BaseConfig baseConfig, HungerGamesWinnersService hungerGamesWinnersService, HowWeBecameCursedService howWeBecameCursedService,
+                           DailyMarvelMemeService dailyMarvelMemeService, DailyRiverdaleMemeService dailyRiverdaleMemeService) {
+        this.baseConfig = baseConfig;
+        this.hungerGamesWinnersService = hungerGamesWinnersService;
+        this.howWeBecameCursedService = howWeBecameCursedService;
+        this.dailyMarvelMemeService = dailyMarvelMemeService;
+        this.dailyRiverdaleMemeService = dailyRiverdaleMemeService;
+    }
 
     @GetMapping(value = {
             "/chat-popout",
@@ -56,21 +55,21 @@ public class SwampController {
     }
 
     @GetMapping(value = {"/", "/index.html"}, produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getHome() throws Exception {
+    public ModelAndView getHome() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Home — The Swamp");
         return new ModelAndView("swamp-home", props);
     }
 
     @GetMapping(value = "/the-swampys.html", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getSwampys() throws Exception {
+    public ModelAndView getSwampys() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "The Swampys — The Swamp");
         return new ModelAndView("the-swampys", props);
     }
 
     @GetMapping(value = "/daily-riverdale-memes.html", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getRiverdaleMemes() throws Exception {
+    public ModelAndView getRiverdaleMemes() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Riverdale Memes — The Swamp");
         props.put("messages", dailyRiverdaleMemeService.getMessages());
@@ -78,7 +77,7 @@ public class SwampController {
     }
 
     @GetMapping(value = "/daily-marvel-memes.html", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getMarvelMemes() throws Exception {
+    public ModelAndView getMarvelMemes() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Marvel Memes — The Swamp");
         props.put("messages", dailyMarvelMemeService.getMessages());
@@ -86,7 +85,7 @@ public class SwampController {
     }
 
     @GetMapping(value = "/cursed-timeline.html", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getCursedTimeline() throws Exception {
+    public ModelAndView getCursedTimeline() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Cursed Timeline — The Swamp");
         props.put("messages", howWeBecameCursedService.getMessages());
@@ -94,7 +93,7 @@ public class SwampController {
     }
 
     @GetMapping(value = "/hunger-games-winners.html", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getHungerGames() throws Exception {
+    public ModelAndView getHungerGames() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Cursed Timeline — The Swamp");
         props.put("messages", hungerGamesWinnersService.getMessages());
@@ -102,7 +101,7 @@ public class SwampController {
     }
 
     @GetMapping(value = "/about-the-swamp.html", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getAbout() throws Exception {
+    public ModelAndView getAbout() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "About — The Swamp");
         return new ModelAndView("about-the-swamp", props);

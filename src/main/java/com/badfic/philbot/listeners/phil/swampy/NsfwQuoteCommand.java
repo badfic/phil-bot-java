@@ -23,7 +23,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -35,15 +34,10 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
 
     private static final String EGGPLANT_EMOJI = "\uD83C\uDF46";
 
-    @Autowired
-    @Qualifier("keanuJda")
-    @Lazy
-    private JDA keanuJda;
+    private final JDA keanuJda;
+    private final NsfwQuoteRepository nsfwQuoteRepository;
 
-    @Autowired
-    private NsfwQuoteRepository nsfwQuoteRepository;
-
-    public NsfwQuoteCommand() {
+    public NsfwQuoteCommand(NsfwQuoteRepository nsfwQuoteRepository, @Qualifier("keanuJda") @Lazy JDA keanuJda) {
         name = "nsfwQuote";
         aliases = new String[]{"nsfwQuotes", "cursedQuote", "cursedQuotes"};
         nsfwOnly = true;
@@ -55,6 +49,8 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
                 `!!nsfwQuote stats` returns statistics about all nsfw quotes
                 `!!nsfwQuote stats @Santiago` returns statistics about Santiago
                 `!!nsfwQuote cache` runs the meme saver if a channel is configured""";
+        this.nsfwQuoteRepository = nsfwQuoteRepository;
+        this.keanuJda = keanuJda;
     }
 
     @Override

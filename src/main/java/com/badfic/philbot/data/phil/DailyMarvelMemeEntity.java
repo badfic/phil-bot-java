@@ -5,9 +5,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "daily_marvel_meme")
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(of = "messageId")
 public class DailyMarvelMemeEntity {
 
     @Id
@@ -25,9 +33,6 @@ public class DailyMarvelMemeEntity {
     @Column
     private LocalDateTime timeEdited;
 
-    public DailyMarvelMemeEntity() {
-    }
-
     public DailyMarvelMemeEntity(long messageId, String message, String imageUrl, LocalDateTime timeCreated, LocalDateTime timeEdited) {
         this.messageId = messageId;
         this.message = message;
@@ -36,43 +41,4 @@ public class DailyMarvelMemeEntity {
         this.timeEdited = timeEdited;
     }
 
-    public long getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(long messageId) {
-        this.messageId = messageId;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public LocalDateTime getTimeCreated() {
-        return timeCreated;
-    }
-
-    public void setTimeCreated(LocalDateTime timeCreated) {
-        this.timeCreated = timeCreated;
-    }
-
-    public LocalDateTime getTimeEdited() {
-        return timeEdited;
-    }
-
-    public void setTimeEdited(LocalDateTime timeEdited) {
-        this.timeEdited = timeEdited;
-    }
 }

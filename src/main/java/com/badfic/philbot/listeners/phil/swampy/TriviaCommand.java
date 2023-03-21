@@ -14,22 +14,21 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TriviaCommand extends BaseSwampy {
 
-    @Autowired
-    private TriviaRepository triviaRepository;
+    private final TriviaRepository triviaRepository;
 
-    public TriviaCommand() {
+    public TriviaCommand(TriviaRepository triviaRepository) {
         name = "trivia";
         requiredRole = Constants.ADMIN_ROLE;
         help = """
                 `!!trivia dump` returns a json file with all the trivia questions and answers.
                 `!!trivia delete 44e04b28-7d39-41d8-8009-80ca6de5a04a` deleted trivia question with id 44e04b28-7d39-41d8-8009-80ca6de5a04a""";
+        this.triviaRepository = triviaRepository;
     }
 
     @Override

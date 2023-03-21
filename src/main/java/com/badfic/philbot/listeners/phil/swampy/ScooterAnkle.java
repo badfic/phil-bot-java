@@ -4,24 +4,20 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.phil.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.lang.invoke.MethodHandles;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class ScooterAnkle extends BaseSwampy {
-
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     public ScooterAnkle() {
         name = "scooterankle";
         help = """
@@ -96,7 +92,7 @@ public class ScooterAnkle extends BaseSwampy {
                 description.append("Oop, failed to give points to user <@!")
                         .append(user.getId())
                         .append(">\n");
-                logger.error("Exception giving points to [user={}] for [scooterUser={}]'s scooter ankle", user.getId(), scooterUser.getId(), e);
+                log.error("Exception giving points to [user={}] for [scooterUser={}]'s scooter ankle", user.getId(), scooterUser.getId(), e);
                 honeybadgerReporter.reportError(e, "Failed to give points to user: " + user.getId() + " for scooter user: " + scooterUser.getId());
             }
         }

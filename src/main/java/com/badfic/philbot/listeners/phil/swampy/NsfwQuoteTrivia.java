@@ -21,19 +21,18 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NsfwQuoteTrivia extends BaseSwampy {
 
-    @Autowired
-    private NsfwQuoteRepository nsfwQuoteRepository;
+    private final NsfwQuoteRepository nsfwQuoteRepository;
 
-    public NsfwQuoteTrivia() {
+    public NsfwQuoteTrivia(NsfwQuoteRepository nsfwQuoteRepository) {
         name = "nsfwQuoteTrivia";
         ownerCommand = true;
+        this.nsfwQuoteRepository = nsfwQuoteRepository;
     }
 
     @Override

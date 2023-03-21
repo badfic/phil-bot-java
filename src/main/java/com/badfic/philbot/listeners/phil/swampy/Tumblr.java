@@ -4,26 +4,21 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.tumblr.jumblr.JumblrClient;
 import com.tumblr.jumblr.types.Blog;
 import com.tumblr.jumblr.types.Post;
-import java.lang.invoke.MethodHandles;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class Tumblr extends BaseSwampy {
+    private final JumblrClient jumblrClient;
 
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-    @Autowired
-    private JumblrClient jumblrClient;
-
-    public Tumblr() {
+    public Tumblr(JumblrClient jumblrClient) {
         name = "tumblr";
         help = "!!tumblr username\nShow this tumblr users latest post";
+        this.jumblrClient = jumblrClient;
     }
 
     @Override
@@ -49,10 +44,9 @@ public class Tumblr extends BaseSwampy {
                 }
             }
         } catch (Exception e) {
-            logger.error("Failed to get [user={}] tumblr posts", split[0], e);
+            log.error("Failed to get [user={}] tumblr posts", split[0], e);
             honeybadgerReporter.reportError(e, "Failed to get user's tumblr posts: " + split[0]);
             event.replyError("Something went wrong trying to get user's posts: " + split[0]);
-            throw e;
         }
     }
 

@@ -9,13 +9,10 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import java.io.ByteArrayInputStream;
-import java.lang.invoke.MethodHandles;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,19 +22,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 
 @Component
+@Slf4j
 public class RssSubscriber extends BaseService {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     private static final Set<String> FEEDS = ImmutableSet.of(
             "https://archiveofourown.org/tags/39926683/feed.atom",
             "https://archiveofourown.org/tags/41072152/feed.atom"
     );
 
-    @Autowired
-    private RssEntryRepository rssEntryRepository;
+    private final RssEntryRepository rssEntryRepository;
+    private final Ao3MetadataParser ao3MetadataParser;
 
-    @Autowired
-    private Ao3MetadataParser ao3MetadataParser;
+    public RssSubscriber(RssEntryRepository rssEntryRepository, Ao3MetadataParser ao3MetadataParser) {
+        this.rssEntryRepository = rssEntryRepository;
+        this.ao3MetadataParser = ao3MetadataParser;
+    }
 
     @Scheduled(cron = "${swampy.schedule.rss}", zone = "${swampy.schedule.timezone}")
     public void run() {
@@ -45,7 +43,7 @@ public class RssSubscriber extends BaseService {
     }
 
     private void refresh() {
-        logger.info("Checking RSS feeds");
+        log.info("Checking RSS feeds");
         TextChannel sfwChannel = philJda.getTextChannelsByName("fic-recs", false).get(0);
         TextChannel nsfwChannel = philJda.getTextChannelsByName("nsfw-fic-recs", false).get(0);
 
@@ -54,8 +52,8 @@ public class RssSubscriber extends BaseService {
                 LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
                 headers.add(HttpHeaders.ACCEPT, "application/atom+xml");
                 headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
-                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-                SyndFeed feed = new SyndFeedInput().build(new XmlReader(new ByteArrayInputStream(response.getBody().getBytes())));
+                ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
+                SyndFeed feed = new SyndFeedInput().build(new XmlReader(new ByteArrayInputStream(response.getBody())));
 
                 boolean initialLoad = rssEntryRepository.countByFeedUrl(url) == 0;
                 long addedLinks = 0;
@@ -91,10 +89,10 @@ public class RssSubscriber extends BaseService {
                             .queue();
                 }
             } catch (Exception e) {
-                logger.error("Failed to parse rss feed {}", url, e);
+                log.error("Failed to parse rss feed {}", url, e);
                 honeybadgerReporter.reportError(e, null, "Failed to parse rss feed " + url);
             }
         }
-        logger.info("Finished checking RSS feeds");
+        log.info("Finished checking RSS feeds");
     }
 }
