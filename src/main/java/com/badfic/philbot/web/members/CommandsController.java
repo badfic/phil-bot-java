@@ -1,6 +1,7 @@
 package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.config.ModHelpAware;
 import com.jagrosh.jdautilities.command.Command;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Comparator;
@@ -14,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -38,7 +38,7 @@ public class CommandsController extends BaseMembersController {
                 .filter(c -> {
                     if ("swampy".equalsIgnoreCase(c.getName())) {
                         swampyCommand.setValue(new SimpleCommand(c.getName(), StringUtils.join(emptyToNull(c.getAliases()), ", "), c.getRequiredRole(), c.getHelp(),
-                                getModHelp(isMod, c).getValue()));
+                                getModHelp(isMod, c)));
                         return false;
                     }
 
@@ -55,16 +55,14 @@ public class CommandsController extends BaseMembersController {
 
                     return isMod || !StringUtils.equalsIgnoreCase(c.getRequiredRole(), Constants.ADMIN_ROLE);
                 })
-                .map(command -> {
-                    final MutableObject<String> modHelp = getModHelp(isMod, command);
-
-                    return new SimpleCommand(
+                .map(command ->
+                    new SimpleCommand(
                             command.getName(),
                             StringUtils.join(emptyToNull(command.getAliases()), ", "),
                             command.getRequiredRole(),
                             command.getHelp(),
-                            modHelp.getValue());
-                })
+                            getModHelp(isMod, command))
+                )
                 .sorted(Comparator.comparing(SimpleCommand::name))
                 .collect(Collectors.toList());
 
@@ -82,22 +80,11 @@ public class CommandsController extends BaseMembersController {
         return ArrayUtils.isEmpty(array) ? null : array;
     }
 
-    private static MutableObject<String> getModHelp(boolean isMod, Command command) {
-        final MutableObject<String> modHelp = new MutableObject<>();
-
-        if (isMod) {
-            try {
-                ReflectionUtils.doWithFields(command.getClass(), field -> {
-                    if ("modhelp".equalsIgnoreCase(field.getName())) {
-                        try {
-                            field.setAccessible(true);
-                            modHelp.setValue(((String) field.get(command)));
-                        } catch (IllegalAccessException ignored) {}
-                    }
-                });
-            } catch (Exception ignored) {}
+    private static String getModHelp(boolean isMod, Command command) {
+        if (isMod && command instanceof ModHelpAware) {
+            return ((ModHelpAware) command).getModHelp();
         }
-        return modHelp;
+        return null;
     }
 
     public record SimpleCommand(String name, String aliases, String requiredRole, String help, String modHelp) {}

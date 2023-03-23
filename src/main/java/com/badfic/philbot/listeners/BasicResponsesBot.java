@@ -2,6 +2,7 @@ package com.badfic.philbot.listeners;
 
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.config.ModHelpAware;
 import com.badfic.philbot.data.BaseResponsesConfig;
 import com.badfic.philbot.data.BaseResponsesConfigRepository;
 import com.badfic.philbot.data.GenericBotResponsesConfigJson;
@@ -19,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.imageio.ImageIO;
+import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -31,7 +33,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends Command {
+public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends Command implements ModHelpAware {
 
     private static final BufferedImage HUG;
 
@@ -39,7 +41,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
     private final ObjectMapper objectMapper;
     private final HoneybadgerReporter honeybadgerReporter;
     private final String fullCmdPrefix;
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+    @Getter
     private final String modHelp;
 
     @Setter(onMethod_ = {@Autowired})

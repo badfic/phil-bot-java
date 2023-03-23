@@ -1,6 +1,7 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.config.ModHelpAware;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.hungersim.Player;
 import com.badfic.philbot.data.hungersim.PlayerRepository;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -40,7 +42,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class SwampyCommand extends BaseSwampy {
+public class SwampyCommand extends BaseSwampy implements ModHelpAware {
     // soft point bans
     private static final Pattern NO_NO_WORDS = Constants.compileWords("snowflake|eternals|captain|witch|christmas|santa|grinch");
 
@@ -58,8 +60,9 @@ public class SwampyCommand extends BaseSwampy {
 
     private volatile boolean awaitingResetConfirmation = false;
 
-    private final PlayerRepository playerRepository;
+    @Getter
     private final String modHelp;
+    private final PlayerRepository playerRepository;
 
     public SwampyCommand(PlayerRepository playerRepository) {
         name = "swampy";

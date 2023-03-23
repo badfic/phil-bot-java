@@ -1,19 +1,21 @@
 package com.badfic.philbot.listeners.phil.swampy;
 
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.config.ModHelpAware;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.Family;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.Color;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -21,11 +23,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ReflectionUtils;
 
 @Component
-public class Fam extends BaseSwampy {
+public class Fam extends BaseSwampy implements ModHelpAware {
 
+    @Getter
     private final String modHelp;
 
     public Fam() {
@@ -178,109 +180,107 @@ public class Fam extends BaseSwampy {
 
     private void adoptGrandparent(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt grandparent", discordUser, "getGrandparents", true);
+        addOrRemoveFamily(event, "adopt grandparent", discordUser, d -> d.getFamily().getGrandparents(), true);
     }
 
     private void disownGrandparent(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown grandparent", discordUser, "getGrandparents", false);
+        addOrRemoveFamily(event, "disown grandparent", discordUser, d -> d.getFamily().getGrandparents(), false);
     }
 
     private void addEx(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "add ex", discordUser, "getExes", true);
+        addOrRemoveFamily(event, "add ex", discordUser, d -> d.getFamily().getExes(), true);
     }
 
     private void removeEx(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "remove ex", discordUser, "getExes", false);
+        addOrRemoveFamily(event, "remove ex", discordUser, d -> d.getFamily().getExes(), false);
     }
 
     private void addCousin(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "add cousin", discordUser, "getCousins", true);
+        addOrRemoveFamily(event, "add cousin", discordUser, d -> d.getFamily().getCousins(), true);
     }
 
     private void removeCousin(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "remove cousin", discordUser, "getCousins", false);
+        addOrRemoveFamily(event, "remove cousin", discordUser, d -> d.getFamily().getCousins(), false);
     }
 
     private void adoptParent(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt parent", discordUser, "getParents", true);
+        addOrRemoveFamily(event, "adopt parent", discordUser, d -> d.getFamily().getParents(), true);
     }
 
     private void disownParent(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown parent", discordUser, "getParents", false);
+        addOrRemoveFamily(event, "disown parent", discordUser, d -> d.getFamily().getParents(), false);
     }
 
     private void adoptSibling(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt sibling", discordUser, "getSiblings", true);
+        addOrRemoveFamily(event, "adopt sibling", discordUser, d -> d.getFamily().getSiblings(), true);
     }
 
     private void disownSibling(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown sibling", discordUser, "getSiblings", false);
+        addOrRemoveFamily(event, "disown sibling", discordUser, d -> d.getFamily().getSiblings(), false);
     }
 
     private void adoptNibling(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt nibling", discordUser, "getNiblings", true);
+        addOrRemoveFamily(event, "adopt nibling", discordUser, d -> d.getFamily().getNiblings(), true);
     }
 
     private void disownNibling(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown nibling", discordUser, "getNiblings", false);
+        addOrRemoveFamily(event, "disown nibling", discordUser, d -> d.getFamily().getNiblings(), false);
     }
 
     private void adoptPibling(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt pibling", discordUser, "getPiblings", true);
+        addOrRemoveFamily(event, "adopt pibling", discordUser, d -> d.getFamily().getPiblings(), true);
     }
 
     private void disownPibling(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown pibling", discordUser, "getPiblings", false);
+        addOrRemoveFamily(event, "disown pibling", discordUser, d -> d.getFamily().getPiblings(), false);
     }
 
     private void adoptGrandchild(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt grandchild", discordUser, "getGrandchildren", true);
+        addOrRemoveFamily(event, "adopt grandchild", discordUser, d -> d.getFamily().getGrandchildren(), true);
     }
 
     private void disownGrandchild(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown grandchild", discordUser, "getGrandchildren", false);
+        addOrRemoveFamily(event, "disown grandchild", discordUser, d -> d.getFamily().getGrandchildren(), false);
     }
 
     private void adoptChild(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "adopt child", discordUser, "getChildren", true);
+        addOrRemoveFamily(event, "adopt child", discordUser, d -> d.getFamily().getChildren(), true);
     }
 
     private void disownChild(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "disown child", discordUser, "getChildren", false);
+        addOrRemoveFamily(event, "disown child", discordUser, d -> d.getFamily().getChildren(), false);
     }
 
     private void propose(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "propose", discordUser, "getSpouses", true);
+        addOrRemoveFamily(event, "propose", discordUser, d -> d.getFamily().getSpouses(), true);
     }
 
     private void divorce(CommandEvent event) {
         DiscordUser discordUser = getUserAndFamily(event.getMember());
-        addOrRemoveFamily(event, "divorce", discordUser, "getSpouses", false);
+        addOrRemoveFamily(event, "divorce", discordUser, d -> d.getFamily().getSpouses(), false);
     }
 
-    private void addOrRemoveFamily(CommandEvent event, String argName, DiscordUser discordUser, String methodNameForSet, boolean add) {
+    private void addOrRemoveFamily(CommandEvent event, String argName, DiscordUser discordUser, Function<DiscordUser, Set<String>> setGetter, boolean add) {
         String args = event.getArgs();
-        Method method = ReflectionUtils.findMethod(Family.class, methodNameForSet);
-        //noinspection unchecked
-        Set<String> set = (Set<String>) ReflectionUtils.invokeMethod(method, discordUser.getFamily());
+        Set<String> set = setGetter.apply(discordUser);
 
         if (set == null) {
             event.replyError("Something went terribly wrong. Try again later");
@@ -338,8 +338,7 @@ public class Fam extends BaseSwampy {
                                 return true;
                             }
 
-                            //noinspection unchecked
-                            ((Set<String>) ReflectionUtils.invokeMethod(method, relookupUser.getFamily())).add(mentionedMember.getId());
+                            setGetter.apply(discordUser).add(mentionedMember.getId());
                             discordUserRepository.save(relookupUser);
 
                             MessageEmbed messageSuccess = Constants.simpleEmbed(argName,
