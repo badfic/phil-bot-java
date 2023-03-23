@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,7 +15,7 @@ public class RemindersTickable implements MinuteTickable {
     private final ReminderRepository reminderRepository;
     private final JDA johnJda;
 
-    public RemindersTickable(ReminderRepository reminderRepository, @Qualifier("johnJda") @Lazy JDA johnJda) {
+    public RemindersTickable(ReminderRepository reminderRepository, @Qualifier("johnJda") JDA johnJda) {
         this.reminderRepository = reminderRepository;
         this.johnJda = johnJda;
     }

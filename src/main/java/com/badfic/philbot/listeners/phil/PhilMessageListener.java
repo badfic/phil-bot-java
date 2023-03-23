@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
@@ -45,6 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -73,20 +75,22 @@ public class PhilMessageListener extends ListenerAdapter {
     private final JDA johnJda;
     private final NsfwQuoteCommand nsfwQuoteCommand;
     private final QuoteCommand quoteCommand;
-    private final PhilCommand philCommand;
     private final SwampyCommand swampyCommand;
     private final MemeCommandsService memeCommandsService;
     private final Ao3MetadataParser ao3MetadataParser;
     private final MemberCount memberCount;
     private final BaseConfig baseConfig;
-    private final CommandClient philCommandClient;
 
-    @Lazy
+    @Setter(onMethod_ = {@Autowired, @Lazy})
+    private PhilCommand philCommand;
+
+    @Setter(onMethod_ = {@Autowired, @Lazy})
+    private CommandClient philCommandClient;
+
     public PhilMessageListener(@Qualifier("behradJda") JDA behradJda, BehradMessageListener behradMessageListener, KeanuMessageListener keanuMessageListener,
                                AntoniaMessageListener antoniaMessageListener, JohnMessageListener johnMessageListener, @Qualifier("keanuJda") JDA keanuJda,
                                @Qualifier("antoniaJda") JDA antoniaJda, @Qualifier("johnJda") JDA johnJda, NsfwQuoteCommand nsfwQuoteCommand,
-                               QuoteCommand quoteCommand, MemeCommandsService memeCommandsService, PhilCommand philCommand,
-                               Ao3MetadataParser ao3MetadataParser, @Qualifier("philCommandClient") CommandClient philCommandClient,
+                               QuoteCommand quoteCommand, MemeCommandsService memeCommandsService, Ao3MetadataParser ao3MetadataParser,
                                MemberCount memberCount, BaseConfig baseConfig, SwampyCommand swampyCommand) {
         this.behradJda = behradJda;
         this.behradMessageListener = behradMessageListener;
@@ -99,9 +103,7 @@ public class PhilMessageListener extends ListenerAdapter {
         this.nsfwQuoteCommand = nsfwQuoteCommand;
         this.quoteCommand = quoteCommand;
         this.memeCommandsService = memeCommandsService;
-        this.philCommand = philCommand;
         this.ao3MetadataParser = ao3MetadataParser;
-        this.philCommandClient = philCommandClient;
         this.memberCount = memberCount;
         this.baseConfig = baseConfig;
         this.swampyCommand = swampyCommand;

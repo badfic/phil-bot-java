@@ -9,9 +9,11 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.Optional;
 import java.util.Set;
+import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,13 +22,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> {
 
-    private final JDA philJda;
+    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
+    private JDA philJda;
 
-    public PhilCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, PhilResponsesConfigRepository philResponsesConfigRepository,
-                       @Qualifier("philJda") @Lazy JDA philJda) throws Exception {
+    public PhilCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, PhilResponsesConfigRepository philResponsesConfigRepository)
+            throws Exception {
         super(philResponsesConfigRepository, objectMapper, honeybadgerReporter, "phil", "phil-kidFriendlyConfig.json", "phil-nsfwConfig.json",
                 PhilResponsesConfig::new);
-        this.philJda = philJda;
     }
 
     @Scheduled(cron = "${swampy.schedule.phil.humpday}", zone = "${swampy.schedule.timezone}")

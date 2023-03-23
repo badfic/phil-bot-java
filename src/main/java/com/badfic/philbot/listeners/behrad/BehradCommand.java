@@ -17,7 +17,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -49,7 +48,7 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
     private final JDA behradJda;
 
     public BehradCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, BehradResponsesConfigRepository behradResponsesConfigRepository,
-                         @Qualifier("behradJda") @Lazy JDA behradJda) throws Exception {
+                         @Qualifier("behradJda") JDA behradJda) throws Exception {
         super(behradResponsesConfigRepository, objectMapper, honeybadgerReporter, "behrad", "behrad-kidFriendlyConfig.json", "behrad-nsfwConfig.json",
                 BehradResponsesConfig::new);
         this.behradJda = behradJda;

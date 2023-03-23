@@ -24,7 +24,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -37,7 +36,7 @@ public class QuoteCommand extends BaseSwampy implements DailyTickable {
     private final JDA johnJda;
     private final QuoteRepository quoteRepository;
 
-    public QuoteCommand(@Qualifier("johnJda") @Lazy JDA johnJda, QuoteRepository quoteRepository) {
+    public QuoteCommand(@Qualifier("johnJda") JDA johnJda, QuoteRepository quoteRepository) {
         name = "quote";
         aliases = new String[] {"quotes"};
         help = """

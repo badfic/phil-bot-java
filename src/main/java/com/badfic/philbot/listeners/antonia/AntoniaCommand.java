@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 import net.dv8tion.jda.api.JDA;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,7 +19,7 @@ public class AntoniaCommand extends BasicResponsesBot<AntoniaResponsesConfig> {
     private final JDA antoniaJda;
 
     public AntoniaCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter,
-                          AntoniaResponsesConfigRepository antoniaResponsesConfigRepository, @Qualifier("antoniaJda") @Lazy JDA antoniaJda) throws Exception {
+                          AntoniaResponsesConfigRepository antoniaResponsesConfigRepository, @Qualifier("antoniaJda") JDA antoniaJda) throws Exception {
         super(antoniaResponsesConfigRepository, objectMapper, honeybadgerReporter, "antonia", "antonia-kidFriendlyConfig.json", "antonia-nsfwConfig.json",
                 AntoniaResponsesConfig::new);
         this.antoniaJda = antoniaJda;

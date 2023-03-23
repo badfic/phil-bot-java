@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -64,7 +63,7 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
     private final JDA keanuJda;
 
     public KeanuCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, KeanuResponsesConfigRepository keanuResponsesConfigRepository,
-                        @Qualifier("keanuJda") @Lazy JDA keanuJda) throws Exception {
+                        @Qualifier("keanuJda") JDA keanuJda) throws Exception {
         super(keanuResponsesConfigRepository, objectMapper, honeybadgerReporter, "keanu", "keanu-kidFriendlyConfig.json", "keanu-nsfwConfig.json",
                 KeanuResponsesConfig::new);
         this.keanuJda = keanuJda;

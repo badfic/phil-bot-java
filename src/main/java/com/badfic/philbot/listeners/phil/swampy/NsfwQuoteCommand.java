@@ -24,7 +24,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -37,7 +36,7 @@ public class NsfwQuoteCommand extends BaseSwampy implements DailyTickable {
     private final JDA keanuJda;
     private final NsfwQuoteRepository nsfwQuoteRepository;
 
-    public NsfwQuoteCommand(NsfwQuoteRepository nsfwQuoteRepository, @Qualifier("keanuJda") @Lazy JDA keanuJda) {
+    public NsfwQuoteCommand(NsfwQuoteRepository nsfwQuoteRepository, @Qualifier("keanuJda") JDA keanuJda) {
         name = "nsfwQuote";
         aliases = new String[]{"nsfwQuotes", "cursedQuote", "cursedQuotes"};
         nsfwOnly = true;

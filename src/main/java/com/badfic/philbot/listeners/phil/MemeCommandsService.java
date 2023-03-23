@@ -18,7 +18,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +29,7 @@ public class MemeCommandsService extends BaseService {
     private final MemeCommandRepository memeCommandRepository;
     private final JDA behradJda;
 
-    public MemeCommandsService(MemeCommandRepository memeCommandRepository, @Qualifier("behradJda") @Lazy JDA behradJda) {
+    public MemeCommandsService(MemeCommandRepository memeCommandRepository, @Qualifier("behradJda") JDA behradJda) {
         this.memeCommandRepository = memeCommandRepository;
         this.behradJda = behradJda;
     }

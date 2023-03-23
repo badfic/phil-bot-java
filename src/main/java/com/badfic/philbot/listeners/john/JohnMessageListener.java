@@ -5,7 +5,6 @@ import com.badfic.philbot.data.phil.Reminder;
 import com.badfic.philbot.data.phil.ReminderRepository;
 import com.badfic.philbot.data.phil.SnarkyReminderResponse;
 import com.badfic.philbot.data.phil.SnarkyReminderResponseRepository;
-import com.badfic.philbot.service.BaseService;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -29,7 +28,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class JohnMessageListener extends BaseService {
+public class JohnMessageListener {
     private static final Pattern JOHN_PATTERN = Constants.compileWords("john|constantine|johnno|johnny|hellblazer");
     private static final Pattern REMINDER_PATTER = Pattern.compile("\\b(remind me in |remind <@![0-9]+> in )[0-9]+\\b", Pattern.CASE_INSENSITIVE);
     private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
@@ -209,7 +208,9 @@ public class JohnMessageListener extends BaseService {
                     .queue();
         } catch (Exception e) {
             log.error("Exception trying to parse a reminder. [msgText={}]", message.getContentRaw(), e);
-            honeybadgerReporter.reportError(e, "Exception trying to parse reminder. MsgText=" + message.getContentRaw());
+            johnCommand.getJohnJda().getTextChannelById(message.getChannel().getIdLong())
+                    .sendMessage("Error: Could not understand your reminder, " + message.getAuthor().getAsMention())
+                    .queue();
         }
     }
 

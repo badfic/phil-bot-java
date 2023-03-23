@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -48,7 +49,7 @@ public abstract class BaseMembersController {
     @Setter(onMethod_ = {@Autowired})
     protected DiscordUserRepository discordUserRepository;
 
-    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda")})
+    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
     protected JDA philJda;
 
     protected void checkSession(HttpServletRequest httpServletRequest, boolean requiresAdmin) throws UnsupportedEncodingException {
