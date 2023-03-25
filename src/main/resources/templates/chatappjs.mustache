@@ -96,24 +96,23 @@
 
     document.querySelector("#messageForm").addEventListener("submit", sendMessage);
     stompClient.activate();
-</script>
-
-<script type="module">
-    import { EmojiButton } from "https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.4/dist/index.js";
-
-    const emojiPicker = new EmojiButton({
-        theme: "dark",
-        showVariants: false
-    });
-
-    emojiPicker.on("emoji", function(selection) {
-        const messageInput = document.querySelector("#message");
-        messageInput.value = messageInput.value + selection.emoji;
-    });
 
     const emojiDiv = document.querySelector(".emoji-trigger");
+
+    const emojiPicker = picmoPopup.createPopup({
+        showVariants: false
+    }, {
+        referenceElement: emojiDiv,
+        triggerElement: emojiDiv,
+    });
+
+    emojiPicker.addEventListener("emoji:select", event => {
+        const messageInput = document.querySelector("#message");
+        messageInput.value = messageInput.value + event.emoji;
+    });
+
     emojiDiv.addEventListener("click", function(e) {
-        emojiPicker.togglePicker(emojiDiv);
+        emojiPicker.toggle();
         e.preventDefault();
     });
 </script>
