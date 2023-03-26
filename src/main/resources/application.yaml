@@ -7,6 +7,8 @@ spring:
       data-source-properties:
         stringtype: "unspecified"
       maximum-pool-size: 4
+      max-lifetime: 300000
+
   jpa:
     open-in-view: false
   main:
@@ -51,7 +53,7 @@ swampy:
 
       trickortreat: "0 3 9 * * *"
       carrot: "0 5 11 * * *"
-      glitter: "0 35 12 * * *"
+      glitter: "0 36 12 * * *"
       potato: "0 5 13 * * *"
       sweepstakes18: "0 3 16 * * *"
       sweepstakeschaos: "0 7 16 * * *"
