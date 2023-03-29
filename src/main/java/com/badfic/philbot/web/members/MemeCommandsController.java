@@ -33,7 +33,7 @@ public class MemeCommandsController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Meme Commands");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
         props.put("commands", memes);
 
         return new ModelAndView("meme-commands", props);

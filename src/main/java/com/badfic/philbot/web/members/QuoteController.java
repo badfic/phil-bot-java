@@ -30,7 +30,7 @@ public class QuoteController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "\uD83D\uDCAC Quotes");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
         props.put("quotes", quoteRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream().map(q -> {
             Member memberById = guild.getMemberById(q.getUserId());
             return new SimpleQuote(memberById != null ? memberById.getEffectiveName() : Long.toString(q.getUserId()),

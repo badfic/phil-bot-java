@@ -18,7 +18,7 @@ public class RanksController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Ranks");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
         props.put("ranks", Rank.getAllRanks());
 
         return new ModelAndView("ranks", props);

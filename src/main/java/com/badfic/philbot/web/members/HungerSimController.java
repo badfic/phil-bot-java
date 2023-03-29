@@ -19,7 +19,7 @@ public class HungerSimController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Hunger Sim");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
 
         return new ModelAndView("hunger-sim", props);
     }
@@ -30,7 +30,7 @@ public class HungerSimController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Hunger Sim - Pronouns");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
 
         return new ModelAndView("hunger-sim-pronouns", props);
     }
@@ -41,7 +41,7 @@ public class HungerSimController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Hunger Sim - Players");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
 
         return new ModelAndView("hunger-sim-players", props);
     }
@@ -52,7 +52,7 @@ public class HungerSimController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Hunger Sim - Outcomes");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
 
         return new ModelAndView("hunger-sim-outcomes", props);
     }
@@ -63,7 +63,7 @@ public class HungerSimController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Hunger Sim - Rounds");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
 
         return new ModelAndView("hunger-sim-rounds", props);
     }
@@ -74,7 +74,7 @@ public class HungerSimController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Hunger Sim - New Game");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
 
         return new ModelAndView("hunger-sim-new-game", props);
     }
@@ -85,7 +85,7 @@ public class HungerSimController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Hunger Sim - Run Game");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
 
         return new ModelAndView("hunger-sim-game", props);
     }

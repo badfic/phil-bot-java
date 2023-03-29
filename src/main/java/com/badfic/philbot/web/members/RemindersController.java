@@ -40,7 +40,7 @@ public class RemindersController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Reminders");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
         props.put("reminders", simpleReminderList);
 
         return new ModelAndView("reminders", props);

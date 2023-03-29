@@ -25,7 +25,7 @@ public class LeaderboardController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Leaderboard");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
         props.put("tables", Arrays.asList("bastards", "children"));
 
         return new ModelAndView("leaderboard", props);

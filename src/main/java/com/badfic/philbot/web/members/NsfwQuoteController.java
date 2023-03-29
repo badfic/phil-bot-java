@@ -30,7 +30,7 @@ public class NsfwQuoteController extends BaseMembersController {
         Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         Map<String, Object> props = new HashMap<>();
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
         props.put("pageTitle", "\uD83C\uDF46 Quotes");
 
         props.put("quotes", nsfwQuoteRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream().map(q -> {

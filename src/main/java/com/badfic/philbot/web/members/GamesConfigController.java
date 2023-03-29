@@ -33,7 +33,6 @@ public class GamesConfigController extends BaseMembersController {
 
         SwampyGamesConfig swampyGamesConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
 
-
         List<ConfigEntry> configEntries = new ArrayList<>();
 
         for (Field declaredField : SwampyGamesConfig.class.getDeclaredFields()) {
@@ -47,7 +46,7 @@ public class GamesConfigController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Games Config");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(httpServletRequest.getSession(), props);
         props.put("configEntries", configEntries);
 
         return new ModelAndView("games-config", props);

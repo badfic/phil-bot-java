@@ -4,6 +4,7 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.ModHelpAware;
 import com.jagrosh.jdautilities.command.Command;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,8 @@ public class CommandsController extends BaseMembersController {
     @GetMapping(value = "/commands", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
-        boolean isMod = Boolean.TRUE.equals(httpServletRequest.getSession().getAttribute(DISCORD_IS_MOD));
+        HttpSession session = httpServletRequest.getSession();
+        boolean isMod = Boolean.TRUE.equals(session.getAttribute(DISCORD_IS_MOD));
 
         MutableObject<SimpleCommand> swampyCommand = new MutableObject<>();
 
@@ -70,7 +72,7 @@ public class CommandsController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Commands");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(session, props);
         props.put("commands", simpleCommandsList);
 
         return new ModelAndView("commands", props);

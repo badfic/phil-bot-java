@@ -1,6 +1,5 @@
 package com.badfic.philbot.web.members;
 
-import com.badfic.philbot.config.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,11 +16,7 @@ public class ChatPopoutController extends BaseMembersController {
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
 
-        Member member = getMemberFromSession(httpServletRequest);
-
-        if (member == null) {
-            throw new UnauthorizedException("You do not have a valid session. Please refresh and login again");
-        }
+        Member member = getMemberFromSession(httpServletRequest.getSession());
 
         String userAvatar = member.getEffectiveAvatarUrl();
 

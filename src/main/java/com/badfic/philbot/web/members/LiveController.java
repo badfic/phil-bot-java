@@ -2,6 +2,7 @@ package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 import net.dv8tion.jda.api.entities.Member;
@@ -17,8 +18,8 @@ public class LiveController extends BaseMembersController {
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
 
-        String discordId = (String) httpServletRequest.getSession().getAttribute(DISCORD_ID);
-        Member member = philJda.getGuildById(baseConfig.guildId).getMemberById(discordId);
+        HttpSession session = httpServletRequest.getSession();
+        Member member = getMemberFromSession(session);
 
         if (member == null) {
             throw new UnauthorizedException("You do not have a valid session. Please refresh and login again");
@@ -28,7 +29,7 @@ public class LiveController extends BaseMembersController {
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "The Swamp Live");
-        addCommonProps(httpServletRequest, props);
+        addCommonProps(session, props);
         props.put("nickname", member.getEffectiveName());
         props.put("userAvatar", userAvatar);
 
