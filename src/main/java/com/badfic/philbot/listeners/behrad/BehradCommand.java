@@ -48,9 +48,8 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
     private final JDA behradJda;
 
     public BehradCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, BehradResponsesConfigRepository behradResponsesConfigRepository,
-                         @Qualifier("behradJda") JDA behradJda) throws Exception {
-        super(behradResponsesConfigRepository, objectMapper, honeybadgerReporter, "behrad", "behrad-kidFriendlyConfig.json", "behrad-nsfwConfig.json",
-                BehradResponsesConfig::new);
+                         @Qualifier("behradJda") JDA behradJda) {
+        super(behradResponsesConfigRepository, objectMapper, honeybadgerReporter, "behrad", BehradResponsesConfig::new);
         this.behradJda = behradJda;
     }
 

@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import javax.imageio.ImageIO;
 import lombok.Getter;
@@ -55,9 +56,8 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         }
     }
 
-    public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository,
-                             ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, String name, String sfwBootstrapJson, String nsfwBootstrapJson,
-                             Supplier<T> responsesConfigConstructor) throws Exception {
+    public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository, ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter,
+                             String name, Supplier<T> responsesConfigConstructor) {
         this.configRepository = configRepository;
         this.objectMapper = objectMapper;
         this.honeybadgerReporter = honeybadgerReporter;
@@ -82,22 +82,16 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
         // seed data if needed
         if (configRepository.findById(BaseResponsesConfig.SINGLETON_ID).isEmpty()) {
-            try (InputStream sfwStream = getClass().getClassLoader().getResourceAsStream(sfwBootstrapJson);
-                 InputStream nsfwStream = getClass().getClassLoader().getResourceAsStream(nsfwBootstrapJson)) {
-                GenericBotResponsesConfigJson kidFriendlyConfig = objectMapper.readValue(sfwStream,
-                        GenericBotResponsesConfigJson.class);
+            GenericBotResponsesConfigJson kidFriendlyConfig = new GenericBotResponsesConfigJson(Set.of(Constants.SWAMPYS_CHANNEL), Set.of("yes", "no"));
 
-                GenericBotResponsesConfigJson nsfwConfig = objectMapper.readValue(nsfwStream,
-                        GenericBotResponsesConfigJson.class);
-                nsfwConfig.responses().addAll(kidFriendlyConfig.responses());
+            GenericBotResponsesConfigJson nsfwConfig = new GenericBotResponsesConfigJson(Set.of(Constants.CURSED_SWAMP_CHANNEL), Set.of("heck yes", "heck no"));
 
-                T responsesConfig = responsesConfigConstructor.get();
-                responsesConfig.setId(BaseResponsesConfig.SINGLETON_ID);
-                responsesConfig.setSfwConfig(kidFriendlyConfig);
-                responsesConfig.setNsfwConfig(nsfwConfig);
+            T responsesConfig = responsesConfigConstructor.get();
+            responsesConfig.setId(BaseResponsesConfig.SINGLETON_ID);
+            responsesConfig.setSfwConfig(kidFriendlyConfig);
+            responsesConfig.setNsfwConfig(nsfwConfig);
 
-                configRepository.save(responsesConfig);
-            }
+            configRepository.save(responsesConfig);
         }
     }
 

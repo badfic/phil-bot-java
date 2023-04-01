@@ -63,9 +63,8 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
     private final JDA keanuJda;
 
     public KeanuCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, KeanuResponsesConfigRepository keanuResponsesConfigRepository,
-                        @Qualifier("keanuJda") JDA keanuJda) throws Exception {
-        super(keanuResponsesConfigRepository, objectMapper, honeybadgerReporter, "keanu", "keanu-kidFriendlyConfig.json", "keanu-nsfwConfig.json",
-                KeanuResponsesConfig::new);
+                        @Qualifier("keanuJda") JDA keanuJda) {
+        super(keanuResponsesConfigRepository, objectMapper, honeybadgerReporter, "keanu", KeanuResponsesConfig::new);
         this.keanuJda = keanuJda;
     }
 

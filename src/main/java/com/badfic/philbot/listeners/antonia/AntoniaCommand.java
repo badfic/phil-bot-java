@@ -19,9 +19,8 @@ public class AntoniaCommand extends BasicResponsesBot<AntoniaResponsesConfig> {
     private final JDA antoniaJda;
 
     public AntoniaCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter,
-                          AntoniaResponsesConfigRepository antoniaResponsesConfigRepository, @Qualifier("antoniaJda") JDA antoniaJda) throws Exception {
-        super(antoniaResponsesConfigRepository, objectMapper, honeybadgerReporter, "antonia", "antonia-kidFriendlyConfig.json", "antonia-nsfwConfig.json",
-                AntoniaResponsesConfig::new);
+                          AntoniaResponsesConfigRepository antoniaResponsesConfigRepository, @Qualifier("antoniaJda") JDA antoniaJda) {
+        super(antoniaResponsesConfigRepository, objectMapper, honeybadgerReporter, "antonia", AntoniaResponsesConfig::new);
         this.antoniaJda = antoniaJda;
     }
 

@@ -25,10 +25,8 @@ public class PhilCommand extends BasicResponsesBot<PhilResponsesConfig> {
     @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
     private JDA philJda;
 
-    public PhilCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, PhilResponsesConfigRepository philResponsesConfigRepository)
-            throws Exception {
-        super(philResponsesConfigRepository, objectMapper, honeybadgerReporter, "phil", "phil-kidFriendlyConfig.json", "phil-nsfwConfig.json",
-                PhilResponsesConfig::new);
+    public PhilCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, PhilResponsesConfigRepository philResponsesConfigRepository) {
+        super(philResponsesConfigRepository, objectMapper, honeybadgerReporter, "phil", PhilResponsesConfig::new);
     }
 
     @Scheduled(cron = "${swampy.schedule.phil.humpday}", zone = "${swampy.schedule.timezone}")

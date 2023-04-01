@@ -18,9 +18,8 @@ public class JohnCommand extends BasicResponsesBot<JohnResponsesConfig> {
     private final JDA johnJda;
 
     public JohnCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, JohnResponsesConfigRepository johnResponsesConfigRepository,
-                       @Qualifier("johnJda") JDA johnJda) throws Exception {
-        super(johnResponsesConfigRepository, objectMapper, honeybadgerReporter, "john", "john-kidFriendlyConfig.json", "john-nsfwConfig.json",
-                JohnResponsesConfig::new);
+                       @Qualifier("johnJda") JDA johnJda) {
+        super(johnResponsesConfigRepository, objectMapper, honeybadgerReporter, "john", JohnResponsesConfig::new);
         this.johnJda = johnJda;
     }
 
