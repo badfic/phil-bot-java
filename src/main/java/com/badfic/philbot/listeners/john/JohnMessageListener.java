@@ -1,10 +1,10 @@
 package com.badfic.philbot.listeners.john;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.phil.Reminder;
-import com.badfic.philbot.data.phil.ReminderRepository;
-import com.badfic.philbot.data.phil.SnarkyReminderResponse;
-import com.badfic.philbot.data.phil.SnarkyReminderResponseRepository;
+import com.badfic.philbot.data.Reminder;
+import com.badfic.philbot.data.ReminderRepository;
+import com.badfic.philbot.data.SnarkyReminderResponse;
+import com.badfic.philbot.data.SnarkyReminderResponseRepository;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;

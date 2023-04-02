@@ -1,7 +1,8 @@
 package com.badfic.philbot.web.members;
 
-import com.badfic.philbot.data.phil.MemeCommandEntity;
-import com.badfic.philbot.listeners.phil.MemeCommandsService;
+import com.badfic.philbot.data.MemeCommandEntity;
+import com.badfic.philbot.service.MemeCommandsService;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,7 @@ public class MemeCommandsController extends BaseMembersController {
     public ResponseEntity<String> postMemeForm(@RequestBody MemeForm form, HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        memeCommandsService.saveMeme(form);
+        memeCommandsService.saveMeme(form.memeUrl(), form.memeName());
 
         return ResponseEntity.ok("Successfully created new meme command! Refresh the page to see it below.");
     }
@@ -55,5 +56,8 @@ public class MemeCommandsController extends BaseMembersController {
         memeCommandsService.deleteMeme(memeName);
         return ResponseEntity.ok("Successfully deleted: " + memeName + ". Refresh the page to see it disappear");
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record MemeForm(String memeName, String memeUrl) {}
 
 }

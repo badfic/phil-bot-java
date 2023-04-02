@@ -1,9 +1,9 @@
 package com.badfic.philbot.service;
 
+import com.badfic.philbot.commands.BaseCommand;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.phil.DailyMarvelMemeEntity;
-import com.badfic.philbot.data.phil.DailyMarvelMemeRepository;
-import com.badfic.philbot.listeners.phil.swampy.BaseSwampy;
+import com.badfic.philbot.data.DailyMarvelMemeEntity;
+import com.badfic.philbot.data.DailyMarvelMemeRepository;
 import com.google.common.collect.Sets;
 import com.google.common.html.HtmlEscapers;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -23,7 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DailyMarvelMemeService extends BaseSwampy {
+public class DailyMarvelMemeService extends BaseCommand {
 
     private static final String SEARCH_STRING = "Out of context Marvel meme";
 

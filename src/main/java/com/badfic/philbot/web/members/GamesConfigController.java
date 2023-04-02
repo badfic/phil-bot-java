@@ -1,8 +1,8 @@
 package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.ControllerConfigurable;
-import com.badfic.philbot.data.phil.SwampyGamesConfig;
-import com.badfic.philbot.data.phil.SwampyGamesConfigRepository;
+import com.badfic.philbot.data.SwampyGamesConfig;
+import com.badfic.philbot.data.SwampyGamesConfigRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.ArrayList;

@@ -4,8 +4,9 @@ import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.NewSessionException;
 import com.badfic.philbot.config.UnauthorizedException;
-import com.badfic.philbot.data.DiscordApiLoginResponse;
 import com.badfic.philbot.data.DiscordUserRepository;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
@@ -136,5 +137,9 @@ public abstract class BaseMembersController {
         session.setAttribute(DISCORD_TOKEN_EXPIRES_AT, LocalDateTime.now().plusSeconds(discordApiLoginResponse.expiresIn()));
         session.setAttribute(DISCORD_REFRESH_TOKEN, discordApiLoginResponse.refreshToken());
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record DiscordApiLoginResponse(@JsonProperty("access_token") String accessToken, @JsonProperty("refresh_token") String refreshToken,
+                                          @JsonProperty("expires_in") Long expiresIn) {}
 
 }

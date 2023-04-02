@@ -1,5 +1,6 @@
 package com.badfic.philbot.data;
 
+import com.badfic.philbot.data.converters.GenericBotResponsesConfigJsonConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Id;

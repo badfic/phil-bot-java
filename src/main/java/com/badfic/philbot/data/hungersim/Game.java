@@ -1,6 +1,6 @@
 package com.badfic.philbot.data.hungersim;
 
-import com.badfic.philbot.data.JsonListConverter;
+import com.badfic.philbot.data.converters.JsonListConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

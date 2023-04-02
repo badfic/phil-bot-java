@@ -9,9 +9,9 @@ import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MODERATION;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
 import static net.dv8tion.jda.api.requests.GatewayIntent.MESSAGE_CONTENT;
 
-import com.badfic.philbot.listeners.phil.MemeCommandsService;
+import com.badfic.philbot.commands.swampy.SwampyCommand;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
-import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
+import com.badfic.philbot.service.MemeCommandsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jagrosh.jdautilities.command.Command;

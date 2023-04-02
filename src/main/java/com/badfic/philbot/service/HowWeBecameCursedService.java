@@ -1,8 +1,8 @@
 package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.phil.HowWeBecameCursedEntity;
-import com.badfic.philbot.data.phil.HowWeBecameCursedRepository;
+import com.badfic.philbot.data.HowWeBecameCursedEntity;
+import com.badfic.philbot.data.HowWeBecameCursedRepository;
 import com.google.common.collect.Sets;
 import com.google.common.html.HtmlEscapers;
 import java.util.HashSet;

@@ -3,8 +3,7 @@ package com.badfic.philbot.web.members;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.config.LoginRedirectException;
 import com.badfic.philbot.config.UnauthorizedException;
-import com.badfic.philbot.data.DiscordApiIdentityResponse;
-import com.badfic.philbot.data.DiscordApiLoginResponse;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
@@ -109,5 +108,8 @@ public class HomeController extends BaseMembersController {
 
         return identityResponse.getBody();
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record DiscordApiIdentityResponse(String id, String username) {}
 
 }
