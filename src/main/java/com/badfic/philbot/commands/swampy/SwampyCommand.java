@@ -693,12 +693,9 @@ public class SwampyCommand extends BaseCommand implements ModHelpAware {
             return;
         }
 
-        Optional<SwampyGamesConfig> optionalConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
-        if (optionalConfig.isPresent()) {
-            SwampyGamesConfig swampyGamesConfig = optionalConfig.get();
-            swampyGamesConfig.setMostRecentTaxes(0);
-            swampyGamesConfigRepository.save(swampyGamesConfig);
-        }
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        swampyGamesConfig.setMostRecentTaxes(0);
+        swampyGamesConfigRepository.save(swampyGamesConfig);
 
         event.reply("Resetting, please wait...");
         for (DiscordUser discordUser : discordUserRepository.findAll()) {

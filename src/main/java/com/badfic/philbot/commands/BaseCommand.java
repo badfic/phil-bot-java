@@ -129,7 +129,7 @@ public abstract class BaseCommand extends Command {
     }
 
     protected SwampyGamesConfig getSwampyGamesConfig() {
-        return swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElse(null);
+        return swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
     }
 
 }
