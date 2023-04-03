@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.events;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class Swiper extends BaseCommand implements MinuteTickable {
+public class Swiper extends BaseNormalCommand implements MinuteTickable {
     // TODO: Investigate putting these in SwampyGamesConfig table
     public static final Map<String, TheSwiper> SWIPERS = ImmutableMap.<String, TheSwiper>builder()
             .put("Swiper No Swiping", new TheSwiper(

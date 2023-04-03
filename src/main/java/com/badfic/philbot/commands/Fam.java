@@ -24,7 +24,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Fam extends BaseCommand implements ModHelpAware {
+public class Fam extends BaseNormalCommand implements ModHelpAware {
 
     @Getter
     private final String modHelp;
@@ -320,8 +320,7 @@ public class Fam extends BaseCommand implements ModHelpAware {
 
             MessageEmbed message = Constants.simpleEmbed(argName,
                     "Hello, " + mentionedMember.getAsMention() + "\n\n" + event.getMember().getAsMention() + " would like to `" + argName
-                            + "` you.\nDo you accept?\n\n(You have 15 minutes to respond or else it defaults to reject)",
-                    Constants.SWAMP_GREEN);
+                            + "` you.\nDo you accept?\n\n(You have 15 minutes to respond or else it defaults to reject)");
 
             event.getChannel().sendMessageEmbeds(message).queue(msg -> {
                 msg.addReaction(Emoji.fromUnicode("✅")).queue();
@@ -341,8 +340,7 @@ public class Fam extends BaseCommand implements ModHelpAware {
                             discordUserRepository.save(relookupUser);
 
                             MessageEmbed messageSuccess = Constants.simpleEmbed(argName,
-                                    mentionedMember.getAsMention() + " accepted " + event.getMember().getAsMention() + "'s `" + argName + '`',
-                                    Constants.SWAMP_GREEN);
+                                    mentionedMember.getAsMention() + " accepted " + event.getMember().getAsMention() + "'s `" + argName + '`');
 
                             msg.editMessageEmbeds(messageSuccess).queue();
                             return true;

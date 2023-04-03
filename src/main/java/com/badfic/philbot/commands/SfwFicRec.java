@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SfwFicRec extends BaseCommand {
+public class SfwFicRec extends BaseNormalCommand {
 
     private final Ao3MetadataParser ao3MetadataParser;
 

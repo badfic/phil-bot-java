@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.Role;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ColorMe extends BaseCommand {
+public class ColorMe extends BaseNormalCommand {
 
     public ColorMe() {
         name = "colorme";

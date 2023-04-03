@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HelpCommand extends BaseCommand {
+public class HelpCommand extends BaseNormalCommand {
 
     public HelpCommand() {
         name = "help";

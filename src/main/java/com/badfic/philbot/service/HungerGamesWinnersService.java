@@ -1,6 +1,6 @@
 package com.badfic.philbot.service;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.HungerGamesWinnerEntity;
 import com.badfic.philbot.data.HungerGamesWinnerRepository;
@@ -27,7 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HungerGamesWinnersService extends BaseCommand implements DailyTickable {
+public class HungerGamesWinnersService extends BaseNormalCommand implements DailyTickable {
 
     private static final String REACTION_EMOJI = "\uD83C\uDFC1";
 

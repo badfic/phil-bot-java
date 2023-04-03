@@ -1,6 +1,6 @@
 package com.badfic.philbot.service;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DailyRiverdaleMemeEntity;
 import com.badfic.philbot.data.DailyRiverdaleMemeRepository;
@@ -23,7 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DailyRiverdaleMemeService extends BaseCommand {
+public class DailyRiverdaleMemeService extends BaseNormalCommand {
 
     private static final String SEARCH_STRING = "out of context riverdale meme";
 

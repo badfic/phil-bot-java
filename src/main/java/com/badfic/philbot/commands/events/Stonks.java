@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.events;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class Stonks extends BaseCommand {
+public class Stonks extends BaseNormalCommand {
     // TODO: Put in SwampyGamesConfig table
     private static final Set<String> STONKS = ImmutableSet.of(
             "https://cdn.discordapp.com/attachments/794506942906761226/882825319722143784/stonky_bellala.png",

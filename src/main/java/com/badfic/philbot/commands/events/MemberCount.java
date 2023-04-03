@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.events;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.DailyTickable;
@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MemberCount extends BaseCommand implements DailyTickable {
+public class MemberCount extends BaseNormalCommand implements DailyTickable {
 
     public MemberCount() {
         name = "memberCount";

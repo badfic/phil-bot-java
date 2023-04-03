@@ -9,7 +9,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RngCommand extends BaseCommand {
+public class RngCommand extends BaseNormalCommand {
 
     private static final Set<String> THUMBNAILS = ImmutableSet.of(
             "https://cdn.discordapp.com/attachments/707453916882665552/781484144425173012/giphy9.gif",

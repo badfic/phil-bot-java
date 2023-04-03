@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.events;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class Boost extends BaseCommand {
+public class Boost extends BaseNormalCommand {
     private static final Set<String> BOOST_WORDS = ImmutableSet.<String>builder().add(
             "boost", "butter", "oleo", "olio", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "word", "kitten", "naughty",
             "nice", "nut", "feet", "yeet", "missouri", "shrek", "swamp", "drench", "florida", "moist", "void", "bird", "legends", "plants", "nuggets", "pride",

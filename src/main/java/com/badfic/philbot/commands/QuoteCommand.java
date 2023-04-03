@@ -29,7 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QuoteCommand extends BaseCommand implements DailyTickable {
+public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
 
     private static final String SPEECH_BUBBLE_EMOJI = "\uD83D\uDCAC";
 

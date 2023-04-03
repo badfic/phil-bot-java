@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.events;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.Family;
@@ -18,7 +18,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UpdateIntroCache extends BaseCommand implements DailyTickable {
+public class UpdateIntroCache extends BaseNormalCommand implements DailyTickable {
 
     public UpdateIntroCache() {
         name = "updateIntroCache";

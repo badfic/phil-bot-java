@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.swampy;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.commands.ModHelpAware;
 import com.badfic.philbot.commands.Rank;
 import com.badfic.philbot.config.Constants;
@@ -44,7 +44,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class SwampyCommand extends BaseCommand implements ModHelpAware {
+public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
     // soft point bans
     private static final Pattern NO_NO_WORDS = Constants.compileWords("snowflake|eternals|captain|witch|christmas|santa|grinch");
 
@@ -86,8 +86,6 @@ public class SwampyCommand extends BaseCommand implements ModHelpAware {
 
     @PostConstruct
     public void init() throws Exception {
-        Rank.init(restTemplate, baseConfig.airtableApiToken);
-
         // seed swampy games config data
         Optional<SwampyGamesConfig> optionalConfig = this.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
         if (optionalConfig.isEmpty()) {

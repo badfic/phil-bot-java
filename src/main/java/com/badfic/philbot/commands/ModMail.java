@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ModMail extends BaseCommand {
+public class ModMail extends BaseNormalCommand {
 
     public ModMail() {
         name = "mods";

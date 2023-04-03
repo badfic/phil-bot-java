@@ -29,7 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NsfwQuoteCommand extends BaseCommand implements DailyTickable {
+public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable {
 
     private static final String EGGPLANT_EMOJI = "\uD83C\uDF46";
 

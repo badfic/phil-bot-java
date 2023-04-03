@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.events;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.Quote;
@@ -34,7 +34,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QuoteTrivia extends BaseCommand implements MinuteTickable {
+public class QuoteTrivia extends BaseNormalCommand implements MinuteTickable {
 
     private final QuoteRepository quoteRepository;
 

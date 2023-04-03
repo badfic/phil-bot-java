@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.events;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class TrickOrTreat extends BaseCommand {
+public class TrickOrTreat extends BaseNormalCommand {
     public TrickOrTreat() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "trickortreat";

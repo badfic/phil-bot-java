@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.events;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class Robinhood extends BaseCommand {
+public class Robinhood extends BaseNormalCommand {
     public Robinhood() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "robinhood";

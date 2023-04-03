@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class ScooterAnkle extends BaseCommand {
+public class ScooterAnkle extends BaseNormalCommand {
     public ScooterAnkle() {
         name = "scooterankle";
         help = """

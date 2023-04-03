@@ -14,7 +14,7 @@ import org.apache.commons.lang3.RegExUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FightCommand extends BaseCommand {
+public class FightCommand extends BaseNormalCommand {
 
     private List<FightOutcome> fightOutcomes;
 

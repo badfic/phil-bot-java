@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.events;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.NsfwQuote;
 import com.badfic.philbot.data.NsfwQuoteRepository;
@@ -34,7 +34,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NsfwQuoteTrivia extends BaseCommand implements MinuteTickable {
+public class NsfwQuoteTrivia extends BaseNormalCommand implements MinuteTickable {
 
     private final NsfwQuoteRepository nsfwQuoteRepository;
 

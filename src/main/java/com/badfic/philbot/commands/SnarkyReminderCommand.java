@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SnarkyReminderCommand extends BaseCommand {
+public class SnarkyReminderCommand extends BaseNormalCommand {
 
     private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
 

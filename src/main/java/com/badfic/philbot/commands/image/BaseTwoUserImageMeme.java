@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.image;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.AlphaComposite;
@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
 
-public abstract class BaseTwoUserImageMeme extends BaseCommand {
+public abstract class BaseTwoUserImageMeme extends BaseNormalCommand {
 
     private final int authorScale;
     private final int authorX;

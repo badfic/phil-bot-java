@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RemindersCommand extends BaseCommand implements MinuteTickable {
+public class RemindersCommand extends BaseNormalCommand implements MinuteTickable {
 
     private final ReminderRepository reminderRepository;
     private final JDA johnJda;

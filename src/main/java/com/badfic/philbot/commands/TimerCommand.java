@@ -7,7 +7,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TimerCommand extends BaseCommand {
+public class TimerCommand extends BaseNormalCommand {
 
     public TimerCommand() {
         name = "timer";

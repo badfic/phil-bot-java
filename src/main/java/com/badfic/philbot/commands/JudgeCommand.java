@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class JudgeCommand extends BaseCommand implements MinuteTickable {
+public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
     public enum Sentence {
         ACQUIT("❌"),
         ONE_HOUR("⏲️"),

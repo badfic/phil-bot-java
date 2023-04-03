@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class Tumblr extends BaseCommand {
+public class Tumblr extends BaseNormalCommand {
     private final JumblrClient jumblrClient;
 
     public Tumblr(JumblrClient jumblrClient) {

@@ -39,7 +39,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EmoteMe extends BaseCommand {
+public class EmoteMe extends BaseNormalCommand {
 
     private static final float ALPHA = 0.69f;
     private volatile boolean emojiImageListDownloadAttempted;

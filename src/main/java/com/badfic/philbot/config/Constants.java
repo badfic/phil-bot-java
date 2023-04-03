@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URL;
 import java.time.DayOfWeek;
@@ -19,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -31,44 +31,43 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public interface Constants {
-    Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+@Slf4j
+public class Constants {
 
-    String PREFIX = "!!";
+    public static final String PREFIX = "!!";
 
-    String ADMIN_ROLE = "Queens of the Castle";
-    String EIGHTEEN_PLUS_ROLE = "18+";
-    String CHAOS_CHILDREN_ROLE = "Chaos Children";
-    String SWAMPYS_CHANNEL = "the-swampys";
-    String MEGA_HELL_CHANNEL = "mega-hell";
-    String MEGA_HELL_ROLE = "in mega hell";
-    String TEST_CHANNEL = "test-channel";
-    String MOD_LOGS_CHANNEL = "super-secret-mod-announcements";
-    String HUNGERDOME_CHANNEL = "the-hungerdome";
-    String CURSED_SWAMP_CHANNEL = "cursed-swamp";
-    String MEMES_CHANNEL = "memes";
+    public static final String ADMIN_ROLE = "Queens of the Castle";
+    public static final String EIGHTEEN_PLUS_ROLE = "18+";
+    public static final String CHAOS_CHILDREN_ROLE = "Chaos Children";
+    public static final String SWAMPYS_CHANNEL = "the-swampys";
+    public static final String MEGA_HELL_CHANNEL = "mega-hell";
+    public static final String MEGA_HELL_ROLE = "in mega hell";
+    public static final String TEST_CHANNEL = "test-channel";
+    public static final String MOD_LOGS_CHANNEL = "super-secret-mod-announcements";
+    public static final String HUNGERDOME_CHANNEL = "the-hungerdome";
+    public static final String CURSED_SWAMP_CHANNEL = "cursed-swamp";
+    public static final String MEMES_CHANNEL = "memes";
 
-    String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
 
-    Color SWAMP_GREEN = new Color(89, 145, 17);
+    public static final Color SWAMP_GREEN = new Color(89, 145, 17);
 
-    Set<Color> COLORS = ImmutableSet.of(
+    public static final Set<Color> COLORS = ImmutableSet.of(
+            SWAMP_GREEN,
             new Color(255, 137, 5),
             new Color(242, 87, 182),
             new Color(99, 221, 99),
             new Color(0, 107, 0)
     );
 
-    Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
+    public static final Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
 
-    static Color colorOfTheMonth() {
+    public static Color colorOfTheMonth() {
         return pickRandom(COLORS);
     }
 
-    static boolean isUrl(String string) {
+    public static boolean isUrl(String string) {
         if (StringUtils.isBlank(string)) {
             return false;
         }
@@ -82,7 +81,7 @@ public interface Constants {
         }
     }
 
-    static boolean urlIsImage(String url) {
+    public static boolean urlIsImage(String url) {
         if (StringUtils.isBlank(url)) {
             return false;
         }
@@ -91,11 +90,11 @@ public interface Constants {
         return Constants.IMAGE_EXTENSION_PATTERN.matcher(fileExtension).find();
     }
 
-    static String imageUrlOrElseNull(String url) {
+    public static String imageUrlOrElseNull(String url) {
         return urlIsImage(url) ? url : null;
     }
 
-    static BufferedImage scaleImageUrlTo(int width, int height, String imageUrl) throws Exception {
+    public static BufferedImage scaleImageUrlTo(int width, int height, String imageUrl) throws Exception {
         if (width <= 0) {
             return null;
         }
@@ -116,14 +115,14 @@ public interface Constants {
         return scaledImage;
     }
 
-    static Optional<Role> hasRole(Member member, String roleName) {
+    public static Optional<Role> hasRole(Member member, String roleName) {
         return member.getRoles()
                 .stream()
                 .filter(r -> r.getName().equalsIgnoreCase(roleName))
                 .findAny();
     }
 
-    static <T> T pickRandom(Collection<T> collection) {
+    public static <T> T pickRandom(Collection<T> collection) {
         int index = ThreadLocalRandom.current().nextInt(collection.size());
         Iterator<T> iterator = collection.iterator();
         for (int i = 0; i < index; i++) {
@@ -132,23 +131,23 @@ public interface Constants {
         return iterator.next();
     }
 
-    static <T> T pickRandom(T[] collection) {
+    public static <T> T pickRandom(T[] collection) {
         int index = ThreadLocalRandom.current().nextInt(collection.length);
         return collection[index];
     }
 
-    static String prettyPrintDuration(Duration duration) {
+    public static String prettyPrintDuration(Duration duration) {
         return duration.toString()
                 .substring(2)
                 .replaceAll("(\\d[HMS])(?!$)", "$1 ")
                 .toLowerCase();
     }
 
-    static Pattern compileWords(String s) {
+    public static Pattern compileWords(String s) {
         return Pattern.compile("\\b(" + s + ")\\b", Pattern.CASE_INSENSITIVE);
     }
 
-    static Pair<DayOfWeek, Integer> isoDayOfWeekMode(int[] array) {
+    public static Pair<DayOfWeek, Integer> isoDayOfWeekMode(int[] array) {
         if (ArrayUtils.isEmpty(array)) {
             return ImmutablePair.of(DayOfWeek.SUNDAY, 0);
         }
@@ -158,6 +157,7 @@ public interface Constants {
 
         int[] counts = new int[7];
 
+        //noinspection ForLoopReplaceableByForEach
         for (int i = 0; i < array.length; i++) {
             int currentValue = array[i];
 
@@ -172,7 +172,7 @@ public interface Constants {
         return ImmutablePair.of(DayOfWeek.of(mode), maxCount);
     }
 
-    static void checkUserTriggerWords(MessageReceivedEvent event, Multimap<String, Pair<Pattern, String>> userTriggerWords) {
+    public static void checkUserTriggerWords(MessageReceivedEvent event, Multimap<String, Pair<Pattern, String>> userTriggerWords) {
         Collection<Pair<Pattern, String>> userTriggers = userTriggerWords.get(event.getAuthor().getId());
         if (CollectionUtils.isNotEmpty(userTriggers)) {
             Optional<String> match = userTriggers.stream().filter(t -> t.getLeft().matcher(event.getMessage().getContentRaw()).find()).map(Pair::getRight).findAny();
@@ -181,54 +181,54 @@ public interface Constants {
         }
     }
 
-    static void debugToTestChannel(JDA jda, String msg) {
-        logger.info(msg);
+    public static void debugToTestChannel(JDA jda, String msg) {
+        log.info(msg);
         jda.getTextChannelsByName(Constants.TEST_CHANNEL, false)
                 .stream()
                 .findFirst()
                 .ifPresent(channel -> channel.sendMessage(msg).queue());
     }
 
-    static void debugToModLogsChannel(JDA jda, MessageEmbed messageEmbed) {
+    public static void debugToModLogsChannel(JDA jda, MessageEmbed messageEmbed) {
         jda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false)
                 .stream()
                 .findAny()
                 .ifPresent(channel -> channel.sendMessageEmbeds(messageEmbed).queue());
     }
 
-    static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {
+    public static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {
         return simpleEmbed(title, description, null, null, null, thumbnail);
     }
 
-    static MessageEmbed simpleEmbedThumbnail(String title, String description, String image, String thumbnail) {
+    public static MessageEmbed simpleEmbedThumbnail(String title, String description, String image, String thumbnail) {
         return simpleEmbed(title, description, image, null, null, thumbnail);
     }
 
-    static MessageEmbed simpleEmbed(String title, String description) {
+    public static MessageEmbed simpleEmbed(String title, String description) {
         return simpleEmbed(title, description, null, null, null, null);
     }
 
-    static MessageEmbed simpleEmbed(String title, String description, Color color) {
+    public static MessageEmbed simpleEmbed(String title, String description, Color color) {
         return simpleEmbed(title, description, null, null, color, null);
     }
 
-    static MessageEmbed simpleEmbed(String title, String description, String image) {
+    public static MessageEmbed simpleEmbed(String title, String description, String image) {
         return simpleEmbed(title, description, image, null, null, null);
     }
 
-    static MessageEmbed simpleEmbed(String title, String description, String image, Color color) {
+    public static MessageEmbed simpleEmbed(String title, String description, String image, Color color) {
         return simpleEmbed(title, description, image, null, color, null);
     }
 
-    static MessageEmbed simpleEmbed(String title, String description, String image, String footer) {
+    public static MessageEmbed simpleEmbed(String title, String description, String image, String footer) {
         return simpleEmbed(title, description, image, footer, null, null);
     }
 
-    static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color) {
+    public static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color) {
         return simpleEmbed(title, description, image, footer, color, null);
     }
 
-    static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color, String thumbnail) {
+    public static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color, String thumbnail) {
         final String finalDesc;
         if (StringUtils.isNotBlank(description)) {
             finalDesc = description.length() > 2048 ? (description.substring(0, 2044) + "...") : description;
@@ -249,7 +249,7 @@ public interface Constants {
                 .build();
     }
 
-    Set<String> FOOTERS = ImmutableSet.of(
+    private static final Set<String> FOOTERS = ImmutableSet.of(
             "powered by 777 shreks",
             "powered by 777 streggs",
             "powered by 777 deans",

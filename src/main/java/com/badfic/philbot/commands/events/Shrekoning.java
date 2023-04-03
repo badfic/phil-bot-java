@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.events;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class Shrekoning extends BaseCommand {
+public class Shrekoning extends BaseNormalCommand {
 
     public Shrekoning() {
         requiredRole = Constants.ADMIN_ROLE;

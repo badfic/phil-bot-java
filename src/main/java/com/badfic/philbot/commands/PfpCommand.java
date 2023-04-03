@@ -8,7 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PfpCommand extends BaseCommand {
+public class PfpCommand extends BaseNormalCommand {
 
     public PfpCommand() {
         name = "pfp";

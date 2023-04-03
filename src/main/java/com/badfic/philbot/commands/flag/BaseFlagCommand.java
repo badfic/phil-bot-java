@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.flag;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.google.common.collect.ImmutableMap;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.imageio.ImageIO;
 
-public abstract class BaseFlagCommand extends BaseCommand {
+public abstract class BaseFlagCommand extends BaseNormalCommand {
     public static final String[] FLAG_NAMES = new String[] {
             "lesbian",
             "gay",

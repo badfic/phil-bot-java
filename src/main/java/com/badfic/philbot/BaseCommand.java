@@ -1,5 +1,6 @@
-package com.badfic.philbot.commands;
+package com.badfic.philbot;
 
+import com.badfic.philbot.commands.Rank;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
@@ -8,61 +9,49 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jagrosh.jdautilities.command.Command;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import okhttp3.OkHttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
-public abstract class BaseCommand extends Command {
-    protected static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy HH:mm");
+public interface BaseCommand {
+
+    DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy HH:mm");
 
     // sweepstakes, taxes, robinhood
-    public static final BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");
-    public static final long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 999;
-    public static final long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 999;
+    BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");
+    long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 999;
+    long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 999;
 
-    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
-    protected JDA philJda;
+    JDA getPhilJda();
 
-    @Setter(onMethod_ = {@Autowired})
-    protected DiscordUserRepository discordUserRepository;
+    DiscordUserRepository getDiscordUserRepository();
 
-    @Setter(onMethod_ = {@Autowired})
-    protected SwampyGamesConfigRepository swampyGamesConfigRepository;
+    SwampyGamesConfigRepository getSwampyGamesConfigRepository();
 
-    @Setter(onMethod_ = {@Autowired})
-    protected ObjectMapper objectMapper;
+    ObjectMapper getObjectMapper();
 
-    @Setter(onMethod_ = {@Autowired})
-    protected BaseConfig baseConfig;
+    BaseConfig getBaseConfig();
 
-    @Setter(onMethod_ = {@Autowired})
-    protected HoneybadgerReporter honeybadgerReporter;
+    HoneybadgerReporter getHoneybadgerReporter();
 
-    @Setter(onMethod_ = {@Autowired})
-    protected RestTemplate restTemplate;
+    RestTemplate getRestTemplate();
 
-    @Setter(onMethod_ = {@Autowired})
-    protected OkHttpClient okHttpClient;
+    OkHttpClient getOkHttpClient();
 
-    @Setter(onMethod_ = {@Autowired})
-    protected ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    ThreadPoolTaskExecutor getThreadPoolTaskExecutor();
 
-    protected DiscordUser getDiscordUserByMember(Member member) {
+    default DiscordUser getDiscordUserByMember(Member member) {
         String userId = member.getId();
+        DiscordUserRepository discordUserRepository = getDiscordUserRepository();
         Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
 
         if (optionalUserEntity.isEmpty()) {
@@ -74,7 +63,7 @@ public abstract class BaseCommand extends Command {
         return optionalUserEntity.get();
     }
 
-    protected CompletableFuture<?> givePointsToMember(long pointsToGive, Member member, DiscordUser user, PointsStat pointsStat) {
+    default CompletableFuture<?> givePointsToMember(long pointsToGive, Member member, DiscordUser user, PointsStat pointsStat) {
         if (isNotParticipating(member)) {
             return CompletableFuture.completedFuture(null);
         }
@@ -86,7 +75,7 @@ public abstract class BaseCommand extends Command {
         long pointsStatsCurrent = pointsStat.getter().applyAsLong(user);
         pointsStatsCurrent += pointsToGive;
         pointsStat.setter().accept(user, pointsStatsCurrent);
-        discordUserRepository.save(user);
+        getDiscordUserRepository().save(user);
 
         Rank rankZero = Rank.byXp(0);
         Rank existingRank = Rank.byXp(existingXp);
@@ -105,7 +94,7 @@ public abstract class BaseCommand extends Command {
         return CompletableFuture.completedFuture(null);
     }
 
-    protected CompletableFuture<?> givePointsToMember(long pointsToGive, Member member, PointsStat pointsStat) {
+    default CompletableFuture<?> givePointsToMember(long pointsToGive, Member member, PointsStat pointsStat) {
         if (isNotParticipating(member)) {
             return CompletableFuture.completedFuture(null);
         }
@@ -113,23 +102,23 @@ public abstract class BaseCommand extends Command {
         return givePointsToMember(pointsToGive, member, getDiscordUserByMember(member), pointsStat);
     }
 
-    protected CompletableFuture<?> takePointsFromMember(long pointsToTake, Member member, PointsStat pointsStat) {
+    default CompletableFuture<?> takePointsFromMember(long pointsToTake, Member member, PointsStat pointsStat) {
         return givePointsToMember(-pointsToTake, member, pointsStat);
     }
 
-    protected boolean isNotParticipating(Member member) {
+    default boolean isNotParticipating(Member member) {
         return member.getRoles().stream().noneMatch(r -> {
             String roleName = r.getName();
             return Constants.CHAOS_CHILDREN_ROLE.equalsIgnoreCase(roleName) || Constants.EIGHTEEN_PLUS_ROLE.equalsIgnoreCase(roleName);
         });
     }
 
-    protected boolean hasRole(Member member, String role) {
+    default boolean hasRole(Member member, String role) {
         return member.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
     }
 
-    protected SwampyGamesConfig getSwampyGamesConfig() {
-        return swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
+    default SwampyGamesConfig getSwampyGamesConfig() {
+        return getSwampyGamesConfigRepository().findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.events;
 
-import com.badfic.philbot.commands.BaseCommand;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class MapCommand extends BaseCommand implements MinuteTickable {
+public class MapCommand extends BaseNormalCommand implements MinuteTickable {
     @VisibleForTesting
     static final String MAP_ZIP_FILENAME = "map-trivia-flags.zip";
 

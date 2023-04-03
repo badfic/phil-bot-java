@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QuickPoll extends BaseCommand {
+public class QuickPoll extends BaseNormalCommand {
 
     public QuickPoll() {
         name = "qp";

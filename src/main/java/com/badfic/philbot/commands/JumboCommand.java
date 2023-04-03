@@ -7,7 +7,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JumboCommand extends BaseCommand {
+public class JumboCommand extends BaseNormalCommand {
 
     public JumboCommand() {
         name = "jumbo";
