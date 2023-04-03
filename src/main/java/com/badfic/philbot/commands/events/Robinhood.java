@@ -42,9 +42,6 @@ public class Robinhood extends BaseNormalCommand {
 
     private void doRobinhood(boolean force) {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
         Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         if (!force && ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceRobinhoodNotHappen()) {

@@ -1,7 +1,9 @@
 package com.badfic.philbot.config;
 
-import com.google.common.collect.ImmutableSet;
+import com.badfic.philbot.data.SwampyGamesConfig;
+import com.badfic.philbot.data.SwampyGamesConfigRepository;
 import com.google.common.collect.Multimap;
+import jakarta.annotation.PostConstruct;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -14,10 +16,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -31,9 +34,13 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class Constants {
+    private static Constants SINGLETON;
 
     public static final String PREFIX = "!!";
 
@@ -53,18 +60,21 @@ public class Constants {
 
     public static final Color SWAMP_GREEN = new Color(89, 145, 17);
 
-    public static final Set<Color> COLORS = ImmutableSet.of(
-            SWAMP_GREEN,
-            new Color(255, 137, 5),
-            new Color(242, 87, 182),
-            new Color(99, 221, 99),
-            new Color(0, 107, 0)
-    );
-
     public static final Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
 
+    @Getter
+    private final SwampyGamesConfigRepository swampyGamesConfigRepository;
+
+    @PostConstruct
+    public void init() {
+        SINGLETON = this;
+    }
+
     public static Color colorOfTheMonth() {
-        return pickRandom(COLORS);
+        return SINGLETON.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).map(swampyGamesConfig -> {
+            String color = pickRandom(swampyGamesConfig.getMonthlyColors());
+            return Color.decode(color);
+        }).orElse(SWAMP_GREEN);
     }
 
     public static boolean isUrl(String string) {
@@ -236,7 +246,12 @@ public class Constants {
             finalDesc = null;
         }
 
-        footer = footer != null ? (footer + "\n" + pickRandom(FOOTERS)) : pickRandom(FOOTERS);
+        String footerAddition = SINGLETON.swampyGamesConfigRepository
+                .findById(SwampyGamesConfig.SINGLETON_ID)
+                .map(swampyGamesConfig -> pickRandom(swampyGamesConfig.getEmbedFooters()))
+                .orElse("powered by 777");
+
+        footer = footer != null ? (footer + "\n" + footerAddition) : footerAddition;
         footer = footer.length() > 2048 ? (footer.substring(0, 2044) + "777") : footer;
 
         return new EmbedBuilder()
@@ -248,152 +263,5 @@ public class Constants {
                 .setThumbnail(imageUrlOrElseNull(thumbnail))
                 .build();
     }
-
-    private static final Set<String> FOOTERS = ImmutableSet.of(
-            "powered by 777 shreks",
-            "powered by 777 streggs",
-            "powered by 777 deans",
-            "powered by 777 castiels",
-            "powered by 777 sams",
-            "powered by 777 billys",
-            "powered by 777 toms",
-            "powered by 777 steves",
-            "powered by 777 jugheads",
-            "powered by 777 riverdale memes",
-            "powered by 777 shrimps",
-            "powered by 777 z0mbs",
-            "powered by 777 memes",
-            "powered by 777 grapefruit",
-            "powered by 777 pineapples",
-            "powered by 777 grapes",
-            "powered by 777 marshmallows",
-            "powered by 777 beers",
-            "powered by 777 coffees",
-            "powered by 777 sticks of butter",
-            "powered by 777 pounds of butter",
-            "powered by 777 receipts",
-            "powered by 777 swamps",
-            "powered by 777 gallons of swamp water",
-            "powered by 777 gallons of milk",
-            "powered by 777 gallons of glogg",
-            "powered by 777 slices of pizza",
-            "powered by 777 youtubers",
-            "powered by 777 tiktokers",
-            "powered by 777 influencers",
-            "powered by 777 mall santas",
-            "powered by 777 vaccines",
-            "powered by 777 anti-vaxers",
-            "powered by 777 politicians",
-            "powered by 777 cinnamon rolls",
-            "powered by 777 garys",
-            "powered by 777 bettys",
-            "powered by 777 aprils",
-            "powered by 777 2020s",
-            "powered by 777 stevies",
-            "powered by 777 wallys",
-            "powered by 777 karens",
-            "powered by 777 monopoly games",
-            "powered by 777 chicken nuggets",
-            "powered by 777 rays",
-            "powered by 777 donnas",
-            "powered by 777 zaris",
-            "powered by 777 darhks",
-            "powered by 777 days",
-            "powered by 777 nights",
-            "powered by 777 summers",
-            "powered by 777 winters",
-            "powered by 777 falls",
-            "powered by 777 autumns",
-            "powered by 777 springs",
-            "powered by 777 april showers",
-            "powered by 777 may flowers",
-            "powered by 777 rainy seasons",
-            "powered by 777 rainbows",
-            "powered by 777 droughts",
-            "powered by 777 WHY THE FUCK IS IT DARK AT 4PMs",
-            "powered by 777 buckets",
-            "powered by 777 glo ups",
-            "powered by 777",
-            "powered by 777 777s",
-            "powered by 777 chuck norris",
-            "powered by 777 tires",
-            "powered by 777 Beckys with the good hair",
-            "powered by 777 cards",
-            "powered by 777 sandwiches",
-            "powered by 777 shenanigans",
-            "powered by 777 catfish",
-            "powered by 777 fish",
-            "powered by 777 salmon",
-            "powered by 777 dogs",
-            "powered by 777 cats",
-            "powered by 777 hamsters",
-            "powered by 777 mumble rappers",
-            "powered by 777 grinches",
-            "powered by 777 matthew morrisons",
-            "powered by 777 phil klemmers",
-            "powered by 777 keanus",
-            "powered by 777 behrads",
-            "powered by 777 tonys",
-            "powered by 777 tonis",
-            "powered by 777 meeseeks",
-            "powered by 777 stonks",
-            "powered by 777 stonkys",
-            "powered by 777 shronks",
-            "powered by 777 shronky",
-            "powered by 777 ayys",
-            "powered by 777 lmaos",
-            "powered by 777 constantines",
-            "powered by 777 unicorns",
-            "powered by 777 uncle guggies",
-            "powered by 777 pepsis",
-            "powered by 777 cokes",
-            "powered by 777 benjis",
-            "powered by 777 fires",
-            "powered by 777 buffalo",
-            "powered by 777 taps",
-            "powered by 777 hissy fits",
-            "powered by 777 units of electricity",
-            "powered by 777 daddys",
-            "powered by 777 \uD83D\uDC40",
-            "powered by 777 eggs",
-            "powered by 777 buffets",
-            "powered by 777 maps",
-            "powered by 777 trivia questions",
-            "powered by 777 tumblrs",
-            "powered by 777 tweets",
-            "powered by 777 twitters",
-            "powered by 777 videos",
-            "powered by 777 gifs",
-            "powered by 777 shrimp",
-            "powered by 777 shremp",
-            "powered by 777 kitties",
-            "powered by 777 doodles",
-            "powered by 777 nuggets",
-            "powered by 777 dongles",
-            "powered by 777 shrekonings",
-            "powered by 777 jigsaws",
-            "powered by 777 fanfics",
-            "powered by 777 books",
-            "powered by 777 newspapers",
-            "powered by 777 \uD83C\uDF64",
-            "powered by 777 \uD83C\uDF71",
-            "powered by 777 ✨",
-            "powered by 777 \uD83D\uDD25",
-            "powered by 777 \uD83E\uDD7A",
-            "powered by 777 santa slots teases",
-            "powered by 777 questionable decisions",
-            "powered by 777 questions",
-            "powered by 777 answers",
-            "powered by 777 cookies",
-            "powered by 777 biscuits",
-            "powered by 777 scones",
-            "powered by 777 pastries",
-            "powered by 777 taxes",
-            "powered by 777 robinhoods",
-            "powered by 777 phones",
-            "powered by 777 canadian servers",
-            "powered by 777 uwus",
-            "powered by 777 dongle youtubers"
-    );
 
 }

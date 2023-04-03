@@ -1,11 +1,14 @@
 package com.badfic.philbot.data;
 
 import com.badfic.philbot.config.ControllerConfigurable;
+import com.badfic.philbot.data.converters.JsonSetConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -329,6 +332,26 @@ public class SwampyGamesConfig {
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
     private String trickOrTreatTrickEmoji = "\uD83D\uDEA7";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
+    @Convert(converter = JsonSetConverter.class)
+    private Set<String> slotsEmoji = Set.of("🍓","🍍","🍊","🍋","🍇","🍉","🍌","🍒","🍎");
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
+    @Convert(converter = JsonSetConverter.class)
+    private Set<String> boostWords = Set.of("boost");
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
+    @Convert(converter = JsonSetConverter.class)
+    private Set<String> monthlyColors = Set.of("#599111");
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
+    @Convert(converter = JsonSetConverter.class)
+    private Set<String> embedFooters = Set.of("powered by 777");
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.LONG)

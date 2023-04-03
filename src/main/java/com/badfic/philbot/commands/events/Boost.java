@@ -4,12 +4,10 @@ import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +21,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class Boost extends BaseNormalCommand {
-    private static final Set<String> BOOST_WORDS = ImmutableSet.<String>builder().add(
-            "boost", "butter", "oleo", "olio", "foot", "stonks", "birthday", "grinch", "riverdale", "shrimp", "snoop", "boost", "word", "kitten", "naughty",
-            "nice", "nut", "feet", "yeet", "missouri", "shrek", "swamp", "drench", "florida", "moist", "void", "bird", "legends", "plants", "nuggets", "pride",
-            "kachow", "daddy", "murder", "hunger", "damp", "wet", "milk")
-            .add("frog", "woman", "patrick", "amphibian", "lucio", "thane", "shamrock", "lucky charms")
-            .build();
 
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;
@@ -96,7 +88,7 @@ public class Boost extends BaseNormalCommand {
         }
 
         if (force || ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceBoostHappensOnHour()) {
-            String boostPhrase = Constants.pickRandom(BOOST_WORDS);
+            String boostPhrase = Constants.pickRandom(swampyGamesConfig.getBoostWords());
             swampyGamesConfig.setBoostPhrase(boostPhrase);
             swampyGamesConfigRepository.save(swampyGamesConfig);
 

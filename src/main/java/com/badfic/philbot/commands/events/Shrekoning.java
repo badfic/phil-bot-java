@@ -38,9 +38,6 @@ public class Shrekoning extends BaseNormalCommand {
     @Scheduled(cron = "${swampy.schedule.events.shrekoning}", zone = "${swampy.schedule.timezone}")
     public void shrekoning() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         Guild guild = philJda.getGuildById(baseConfig.guildId);

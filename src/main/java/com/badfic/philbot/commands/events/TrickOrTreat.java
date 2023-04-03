@@ -36,9 +36,6 @@ public class TrickOrTreat extends BaseNormalCommand {
     @Scheduled(cron = "${swampy.schedule.events.trickortreat}", zone = "${swampy.schedule.timezone}")
     public void trickOrTreat() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         Guild guild = philJda.getGuildById(baseConfig.guildId);
         List<DiscordUser> allUsers = discordUserRepository.findAll();

@@ -18,6 +18,7 @@ public class RankRefreshCommand extends BaseNormalCommand {
         this.restTemplate = restTemplate;
         this.baseConfig = baseConfig;
         this.name = "rankRefresh";
+        this.aliases = new String[] {"refreshRanks"};
         this.requiredRole = Constants.ADMIN_ROLE;
         this.help = "Manually refresh the ranks spreadsheet from Airtable";
 

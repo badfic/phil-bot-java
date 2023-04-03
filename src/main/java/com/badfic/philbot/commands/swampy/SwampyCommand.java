@@ -9,7 +9,6 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.hungersim.Player;
 import com.badfic.philbot.data.hungersim.PlayerRepository;
-import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
 import java.text.NumberFormat;
@@ -54,11 +53,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
             "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40", "\uD83D\uDC40"
     };
     public static final String SLOT_MACHINE = "\uD83C\uDFB0";
-    public static final Set<String> SLOTS_EMOJIS = ImmutableSet.of(
-            "\uD83E\uDDCD\u200D♀️", "\uD83C\uDFC4\u200D♀️", "\uD83D\uDC38",
-            "\uD83D\uDC6F\u200D♀️️", "\uD83D\uDC6D️️", "\uD83D\uDC69",
-            "\uD83D\uDC75", "\uD83D\uDC69\u200D❤️\u200D\uD83D\uDC69️", "☘️"
-    );
 
     private volatile boolean awaitingResetConfirmation = false;
 
@@ -151,9 +145,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
             event.replyError("Unrecognized command");
         } else {
             SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-            if (swampyGamesConfig == null) {
-                return;
-            }
 
             if (swampyGamesConfig.getBoostPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getBoostPhrase())) {
                 acceptedBoost(event.getMember());
@@ -220,9 +211,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
         }
 
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         long minutes = ChronoUnit.MINUTES.between(timeTheyJoinedVoice, LocalDateTime.now());
         long points = minutes * swampyGamesConfig.getVcPointsPerMinute();
@@ -239,9 +227,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
         }
 
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         givePointsToMember(swampyGamesConfig.getReactionPoints(), event.getMember(), PointsStat.REACTOR_POINTS);
         long messageId = event.getMessageIdLong();
@@ -305,9 +290,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
         DiscordUser discordUser = getDiscordUserByMember(member);
 
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nextSlotsTime = discordUser.getLastSlots().plus(swampyGamesConfig.getSlotsTimeoutMinutes(), ChronoUnit.MINUTES);
@@ -324,13 +306,16 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
 
         discordUser.setLastSlots(now);
 
-        double oddsClosEnough = ((1.0 / SLOTS_EMOJIS.size()) * (1.0 / SLOTS_EMOJIS.size())) * 100.0;
-        double oddsWinnerWinner = ((1.0 / SLOTS_EMOJIS.size()) * (1.0 / SLOTS_EMOJIS.size()) * (1.0 / SLOTS_EMOJIS.size())) * 100.0;
+        Set<String> slotsEmojis = swampyGamesConfig.getSlotsEmoji();
+        int size = slotsEmojis.size();
+
+        double oddsClosEnough = ((1.0 / size) * (1.0 / size)) * 100.0;
+        double oddsWinnerWinner = ((1.0 / size) * (1.0 / size) * (1.0 / size)) * 100.0;
         String footer = String.format("Odds of a WINNER WINNER: %.3f%%\nOdds of a CLOSE ENOUGH: %.3f%%", oddsWinnerWinner, oddsClosEnough);
 
-        String one = Constants.pickRandom(SLOTS_EMOJIS);
-        String two = Constants.pickRandom(SLOTS_EMOJIS);
-        String three = Constants.pickRandom(SLOTS_EMOJIS);
+        String one = Constants.pickRandom(slotsEmojis);
+        String two = Constants.pickRandom(slotsEmojis);
+        String three = Constants.pickRandom(slotsEmojis);
 
         if (one.equals(two) && two.equals(three)) {
             givePointsToMember(swampyGamesConfig.getSlotsWinPoints(), member, discordUser, PointsStat.SLOTS_WINNER_WINNER).thenRun(() -> {
@@ -492,9 +477,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
 
     private void upvote(CommandEvent event) {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
 
@@ -569,9 +551,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
         DiscordUser discordUser = getDiscordUserByMember(event.getMember());
 
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getDownvoteTimeoutMinutes(), ChronoUnit.MINUTES);
@@ -704,6 +683,13 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
             }
 
             discordUserRepository.save(discordUser);
+        }
+
+        try {
+            Rank.init(restTemplate, baseConfig.airtableApiToken);
+        } catch (Exception e) {
+            event.replyError("Failed to refresh ranks from Airtable, please manually run the !!rankRefresh command");
+            return;
         }
 
         event.replySuccess("Reset the Swampys");

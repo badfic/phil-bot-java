@@ -30,9 +30,6 @@ public class UpvoteSlashCommand extends BaseSlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         OptionMapping option = event.getOption("user");
 

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Synchronized;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -41,7 +42,11 @@ public class Rank {
         this.firstRank = ordinal == 0;
     }
 
+    @Synchronized
     public static void init(RestTemplate restTemplate, String airtableApiToken) throws Exception {
+        LEVEL_MAP.clear();
+        ALL_RANKS.clear();
+
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + airtableApiToken);
         ResponseEntity<RecordList> response = restTemplate.exchange("https://api.airtable.com/v0/appYjP1F2Li4DAR1m/tblDmx7RE0kEP0p48",
@@ -67,6 +72,7 @@ public class Rank {
         }
     }
 
+    @Synchronized
     public static Rank byXp(long xp) {
         long level = xp / LVL_MULTIPLIER;
 
@@ -79,6 +85,7 @@ public class Rank {
         return LEVEL_MAP.get(0L);
     }
 
+    @Synchronized
     public static List<Rank> getAllRanks() {
         return ALL_RANKS;
     }

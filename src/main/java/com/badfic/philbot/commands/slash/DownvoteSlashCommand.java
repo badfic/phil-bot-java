@@ -38,9 +38,6 @@ public class DownvoteSlashCommand extends BaseSlashCommand {
         DiscordUser discordUser = getDiscordUserByMember(event.getMember());
 
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getDownvoteTimeoutMinutes(), ChronoUnit.MINUTES);

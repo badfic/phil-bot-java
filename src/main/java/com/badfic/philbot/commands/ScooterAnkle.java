@@ -34,9 +34,6 @@ public class ScooterAnkle extends BaseNormalCommand {
 
     private void scooterAnkle(CommandEvent event) {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         TextChannel swampysChannel = event.getJDA().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
         DiscordUser scooterUser = getDiscordUserByMember(event.getMember());

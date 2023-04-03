@@ -10,6 +10,7 @@ import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Set;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +28,6 @@ public class SlotsSlashCommand extends BaseSlashCommand {
         DiscordUser discordUser = getDiscordUserByMember(member);
 
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nextSlotsTime = discordUser.getLastSlots().plus(swampyGamesConfig.getSlotsTimeoutMinutes(), ChronoUnit.MINUTES);
@@ -46,13 +44,16 @@ public class SlotsSlashCommand extends BaseSlashCommand {
 
         discordUser.setLastSlots(now);
 
-        double oddsClosEnough = ((1.0 / SwampyCommand.SLOTS_EMOJIS.size()) * (1.0 / SwampyCommand.SLOTS_EMOJIS.size())) * 100.0;
-        double oddsWinnerWinner = ((1.0 / SwampyCommand.SLOTS_EMOJIS.size()) * (1.0 / SwampyCommand.SLOTS_EMOJIS.size()) * (1.0 / SwampyCommand.SLOTS_EMOJIS.size())) * 100.0;
+        Set<String> slotsEmojis = swampyGamesConfig.getSlotsEmoji();
+        int size = slotsEmojis.size();
+
+        double oddsClosEnough = ((1.0 / size) * (1.0 / size)) * 100.0;
+        double oddsWinnerWinner = ((1.0 / size) * (1.0 / size) * (1.0 / size)) * 100.0;
         String footer = String.format("Odds of a WINNER WINNER: %.3f%%\nOdds of a CLOSE ENOUGH: %.3f%%", oddsWinnerWinner, oddsClosEnough);
 
-        String one = Constants.pickRandom(SwampyCommand.SLOTS_EMOJIS);
-        String two = Constants.pickRandom(SwampyCommand.SLOTS_EMOJIS);
-        String three = Constants.pickRandom(SwampyCommand.SLOTS_EMOJIS);
+        String one = Constants.pickRandom(slotsEmojis);
+        String two = Constants.pickRandom(slotsEmojis);
+        String three = Constants.pickRandom(slotsEmojis);
 
         if (one.equals(two) && two.equals(three)) {
             givePointsToMember(swampyGamesConfig.getSlotsWinPoints(), member, discordUser, PointsStat.SLOTS_WINNER_WINNER).thenRun(() -> {

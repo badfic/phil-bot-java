@@ -63,9 +63,6 @@ public class Sweepstakes extends BaseNormalCommand {
 
     private void doSweepstakes(String role) {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        if (swampyGamesConfig == null) {
-            return;
-        }
 
         Guild guild = philJda.getGuildById(baseConfig.guildId);
         List<DiscordUser> allUsers = discordUserRepository.findAll();
