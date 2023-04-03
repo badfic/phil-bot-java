@@ -1,7 +1,7 @@
 package com.badfic.philbot.web.members;
 
+import com.badfic.philbot.commands.ModHelpAware;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.ModHelpAware;
 import com.jagrosh.jdautilities.command.Command;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

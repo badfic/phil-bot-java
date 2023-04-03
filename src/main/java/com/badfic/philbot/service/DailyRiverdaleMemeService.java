@@ -1,9 +1,9 @@
 package com.badfic.philbot.service;
 
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.phil.DailyRiverdaleMemeEntity;
-import com.badfic.philbot.data.phil.DailyRiverdaleMemeRepository;
-import com.badfic.philbot.listeners.phil.swampy.BaseSwampy;
+import com.badfic.philbot.data.DailyRiverdaleMemeEntity;
+import com.badfic.philbot.data.DailyRiverdaleMemeRepository;
 import com.google.common.collect.Sets;
 import com.google.common.html.HtmlEscapers;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -23,7 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DailyRiverdaleMemeService extends BaseSwampy {
+public class DailyRiverdaleMemeService extends BaseNormalCommand {
 
     private static final String SEARCH_STRING = "out of context riverdale meme";
 

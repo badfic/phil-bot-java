@@ -1,8 +1,8 @@
 package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.phil.RssEntry;
-import com.badfic.philbot.data.phil.RssEntryRepository;
+import com.badfic.philbot.data.RssEntry;
+import com.badfic.philbot.data.RssEntryRepository;
 import com.google.common.collect.ImmutableSet;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;

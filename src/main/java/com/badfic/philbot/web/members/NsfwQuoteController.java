@@ -1,6 +1,6 @@
 package com.badfic.philbot.web.members;
 
-import com.badfic.philbot.data.phil.NsfwQuoteRepository;
+import com.badfic.philbot.data.NsfwQuoteRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.ZoneId;
 import java.util.HashMap;

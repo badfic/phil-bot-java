@@ -1,14 +1,18 @@
 package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.ControllerConfigurable;
-import com.badfic.philbot.data.phil.SwampyGamesConfig;
-import com.badfic.philbot.data.phil.SwampyGamesConfigRepository;
+import com.badfic.philbot.data.SwampyGamesConfig;
+import com.badfic.philbot.data.SwampyGamesConfigRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +23,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequiredArgsConstructor
 public class GamesConfigController extends BaseMembersController {
 
     private final SwampyGamesConfigRepository swampyGamesConfigRepository;
-
-    public GamesConfigController(SwampyGamesConfigRepository swampyGamesConfigRepository) {
-        this.swampyGamesConfigRepository = swampyGamesConfigRepository;
-    }
+    private final ObjectMapper objectMapper;
 
     @GetMapping(value = "/games-config", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
@@ -33,14 +35,22 @@ public class GamesConfigController extends BaseMembersController {
 
         SwampyGamesConfig swampyGamesConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
 
-        List<ConfigEntry> configEntries = new ArrayList<>();
+        List<ConfigEntryGet> configEntries = new ArrayList<>();
 
         for (Field declaredField : SwampyGamesConfig.class.getDeclaredFields()) {
             ControllerConfigurable annotation = declaredField.getAnnotation(ControllerConfigurable.class);
             if (annotation != null) {
                 declaredField.setAccessible(true);
-                configEntries.add(new ConfigEntry(declaredField.getName(), declaredField.get(swampyGamesConfig).toString(),
-                        annotation.type() == ControllerConfigurable.Type.IMG));
+
+                switch (annotation.type()) {
+                    case INT, LONG, STRING ->
+                            configEntries.add(new ConfigEntryGet(declaredField.getName(), declaredField.get(swampyGamesConfig).toString(), false, false));
+                    case IMG ->
+                            configEntries.add(new ConfigEntryGet(declaredField.getName(), declaredField.get(swampyGamesConfig).toString(), true, false));
+                    case STRING_SET ->
+                            configEntries.add(new ConfigEntryGet(declaredField.getName(), objectMapper.writeValueAsString(declaredField.get(swampyGamesConfig)), false, true));
+                    default -> throw new IllegalStateException();
+                }
             }
         }
 
@@ -53,7 +63,7 @@ public class GamesConfigController extends BaseMembersController {
     }
 
     @PostMapping(value = "/games-config", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> post(HttpServletRequest httpServletRequest, @RequestBody ConfigEntry configEntry) throws Exception {
+    public ResponseEntity<String> post(HttpServletRequest httpServletRequest, @RequestBody ConfigEntryPut configEntry) throws Exception {
         checkSession(httpServletRequest, true);
 
         SwampyGamesConfig swampyGamesConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
@@ -62,16 +72,30 @@ public class GamesConfigController extends BaseMembersController {
             Field declaredField = SwampyGamesConfig.class.getDeclaredField(configEntry.fieldName());
             declaredField.setAccessible(true);
 
-            if (int.class.equals(declaredField.getType())) {
-                int realValue = Integer.parseInt(configEntry.fieldValue());
+            ControllerConfigurable controllerConfigurableAnnotation = declaredField.getAnnotation(ControllerConfigurable.class);
 
-                declaredField.set(swampyGamesConfig, realValue);
-            } else if (long.class.equals(declaredField.getType())) {
-                long realValue = Long.parseLong(configEntry.fieldValue());
+            if (controllerConfigurableAnnotation == null) {
+                return ResponseEntity.badRequest().build();
+            }
 
-                declaredField.set(swampyGamesConfig, realValue);
-            } else {
-                declaredField.set(swampyGamesConfig, configEntry.fieldValue());
+            switch (controllerConfigurableAnnotation.type()) {
+                case INT -> {
+                    int realValue = Integer.parseInt(configEntry.fieldValue());
+                    declaredField.set(swampyGamesConfig, realValue);
+                }
+                case LONG -> {
+                    long realValue = Long.parseLong(configEntry.fieldValue());
+                    declaredField.set(swampyGamesConfig, realValue);
+                }
+                case STRING, IMG -> declaredField.set(swampyGamesConfig, configEntry.fieldValue());
+                case STRING_SET -> {
+                    String fieldValueRaw = configEntry.fieldValue();
+
+                    Set<String> fieldValue = objectMapper.readValue(fieldValueRaw, new TypeReference<>() {});
+
+                    declaredField.set(swampyGamesConfig, fieldValue);
+                }
+                default -> throw new IllegalStateException();
             }
 
             swampyGamesConfigRepository.save(swampyGamesConfig);
@@ -80,6 +104,8 @@ public class GamesConfigController extends BaseMembersController {
         return ResponseEntity.ok("Saved. If it was an image you'll have to refresh to see the new image.");
     }
 
-    private record ConfigEntry(String fieldName, String fieldValue, Boolean valueIsImg) {}
+    private record ConfigEntryGet(String fieldName, String fieldValue, Boolean valueIsImg, Boolean valueIsSet) {}
+
+    private record ConfigEntryPut(String fieldName, String fieldValue) {}
 
 }

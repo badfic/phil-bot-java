@@ -1,7 +1,7 @@
 package com.badfic.philbot.web.members;
 
-import com.badfic.philbot.data.phil.Trivia;
-import com.badfic.philbot.data.phil.TriviaRepository;
+import com.badfic.philbot.data.Trivia;
+import com.badfic.philbot.data.TriviaRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;

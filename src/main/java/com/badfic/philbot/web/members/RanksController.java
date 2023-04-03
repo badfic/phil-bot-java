@@ -1,6 +1,6 @@
 package com.badfic.philbot.web.members;
 
-import com.badfic.philbot.data.phil.Rank;
+import com.badfic.philbot.commands.Rank;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;

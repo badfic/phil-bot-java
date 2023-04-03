@@ -1,12 +1,12 @@
 package com.badfic.philbot.listeners;
 
+import com.badfic.philbot.commands.ModHelpAware;
+import com.badfic.philbot.commands.image.BaseTwoUserImageMeme;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.ModHelpAware;
 import com.badfic.philbot.data.BaseResponsesConfig;
 import com.badfic.philbot.data.BaseResponsesConfigRepository;
 import com.badfic.philbot.data.GenericBotResponsesConfigJson;
-import com.badfic.philbot.listeners.phil.swampy.BaseTwoUserImageMeme;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;

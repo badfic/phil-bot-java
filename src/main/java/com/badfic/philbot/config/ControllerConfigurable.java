@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface ControllerConfigurable {
     enum Type {
-        INT, LONG, STRING, IMG
+        INT, LONG, STRING, STRING_SET, IMG
     }
 
     Type type();

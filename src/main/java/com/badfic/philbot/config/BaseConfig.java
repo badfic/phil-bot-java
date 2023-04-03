@@ -9,9 +9,9 @@ import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MODERATION;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
 import static net.dv8tion.jda.api.requests.GatewayIntent.MESSAGE_CONTENT;
 
-import com.badfic.philbot.listeners.phil.MemeCommandsService;
+import com.badfic.philbot.commands.swampy.SwampyCommand;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
-import com.badfic.philbot.listeners.phil.swampy.SwampyCommand;
+import com.badfic.philbot.service.MemeCommandsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jagrosh.jdautilities.command.Command;
@@ -25,7 +25,6 @@ import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -229,7 +228,7 @@ public class BaseConfig {
     @Bean(name = "antoniaJda")
     public JDA antoniaJda(ThreadPoolTaskScheduler taskScheduler,
                           ThreadPoolTaskExecutor threadPoolTaskExecutor,
-                          OkHttpClient okHttpClient) throws Exception {
+                          OkHttpClient okHttpClient) {
         return JDABuilder.createLight(antoniaBotToken, Collections.emptyList())
                 .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
                 .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
@@ -243,7 +242,7 @@ public class BaseConfig {
     @Bean(name = "johnJda")
     public JDA johnJda(ThreadPoolTaskScheduler taskScheduler,
                        ThreadPoolTaskExecutor threadPoolTaskExecutor,
-                       OkHttpClient okHttpClient) throws Exception {
+                       OkHttpClient okHttpClient) {
         return JDABuilder.createLight(johnBotToken, Collections.emptyList())
                 .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
                 .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
@@ -257,7 +256,7 @@ public class BaseConfig {
     @Bean(name = "behradJda")
     public JDA behradJda(ThreadPoolTaskScheduler taskScheduler,
                          ThreadPoolTaskExecutor threadPoolTaskExecutor,
-                         OkHttpClient okHttpClient) throws Exception {
+                         OkHttpClient okHttpClient) {
         return JDABuilder.createLight(behradBotToken, Collections.emptyList())
                 .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
                 .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
@@ -271,7 +270,7 @@ public class BaseConfig {
     @Bean(name = "keanuJda")
     public JDA keanuJda(ThreadPoolTaskScheduler taskScheduler,
                         ThreadPoolTaskExecutor threadPoolTaskExecutor,
-                        OkHttpClient okHttpClient) throws Exception {
+                        OkHttpClient okHttpClient) {
         return JDABuilder.createLight(keanuBotToken, Collections.emptyList())
                 .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
                 .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
@@ -285,61 +284,60 @@ public class BaseConfig {
     @Bean(name = "philCommandClient")
     public CommandClient philCommandClient(ThreadPoolTaskScheduler taskScheduler,
                                            List<Command> commands,
+                                           SwampyCommand swampyCommand,
                                            HoneybadgerReporter honeybadgerReporter,
                                            MemeCommandsService memeCommandsService) {
-        Optional<SwampyCommand> optSwampyCommand = commands.stream()
-                .filter(c -> c instanceof SwampyCommand && !(c instanceof SlashCommand))
-                .findAny()
-                .map(c -> (SwampyCommand) c);
+        CommandClientBuilder builder = new CommandClientBuilder();
 
-        final MutableObject<CommandClient> thisClient = new MutableObject<>();
-
-        thisClient.setValue(new CommandClientBuilder()
-                .setOwnerId(ownerId)
+        builder.setOwnerId(ownerId)
                 .setPrefix(Constants.PREFIX)
                 .forceGuildOnly(guildId)
-                .addSlashCommands(commands.stream().filter(c -> c instanceof SlashCommand).toArray(SlashCommand[]::new))
                 .useHelpBuilder(false)
-                .addCommands(commands.stream().filter(c -> !(c instanceof SlashCommand)).toArray(Command[]::new))
                 .setScheduleExecutor(taskScheduler.getScheduledExecutor())
                 .setActivity(Activity.playing("with our feelings"))
-                .setEmojis("\uD83D\uDC38", "⚠️", "\uD83C\uDF29️")
-                .setListener(new CommandListener() {
-                    @Override
-                    public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
-                        log.error("Exception in command: " + command.getName(), throwable);
-                        honeybadgerReporter.reportError(throwable, event, "Exception in command: " + command.getName());
-                    }
+                .setEmojis("✅", "⚠️", "❌");
 
-                    @Override
-                    public void onNonCommandMessage(MessageReceivedEvent event) {
-                        if (optSwampyCommand.isPresent()) {
-                            SwampyCommand swampyCommand = optSwampyCommand.get();
+        for (Command command : commands) {
+            if (command instanceof SlashCommand) {
+                builder.addSlashCommands((SlashCommand) command);
+            } else {
+                builder.addCommand(command);
+            }
+        }
 
-                            String contentRaw = event.getMessage().getContentRaw();
+        final MutableObject<CommandClient> thisClient = new MutableObject<>();
+        builder.setListener(new CommandListener() {
+            @Override
+            public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
+                log.error("Exception in command: " + command.getName(), throwable);
+                honeybadgerReporter.reportError(throwable, event, "Exception in command: " + command.getName());
+            }
 
-                            if (StringUtils.startsWith(contentRaw, Constants.PREFIX)) {
-                                String message = StringUtils.substring(contentRaw, 2);
-                                message = StringUtils.trim(message);
+            @Override
+            public void onNonCommandMessage(MessageReceivedEvent event) {
+                String contentRaw = event.getMessage().getContentRaw();
 
-                                String[] parts;
-                                if (StringUtils.isNotBlank(message)) {
-                                    if ((parts = message.split("\\s+")).length >= 2) {
-                                        if (Stream.of("help", "rank", "up", "down", "slots")
-                                                .anyMatch(arg -> StringUtils.equalsIgnoreCase(arg, parts[1]))) {
-                                            swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, parts[1], thisClient.getValue()));
-                                            return;
-                                        }
-                                    }
+                if (StringUtils.startsWith(contentRaw, Constants.PREFIX)) {
+                    String message = StringUtils.substring(contentRaw, 2);
+                    message = StringUtils.trim(message);
 
-                                    memeCommandsService.executeCustomCommand(parts[0], event.getChannel().asGuildMessageChannel());
-                                }
+                    String[] parts;
+                    if (StringUtils.isNotBlank(message)) {
+                        if ((parts = message.split("\\s+")).length >= 2) {
+                            if (Stream.of("help", "rank", "up", "down", "slots")
+                                    .anyMatch(arg -> StringUtils.equalsIgnoreCase(arg, parts[1]))) {
+                                swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, parts[1], thisClient.getValue()));
+                                return;
                             }
                         }
-                    }
-                })
-                .build());
 
+                        memeCommandsService.executeCustomCommand(parts[0], event.getChannel().asGuildMessageChannel());
+                    }
+                }
+            }
+        });
+
+        thisClient.setValue(builder.build());
         return thisClient.getValue();
     }
 
