@@ -2,7 +2,10 @@ package com.badfic.philbot.config;
 
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigRepository;
-import com.google.common.collect.Multimap;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ListMultimap;
 import jakarta.annotation.PostConstruct;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -12,10 +15,13 @@ import java.net.URI;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
@@ -62,6 +68,45 @@ public class Constants {
 
     public static final Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
 
+    private enum CacheKeyType {
+        COLORS, FOOTERS
+    }
+
+    private static final LoadingCache<CacheKeyType, String[]> CACHE = CacheBuilder.newBuilder().refreshAfterWrite(Duration.of(15, ChronoUnit.MINUTES))
+            .build(new CacheLoader<>() {
+                @Override
+                public String[] load(CacheKeyType key) {
+                    switch (key) {
+                        case COLORS -> {
+                            String[] defaultColors = {String.format("#%02x%02x%02x", SWAMP_GREEN.getRed(), SWAMP_GREEN.getGreen(), SWAMP_GREEN.getBlue())};
+
+                            if (SINGLETON == null) {
+                                return defaultColors;
+                            }
+
+                            return SINGLETON.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).map(swampyGamesConfig -> {
+                                Set<String> monthlyColors = swampyGamesConfig.getMonthlyColors();
+                                return monthlyColors.toArray(String[]::new);
+                            }).orElse(defaultColors);
+                        }
+                        case FOOTERS -> {
+                            String[] defaultFooter = {"powered by 777"};
+
+                            if (SINGLETON == null) {
+                                return defaultFooter;
+                            }
+
+                            return SINGLETON.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).map(swampyGamesConfig -> {
+                                Set<String> embedFooters = swampyGamesConfig.getEmbedFooters();
+                                return embedFooters.toArray(String[]::new);
+                            }).orElse(defaultFooter);
+                        }
+                    }
+
+                    throw new IllegalStateException("Unrecognized CacheKeyType");
+                }
+            });
+
     @Getter
     private final SwampyGamesConfigRepository swampyGamesConfigRepository;
 
@@ -71,10 +116,9 @@ public class Constants {
     }
 
     public static Color colorOfTheMonth() {
-        return SINGLETON.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).map(swampyGamesConfig -> {
-            String color = pickRandom(swampyGamesConfig.getMonthlyColors());
-            return Color.decode(color);
-        }).orElse(SWAMP_GREEN);
+        String[] colors = CACHE.getUnchecked(CacheKeyType.COLORS);
+        String color = pickRandom(colors);
+        return Color.decode(color);
     }
 
     public static boolean isUrl(String string) {
@@ -126,14 +170,25 @@ public class Constants {
     }
 
     public static Optional<Role> hasRole(Member member, String roleName) {
-        return member.getRoles()
-                .stream()
-                .filter(r -> r.getName().equalsIgnoreCase(roleName))
-                .findAny();
+        List<Role> roles = member.getRoles();
+
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < roles.size(); i++) {
+            Role r = roles.get(i);
+            if (r.getName().equalsIgnoreCase(roleName)) {
+                return Optional.of(r);
+            }
+        }
+
+        return Optional.empty();
     }
 
     public static <T> T pickRandom(Collection<T> collection) {
         int index = ThreadLocalRandom.current().nextInt(collection.size());
+        if (collection instanceof List<T>) {
+            return ((List<T>) collection).get(index);
+        }
+
         Iterator<T> iterator = collection.iterator();
         for (int i = 0; i < index; i++) {
             iterator.next();
@@ -182,28 +237,32 @@ public class Constants {
         return ImmutablePair.of(DayOfWeek.of(mode), maxCount);
     }
 
-    public static void checkUserTriggerWords(MessageReceivedEvent event, Multimap<String, Pair<Pattern, String>> userTriggerWords) {
-        Collection<Pair<Pattern, String>> userTriggers = userTriggerWords.get(event.getAuthor().getId());
+    public static void checkUserTriggerWords(MessageReceivedEvent event, ListMultimap<String, Pair<Pattern, String>> userTriggerWords) {
+        List<Pair<Pattern, String>> userTriggers = userTriggerWords.get(event.getAuthor().getId());
         if (CollectionUtils.isNotEmpty(userTriggers)) {
-            Optional<String> match = userTriggers.stream().filter(t -> t.getLeft().matcher(event.getMessage().getContentRaw()).find()).map(Pair::getRight).findAny();
+            Optional<String> match = Optional.empty();
 
-            match.ifPresent(s -> event.getJDA().getTextChannelById(event.getChannel().getId()).sendMessage(s).queue());
+            //noinspection ForLoopReplaceableByForEach
+            for (int i = 0; i < userTriggers.size(); i++) {
+                Pair<Pattern, String> t = userTriggers.get(i);
+                if (t.getLeft().matcher(event.getMessage().getContentRaw()).find()) {
+                    String right = t.getRight();
+                    match = Optional.of(right);
+                    break;
+                }
+            }
+
+            match.ifPresent(s -> event.getJDA().getTextChannelById(event.getChannel().getIdLong()).sendMessage(s).queue());
         }
     }
 
     public static void debugToTestChannel(JDA jda, String msg) {
         log.info(msg);
-        jda.getTextChannelsByName(Constants.TEST_CHANNEL, false)
-                .stream()
-                .findFirst()
-                .ifPresent(channel -> channel.sendMessage(msg).queue());
+        jda.getTextChannelsByName(Constants.TEST_CHANNEL, false).get(0).sendMessage(msg).queue();
     }
 
     public static void debugToModLogsChannel(JDA jda, MessageEmbed messageEmbed) {
-        jda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false)
-                .stream()
-                .findAny()
-                .ifPresent(channel -> channel.sendMessageEmbeds(messageEmbed).queue());
+        jda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).get(0).sendMessageEmbeds(messageEmbed).queue();
     }
 
     public static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {
@@ -246,10 +305,8 @@ public class Constants {
             finalDesc = null;
         }
 
-        String footerAddition = SINGLETON.swampyGamesConfigRepository
-                .findById(SwampyGamesConfig.SINGLETON_ID)
-                .map(swampyGamesConfig -> pickRandom(swampyGamesConfig.getEmbedFooters()))
-                .orElse("powered by 777");
+        String[] footers = CACHE.getUnchecked(CacheKeyType.FOOTERS);
+        String footerAddition = pickRandom(footers);
 
         footer = footer != null ? (footer + "\n" + footerAddition) : footerAddition;
         footer = footer.length() > 2048 ? (footer.substring(0, 2044) + "777") : footer;

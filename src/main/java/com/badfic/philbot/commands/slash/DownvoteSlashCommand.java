@@ -8,7 +8,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.stereotype.Service;
@@ -24,18 +26,22 @@ public class DownvoteSlashCommand extends BaseSlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
+        CompletableFuture<InteractionHook> interactionHook = event.deferReply().submit();
+
+        Member member = event.getMember();
         Member mentionedMember = event.getOption("user").getAsMember();
+
         if (isNotParticipating(mentionedMember)) {
-            event.reply(mentionedMember.getEffectiveName() + " is not participating in the swampys").queue();
+            replyToInteractionHook(event, interactionHook, mentionedMember.getEffectiveName() + " is not participating in the swampys");
             return;
         }
 
-        if (event.getMember().getId().equalsIgnoreCase(mentionedMember.getId())) {
-            event.reply("You can't downvote yourself").queue();
+        if (member.getId().equalsIgnoreCase(mentionedMember.getId())) {
+            replyToInteractionHook(event, interactionHook, "You can't downvote yourself");
             return;
         }
 
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+        DiscordUser discordUser = getDiscordUserByMember(member);
 
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
@@ -45,23 +51,24 @@ public class DownvoteSlashCommand extends BaseSlashCommand {
             Duration duration = Duration.between(now, nextVoteTime);
 
             if (duration.getSeconds() < 60) {
-                event.reply("You must wait " + (duration.getSeconds() + 1) + " seconds before up/down-voting again").queue();
+                replyToInteractionHook(event, interactionHook, "You must wait " + (duration.getSeconds() + 1) + " seconds before up/down-voting again");
             } else {
-                event.reply("You must wait " + (duration.toMinutes() + 1) + " minutes before up/down-voting again").queue();
+                replyToInteractionHook(event, interactionHook, "You must wait " + (duration.toMinutes() + 1) + " minutes before up/down-voting again");
             }
             return;
         }
         discordUser.setLastVote(now);
-        discordUserRepository.save(discordUser);
 
         if (mentionedMember.getUser().isBot()) {
-            takePointsFromMember(swampyGamesConfig.getDownvotePointsFromDownvotee(), event.getMember(), PointsStat.DOWNVOTED);
+            takePointsFromMember(swampyGamesConfig.getDownvotePointsFromDownvotee(), member, discordUser, PointsStat.DOWNVOTED);
             givePointsToMember(swampyGamesConfig.getDownvotePointsToDownvoter(), mentionedMember, PointsStat.DOWNVOTER);
-            event.reply("Successfully downvoted " + event.getMember().getEffectiveName() + " \uD83D\uDE08").queue();
+
+            replyToInteractionHook(event, interactionHook, "Successfully downvoted " + member.getEffectiveName() + " \uD83D\uDE08");
         } else {
             takePointsFromMember(swampyGamesConfig.getDownvotePointsFromDownvotee(), mentionedMember, PointsStat.DOWNVOTED);
-            givePointsToMember(swampyGamesConfig.getDownvotePointsToDownvoter(), event.getMember(), PointsStat.DOWNVOTER);
-            event.reply("Successfully downvoted " + mentionedMember.getEffectiveName()).queue();
+            givePointsToMember(swampyGamesConfig.getDownvotePointsToDownvoter(), member, discordUser, PointsStat.DOWNVOTER);
+
+            replyToInteractionHook(event, interactionHook, "Successfully downvoted " + mentionedMember.getEffectiveName());
         }
     }
 

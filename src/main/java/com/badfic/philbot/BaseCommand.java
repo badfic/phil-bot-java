@@ -12,11 +12,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import okhttp3.OkHttpClient;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -82,23 +84,19 @@ public interface BaseCommand {
         Rank newRank = Rank.byXp(newXp);
 
         if (newRank != rankZero && existingRank != newRank) {
-            TextChannel announcementsChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+            TextChannel swampysChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
             MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + newRank.getLevel() + '!',
                     newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()),
                     newRank.getRankUpImage(), newRank.getColor());
 
-            return announcementsChannel.sendMessageEmbeds(messageEmbed).submit();
+            return swampysChannel.sendMessageEmbeds(messageEmbed).submit();
         }
 
         return CompletableFuture.completedFuture(null);
     }
 
     default CompletableFuture<?> givePointsToMember(long pointsToGive, Member member, PointsStat pointsStat) {
-        if (isNotParticipating(member)) {
-            return CompletableFuture.completedFuture(null);
-        }
-
         return givePointsToMember(pointsToGive, member, getDiscordUserByMember(member), pointsStat);
     }
 
@@ -106,15 +104,35 @@ public interface BaseCommand {
         return givePointsToMember(-pointsToTake, member, pointsStat);
     }
 
+    default CompletableFuture<?> takePointsFromMember(long pointsToTake, Member member, DiscordUser discordUser, PointsStat pointsStat) {
+        return givePointsToMember(-pointsToTake, member, discordUser, pointsStat);
+    }
+
     default boolean isNotParticipating(Member member) {
-        return member.getRoles().stream().noneMatch(r -> {
-            String roleName = r.getName();
-            return Constants.CHAOS_CHILDREN_ROLE.equalsIgnoreCase(roleName) || Constants.EIGHTEEN_PLUS_ROLE.equalsIgnoreCase(roleName);
-        });
+        List<Role> roles = member.getRoles();
+
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < roles.size(); i++) {
+            String roleName = roles.get(i).getName();
+
+            if (Constants.CHAOS_CHILDREN_ROLE.equals(roleName) || Constants.EIGHTEEN_PLUS_ROLE.equals(roleName)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     default boolean hasRole(Member member, String role) {
-        return member.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
+        List<Role> roles = member.getRoles();
+
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < roles.size(); i++) {
+            if (roles.get(i).getName().equalsIgnoreCase(role)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     default SwampyGamesConfig getSwampyGamesConfig() {

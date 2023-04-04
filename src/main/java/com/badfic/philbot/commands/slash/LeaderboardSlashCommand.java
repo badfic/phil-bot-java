@@ -7,11 +7,14 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -29,11 +32,13 @@ public class LeaderboardSlashCommand extends BaseSlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
+        CompletableFuture<InteractionHook> interactionHook = event.deferReply().submit();
         List<DiscordUser> swampyUsers = discordUserRepository.findAll();
         OptionMapping type = event.getOption("type");
+        Guild guild = event.getGuild();
 
         if (Objects.isNull(type)) {
-            event.reply("You must pick a leaderboard type").queue();
+            replyToInteractionHook(event, interactionHook, "You must pick a leaderboard type");
             return;
         }
 
@@ -41,7 +46,7 @@ public class LeaderboardSlashCommand extends BaseSlashCommand {
         StringBuilder description = new StringBuilder();
         swampyUsers.stream().filter(u -> {
             try {
-                Member member = Objects.requireNonNull(event.getGuild().getMemberById(u.getId()));
+                Member member = Objects.requireNonNull(guild.getMemberById(u.getId()));
 
                 return member.getRoles()
                         .stream()
@@ -63,7 +68,7 @@ public class LeaderboardSlashCommand extends BaseSlashCommand {
         MessageEmbed messageEmbed = Constants.simpleEmbed(type.getAsLong() == 1 ? "Bastard Leaderboard" : "Chaos Leaderboard",
                 description.toString());
 
-        event.replyEmbeds(messageEmbed).queue();
+        replyToInteractionHook(event, interactionHook, messageEmbed);
     }
 
     @Override

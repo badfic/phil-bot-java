@@ -7,8 +7,10 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -25,6 +27,7 @@ public class RankSlashCommand extends BaseSlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
+        CompletableFuture<InteractionHook> interactionHook = event.deferReply().submit();
         Member member = event.getMember();
 
         OptionMapping userOption = event.getOption("user");
@@ -33,7 +36,7 @@ public class RankSlashCommand extends BaseSlashCommand {
         }
 
         if (isNotParticipating(member)) {
-            event.replyEmbeds(Constants.simpleEmbed("Your Rank", "Is not participating in the games")).queue();
+            replyToInteractionHook(event, interactionHook, Constants.simpleEmbed("Your Rank", "Is not participating in the games"));
             return;
         }
 
@@ -59,6 +62,6 @@ public class RankSlashCommand extends BaseSlashCommand {
                 rank.getRankUpImage(),
                 rank.getColor());
 
-        event.replyEmbeds(messageEmbed).queue();
+        replyToInteractionHook(event, interactionHook, messageEmbed);
     }
 }

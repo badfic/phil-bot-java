@@ -1,8 +1,8 @@
 package com.badfic.philbot.listeners.keanu;
 
 import com.badfic.philbot.config.Constants;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class KeanuMessageListener {
 
     private static final Pattern KEANU_PATTERN = Constants.compileWords("keanu|reeves|neo|john wick|puppy|puppies|pupper|doggo|doge");
-    private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
+    private static final ListMultimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableListMultimap.<String, Pair<Pattern, String>>builder()
             .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
             .build();
 

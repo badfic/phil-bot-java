@@ -5,9 +5,9 @@ import com.badfic.philbot.data.Reminder;
 import com.badfic.philbot.data.ReminderRepository;
 import com.badfic.philbot.data.SnarkyReminderResponse;
 import com.badfic.philbot.data.SnarkyReminderResponseRepository;
-import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.ListMultimap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -90,7 +90,7 @@ public class JohnMessageListener {
             "https://emoji.gg/assets/emoji/1554_ablobderpyhappy.gif",
             "https://emoji.gg/assets/emoji/8783_ablobhop.gif"
     );
-    private static final Multimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableMultimap.<String, Pair<Pattern, String>>builder()
+    private static final ListMultimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableListMultimap.<String, Pair<Pattern, String>>builder()
             .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
             .build();
 

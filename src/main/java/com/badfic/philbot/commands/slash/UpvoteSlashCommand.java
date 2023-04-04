@@ -10,8 +10,10 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -29,12 +31,12 @@ public class UpvoteSlashCommand extends BaseSlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-
+        CompletableFuture<InteractionHook> interactionHook = event.deferReply().submit();
+        Member member = event.getMember();
         OptionMapping option = event.getOption("user");
 
         if (Objects.isNull(option)) {
-            event.reply("You must mention at least one user to upvote").queue();
+            replyToInteractionHook(event, interactionHook, "You must mention at least one user to upvote");
             return;
         }
 
@@ -47,7 +49,7 @@ public class UpvoteSlashCommand extends BaseSlashCommand {
                 return false;
             }
 
-            if (event.getMember().getId().equalsIgnoreCase(mentionedMember.getId())) {
+            if (member.getId().equalsIgnoreCase(mentionedMember.getId())) {
                 description.append("You can't upvote yourself\n");
                 return false;
             }
@@ -56,11 +58,13 @@ public class UpvoteSlashCommand extends BaseSlashCommand {
         }).collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(eligibleMembers)) {
-            event.reply("Please mention at least one eligible user to upvote. Example `!!swampy up @Santiago`").queue();
+            replyToInteractionHook(event, interactionHook, "Please mention at least one eligible user to upvote. Example `!!swampy up @Santiago`");
             return;
         }
 
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+        DiscordUser discordUser = getDiscordUserByMember(member);
+
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getUpvoteTimeoutMinutes(), ChronoUnit.MINUTES);
@@ -68,23 +72,22 @@ public class UpvoteSlashCommand extends BaseSlashCommand {
             Duration duration = Duration.between(now, nextVoteTime);
 
             if (duration.getSeconds() < 60) {
-                event.reply("You must wait " + (duration.getSeconds() + 1) + " seconds before up/down-voting again").queue();
+                replyToInteractionHook(event, interactionHook, "You must wait " + (duration.getSeconds() + 1) + " seconds before up/down-voting again");
             } else {
-                event.reply("You must wait " + (duration.toMinutes() + 1) + " minutes before up/down-voting again").queue();
+                replyToInteractionHook(event, interactionHook, "You must wait " + (duration.toMinutes() + 1) + " minutes before up/down-voting again");
             }
             return;
         }
         discordUser.setLastVote(now);
-        discordUserRepository.save(discordUser);
 
-        givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvoter(), event.getMember(), PointsStat.UPVOTER);
+        givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvoter(), member, discordUser, PointsStat.UPVOTER);
 
         for (Member mentionedMember : eligibleMembers) {
             givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvotee(), mentionedMember, PointsStat.UPVOTED);
             description.append(mentionedMember.getEffectiveName()).append('\n');
         }
 
-        event.replyEmbeds(Constants.simpleEmbed("Successfully Upvoted...", description.toString())).queue();
+        replyToInteractionHook(event, interactionHook, Constants.simpleEmbed("Successfully Upvoted...", description.toString()));
     }
 
 }
