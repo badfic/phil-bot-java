@@ -1,6 +1,7 @@
 package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDao;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.io.InputStream;
@@ -32,6 +33,9 @@ public class Ao3MetadataParserTest {
     @Mock
     private RestTemplate restTemplate;
 
+    @Mock
+    private SwampyGamesConfigDao swampyGamesConfigDao;
+
     @InjectMocks
     private Ao3MetadataParser ao3MetadataParser;
 
@@ -39,7 +43,8 @@ public class Ao3MetadataParserTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        new Constants(Mockito.mock(SwampyGamesConfigDao.class)).init();
+        Mockito.doReturn(new SwampyGamesConfig()).when(swampyGamesConfigDao).getSwampyGamesConfig();
+        new Constants(swampyGamesConfigDao).init();
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("ao3-test.html")) {
             work = IOUtils.toString(Objects.requireNonNull(stream), StandardCharsets.UTF_8);
         }
