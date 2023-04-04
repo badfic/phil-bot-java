@@ -2,7 +2,7 @@ package com.badfic.philbot.listeners.john;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.Reminder;
-import com.badfic.philbot.data.ReminderRepository;
+import com.badfic.philbot.data.ReminderDao;
 import com.badfic.philbot.data.SnarkyReminderResponse;
 import com.badfic.philbot.data.SnarkyReminderResponseRepository;
 import com.google.common.collect.ImmutableListMultimap;
@@ -95,12 +95,12 @@ public class JohnMessageListener {
             .build();
 
     private final JohnCommand johnCommand;
-    private final ReminderRepository reminderRepository;
+    private final ReminderDao reminderDao;
     private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
 
-    public JohnMessageListener(JohnCommand johnCommand, ReminderRepository reminderRepository, SnarkyReminderResponseRepository snarkyReminderResponseRepository) {
+    public JohnMessageListener(JohnCommand johnCommand, ReminderDao reminderDao, SnarkyReminderResponseRepository snarkyReminderResponseRepository) {
         this.johnCommand = johnCommand;
-        this.reminderRepository = reminderRepository;
+        this.reminderDao = reminderDao;
         this.snarkyReminderResponseRepository = snarkyReminderResponseRepository;
     }
 
@@ -200,7 +200,7 @@ public class JohnMessageListener {
                 dueDate = dueDate.plus(number, ChronoUnit.DAYS);
             }
 
-            Reminder savedReminder = reminderRepository.save(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
+            Reminder savedReminder = reminderDao.save(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
             SnarkyReminderResponse snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
             johnCommand.getJohnJda().getTextChannelById(message.getChannel().getIdLong())
                     .sendMessage("(reminder #" + savedReminder.getId() + ") " +

@@ -1,10 +1,6 @@
 package com.badfic.philbot.config;
 
-import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.data.SwampyGamesConfigRepository;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.badfic.philbot.data.SwampyGamesConfigDao;
 import com.google.common.collect.ListMultimap;
 import jakarta.annotation.PostConstruct;
 import java.awt.Color;
@@ -15,7 +11,6 @@ import java.net.URI;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +20,6 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -68,47 +62,7 @@ public class Constants {
 
     public static final Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
 
-    private enum CacheKeyType {
-        COLORS, FOOTERS
-    }
-
-    private static final LoadingCache<CacheKeyType, String[]> CACHE = CacheBuilder.newBuilder().refreshAfterWrite(Duration.of(15, ChronoUnit.MINUTES))
-            .build(new CacheLoader<>() {
-                @Override
-                public String[] load(CacheKeyType key) {
-                    switch (key) {
-                        case COLORS -> {
-                            String[] defaultColors = {String.format("#%02x%02x%02x", SWAMP_GREEN.getRed(), SWAMP_GREEN.getGreen(), SWAMP_GREEN.getBlue())};
-
-                            if (SINGLETON == null) {
-                                return defaultColors;
-                            }
-
-                            return SINGLETON.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).map(swampyGamesConfig -> {
-                                Set<String> monthlyColors = swampyGamesConfig.getMonthlyColors();
-                                return monthlyColors.toArray(String[]::new);
-                            }).orElse(defaultColors);
-                        }
-                        case FOOTERS -> {
-                            String[] defaultFooter = {"powered by 777"};
-
-                            if (SINGLETON == null) {
-                                return defaultFooter;
-                            }
-
-                            return SINGLETON.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).map(swampyGamesConfig -> {
-                                Set<String> embedFooters = swampyGamesConfig.getEmbedFooters();
-                                return embedFooters.toArray(String[]::new);
-                            }).orElse(defaultFooter);
-                        }
-                    }
-
-                    throw new IllegalStateException("Unrecognized CacheKeyType");
-                }
-            });
-
-    @Getter
-    private final SwampyGamesConfigRepository swampyGamesConfigRepository;
+    private final SwampyGamesConfigDao swampyGamesConfigDao;
 
     @PostConstruct
     public void init() {
@@ -116,7 +70,7 @@ public class Constants {
     }
 
     public static Color colorOfTheMonth() {
-        String[] colors = CACHE.getUnchecked(CacheKeyType.COLORS);
+        Set<String> colors = SINGLETON.swampyGamesConfigDao.getSwampyGamesConfig().getMonthlyColors();
         String color = pickRandom(colors);
         return Color.decode(color);
     }
@@ -305,7 +259,7 @@ public class Constants {
             finalDesc = null;
         }
 
-        String[] footers = CACHE.getUnchecked(CacheKeyType.FOOTERS);
+        Set<String> footers = SINGLETON.swampyGamesConfigDao.getSwampyGamesConfig().getEmbedFooters();
         String footerAddition = pickRandom(footers);
 
         footer = footer != null ? (footer + "\n" + footerAddition) : footerAddition;

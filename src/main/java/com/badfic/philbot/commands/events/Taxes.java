@@ -92,7 +92,7 @@ public class Taxes extends BaseNormalCommand {
         }
 
         swampyGamesConfig.setMostRecentTaxes(totalTaxes);
-        swampyGamesConfigRepository.save(swampyGamesConfig);
+        swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
 
         MessageEmbed message = Constants.simpleEmbed("Tax time! " + NumberFormat.getIntegerInstance().format(totalTaxes)
                         + " points in taxes have been paid to " + swampyGamesConfig.getTaxesPerson(),

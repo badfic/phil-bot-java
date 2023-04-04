@@ -7,7 +7,7 @@ import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.data.SwampyGamesConfigRepository;
+import com.badfic.philbot.data.SwampyGamesConfigDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.honeybadger.reporter.HoneybadgerReporter;
 import java.math.BigDecimal;
@@ -37,7 +37,7 @@ public interface BaseCommand {
 
     DiscordUserRepository getDiscordUserRepository();
 
-    SwampyGamesConfigRepository getSwampyGamesConfigRepository();
+    SwampyGamesConfigDao getSwampyGamesConfigDao();
 
     ObjectMapper getObjectMapper();
 
@@ -135,8 +135,12 @@ public interface BaseCommand {
         return false;
     }
 
-    default SwampyGamesConfig getSwampyGamesConfig() {
-        return getSwampyGamesConfigRepository().findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
+    default SwampyGamesConfig getSwampyGamesConfig()  {
+        return getSwampyGamesConfigDao().getSwampyGamesConfig();
+    }
+
+    default SwampyGamesConfig saveSwampyGamesConfig(SwampyGamesConfig swampyGamesConfig) {
+        return getSwampyGamesConfigDao().saveSwampyGamesConfig(swampyGamesConfig);
     }
 
 }

@@ -49,7 +49,7 @@ public class MemberCount extends BaseNormalCommand implements DailyTickable {
 
             SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
             swampyGamesConfig.setMemberCountChannel(voiceChannelId);
-            swampyGamesConfigRepository.save(swampyGamesConfig);
+            saveSwampyGamesConfig(swampyGamesConfig);
 
             voiceChannelById.getManager().setName(event.getGuild().getMembers().size() + " members").queue();
             event.replySuccess("Successfully set channel and updated member count");

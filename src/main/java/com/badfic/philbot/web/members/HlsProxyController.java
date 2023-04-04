@@ -2,8 +2,8 @@ package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.NewSessionException;
 import com.badfic.philbot.config.UnauthorizedException;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.time.Duration;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class HlsProxyController extends BaseMembersController {
 
-    private static final Cache<String, String> OUTSTANDING_AUTHS = CacheBuilder.newBuilder()
+    private static final Cache<String, String> OUTSTANDING_AUTHS = Caffeine.newBuilder()
             .expireAfterWrite(Duration.of(1, ChronoUnit.DAYS))
             .build();
 

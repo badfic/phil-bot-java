@@ -46,7 +46,7 @@ public class Boost extends BaseNormalCommand {
 
         if (swampyGamesConfig.getBoostPhrase() != null) {
             swampyGamesConfig.setBoostPhrase(null);
-            swampyGamesConfigRepository.save(swampyGamesConfig);
+            saveSwampyGamesConfig(swampyGamesConfig);
 
             List<CompletableFuture<?>> futures = new ArrayList<>();
             LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
@@ -90,7 +90,7 @@ public class Boost extends BaseNormalCommand {
         if (force || ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceBoostHappensOnHour()) {
             String boostPhrase = Constants.pickRandom(swampyGamesConfig.getBoostWords());
             swampyGamesConfig.setBoostPhrase(boostPhrase);
-            swampyGamesConfigRepository.save(swampyGamesConfig);
+            saveSwampyGamesConfig(swampyGamesConfig);
 
             MessageEmbed message = Constants.simpleEmbed("BOOST BLITZ",
                     "Type `" + boostPhrase + "` in this channel before the top of the hour to be boosted by "

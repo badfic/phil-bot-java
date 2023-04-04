@@ -153,7 +153,7 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
             swampyGamesConfig.setSwiperAwaiting(null);
             swampyGamesConfig.setSwiperSavior(null);
             swampyGamesConfig.setSwiperExpiration(null);
-            swampyGamesConfigRepository.save(swampyGamesConfig);
+            saveSwampyGamesConfig(swampyGamesConfig);
 
             Swiper.TheSwiper theSwiper = Swiper.SWIPERS.get(noSwipingPhrase);
             Optional<DiscordUser> victim = discordUserRepository.findById(swiperAwaiting);
@@ -249,7 +249,7 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
         swampyGamesConfig.setNoSwipingPhrase(theSwiper.noSwipingPhrase());
         swampyGamesConfig.setSwiperSavior(null);
         swampyGamesConfig.setSwiperExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
-        swampyGamesConfig = swampyGamesConfigRepository.save(swampyGamesConfig);
+        swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
 
         String description = "They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
                 + "' in this channel within 15 minutes to stop them!";

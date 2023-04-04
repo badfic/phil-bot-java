@@ -70,7 +70,7 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
 
         swampyGamesConfig.setMapPhrase(mapTriviaObject.regex());
         swampyGamesConfig.setMapTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
-        swampyGamesConfigRepository.save(swampyGamesConfig);
+        swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
 
         String type = mapTriviaObject.code().startsWith("us-") ? "US State" : "Country";
         String description = switch (triviaType) {
@@ -117,7 +117,7 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
                 && swampyGamesConfig.getMapTriviaExpiration().isBefore(LocalDateTime.now())) {
             swampyGamesConfig.setMapPhrase(null);
             swampyGamesConfig.setMapTriviaExpiration(null);
-            swampyGamesConfigRepository.save(swampyGamesConfig);
+            saveSwampyGamesConfig(swampyGamesConfig);
 
             TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
             Guild guild = philJda.getGuildById(baseConfig.guildId);

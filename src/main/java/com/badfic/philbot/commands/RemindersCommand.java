@@ -2,12 +2,12 @@ package com.badfic.philbot.commands;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.Reminder;
-import com.badfic.philbot.data.ReminderRepository;
+import com.badfic.philbot.data.ReminderDao;
 import com.badfic.philbot.service.MinuteTickable;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -19,10 +19,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class RemindersCommand extends BaseNormalCommand implements MinuteTickable {
 
-    private final ReminderRepository reminderRepository;
+    private final ReminderDao reminderDao;
     private final JDA johnJda;
 
-    public RemindersCommand(ReminderRepository reminderRepository, @Qualifier("johnJda") JDA johnJda) {
+    public RemindersCommand(ReminderDao reminderDao, @Qualifier("johnJda") JDA johnJda) {
         name = "reminders";
         aliases = new String[] {"reminder"};
         help = """
@@ -30,14 +30,14 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
                 `!!reminders` lists all reminders
                 `!!reminders 5` Show reminder number 5
                 `!!reminders delete 5` Delete reminder number 5""";
-        this.reminderRepository = reminderRepository;
+        this.reminderDao = reminderDao;
         this.johnJda = johnJda;
     }
 
     @Override
     protected void execute(CommandEvent event) {
         if (StringUtils.isBlank(event.getArgs())) {
-            List<Reminder> reminders = reminderRepository.findAll();
+            Collection<Reminder> reminders = reminderDao.findAll();
 
             StringBuilder description = new StringBuilder();
             for (Reminder reminder : reminders) {
@@ -58,8 +58,8 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
 
             try {
                 long toDelete = Long.parseLong(number);
-                if (reminderRepository.existsById(toDelete)) {
-                    reminderRepository.deleteById(toDelete);
+                if (reminderDao.existsById(toDelete)) {
+                    reminderDao.deleteById(toDelete);
                     event.replySuccess("Deleted reminder #" + toDelete);
                 } else {
                     event.replySuccess("Reminder #" + toDelete + " doesn't exist");
@@ -72,7 +72,7 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
 
             try {
                 long toLookup = Long.parseLong(number);
-                Optional<Reminder> optionalReminder = reminderRepository.findById(toLookup);
+                Optional<Reminder> optionalReminder = reminderDao.findById(toLookup);
 
                 if (optionalReminder.isPresent()) {
                     Reminder reminder = optionalReminder.get();
@@ -106,12 +106,14 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
     @Override
     public void runMinutelyTask() {
         LocalDateTime now = LocalDateTime.now();
-        for (Reminder reminder : reminderRepository.findByDueDateBefore(now)) {
-            TextChannel textChannelById = johnJda.getTextChannelById(reminder.getChannelId());
+        for (Reminder reminder : reminderDao.findAll()) {
+            if (now.isEqual(reminder.getDueDate()) || now.isAfter(reminder.getDueDate())) {
+                TextChannel textChannelById = johnJda.getTextChannelById(reminder.getChannelId());
 
-            if (textChannelById != null) {
-                textChannelById.sendMessage("(reminder #" + reminder.getId() + ") <@!" + reminder.getUserId() + "> " + reminder.getReminder()).queue();
-                reminderRepository.deleteById(reminder.getId());
+                if (textChannelById != null) {
+                    textChannelById.sendMessage("(reminder #" + reminder.getId() + ") <@!" + reminder.getUserId() + "> " + reminder.getReminder()).queue();
+                    reminderDao.deleteById(reminder.getId());
+                }
             }
         }
     }

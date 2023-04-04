@@ -3,7 +3,7 @@ package com.badfic.philbot.commands;
 import com.badfic.philbot.BaseCommand;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.data.DiscordUserRepository;
-import com.badfic.philbot.data.SwampyGamesConfigRepository;
+import com.badfic.philbot.data.SwampyGamesConfigDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import io.honeybadger.reporter.HoneybadgerReporter;
@@ -29,7 +29,7 @@ public abstract class BaseNormalCommand extends Command implements BaseCommand {
 
     @Setter(onMethod_ = {@Autowired})
     @Getter
-    protected SwampyGamesConfigRepository swampyGamesConfigRepository;
+    protected SwampyGamesConfigDao swampyGamesConfigDao;
 
     @Setter(onMethod_ = {@Autowired})
     @Getter

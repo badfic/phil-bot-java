@@ -3,7 +3,7 @@ package com.badfic.philbot.commands.slash;
 import com.badfic.philbot.BaseCommand;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.data.DiscordUserRepository;
-import com.badfic.philbot.data.SwampyGamesConfigRepository;
+import com.badfic.philbot.data.SwampyGamesConfigDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -33,7 +33,7 @@ public abstract class BaseSlashCommand extends SlashCommand implements BaseComma
 
     @Setter(onMethod_ = {@Autowired})
     @Getter
-    protected SwampyGamesConfigRepository swampyGamesConfigRepository;
+    protected SwampyGamesConfigDao swampyGamesConfigDao;
 
     @Setter(onMethod_ = {@Autowired})
     @Getter
@@ -82,4 +82,5 @@ public abstract class BaseSlashCommand extends SlashCommand implements BaseComma
             hook.editOriginal(message).queue();
         });
     }
+
 }

@@ -99,7 +99,7 @@ public class TriviaCommand extends BaseNormalCommand implements MinuteTickable {
             swampyGamesConfig.setTriviaGuid(trivia.getId());
             swampyGamesConfig.setTriviaMsgId(success.getId());
             swampyGamesConfig.setTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
-            swampyGamesConfigRepository.save(swampyGamesConfig);
+            saveSwampyGamesConfig(swampyGamesConfig);
 
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE6")).queue();
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE7")).queue();
@@ -121,7 +121,7 @@ public class TriviaCommand extends BaseNormalCommand implements MinuteTickable {
             swampyGamesConfig.setTriviaMsgId(null);
             swampyGamesConfig.setTriviaGuid(null);
             swampyGamesConfig.setTriviaExpiration(null);
-            swampyGamesConfigRepository.save(swampyGamesConfig);
+            saveSwampyGamesConfig(swampyGamesConfig);
 
             TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
             Guild guild = philJda.getGuildById(baseConfig.guildId);

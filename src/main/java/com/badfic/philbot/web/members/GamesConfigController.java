@@ -2,7 +2,7 @@ package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.ControllerConfigurable;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.data.SwampyGamesConfigRepository;
+import com.badfic.philbot.data.SwampyGamesConfigDao;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,14 +26,14 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 public class GamesConfigController extends BaseMembersController {
 
-    private final SwampyGamesConfigRepository swampyGamesConfigRepository;
+    private final SwampyGamesConfigDao swampyGamesConfigDao;
     private final ObjectMapper objectMapper;
 
     @GetMapping(value = "/games-config", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.getSwampyGamesConfig();
 
         List<ConfigEntryGet> configEntries = new ArrayList<>();
 
@@ -66,8 +66,6 @@ public class GamesConfigController extends BaseMembersController {
     public ResponseEntity<String> post(HttpServletRequest httpServletRequest, @RequestBody ConfigEntryPut configEntry) throws Exception {
         checkSession(httpServletRequest, true);
 
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseThrow(IllegalStateException::new);
-
         if (configEntry != null && StringUtils.isNotBlank(configEntry.fieldName()) && StringUtils.isNotBlank(configEntry.fieldValue())) {
             Field declaredField = SwampyGamesConfig.class.getDeclaredField(configEntry.fieldName());
             declaredField.setAccessible(true);
@@ -77,6 +75,8 @@ public class GamesConfigController extends BaseMembersController {
             if (controllerConfigurableAnnotation == null) {
                 return ResponseEntity.badRequest().build();
             }
+
+            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.getSwampyGamesConfig();
 
             switch (controllerConfigurableAnnotation.type()) {
                 case INT -> {
@@ -98,7 +98,7 @@ public class GamesConfigController extends BaseMembersController {
                 default -> throw new IllegalStateException();
             }
 
-            swampyGamesConfigRepository.save(swampyGamesConfig);
+            swampyGamesConfigDao.saveSwampyGamesConfig(swampyGamesConfig);
         }
 
         return ResponseEntity.ok("Saved. If it was an image you'll have to refresh to see the new image.");

@@ -125,7 +125,7 @@ public class NsfwQuoteTrivia extends BaseNormalCommand implements MinuteTickable
             swampyGamesConfig.setNsfwQuoteTriviaCorrectAnswer(correctAnswer);
             swampyGamesConfig.setNsfwQuoteTriviaMsgId(success.getId());
             swampyGamesConfig.setNsfwQuoteTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
-            swampyGamesConfigRepository.save(swampyGamesConfig);
+            saveSwampyGamesConfig(swampyGamesConfig);
 
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE6")).queue();
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE7")).queue();
@@ -146,7 +146,7 @@ public class NsfwQuoteTrivia extends BaseNormalCommand implements MinuteTickable
             swampyGamesConfig.setNsfwQuoteTriviaCorrectAnswer(null);
             swampyGamesConfig.setNsfwQuoteTriviaMsgId(null);
             swampyGamesConfig.setNsfwQuoteTriviaExpiration(null);
-            swampyGamesConfigRepository.save(swampyGamesConfig);
+            saveSwampyGamesConfig(swampyGamesConfig);
 
             TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false).get(0);
             Guild guild = philJda.getGuildById(baseConfig.guildId);

@@ -12,8 +12,8 @@ import com.badfic.philbot.listeners.john.JohnMessageListener;
 import com.badfic.philbot.listeners.keanu.KeanuMessageListener;
 import com.badfic.philbot.service.Ao3MetadataParser;
 import com.badfic.philbot.service.MemeCommandsService;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -55,7 +55,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class PhilMessageListener extends ListenerAdapter {
-    private static final Cache<String, Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = CacheBuilder.newBuilder()
+    private static final Cache<String, Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = Caffeine.newBuilder()
             .maximumSize(200)
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .build();

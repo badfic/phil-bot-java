@@ -23,6 +23,12 @@ server:
     whitelabel:
       enabled: false
 
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: "DEBUG"
+
 swampy:
   schedule:
     timezone: "America/Los_Angeles"
@@ -31,7 +37,7 @@ swampy:
     hourly: "0 0 * * * *"
     minutely: "0 * * * * *"
 
-    rss: "0 0,30 * * * *"
+    rss: "0 30 * * * *"
 
     phil:
       dadjoke: "0 17 7 * * *"

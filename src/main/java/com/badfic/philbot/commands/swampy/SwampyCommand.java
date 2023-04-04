@@ -10,7 +10,6 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.hungersim.Player;
 import com.badfic.philbot.data.hungersim.PlayerRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import jakarta.annotation.PostConstruct;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -76,17 +75,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
                 "`!!swampy take 120 @Santiago` remove 120 points from Santiago\n" +
                 "`!!swampy reset` reset everyone back to level 0";
         this.playerRepository = playerRepository;
-    }
-
-    @PostConstruct
-    public void init() throws Exception {
-        // seed swampy games config data
-        Optional<SwampyGamesConfig> optionalConfig = this.swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID);
-        if (optionalConfig.isEmpty()) {
-            SwampyGamesConfig singleton = new SwampyGamesConfig();
-            singleton.setId(SwampyGamesConfig.SINGLETON_ID);
-            this.swampyGamesConfigRepository.save(singleton);
-        }
     }
 
     @Override
@@ -158,7 +146,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
             if (swampyGamesConfig.getSwiperAwaiting() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getNoSwipingPhrase())) {
                 givePointsToMember(1, event.getMember(), PointsStat.SWIPER_PARTICIPATIONS);
                 swampyGamesConfig.setSwiperSavior(event.getMember().getId());
-                swampyGamesConfigRepository.save(swampyGamesConfig);
+                swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
             }
 
             if (NO_NO_WORDS.matcher(msgContent).find()) {
@@ -672,7 +660,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
 
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         swampyGamesConfig.setMostRecentTaxes(0);
-        swampyGamesConfigRepository.save(swampyGamesConfig);
+        saveSwampyGamesConfig(swampyGamesConfig);
 
         event.reply("Resetting, please wait...");
         for (DiscordUser discordUser : discordUserRepository.findAll()) {
