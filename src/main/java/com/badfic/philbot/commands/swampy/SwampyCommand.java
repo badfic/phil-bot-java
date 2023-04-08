@@ -297,8 +297,8 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
         Set<String> slotsEmojis = swampyGamesConfig.getSlotsEmoji();
         int size = slotsEmojis.size();
 
-        double oddsClosEnough = ((1.0 / size) * (1.0 / size)) * 100.0;
-        double oddsWinnerWinner = ((1.0 / size) * (1.0 / size) * (1.0 / size)) * 100.0;
+        double oddsClosEnough = (1.0 / size) * (1.0 / size) * 300.0;
+        double oddsWinnerWinner = (1.0 / size) * (1.0 / size) * (1.0 / size) * 100.0;
         String footer = String.format("Odds of a WINNER WINNER: %.3f%%\nOdds of a CLOSE ENOUGH: %.3f%%", oddsWinnerWinner, oddsClosEnough);
 
         String one = Constants.pickRandom(slotsEmojis);

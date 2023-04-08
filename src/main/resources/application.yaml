@@ -23,12 +23,6 @@ server:
     whitelabel:
       enabled: false
 
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: "DEBUG"
-
 swampy:
   schedule:
     timezone: "America/Los_Angeles"
