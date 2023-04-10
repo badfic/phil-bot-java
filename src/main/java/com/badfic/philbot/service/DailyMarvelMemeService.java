@@ -45,7 +45,7 @@ public class DailyMarvelMemeService extends BaseNormalCommand {
     public void runDailyTask() {
         List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
-            log.error("DailyMarvelMemeService Failed to find " + Constants.MEMES_CHANNEL + " channel");
+            log.error("DailyMarvelMemeService Failed to find [channel={}]", Constants.MEMES_CHANNEL);
             return;
         }
 

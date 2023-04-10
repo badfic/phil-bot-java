@@ -56,7 +56,7 @@ public abstract class BaseTwoUserImageMeme extends BaseNormalCommand {
                     .addFiles(FileUpload.fromData(bytes, memeName + ".png"))
                     .queue();
         } catch (Exception e) {
-            log.error(getClass().getSimpleName() + " could not " + memeName + " user " + event.getAuthor().getAsMention(), e);
+            log.error("{} could not {} [user={}]", getClass().getSimpleName(), memeName, event.getAuthor().getAsMention(), e);
             event.replyError("Failed to generate '" + memeName + "' meme");
         }
     }

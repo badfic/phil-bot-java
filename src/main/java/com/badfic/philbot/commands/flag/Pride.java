@@ -79,7 +79,7 @@ public class Pride extends BaseFlagCommand {
                     .addFiles(FileUpload.fromData(outputStream.toByteArray(), "pride.png"))
                     .queue();
         } catch (Exception e) {
-            log.error("Failed to pride user [" + member.getEffectiveName() + "], args: " + event.getArgs(), e);
+            log.error("Failed to pride [user={}] [args={}]", member.getEffectiveName(), event.getArgs(), e);
             event.replyError("Failed to pride " + member.getAsMention());
         }
     }

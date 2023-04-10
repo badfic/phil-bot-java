@@ -71,7 +71,7 @@ public class Heart extends BaseFlagCommand {
                     .addFiles(FileUpload.fromData(outputStream.toByteArray(), "heart.png"))
                     .queue();
         } catch (Exception e) {
-            log.error("Failed to make heart, args: " + event.getArgs(), e);
+            log.error("Failed to make heart, [args={}]", event.getArgs(), e);
             event.replyError("Failed to " + event.getArgs() + " heart");
         }
     }

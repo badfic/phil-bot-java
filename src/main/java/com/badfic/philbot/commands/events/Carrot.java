@@ -73,7 +73,7 @@ public class Carrot extends BaseNormalCommand {
                             .append(">\n");
                 }
             } catch (Exception e) {
-                log.error("Failed to carrot user: " + user.getId(), e);
+                log.error("Failed to carrot [user={}]", user.getId(), e);
             }
         }
 

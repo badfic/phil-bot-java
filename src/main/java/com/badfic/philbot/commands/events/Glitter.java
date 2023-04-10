@@ -72,7 +72,7 @@ public class Glitter extends BaseNormalCommand {
                             .append(">\n");
                 }
             } catch (Exception e) {
-                log.error("Failed to glitter user: " + user.getId(), e);
+                log.error("Failed to glitter [user={}]", user.getId(), e);
             }
         }
 

@@ -73,7 +73,7 @@ public class Potato extends BaseNormalCommand {
                             .append(">\n");
                 }
             } catch (Exception e) {
-                log.error("Failed to potato user: " + user.getId(), e);
+                log.error("Failed to potato [user={}]", user.getId(), e);
             }
         }
 

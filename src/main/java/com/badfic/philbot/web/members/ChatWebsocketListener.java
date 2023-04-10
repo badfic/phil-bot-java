@@ -37,7 +37,7 @@ public class ChatWebsocketListener {
         String username = (String) headerAccessor.getSessionAttributes().get("username");
         String userAvatar = (String) headerAccessor.getSessionAttributes().get("userAvatar");
         if (username != null) {
-            log.info("User Disconnected : " + username);
+            log.info("[User={}] Disconnected", username);
             ONLINE_MEMBERS.compute(username, (key, oldValue) -> {
                 if (oldValue != null && oldValue > 1) {
                     return oldValue - 1;
