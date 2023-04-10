@@ -53,7 +53,7 @@ public class HungerGamesWinnersService extends BaseNormalCommand implements Dail
                 .findFirst();
 
         if (optionalChannel.isEmpty()) {
-            log.error("HungerGamesWinnersService Could not find " + Constants.HUNGERDOME_CHANNEL + " channel");
+            log.error("HungerGamesWinnersService Could not find [channel={}]", Constants.HUNGERDOME_CHANNEL);
             return;
         }
 

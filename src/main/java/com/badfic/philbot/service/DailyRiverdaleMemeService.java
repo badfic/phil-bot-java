@@ -45,7 +45,7 @@ public class DailyRiverdaleMemeService extends BaseNormalCommand {
     private void runTask() {
         List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
-            log.error("DailyRiverdaleMemeService Failed to find " + Constants.CURSED_SWAMP_CHANNEL + " channel");
+            log.error("DailyRiverdaleMemeService Failed to find [channel={}]", Constants.CURSED_SWAMP_CHANNEL);
             return;
         }
 

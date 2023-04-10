@@ -29,7 +29,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -89,13 +88,20 @@ public class Constants {
         }
     }
 
+    public static Optional<String> getFilenameExtension(String filename) {
+        return Optional.ofNullable(filename)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(filename.lastIndexOf(".") + 1));
+    }
+
     public static boolean urlIsImage(String url) {
         if (StringUtils.isBlank(url)) {
             return false;
         }
 
-        String fileExtension = FilenameUtils.getExtension(url);
-        return Constants.IMAGE_EXTENSION_PATTERN.matcher(fileExtension).find();
+        Optional<String> fileExtension = getFilenameExtension(url);
+
+        return fileExtension.map(ext -> Constants.IMAGE_EXTENSION_PATTERN.matcher(ext).find()).orElse(false);
     }
 
     public static String imageUrlOrElseNull(String url) {

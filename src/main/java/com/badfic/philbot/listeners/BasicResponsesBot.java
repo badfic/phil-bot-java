@@ -315,7 +315,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
                 return;
             } catch (Exception e) {
-                log.error(getClass().getSimpleName() + " could not hug user " + event.getAuthor().getAsMention(), e);
+                log.error("{} could not hug [user={}]", getClass().getSimpleName(), event.getAuthor().getAsMention(), e);
                 selfJda.getTextChannelById(event.getChannel().getId()).sendMessage("\uD83E\uDD17").queue();
             }
         }

@@ -303,7 +303,7 @@ public class BaseConfig {
         builder.setListener(new CommandListener() {
             @Override
             public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
-                log.error("Exception in command: " + command.getName(), throwable);
+                log.error("Exception in [command={}]", command.getName(), throwable);
             }
 
             @Override

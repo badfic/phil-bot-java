@@ -69,7 +69,7 @@ public class Clown extends BaseFlagCommand {
                     .addFiles(FileUpload.fromData(outputStream.toByteArray(), "clown.png"))
                     .queue();
         } catch (Exception e) {
-            log.error("Failed to make clown, args: " + event.getArgs(), e);
+            log.error("Failed to make clown, [args={}]", event.getArgs(), e);
             event.replyError("Failed to " + event.getArgs() + " clown");
         }
     }

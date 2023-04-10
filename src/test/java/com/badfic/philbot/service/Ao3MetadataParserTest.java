@@ -10,7 +10,6 @@ import java.util.Objects;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +41,7 @@ public class Ao3MetadataParserTest {
         Mockito.doReturn(new SwampyGamesConfig()).when(swampyGamesConfigDao).getSwampyGamesConfig();
         new Constants(swampyGamesConfigDao).init();
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("ao3-test.html")) {
-            work = IOUtils.toString(Objects.requireNonNull(stream), StandardCharsets.UTF_8);
+            work = new String(Objects.requireNonNull(stream).readAllBytes(), StandardCharsets.UTF_8);
         }
     }
 

@@ -33,7 +33,6 @@ import okhttp3.Response;
 import okio.BufferedSink;
 import okio.Okio;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
@@ -85,7 +84,11 @@ public class EmoteMe extends BaseNormalCommand {
                         emojiImageListFile = null;
 
                         if (tempFile != null) {
-                            FileUtils.deleteQuietly(tempFile.toFile());
+                            try {
+                                if (Files.exists(tempFile)) {
+                                    tempFile.toFile().delete();
+                                }
+                            } catch (Exception ignored) {}
                         }
                     } finally {
                         emojiImageListDownloadAttempted = true;
@@ -127,7 +130,11 @@ public class EmoteMe extends BaseNormalCommand {
                         emojiTestListFile = null;
 
                         if (tempFile != null) {
-                            FileUtils.deleteQuietly(tempFile.toFile());
+                            try {
+                                if (Files.exists(tempFile)) {
+                                    tempFile.toFile().delete();
+                                }
+                            } catch (Exception ignored) {}
                         }
                     } finally {
                         emojiTestListDownloadAttempted = true;
@@ -143,9 +150,17 @@ public class EmoteMe extends BaseNormalCommand {
 
     @PreDestroy
     public void tearDown() {
-        if (emojiImageListFile != null && Files.exists(emojiImageListFile)) {
-            FileUtils.deleteQuietly(emojiImageListFile.toFile());
-        }
+        try {
+            if (emojiImageListFile != null && Files.exists(emojiImageListFile)) {
+                emojiImageListFile.toFile().delete();
+            }
+        } catch (Exception ignored) {}
+
+        try {
+            if (emojiTestListFile != null && Files.exists(emojiTestListFile)) {
+                emojiTestListFile.toFile().delete();
+            }
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -258,7 +273,7 @@ public class EmoteMe extends BaseNormalCommand {
                     .addFiles(FileUpload.fromData(outputStream.toByteArray(), "emote.png"))
                     .queue();
         } catch (Exception e) {
-            log.error("Failed to emoteme user [" + member.getEffectiveName() + "], args: " + args, e);
+            log.error("Failed to emoteme [user={}] [args={}]", member.getEffectiveName(), args, e);
             event.replyError("Failed to emoteme " + member.getAsMention());
         }
     }
