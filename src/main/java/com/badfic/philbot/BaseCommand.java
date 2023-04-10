@@ -9,7 +9,6 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -42,8 +41,6 @@ public interface BaseCommand {
     ObjectMapper getObjectMapper();
 
     BaseConfig getBaseConfig();
-
-    HoneybadgerReporter getHoneybadgerReporter();
 
     RestTemplate getRestTemplate();
 

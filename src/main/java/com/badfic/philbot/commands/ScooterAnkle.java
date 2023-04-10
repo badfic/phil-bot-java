@@ -91,7 +91,6 @@ public class ScooterAnkle extends BaseNormalCommand {
                         .append(user.getId())
                         .append(">\n");
                 log.error("Exception giving points to [user={}] for [scooterUser={}]'s scooter ankle", user.getId(), scooterUser.getId(), e);
-                honeybadgerReporter.reportError(e, "Failed to give points to user: " + user.getId() + " for scooter user: " + scooterUser.getId());
             }
         }
 

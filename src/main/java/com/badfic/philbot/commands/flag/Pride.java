@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class Pride extends BaseFlagCommand {
 
     private static final float ALPHA = 0.69f;
@@ -77,7 +79,7 @@ public class Pride extends BaseFlagCommand {
                     .addFiles(FileUpload.fromData(outputStream.toByteArray(), "pride.png"))
                     .queue();
         } catch (Exception e) {
-            honeybadgerReporter.reportError(e, null, "Failed to pride user [" + member.getEffectiveName() + "], args: " + event.getArgs());
+            log.error("Failed to pride user [" + member.getEffectiveName() + "], args: " + event.getArgs(), e);
             event.replyError("Failed to pride " + member.getAsMention());
         }
     }

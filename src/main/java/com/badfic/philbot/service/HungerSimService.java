@@ -10,13 +10,13 @@ import com.badfic.philbot.data.hungersim.Round;
 import com.badfic.philbot.data.hungersim.RoundOutcome;
 import com.badfic.philbot.data.hungersim.RoundOutcomeRepository;
 import com.badfic.philbot.data.hungersim.RoundRepository;
-import com.google.common.html.HtmlEscapers;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -56,7 +56,7 @@ public class HungerSimService extends BaseService {
 
             Player winner = alivePlayers.pop();
             winner.setEffectiveNameViaJda(philJda);
-            game.setCurrentOutcomes(Collections.singletonList("<b>" + HtmlEscapers.htmlEscaper().escape(winner.getEffectiveName()) + "</b> has won!"));
+            game.setCurrentOutcomes(Collections.singletonList("<b>" + StringEscapeUtils.escapeHtml4(winner.getEffectiveName()) + "</b> has won!"));
             return gameRepository.save(game);
         }
 
@@ -93,21 +93,12 @@ public class HungerSimService extends BaseService {
             }
 
             switch (outcome.getNumPlayers()) {
-                case 1:
-                    appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), philJda));
-                    break;
-                case 2:
-                    appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), philJda));
-                    break;
-                case 3:
-                    appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), outcomePlayerSet.get(2), philJda));
-                    break;
-                case 4:
-                    appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), outcomePlayerSet.get(2), outcomePlayerSet.get(3),
-                            philJda));
-                    break;
-                default:
-                    throw new IllegalArgumentException("Found Outcome that somehow had more than 4 players");
+                case 1 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), philJda));
+                case 2 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), philJda));
+                case 3 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), outcomePlayerSet.get(2), philJda));
+                case 4 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), outcomePlayerSet.get(2), outcomePlayerSet.get(3),
+                        philJda));
+                default -> throw new IllegalArgumentException("Found Outcome that somehow had more than 4 players");
             }
 
             playerRepository.saveAll(outcomePlayerSet);

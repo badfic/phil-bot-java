@@ -1,8 +1,5 @@
 package com.badfic.philbot.data.hungersim;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.html.HtmlEscapers;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 @Entity
@@ -27,12 +25,11 @@ import org.apache.commons.lang3.StringUtils;
 @EqualsAndHashCode(of = "id")
 public class Outcome {
 
-    public static final Map<Integer, List<String>> VARIABLES = ImmutableMap.<Integer, List<String>>builder()
-            .put(1, ImmutableList.of("{player1}", "{player1_subject}", "{player1_object}", "{player1_possessive}", "{player1_self}"))
-            .put(2, ImmutableList.of("{player2}", "{player2_subject}", "{player2_object}", "{player2_possessive}", "{player2_self}"))
-            .put(3, ImmutableList.of("{player3}", "{player3_subject}", "{player3_object}", "{player3_possessive}", "{player3_self}"))
-            .put(4, ImmutableList.of("{player4}", "{player4_subject}", "{player4_object}", "{player4_possessive}", "{player4_self}"))
-            .build();
+    public static final Map<Integer, List<String>> VARIABLES = Map.of(
+            1, List.of("{player1}", "{player1_subject}", "{player1_object}", "{player1_possessive}", "{player1_self}"),
+            2, List.of("{player2}", "{player2_subject}", "{player2_object}", "{player2_possessive}", "{player2_self}"),
+            3, List.of("{player3}", "{player3_subject}", "{player3_object}", "{player3_possessive}", "{player3_self}"),
+            4, List.of("{player4}", "{player4_subject}", "{player4_object}", "{player4_possessive}", "{player4_self}"));
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,7 +65,7 @@ public class Outcome {
     public String apply(Player player1, JDA jda) {
         player1.setHp(minMaxHp(player1.getHp() + player1Hp));
 
-        List<Player> playerList = ImmutableList.of(player1);
+        List<Player> playerList = List.of(player1);
         return getOutcomeResultString(jda, playerList);
     }
 
@@ -76,7 +73,7 @@ public class Outcome {
         player1.setHp(minMaxHp(player1.getHp() + player1Hp));
         player2.setHp(minMaxHp(player2.getHp() + player2Hp));
 
-        List<Player> playerList = ImmutableList.of(player1, player2);
+        List<Player> playerList = List.of(player1, player2);
         return getOutcomeResultString(jda, playerList);
     }
 
@@ -85,7 +82,7 @@ public class Outcome {
         player2.setHp(minMaxHp(player2.getHp() + player2Hp));
         player3.setHp(minMaxHp(player3.getHp() + player3Hp));
 
-        List<Player> playerList = ImmutableList.of(player1, player2, player3);
+        List<Player> playerList = List.of(player1, player2, player3);
         return getOutcomeResultString(jda, playerList);
     }
 
@@ -95,7 +92,7 @@ public class Outcome {
         player3.setHp(minMaxHp(player3.getHp() + player3Hp));
         player4.setHp(minMaxHp(player4.getHp() + player4Hp));
 
-        List<Player> playerList = ImmutableList.of(player1, player2, player3, player4);
+        List<Player> playerList = List.of(player1, player2, player3, player4);
         return getOutcomeResultString(jda, playerList);
     }
 
@@ -115,14 +112,14 @@ public class Outcome {
 
             player.setEffectiveNameViaJda(jda);
 
-            result = StringUtils.replace(result, "{player" + (i + 1) + '}', "<b>" + HtmlEscapers.htmlEscaper().escape(player.getEffectiveName()) + "</b>");
+            result = StringUtils.replace(result, "{player" + (i + 1) + '}', "<b>" + StringEscapeUtils.escapeHtml4(player.getEffectiveName()) + "</b>");
             result = StringUtils.replace(result, "{player" + (i + 1) + "_subject}", player.getPronoun().getSubject());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_object}", player.getPronoun().getObject());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_possessive}", player.getPronoun().getPossessive());
             result = StringUtils.replace(result, "{player" + (i + 1) + "_self}", player.getPronoun().getSelf());
 
             if (player.getHp() <= 0) {
-                result += " (<b>" + HtmlEscapers.htmlEscaper().escape(player.getEffectiveName()) + "</b> died)";
+                result += " (<b>" + StringEscapeUtils.escapeHtml4(player.getEffectiveName()) + "</b> died)";
             }
         }
 

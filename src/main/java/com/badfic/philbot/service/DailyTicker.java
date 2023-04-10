@@ -26,7 +26,6 @@ public class DailyTicker extends BaseService {
                     tickable.runDailyTask();
                 } catch (Exception e) {
                     log.error("Exception in daily tickable [{}]", tickable.getClass().getName(), e);
-                    honeybadgerReporter.reportError(e, null, "Exception in daily tickable: " + tickable.getClass().getName());
                 }
             });
         }

@@ -6,8 +6,6 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.MinuteTickable;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
 import java.io.InputStream;
@@ -31,7 +29,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class MapCommand extends BaseNormalCommand implements MinuteTickable {
-    @VisibleForTesting
+    // VisibleForTesting
     static final String MAP_ZIP_FILENAME = "map-trivia-flags.zip";
 
     private List<MapTriviaObject> countries;
@@ -45,7 +43,7 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
     @PostConstruct
     public void init() throws Exception {
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("map-trivia.json")) {
-            countries = ImmutableList.copyOf(objectMapper.readValue(stream, new TypeReference<List<MapTriviaObject>>() {}));
+            countries = objectMapper.readValue(stream, new TypeReference<>() {});
         }
     }
 
@@ -102,8 +100,7 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
                     .addFiles(FileUpload.fromData(zipFile.readAllBytes(), "map-trivia.png"))
                     .queue();
         } catch (Exception e) {
-            log.error("Failed to load map image", e);
-            honeybadgerReporter.reportError(e, null, "Failed to load image for map trivia");
+            log.error("Failed to load map image for map trivia", e);
             swampysChannel.sendMessage("Failed to load image for map trivia. The answer is " + mapTriviaObject.regex()).queue();
         }
     }
@@ -156,12 +153,12 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
         }
     }
 
-    @VisibleForTesting
+    // VisibleForTesting
     List<MapTriviaObject> getCountries() {
         return countries;
     }
 
-    @VisibleForTesting
+    // VisibleForTesting
     record MapTriviaObject(String code, String regex, String capital) {}
 
     private enum TriviaType {

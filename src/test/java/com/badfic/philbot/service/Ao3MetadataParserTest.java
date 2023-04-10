@@ -3,7 +3,6 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDao;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -26,9 +25,6 @@ public class Ao3MetadataParserTest {
 
     @Mock
     private JDA philJda;
-
-    @Mock
-    private HoneybadgerReporter honeybadgerReporter;
 
     @Mock
     private RestTemplate restTemplate;

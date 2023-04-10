@@ -2,7 +2,6 @@ package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.BaseConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,6 @@ public abstract class BaseService {
 
     @Setter(onMethod_ = {@Autowired})
     protected BaseConfig baseConfig;
-
-    @Setter(onMethod_ = {@Autowired})
-    protected HoneybadgerReporter honeybadgerReporter;
 
     @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
     protected JDA philJda;

@@ -5,9 +5,7 @@ import com.badfic.philbot.data.behrad.BehradResponsesConfig;
 import com.badfic.philbot.data.behrad.BehradResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -23,14 +21,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
 
-    private static final Set<String> SHAYAN_IMGS = ImmutableSet.of(
+    private static final Set<String> SHAYAN_IMGS = Set.of(
             "https://cdn.discordapp.com/attachments/323666308107599872/750575009650573332/unknown-15.png",
             "https://cdn.discordapp.com/attachments/323666308107599872/750575009885454356/unknown-21.png",
             "https://cdn.discordapp.com/attachments/323666308107599872/750575010221129889/unknown-17.png",
             "https://cdn.discordapp.com/attachments/323666308107599872/750575275783487598/MV5BMGEyZDE2YmYtNjRhNi00MzQwLThjNjItM2E5YjVjOTI3MDMwXkEyXkFqcGdeQXVyMTAzMjM0MjE0.png",
             "https://cdn.discordapp.com/attachments/323666308107599872/750575276026626129/MV5BYTRjOGE2OWUtMjk2MS00MGFkLTg2YjEtYmNjZDRjODAzNWI4XkEyXkFqcGdeQXVyMTAzMjM0MjE0.png"
     );
-    private static final Set<String> SLOTH_GIFS = ImmutableSet.of(
+    private static final Set<String> SLOTH_GIFS = Set.of(
             "https://gfycat.com/cooperativeglamoroushoneybee-animals-sloth-cute",
             "https://gfycat.com/ornateplumpicterinewarbler-animals-sloth-baby",
             "https://gfycat.com/femaleastonishingflies-relax",
@@ -47,9 +45,8 @@ public class BehradCommand extends BasicResponsesBot<BehradResponsesConfig> {
 
     private final JDA behradJda;
 
-    public BehradCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, BehradResponsesConfigRepository behradResponsesConfigRepository,
-                         @Qualifier("behradJda") JDA behradJda) {
-        super(behradResponsesConfigRepository, objectMapper, honeybadgerReporter, "behrad", BehradResponsesConfig::new);
+    public BehradCommand(ObjectMapper objectMapper, BehradResponsesConfigRepository behradResponsesConfigRepository, @Qualifier("behradJda") JDA behradJda) {
+        super(behradResponsesConfigRepository, objectMapper, "behrad", BehradResponsesConfig::new);
         this.behradJda = behradJda;
     }
 

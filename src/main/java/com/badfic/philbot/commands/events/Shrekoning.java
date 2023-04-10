@@ -71,7 +71,6 @@ public class Shrekoning extends BaseNormalCommand {
                         }
                     } catch (Exception e) {
                         log.error("Failed to shrekoning user [id={}]", user.getId(), e);
-                        honeybadgerReporter.reportError(e, "Failed to shrekoning user: " + user.getId());
                     }
                 });
 

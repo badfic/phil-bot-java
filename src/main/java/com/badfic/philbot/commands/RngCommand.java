@@ -1,7 +1,6 @@
 package com.badfic.philbot.commands;
 
 import com.badfic.philbot.config.Constants;
-import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RngCommand extends BaseNormalCommand {
 
-    private static final Set<String> THUMBNAILS = ImmutableSet.of(
+    private static final Set<String> THUMBNAILS = Set.of(
             "https://cdn.discordapp.com/attachments/707453916882665552/781484144425173012/giphy9.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/781484151189930014/giphy8.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/781484155120648202/4tenor.gif",

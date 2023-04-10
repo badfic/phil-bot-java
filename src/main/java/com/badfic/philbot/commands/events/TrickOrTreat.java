@@ -76,7 +76,6 @@ public class TrickOrTreat extends BaseNormalCommand {
                     }
                 } catch (Exception e) {
                     log.error("Failed to trick or treat user [id={}]", user.getId(), e);
-                    honeybadgerReporter.reportError(e, "Failed to trick or treat user: " + user.getId());
                 }
             }
         }

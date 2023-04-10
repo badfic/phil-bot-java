@@ -5,12 +5,11 @@ import com.badfic.philbot.data.Reminder;
 import com.badfic.philbot.data.ReminderDao;
 import com.badfic.philbot.data.SnarkyReminderResponse;
 import com.badfic.philbot.data.SnarkyReminderResponseRepository;
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ListMultimap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -32,7 +31,7 @@ public class JohnMessageListener {
     private static final Pattern JOHN_PATTERN = Constants.compileWords("john|constantine|johnno|johnny|hellblazer");
     private static final Pattern REMINDER_PATTER = Pattern.compile("\\b(remind me in |remind <@![0-9]+> in )[0-9]+\\b", Pattern.CASE_INSENSITIVE);
     private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
-    private static final Set<String> UWU = ImmutableSet.of(
+    private static final Set<String> UWU = Set.of(
             "https://tenor.com/bbmRv.gif",
             "https://tenor.com/X7Nq.gif",
             "https://tenor.com/bhbNA.gif",
@@ -66,7 +65,7 @@ public class JohnMessageListener {
             "https://cdn.discordapp.com/attachments/707453916882665552/793431157717991464/chimmy.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/793431180099452948/tata.gif",
             "https://cdn.discordapp.com/attachments/761398315119280158/867804756621131786/chris-evans-steve-rogers-heart-Favim.png");
-    private static final Set<String> GOOD_BOT = ImmutableSet.of(
+    private static final Set<String> GOOD_BOT = Set.of(
             ":D!!!",
             "I know",
             "Yeah, yeah",
@@ -90,9 +89,8 @@ public class JohnMessageListener {
             "https://emoji.gg/assets/emoji/1554_ablobderpyhappy.gif",
             "https://emoji.gg/assets/emoji/8783_ablobhop.gif"
     );
-    private static final ListMultimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableListMultimap.<String, Pair<Pattern, String>>builder()
-            .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
-            .build();
+    private static final Map<String, List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = Map.of(
+            "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
 
     private final JohnCommand johnCommand;
     private final ReminderDao reminderDao;

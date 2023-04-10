@@ -6,7 +6,6 @@ import com.badfic.philbot.data.john.JohnResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.Optional;
 import java.util.Set;
 import net.dv8tion.jda.api.JDA;
@@ -17,9 +16,8 @@ import org.springframework.stereotype.Component;
 public class JohnCommand extends BasicResponsesBot<JohnResponsesConfig> {
     private final JDA johnJda;
 
-    public JohnCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, JohnResponsesConfigRepository johnResponsesConfigRepository,
-                       @Qualifier("johnJda") JDA johnJda) {
-        super(johnResponsesConfigRepository, objectMapper, honeybadgerReporter, "john", JohnResponsesConfig::new);
+    public JohnCommand(ObjectMapper objectMapper, JohnResponsesConfigRepository johnResponsesConfigRepository, @Qualifier("johnJda") JDA johnJda) {
+        super(johnResponsesConfigRepository, objectMapper, "john", JohnResponsesConfig::new);
         this.johnJda = johnJda;
     }
 

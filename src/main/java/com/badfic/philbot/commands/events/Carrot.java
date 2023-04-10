@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang3.mutable.MutableLong;
@@ -19,6 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class Carrot extends BaseNormalCommand {
 
     public Carrot() {
@@ -71,7 +73,7 @@ public class Carrot extends BaseNormalCommand {
                             .append(">\n");
                 }
             } catch (Exception e) {
-                honeybadgerReporter.reportError(e, "Failed to carrot user: " + user.getId());
+                log.error("Failed to carrot user: " + user.getId(), e);
             }
         }
 

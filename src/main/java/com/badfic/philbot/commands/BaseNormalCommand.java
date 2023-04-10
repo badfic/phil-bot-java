@@ -6,7 +6,6 @@ import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.SwampyGamesConfigDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
@@ -38,10 +37,6 @@ public abstract class BaseNormalCommand extends Command implements BaseCommand {
     @Setter(onMethod_ = {@Autowired})
     @Getter
     protected BaseConfig baseConfig;
-
-    @Setter(onMethod_ = {@Autowired})
-    @Getter
-    protected HoneybadgerReporter honeybadgerReporter;
 
     @Setter(onMethod_ = {@Autowired})
     @Getter

@@ -5,9 +5,7 @@ import com.badfic.philbot.data.keanu.KeanuResponsesConfig;
 import com.badfic.philbot.data.keanu.KeanuResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -25,7 +23,7 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
     private static final Pattern PUPPY_PATTERN = Constants.compileWords("puppy|puppies|pupper|doggo|doge");
     private static final String HELLO_GIF = "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves";
     private static final String PUPPIES_GIF = "https://media.giphy.com/media/8rFNes6jllJQRnHTsF/giphy.gif";
-    private static final Set<String> GOOD_MORNING_GIFS = ImmutableSet.of(
+    private static final Set<String> GOOD_MORNING_GIFS = Set.of(
             HELLO_GIF,
             PUPPIES_GIF,
             "https://cdn.discordapp.com/attachments/323666308107599872/752638622099832852/donut.gif",
@@ -52,7 +50,7 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
             "https://cdn.discordapp.com/attachments/323666308107599872/752638879500206171/keanu_confetti.gif",
             "https://cdn.discordapp.com/attachments/741030569307275436/753991114301898762/image0.png"
     );
-    private static final Set<String> FIGHT_GIFS = ImmutableSet.of(
+    private static final Set<String> FIGHT_GIFS = Set.of(
             "https://cdn.discordapp.com/attachments/707453916882665552/880260097752838185/john-wick-5.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/880260100105830440/john-wick-4.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/880260103830380574/john-wick-3.gif",
@@ -62,9 +60,8 @@ public class KeanuCommand extends BasicResponsesBot<KeanuResponsesConfig> {
 
     private final JDA keanuJda;
 
-    public KeanuCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter, KeanuResponsesConfigRepository keanuResponsesConfigRepository,
-                        @Qualifier("keanuJda") JDA keanuJda) {
-        super(keanuResponsesConfigRepository, objectMapper, honeybadgerReporter, "keanu", KeanuResponsesConfig::new);
+    public KeanuCommand(ObjectMapper objectMapper, KeanuResponsesConfigRepository keanuResponsesConfigRepository, @Qualifier("keanuJda") JDA keanuJda) {
+        super(keanuResponsesConfigRepository, objectMapper, "keanu", KeanuResponsesConfig::new);
         this.keanuJda = keanuJda;
     }
 

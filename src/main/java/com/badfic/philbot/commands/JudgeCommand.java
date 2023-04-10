@@ -4,7 +4,6 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.CourtCase;
 import com.badfic.philbot.data.CourtCaseDao;
 import com.badfic.philbot.service.MinuteTickable;
-import com.google.common.collect.ImmutableMap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -150,7 +149,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                     try {
                         Message trialMessage = swampysChannel.retrieveMessageById(courtCase.getTrialMessageId()).timeout(30, TimeUnit.SECONDS).complete();
 
-                        Map<Sentence, MutableInt> sentenceMap = ImmutableMap.of(
+                        Map<Sentence, MutableInt> sentenceMap = Map.of(
                                 JudgeCommand.Sentence.ACQUIT, new MutableInt(-1),
                                 JudgeCommand.Sentence.ONE_HOUR, new MutableInt(-1),
                                 JudgeCommand.Sentence.FIVE_HOUR, new MutableInt(-1),
@@ -222,7 +221,6 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                         }
                     } catch (Exception e) {
                         log.error("Error with trial for [userId={}]", courtCase.getDefendantId(), e);
-                        honeybadgerReporter.reportError(e, null, "Error with trial for user " + courtCase.getDefendantId());
                         courtCaseDao.deleteById(courtCase.getDefendantId());
                         swampysChannel.sendMessage("Trial for <@!" + courtCase.getDefendantId() + "> aborted.").queue();
                     }
@@ -234,13 +232,11 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                         megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been released from mega-hell").queue();
                     } catch (Exception e) {
                         log.error("Error with release date for [userId={}]", courtCase.getDefendantId(), e);
-                        honeybadgerReporter.reportError(e, null, "Error with release date for user " + courtCase.getDefendantId());
                         megaHellChannel.sendMessage("Sentence for <@!" + courtCase.getDefendantId() + "> aborted.").queue();
                     }
                 }
             } catch (Exception e) {
                 log.error("Error with court case for [userId={}]", courtCase.getDefendantId(), e);
-                honeybadgerReporter.reportError(e, null, "Error with court case for user " + courtCase.getDefendantId());
             }
         }
     }
