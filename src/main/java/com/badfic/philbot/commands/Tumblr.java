@@ -30,8 +30,9 @@ public class Tumblr extends BaseNormalCommand {
             return;
         }
 
+        String tumblrUser = split[0];
         try {
-            Blog blog = jumblrClient.blogInfo(split[0] + ".tumblr.com");
+            Blog blog = jumblrClient.blogInfo(tumblrUser + ".tumblr.com");
 
             if (blog != null) {
                 List<Post> posts = blog.posts();
@@ -44,9 +45,8 @@ public class Tumblr extends BaseNormalCommand {
                 }
             }
         } catch (Exception e) {
-            log.error("Failed to get [user={}] tumblr posts", split[0], e);
-            honeybadgerReporter.reportError(e, "Failed to get user's tumblr posts: " + split[0]);
-            event.replyError("Something went wrong trying to get user's posts: " + split[0]);
+            log.error("Failed to get [user={}] tumblr posts", tumblrUser, e);
+            event.replyError("Something went wrong trying to get user's posts: " + tumblrUser);
         }
     }
 

@@ -10,11 +10,13 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.imageio.ImageIO;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class Clown extends BaseFlagCommand {
 
     private final BufferedImage image;
@@ -67,7 +69,7 @@ public class Clown extends BaseFlagCommand {
                     .addFiles(FileUpload.fromData(outputStream.toByteArray(), "clown.png"))
                     .queue();
         } catch (Exception e) {
-            honeybadgerReporter.reportError(e, null, "Failed to make clown, args: " + event.getArgs());
+            log.error("Failed to make clown, args: " + event.getArgs(), e);
             event.replyError("Failed to " + event.getArgs() + " clown");
         }
     }

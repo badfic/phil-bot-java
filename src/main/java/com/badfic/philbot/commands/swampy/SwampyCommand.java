@@ -254,7 +254,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
         }
 
         Optional<Player> optionalPlayer = playerRepository.findByDiscordUser_id(id);
-        optionalPlayer.ifPresent(player -> playerRepository.delete(player));
+        optionalPlayer.ifPresent(playerRepository::delete);
 
         if (discordUserRepository.existsById(id)) {
             discordUserRepository.deleteById(id);
@@ -445,7 +445,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
                 return hasRole(member, StringUtils.containsIgnoreCase(split[1], "bastard") ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE);
             } catch (Exception e) {
                 log.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);
-                honeybadgerReporter.reportError(e, "unable to lookup user for leaderboard: " + u.getId());
                 return false;
             }
         }).sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())).limit(10).forEachOrdered(swampyUser -> {

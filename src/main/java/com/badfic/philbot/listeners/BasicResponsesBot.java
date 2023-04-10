@@ -11,7 +11,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +22,7 @@ import java.util.function.Supplier;
 import javax.imageio.ImageIO;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -34,13 +34,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Slf4j
 public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends Command implements ModHelpAware {
 
     private static final BufferedImage HUG;
 
     private final BaseResponsesConfigRepository<T> configRepository;
     private final ObjectMapper objectMapper;
-    private final HoneybadgerReporter honeybadgerReporter;
     private final String fullCmdPrefix;
     @Getter
     private final String modHelp;
@@ -56,11 +56,10 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         }
     }
 
-    public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository, ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter,
-                             String name, Supplier<T> responsesConfigConstructor) {
+    public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository, ObjectMapper objectMapper, String name,
+                             Supplier<T> responsesConfigConstructor) {
         this.configRepository = configRepository;
         this.objectMapper = objectMapper;
-        this.honeybadgerReporter = honeybadgerReporter;
 
         this.name = name;
         this.fullCmdPrefix = Constants.PREFIX + name;
@@ -316,9 +315,8 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
                 return;
             } catch (Exception e) {
+                log.error(getClass().getSimpleName() + " could not hug user " + event.getAuthor().getAsMention(), e);
                 selfJda.getTextChannelById(event.getChannel().getId()).sendMessage("\uD83E\uDD17").queue();
-
-                honeybadgerReporter.reportError(e, null, getClass().getSimpleName() + " could not hug user " + event.getAuthor().getAsMention());
             }
         }
 

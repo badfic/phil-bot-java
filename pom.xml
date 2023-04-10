@@ -18,29 +18,16 @@
 		<java.version>17</java.version>
 
 		<commons-io.version>2.11.0</commons-io.version>
-		<guava.version>31.1-jre</guava.version>
-		<honeybadger.version>2.1.2</honeybadger.version>
 		<jda.version>5.0.0-beta.6</jda.version>
 		<jda-utilities.version>2.0-SNAPSHOT</jda-utilities.version>
 		<jsoup.version>1.15.4</jsoup.version>
 		<jumblr.version>0.0.13</jumblr.version>
 		<rome.version>2.1.0</rome.version>
+		<sentry.io.version>6.17.0</sentry.io.version>
 		<zip4j.version>2.11.5</zip4j.version>
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -74,10 +61,6 @@
 			<artifactId>flyway-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>${commons-io.version}</version>
@@ -100,16 +83,6 @@
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.honeybadger</groupId>
-			<artifactId>honeybadger-java</artifactId>
-			<version>${honeybadger.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.tumblr</groupId>
 			<artifactId>jumblr</artifactId>
 			<version>${jumblr.version}</version>
@@ -128,6 +101,11 @@
 			<groupId>net.lingala.zip4j</groupId>
 			<artifactId>zip4j</artifactId>
 			<version>${zip4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.sentry</groupId>
+			<artifactId>sentry-logback</artifactId>
+			<version>${sentry.io.version}</version>
 		</dependency>
 
 		<dependency>

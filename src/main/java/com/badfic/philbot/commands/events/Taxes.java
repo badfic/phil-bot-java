@@ -86,7 +86,6 @@ public class Taxes extends BaseNormalCommand {
                     }
                 } catch (Exception e) {
                     log.error("Failed to tax user [id={}]", user.getId(), e);
-                    honeybadgerReporter.reportError(e, "Failed to tax user: " + user.getId());
                 }
             }
         }

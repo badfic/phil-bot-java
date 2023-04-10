@@ -32,7 +32,6 @@ public class MinuteTicker extends BaseService {
                     tickable.runMinutelyTask();
                 } catch (Exception e) {
                     log.error("Exception in minute tickable [{}]", tickable.getClass().getName(), e);
-                    honeybadgerReporter.reportError(e, null, "Exception in minute tickable: " + tickable.getClass().getName());
                 }
             });
         }

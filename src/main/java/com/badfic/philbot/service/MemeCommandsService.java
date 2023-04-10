@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class MemeCommandsService extends BaseService {
 
     private static final TypeReference<Set<String>> STRING_LIST = new TypeReference<>() {};
@@ -110,8 +112,7 @@ public class MemeCommandsService extends BaseService {
                     Set<String> urlList = objectMapper.readValue(url, STRING_LIST);
                     url = Constants.pickRandom(urlList);
                 } catch (JsonProcessingException e) {
-                    honeybadgerReporter.reportError(e, null,
-                            String.format("\"%s\" meme command value starts and ends with brackets but is not a list", commandName));
+                    log.error("{} meme command value starts and ends with brackets but is not a list", commandName, e);
                 }
             }
 

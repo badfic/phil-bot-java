@@ -10,9 +10,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Objects;
 import javax.imageio.ImageIO;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
 
+@Slf4j
 public abstract class BaseTwoUserImageMeme extends BaseNormalCommand {
 
     private final int authorScale;
@@ -54,8 +56,8 @@ public abstract class BaseTwoUserImageMeme extends BaseNormalCommand {
                     .addFiles(FileUpload.fromData(bytes, memeName + ".png"))
                     .queue();
         } catch (Exception e) {
+            log.error(getClass().getSimpleName() + " could not " + memeName + " user " + event.getAuthor().getAsMention(), e);
             event.replyError("Failed to generate '" + memeName + "' meme");
-            honeybadgerReporter.reportError(e, null, getClass().getSimpleName() + " could not " + memeName + " user " + event.getAuthor().getAsMention());
         }
     }
 

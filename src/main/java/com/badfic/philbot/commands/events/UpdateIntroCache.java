@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -18,6 +19,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class UpdateIntroCache extends BaseNormalCommand implements DailyTickable {
 
     public UpdateIntroCache() {
@@ -39,7 +41,7 @@ public class UpdateIntroCache extends BaseNormalCommand implements DailyTickable
         Optional<TextChannel> optionalIntroChannel = philJda.getTextChannelsByName("introductions", false).stream().findFirst();
 
         if (optionalIntroChannel.isEmpty()) {
-            honeybadgerReporter.reportError(new RuntimeException("ERROR: UpdateIntroCache could not find the #introductions channel"));
+            log.error("ERROR: UpdateIntroCache could not find the #introductions channel");
             return;
         }
 

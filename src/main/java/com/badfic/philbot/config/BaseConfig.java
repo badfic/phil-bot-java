@@ -21,7 +21,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.CommandListener;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.tumblr.jumblr.JumblrClient;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -171,8 +170,6 @@ public class BaseConfig {
         threadPoolTaskExecutor.setAllowCoreThreadTimeOut(true);
         threadPoolTaskExecutor.setRejectedExecutionHandler((runnable, executor) -> {
             log.error("Rejected task in threadPoolTaskExecutor. [runnable={}]", runnable);
-            honeybadgerReporter().reportError(new RuntimeException("Rejected task in threadPoolTaskExecutor"), runnable,
-                    "Rejected task in threadPoolTaskExecutor");
         });
         return threadPoolTaskExecutor;
     }
@@ -183,11 +180,9 @@ public class BaseConfig {
         threadPoolTaskScheduler.setPoolSize(2);
         threadPoolTaskScheduler.setRejectedExecutionHandler((runnable, executor) -> {
             log.error("Rejected task in taskScheduler. [runnable={}]", runnable);
-            honeybadgerReporter().reportError(new RuntimeException("Rejected task in taskScheduler"), runnable, "Rejected task in taskScheduler");
         });
         threadPoolTaskScheduler.setErrorHandler(t -> {
             log.error("Error in scheduled task", t);
-            honeybadgerReporter().reportError(t, null, "Error in scheduled task");
         });
         return threadPoolTaskScheduler;
     }
@@ -285,7 +280,6 @@ public class BaseConfig {
     public CommandClient philCommandClient(ThreadPoolTaskScheduler taskScheduler,
                                            List<Command> commands,
                                            SwampyCommand swampyCommand,
-                                           HoneybadgerReporter honeybadgerReporter,
                                            MemeCommandsService memeCommandsService) {
         CommandClientBuilder builder = new CommandClientBuilder();
 
@@ -310,7 +304,6 @@ public class BaseConfig {
             @Override
             public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
                 log.error("Exception in command: " + command.getName(), throwable);
-                honeybadgerReporter.reportError(throwable, event, "Exception in command: " + command.getName());
             }
 
             @Override
@@ -361,11 +354,6 @@ public class BaseConfig {
                 .addEventListeners(philMessageListener, philCommandClient)
                 .setActivity(Activity.playing("with our feelings"))
                 .build();
-    }
-
-    @Bean
-    public HoneybadgerReporter honeybadgerReporter() {
-        return new HoneybadgerReporter();
     }
 
     @Bean

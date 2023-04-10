@@ -1,9 +1,9 @@
 package com.badfic.philbot.listeners.antonia;
 
 import com.badfic.philbot.config.Constants;
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ListMultimap;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
@@ -18,11 +18,10 @@ import org.springframework.stereotype.Service;
 public class AntoniaMessageListener {
 
     private static final Pattern ANTONIA_PATTERN = Constants.compileWords("antonia|toni|tony|stark|tash|iron man|tin can");
-    private static final ListMultimap<String, Pair<Pattern, String>> USER_TRIGGER_WORDS = ImmutableListMultimap.<String, Pair<Pattern, String>>builder()
-            .put("307611036134146080", ImmutablePair.of(Constants.compileWords("I love you"), "I know"))
-            .put("323520695550083074", ImmutablePair.of(Constants.compileWords("togna"), "bologna"))
-            .put("323520695550083074", ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
-            .build();
+    private static final Map<String, List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = Map.of(
+            "307611036134146080", List.of(ImmutablePair.of(Constants.compileWords("I love you"), "I know")),
+            "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("togna"), "bologna"),
+                    ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
     private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
 
     private final AntoniaCommand antoniaCommand;

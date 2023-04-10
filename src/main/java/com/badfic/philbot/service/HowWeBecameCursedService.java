@@ -3,8 +3,7 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.HowWeBecameCursedEntity;
 import com.badfic.philbot.data.HowWeBecameCursedRepository;
-import com.google.common.collect.Sets;
-import com.google.common.html.HtmlEscapers;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
@@ -19,10 +19,12 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RegExUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class HowWeBecameCursedService extends BaseService implements DailyTickable {
 
     private final HowWeBecameCursedRepository howWeBecameCursedRepository;
@@ -38,7 +40,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
                 .findFirst();
 
         if (optionalChannel.isEmpty()) {
-            honeybadgerReporter.reportError(new IllegalArgumentException("Could not find how-we-became-cursed channel"));
+            log.error("HowWeBecameCursedService Could not find how-we-became-cursed channel");
             return;
         }
 
@@ -85,7 +87,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
             }
         }
 
-        Sets.SetView<Long> deletedMessageIds = Sets.difference(howWeBecameCursedRepository.findAllIds(), messageIds);
+        Collection<Long> deletedMessageIds = CollectionUtils.disjunction(howWeBecameCursedRepository.findAllIds(), messageIds);
 
         for (Long deletedMessageId : deletedMessageIds) {
             if (howWeBecameCursedRepository.existsById(deletedMessageId)) {
@@ -107,7 +109,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
         StringBuilder contentBuilder = new StringBuilder();
 
         contentBuilder.append("<pre style=\"white-space: pre-wrap;\">\n")
-                .append(HtmlEscapers.htmlEscaper().escape(message.getContentDisplay()))
+                .append(StringEscapeUtils.escapeHtml4(message.getContentDisplay()))
                 .append("\n</pre>\n");
 
         if (CollectionUtils.isNotEmpty(message.getAttachments())) {
@@ -152,7 +154,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
                 content = RegExUtils.replaceAll(
                         content,
                         ':' + emote.getName() + ':',
-                        "<img alt=\"" + HtmlEscapers.htmlEscaper().escape(emote.getName()) + "\" src=\"" + imageUrl + "\" width=\"32\" height=\"32\">");
+                        "<img alt=\"" + StringEscapeUtils.escapeHtml4(emote.getName()) + "\" src=\"" + imageUrl + "\" width=\"32\" height=\"32\">");
             }
         }
 

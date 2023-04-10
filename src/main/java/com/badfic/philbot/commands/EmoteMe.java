@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -39,6 +40,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class EmoteMe extends BaseNormalCommand {
 
     private static final float ALPHA = 0.69f;
@@ -65,7 +67,7 @@ public class EmoteMe extends BaseNormalCommand {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     emojiImageListDownloadAttempted = true;
-                    honeybadgerReporter.reportError(e, null, "Failed to download emoji image list from unicode.org");
+                    log.error("Failed to download emoji image list from unicode.org", e);
                     emojiImageListFile = null;
                 }
 
@@ -79,7 +81,7 @@ public class EmoteMe extends BaseNormalCommand {
                         }
                         emojiImageListFile = tempFile;
                     } catch (Exception e) {
-                        honeybadgerReporter.reportError(e, null, "Failed to download emoji image list from unicode.org");
+                        log.error("Failed to download emoji image list from unicode.org", e);
                         emojiImageListFile = null;
 
                         if (tempFile != null) {
@@ -91,7 +93,7 @@ public class EmoteMe extends BaseNormalCommand {
                 }
             });
         } catch (Exception e) {
-            honeybadgerReporter.reportError(e, null, "Failed to download emoji image list from unicode.org");
+            log.error("Failed to download emoji image list from unicode.org", e);
             emojiImageListFile = null;
             emojiImageListDownloadAttempted = true;
         }
@@ -107,7 +109,7 @@ public class EmoteMe extends BaseNormalCommand {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     emojiTestListDownloadAttempted = true;
-                    honeybadgerReporter.reportError(e, null, "Failed to download emoji test list from unicode.org");
+                    log.error("Failed to download emoji test list from unicode.org", e);
                     emojiTestListFile = null;
                 }
 
@@ -121,7 +123,7 @@ public class EmoteMe extends BaseNormalCommand {
                         }
                         emojiTestListFile = tempFile;
                     } catch (Exception e) {
-                        honeybadgerReporter.reportError(e, null, "Failed to download emoji test list from unicode.org");
+                        log.error("Failed to download emoji test list from unicode.org", e);
                         emojiTestListFile = null;
 
                         if (tempFile != null) {
@@ -133,7 +135,7 @@ public class EmoteMe extends BaseNormalCommand {
                 }
             });
         } catch (Exception e) {
-            honeybadgerReporter.reportError(e, null, "Failed to download emoji test list from unicode.org");
+            log.error("Failed to download emoji test list from unicode.org", e);
             emojiTestListFile = null;
             emojiTestListDownloadAttempted = true;
         }
@@ -256,7 +258,7 @@ public class EmoteMe extends BaseNormalCommand {
                     .addFiles(FileUpload.fromData(outputStream.toByteArray(), "emote.png"))
                     .queue();
         } catch (Exception e) {
-            honeybadgerReporter.reportError(e, null, "Failed to emoteme user [" + member.getEffectiveName() + "], args: " + args);
+            log.error("Failed to emoteme user [" + member.getEffectiveName() + "], args: " + args, e);
             event.replyError("Failed to emoteme " + member.getAsMention());
         }
     }

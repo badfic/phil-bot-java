@@ -6,7 +6,6 @@ import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.MinuteTickable;
-import com.google.common.collect.ImmutableMap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -27,96 +26,95 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class Swiper extends BaseNormalCommand implements MinuteTickable {
     // TODO: Investigate putting these in SwampyGamesConfig table
-    public static final Map<String, TheSwiper> SWIPERS = ImmutableMap.<String, TheSwiper>builder()
-            .put("Swiper No Swiping", new TheSwiper(
+    public static final Map<String, TheSwiper> SWIPERS = Map.ofEntries(
+            Map.entry("Swiper No Swiping", new TheSwiper(
                     "Swiper No Swiping",
                     "Swiper Was Spotted Nearby",
                     "https://cdn.discordapp.com/attachments/794506942906761226/986488638370107452/SwiperArrives.png",
                     "https://cdn.discordapp.com/attachments/917315206009483294/946224026144084008/image0.jpg",
                     "Swiper Escaped!",
                     "https://cdn.discordapp.com/attachments/917315206009483294/946217897800396830/image0.jpg"
-            ))
-            .put("Snarter No Snarting", new TheSwiper(
+            )),
+            Map.entry("Snarter No Snarting", new TheSwiper(
                     "Snarter No Snarting",
                     "Rory and Snart Were Spotted Nearby",
                     "https://cdn.discordapp.com/attachments/741030569307275436/924881936592289832/familyjewels.png",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882905202640945162/snarter_lose.png",
                     "Rory and Snart Escaped!",
                     "https://cdn.discordapp.com/attachments/741030569307275436/924881936890097694/Snarter.gif"
-            ))
-            .put("Squidward No Squidding", new TheSwiper(
+            )),
+            Map.entry("Squidward No Squidding", new TheSwiper(
                     "Squidward No Squidding",
                     "Squidward Was Spotted Nearby",
                     "https://cdn.discordapp.com/attachments/741024218938081340/924150658041532476/IMG_4941.png",
                     "https://cdn.discordapp.com/attachments/741024218938081340/924150658314141716/phonto.jpg",
                     "Squidward Squidded Away With Yo Points!",
                     "https://cdn.discordapp.com/attachments/741024218938081340/924150658540638208/phonto.jpg"
-            ))
-            .put("Shrimper No Shrimping", new TheSwiper(
+            )),
+            Map.entry("Shrimper No Shrimping", new TheSwiper(
                     "Shrimper No Shrimping",
                     "Shrimp Spotted Nearby",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882890043411279942/shrimper_comes.png",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882890047177760818/shrimper_lose.png",
                     "The Shrimp Shrimped Away!",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882890051145588757/shrimper_wins.png"
-            ))
-            .put("Schuester No Schuesting", new TheSwiper(
+            )),
+            Map.entry("Schuester No Schuesting", new TheSwiper(
                     "Schuester No Schuesting",
                     "Schuester Spotted Nearby",
                     "https://cdn.discordapp.com/attachments/746148999144407211/966418471443398706/IMG_2662.png",
                     "https://cdn.discordapp.com/attachments/746148999144407211/966422230307336272/IMG_2663.jpg",
                     "The Grinch Stole Your Soul!",
                     "https://cdn.discordapp.com/attachments/746148999144407211/966422230546403430/phonto.jpg"
-            ))
-            .put("Chooster No Choosting", new TheSwiper(
+            )),
+            Map.entry("Chooster No Choosting", new TheSwiper(
                     "Chooster No Choosting",
                     "Thomas The Tank Engine Spotted",
                     "https://cdn.discordapp.com/attachments/771565238624845846/945863411730907186/choochoocomingforyou.png",
                     "https://cdn.discordapp.com/attachments/771565238624845846/945864978475384842/caboose.png",
                     "Sweet Sweet Murder",
                     "https://cdn.discordapp.com/attachments/323666308107599872/972380655658872872/chooster-won.png"
-            ))
-            .put("Panic No Discoing", new TheSwiper(
+            )),
+            Map.entry("Panic No Discoing", new TheSwiper(
                     "Panic No Discoing",
                     "Brendon Urie Spotted",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882845495502962728/brendon_coming.png",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882845503979671612/brendon_lose.png",
                     "Panic! At The Crisco",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882845513215528970/brendon_win.png"
-            ))
-            .put("Doofen No Shmirtzing", new TheSwiper(
+            )),
+            Map.entry("Doofen No Shmirtzing", new TheSwiper(
                     "Doofen No Shmirtzing",
                     "Dr. Doofenshmirtz Spotted Nearby!",
                     "https://cdn.discordapp.com/attachments/761398315119280158/928159786388820019/doof-arrives.png",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882885589333082132/doof_loses.png",
                     "Doofenshmirtz Evil Incorporated",
                     "https://cdn.discordapp.com/attachments/794506942906761226/882885597927186472/doof_wins.png"
-            ))
-            .put("Sebastian No Stanning", new TheSwiper(
+            )),
+            Map.entry("Sebastian No Stanning", new TheSwiper(
                     "Sebastian No Stanning",
                     "Sebastian Stan Spotted Nearby!",
                     "https://cdn.discordapp.com/attachments/741024218938081340/923715944310779984/nostanning.png",
                     "https://cdn.discordapp.com/attachments/741024218938081340/923715944700837958/sebstopped.png",
                     "Get Stan'd",
                     "https://cdn.discordapp.com/attachments/741024218938081340/923715945388716094/yesstanning.png"
-            ))
-            .put("Loki No Larceny", new TheSwiper(
+            )),
+            Map.entry("Loki No Larceny", new TheSwiper(
                     "Loki No Larceny",
                     "Loki Spotted Nearby!",
                     "https://cdn.discordapp.com/attachments/323666308107599872/947617999869849662/loki-arrives-edit.png",
                     "https://cdn.discordapp.com/attachments/707453916882665552/947616510409576488/loki-lost.png",
                     "WOW, You just got Loki'd",
                     "https://cdn.discordapp.com/attachments/746148999144407211/946171616155541594/F4ABFC69-BACD-4285-9725-1FBFA94A21DC.jpg"
-            ))
-            .put("Peggy No Pegging", new TheSwiper(
+            )),
+            Map.entry("Peggy No Pegging", new TheSwiper(
                     "Peggy No Pegging",
                     "Peggy Spotted Nearby!",
                     "https://cdn.discordapp.com/attachments/746148999144407211/984139370950959124/peggyarrives.png",
                     "https://cdn.discordapp.com/attachments/746148999144407211/984139371244564520/peggyloses.png",
                     "Get Pegged",
                     "https://cdn.discordapp.com/attachments/746148999144407211/984139371504631848/peggywins.png"
-            ))
-            .build();
+            )));
 
     public static final String SPIDERMAN_PNG = "https://cdn.discordapp.com/attachments/707453916882665552/928163455901511720/spidey.png";
 
@@ -187,7 +185,6 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
                         }
                     } catch (Exception e) {
                         log.error("Exception with swiper savior branch", e);
-                        honeybadgerReporter.reportError(e, "Exception during swiper savior logic");
                     }
                 } else {
                     try {
@@ -201,7 +198,6 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
                         }
                     } catch (Exception e) {
                         log.error("Exception looking up swiper victim [id={}] after they were not saved", victim.get().getId(), e);
-                        honeybadgerReporter.reportError(e, "Exception looking up swiper victim after they were not saved: " + victim.get().getId());
                     }
                 }
             }

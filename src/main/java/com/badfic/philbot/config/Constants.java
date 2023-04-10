@@ -1,7 +1,6 @@
 package com.badfic.philbot.config;
 
 import com.badfic.philbot.data.SwampyGamesConfigDao;
-import com.google.common.collect.ListMultimap;
 import jakarta.annotation.PostConstruct;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -14,6 +13,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -191,7 +191,7 @@ public class Constants {
         return ImmutablePair.of(DayOfWeek.of(mode), maxCount);
     }
 
-    public static void checkUserTriggerWords(MessageReceivedEvent event, ListMultimap<String, Pair<Pattern, String>> userTriggerWords) {
+    public static void checkUserTriggerWords(MessageReceivedEvent event, Map<String, List<Pair<Pattern, String>>> userTriggerWords) {
         List<Pair<Pattern, String>> userTriggers = userTriggerWords.get(event.getAuthor().getId());
         if (CollectionUtils.isNotEmpty(userTriggers)) {
             Optional<String> match = Optional.empty();

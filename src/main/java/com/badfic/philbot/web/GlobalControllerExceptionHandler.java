@@ -4,7 +4,6 @@ import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.LoginRedirectException;
 import com.badfic.philbot.config.NewSessionException;
 import com.badfic.philbot.config.UnauthorizedException;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
@@ -20,11 +19,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 public class GlobalControllerExceptionHandler {
     private final BaseConfig baseConfig;
-    private final HoneybadgerReporter honeybadgerReporter;
 
-    public GlobalControllerExceptionHandler(BaseConfig baseConfig, HoneybadgerReporter honeybadgerReporter) {
+    public GlobalControllerExceptionHandler(BaseConfig baseConfig) {
         this.baseConfig = baseConfig;
-        this.honeybadgerReporter = honeybadgerReporter;
     }
 
     @ExceptionHandler(NewSessionException.class)
@@ -57,8 +54,7 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception e, HttpServletRequest request) {
-        log.error("Exception caught at top level", e);
-        honeybadgerReporter.reportError(e, request, "Controller Exception caught at top level");
+        log.error("Controller Exception caught at top level", e);
         return new ResponseEntity<>("Generic Top Level Exception, ask Santiago. Something might have broke.", HttpStatus.UNAUTHORIZED);
     }
 

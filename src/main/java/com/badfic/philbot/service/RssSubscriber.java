@@ -3,7 +3,6 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.RssEntry;
 import com.badfic.philbot.data.RssEntryRepository;
-import com.google.common.collect.ImmutableSet;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
@@ -24,7 +23,7 @@ import org.springframework.util.LinkedMultiValueMap;
 @Component
 @Slf4j
 public class RssSubscriber extends BaseService {
-    private static final Set<String> FEEDS = ImmutableSet.of(
+    private static final Set<String> FEEDS = Set.of(
             "https://archiveofourown.org/tags/39926683/feed.atom",
             "https://archiveofourown.org/tags/41072152/feed.atom"
     );
@@ -90,7 +89,6 @@ public class RssSubscriber extends BaseService {
                 }
             } catch (Exception e) {
                 log.error("Failed to parse rss feed {}", url, e);
-                honeybadgerReporter.reportError(e, null, "Failed to parse rss feed " + url);
             }
         }
         log.info("Finished checking RSS feeds");

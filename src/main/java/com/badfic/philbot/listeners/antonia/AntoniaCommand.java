@@ -6,7 +6,6 @@ import com.badfic.philbot.data.antonia.AntoniaResponsesConfigRepository;
 import com.badfic.philbot.listeners.BasicResponsesBot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.Optional;
 import java.util.Set;
 import net.dv8tion.jda.api.JDA;
@@ -18,9 +17,9 @@ public class AntoniaCommand extends BasicResponsesBot<AntoniaResponsesConfig> {
 
     private final JDA antoniaJda;
 
-    public AntoniaCommand(ObjectMapper objectMapper, HoneybadgerReporter honeybadgerReporter,
-                          AntoniaResponsesConfigRepository antoniaResponsesConfigRepository, @Qualifier("antoniaJda") JDA antoniaJda) {
-        super(antoniaResponsesConfigRepository, objectMapper, honeybadgerReporter, "antonia", AntoniaResponsesConfig::new);
+    public AntoniaCommand(ObjectMapper objectMapper, AntoniaResponsesConfigRepository antoniaResponsesConfigRepository,
+                          @Qualifier("antoniaJda") JDA antoniaJda) {
+        super(antoniaResponsesConfigRepository, objectMapper, "antonia", AntoniaResponsesConfig::new);
         this.antoniaJda = antoniaJda;
     }
 

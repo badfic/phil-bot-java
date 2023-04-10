@@ -5,7 +5,6 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.google.common.collect.ImmutableSet;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class Stonks extends BaseNormalCommand {
     // TODO: Put in SwampyGamesConfig table
-    private static final Set<String> STONKS = ImmutableSet.of(
+    private static final Set<String> STONKS = Set.of(
             "https://cdn.discordapp.com/attachments/794506942906761226/882825319722143784/stonky_bellala.png",
             "https://cdn.discordapp.com/attachments/794506942906761226/882825323308269598/stonky_betty.png",
             "https://cdn.discordapp.com/attachments/718561729105363075/945846713254576239/IMG_1832.png",
@@ -86,7 +85,6 @@ public class Stonks extends BaseNormalCommand {
                 }
             } catch (Exception e) {
                 log.error("Failed to stonks user [id={}]", user.getId(), e);
-                honeybadgerReporter.reportError(e, "Failed to stonks user: " + user.getId());
             }
         }
 

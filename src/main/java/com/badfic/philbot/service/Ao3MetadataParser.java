@@ -1,13 +1,11 @@
 package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
-import com.google.common.annotations.VisibleForTesting;
 import java.awt.Color;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @Slf4j
@@ -26,24 +25,26 @@ public class Ao3MetadataParser extends BaseService {
 
     public boolean parseLink(String link, String channelName) {
         try {
-            URIBuilder uriBuilder = new URIBuilder(link);
-            uriBuilder.clearParameters();
-            uriBuilder.addParameter("view_adult", "true");
-            uriBuilder.addParameter("view_full_work", "true");
+            String url = UriComponentsBuilder.fromUriString(link)
+                    .replaceQuery("")
+                    .queryParam("view_adult", "true")
+                    .queryParam("view_full_work", "true")
+                    .build()
+                    .toString();
+
             LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add(HttpHeaders.ACCEPT, MediaType.TEXT_HTML_VALUE);
             headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
-            ResponseEntity<String> loginResponse = restTemplate.exchange(uriBuilder.build().toString(), HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            ResponseEntity<String> loginResponse = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
             String work = loginResponse.getBody();
             return parseWork(link, work, channelName);
         } catch (Exception e) {
             log.error("Failed to download ao3 [link={}]", link, e);
-            honeybadgerReporter.reportError(e, null, "Failed to download ao3 link: " + link);
             return false;
         }
     }
 
-    @VisibleForTesting
+    // Visible For Testing
     boolean parseWork(String originalLink, String work, String channelName) {
         TextChannel channel = philJda.getTextChannelsByName(channelName, false).get(0);
 
@@ -224,7 +225,6 @@ public class Ao3MetadataParser extends BaseService {
             return true;
         } catch (Exception e) {
             log.error("Failed to parse ao3 [link={}]", originalLink, e);
-            honeybadgerReporter.reportError(e, null, "Failed to parse ao3 link " + originalLink);
             return false;
         }
     }

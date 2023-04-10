@@ -53,7 +53,6 @@ public class LeaderboardSlashCommand extends BaseSlashCommand {
                         .anyMatch(r -> r.getName().equalsIgnoreCase(type.getAsLong() == 1 ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE));
             } catch (Exception e) {
                 log.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);
-                honeybadgerReporter.reportError(e, "unable to lookup user for leaderboard: " + u.getId());
                 return false;
             }
         }).sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())).limit(10).forEachOrdered(swampyUser -> {

@@ -7,7 +7,6 @@ import com.badfic.philbot.data.SwampyGamesConfigDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
-import io.honeybadger.reporter.HoneybadgerReporter;
 import java.util.concurrent.CompletableFuture;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,10 +41,6 @@ public abstract class BaseSlashCommand extends SlashCommand implements BaseComma
     @Setter(onMethod_ = {@Autowired})
     @Getter
     protected BaseConfig baseConfig;
-
-    @Setter(onMethod_ = {@Autowired})
-    @Getter
-    protected HoneybadgerReporter honeybadgerReporter;
 
     @Setter(onMethod_ = {@Autowired})
     @Getter

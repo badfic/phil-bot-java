@@ -93,7 +93,6 @@ public class Robinhood extends BaseNormalCommand {
                     }
                 } catch (Exception e) {
                     log.error("Failed to robinhood user [id={}]", user.getId(), e);
-                    honeybadgerReporter.reportError(e, "Failed to robinhood user: " + user.getId());
                 }
             }
         }
