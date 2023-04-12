@@ -17,7 +17,7 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<jda.version>5.0.0-beta.7</jda.version>
+		<jda.version>5.0.0-beta.8</jda.version>
 		<jda-utilities.version>2.0-SNAPSHOT</jda-utilities.version>
 		<jsoup.version>1.15.4</jsoup.version>
 		<jumblr.version>0.0.13</jumblr.version>
