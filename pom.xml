@@ -20,7 +20,6 @@
 		<jda.version>5.0.0-beta.8</jda.version>
 		<jda-utilities.version>2.0-SNAPSHOT</jda-utilities.version>
 		<jsoup.version>1.15.4</jsoup.version>
-		<jumblr.version>0.0.13</jumblr.version>
 		<rome.version>2.1.0</rome.version>
 		<sentry.io.version>6.17.0</sentry.io.version>
 		<zip4j.version>2.11.5</zip4j.version>
@@ -79,11 +78,6 @@
 			<artifactId>jda-chewtils</artifactId>
 			<version>${jda-utilities.version}</version>
 			<type>pom</type>
-		</dependency>
-		<dependency>
-			<groupId>com.tumblr</groupId>
-			<artifactId>jumblr</artifactId>
-			<version>${jumblr.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.rometools</groupId>
