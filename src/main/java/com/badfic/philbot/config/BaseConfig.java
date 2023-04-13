@@ -20,7 +20,6 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.CommandListener;
 import com.jagrosh.jdautilities.command.SlashCommand;
-import com.tumblr.jumblr.JumblrClient;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -148,15 +147,6 @@ public class BaseConfig {
 
     @Value("${TUMBLR_CONSUMER_KEY}")
     public String tumblrConsumerKey;
-
-    @Value("${TUMBLR_CONSUMER_SECRET}")
-    public String tumblrConsumerSecret;
-
-    @Value("${TUMBLR_OAUTH_TOKEN}")
-    public String tumblrOauthToken;
-
-    @Value("${TUMBLR_OAUTH_SECRET}")
-    public String tumblrOauthSecret;
 
     @Value("${OWNCAST_INSTANCE}")
     public String owncastInstance;
@@ -354,11 +344,6 @@ public class BaseConfig {
                 .addEventListeners(philMessageListener, philCommandClient)
                 .setActivity(Activity.playing("with our feelings"))
                 .build();
-    }
-
-    @Bean
-    public JumblrClient jumblrClient() {
-        return new JumblrClient(tumblrConsumerKey, tumblrConsumerSecret, tumblrOauthToken, tumblrOauthSecret);
     }
 
 }

@@ -32,19 +32,11 @@ DISCORD_CLIENT_SECRET
 
 HOSTNAME
 
-HONEYBADGER_API_KEY
+SENTRY_URL
 
 TUMBLR_CONSUMER_KEY
-TUMBLR_CONSUMER_SECRET
-TUMBLR_OAUTH_TOKEN
-TUMBLR_OAUTH_SECRET
 
 OWNCAST_INSTANCE
-```
-
-The following JVM argument is now required for the tumblr command to work correctly
-```
---add-opens java.base/java.io=ALL-UNNAMED
 ```
 
 ---
