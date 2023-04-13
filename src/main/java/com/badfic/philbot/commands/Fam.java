@@ -7,7 +7,6 @@ import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.Color;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -436,21 +435,6 @@ public class Fam extends BaseNormalCommand implements ModHelpAware {
             description.append("Failed to load family member");
             event.reply(Constants.simpleEmbed(member.getEffectiveName() + "'s Family", description.toString()));
         }
-    }
-
-    private Member getRandomFamilyMember(Family family, CommandEvent event, Member rootMember) {
-        Set<Member> allMembers = new HashSet<>();
-        allMembers.add(rootMember);
-        allMembers.addAll(getMemberSet(family.getSpouses(), event));
-        allMembers.addAll(getMemberSet(family.getExes(), event));
-        allMembers.addAll(getMemberSet(family.getChildren(), event));
-        allMembers.addAll(getMemberSet(family.getGrandchildren(), event));
-        allMembers.addAll(getMemberSet(family.getParents(), event));
-        allMembers.addAll(getMemberSet(family.getGrandparents(), event));
-        allMembers.addAll(getMemberSet(family.getSiblings(), event));
-        allMembers.addAll(getMemberSet(family.getCousins(), event));
-
-        return Constants.pickRandom(allMembers);
     }
 
     private Set<Member> getMemberSet(Set<String> set, CommandEvent event) {

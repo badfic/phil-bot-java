@@ -9,12 +9,13 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,7 +33,7 @@ public class JohnMessageListener {
     private static final Pattern JOHN_PATTERN = Constants.compileWords("john|constantine|johnno|johnny|hellblazer");
     private static final Pattern REMINDER_PATTER = Pattern.compile("\\b(remind me in |remind <@![0-9]+> in )[0-9]+\\b", Pattern.CASE_INSENSITIVE);
     private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
-    private static final Set<String> UWU = Set.of(
+    private static final String[] UWU = {
             "https://tenor.com/bbmRv.gif",
             "https://tenor.com/X7Nq.gif",
             "https://tenor.com/bhbNA.gif",
@@ -64,8 +66,9 @@ public class JohnMessageListener {
             "https://cdn.discordapp.com/attachments/707453916882665552/793431132963733514/giphy2.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/793431157717991464/chimmy.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/793431180099452948/tata.gif",
-            "https://cdn.discordapp.com/attachments/761398315119280158/867804756621131786/chris-evans-steve-rogers-heart-Favim.png");
-    private static final Set<String> GOOD_BOT = Set.of(
+            "https://cdn.discordapp.com/attachments/761398315119280158/867804756621131786/chris-evans-steve-rogers-heart-Favim.png"
+    };
+    private static final String[] GOOD_BOT = {
             ":D!!!",
             "I know",
             "Yeah, yeah",
@@ -88,35 +91,77 @@ public class JohnMessageListener {
             "Ta, mate",
             "https://emoji.gg/assets/emoji/1554_ablobderpyhappy.gif",
             "https://emoji.gg/assets/emoji/8783_ablobhop.gif"
-    );
+    };
     private static final Map<String, List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = Map.of(
             "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
 
     private final JohnCommand johnCommand;
     private final ReminderDao reminderDao;
     private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
+    private final JDA johnJda;
 
-    public JohnMessageListener(JohnCommand johnCommand, ReminderDao reminderDao, SnarkyReminderResponseRepository snarkyReminderResponseRepository) {
+    public JohnMessageListener(JohnCommand johnCommand, ReminderDao reminderDao, SnarkyReminderResponseRepository snarkyReminderResponseRepository,
+                               @Qualifier("johnJda") JDA johnJda) {
         this.johnCommand = johnCommand;
         this.reminderDao = reminderDao;
         this.snarkyReminderResponseRepository = snarkyReminderResponseRepository;
+        this.johnJda = johnJda;
     }
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        String msgContent = event.getMessage().getContentRaw();
+        String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
         if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
             return;
         }
 
+        if (REMINDER_PATTER.matcher(msgContent).find()) {
+            addReminder(event.getMessage());
+            return;
+        }
+
         long channelId = event.getMessage().getChannel().getIdLong();
+
+        if ("ayy".equals(msgContent)) {
+            event.getJDA().getTextChannelById(channelId).sendMessage("lmao").queue();
+            return;
+        }
+        if ("slang".equals(msgContent)) {
+            event.getJDA().getTextChannelById(channelId).sendMessage("You're an absolute whopper").queue();
+            return;
+        }
+        if ("stughead".equals(msgContent)) {
+            event.getJDA().getTextChannelById(channelId).sendMessage("\uD83D\uDC40").queue();
+            return;
+        }
+        if ("africa".equals(msgContent)) {
+            event.getJDA().getTextChannelById(channelId).sendMessage("I BLESS THE RAINS DOWN IN AAAAFRICAAA").queue();
+            return;
+        }
+        if ("cool".equals(msgContent)) {
+            event.getJDA().getTextChannelById(channelId).sendMessage("cool cool cool").queue();
+            return;
+        }
+        if ("uwu".equals(msgContent)) {
+            event.getJDA().getTextChannelById(channelId).sendMessage(Constants.pickRandom(UWU)).queue();
+            return;
+        }
+        if ("good bot".equals(msgContent)) {
+            if (601043580945170443L == event.getAuthor().getIdLong()) {
+                event.getJDA().getTextChannelById(channelId).sendMessage(":D!!!").queue();
+            } else {
+                event.getJDA().getTextChannelById(channelId).sendMessage(Constants.pickRandom(GOOD_BOT)).queue();
+            }
+            return;
+        }
+
         LAST_WORD_MAP.compute(channelId, (key, oldValue) -> {
             if (oldValue == null) {
                 return new ImmutablePair<>(msgContent, 1L);
             }
             if (oldValue.getLeft().equalsIgnoreCase(msgContent)) {
                 if (oldValue.getRight() + 1 >= 5) {
-                    johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(msgContent).queue();
+                    event.getJDA().getTextChannelById(channelId).sendMessage(msgContent).queue();
                     return new ImmutablePair<>(msgContent, 0L);
                 }
 
@@ -126,39 +171,7 @@ public class JohnMessageListener {
             }
         });
 
-        if (REMINDER_PATTER.matcher(msgContent).find()) {
-            addReminder(event.getMessage());
-            return;
-        }
-
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
-
-        if ("ayy".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage("lmao").queue();
-            return;
-        }
-        if ("slang".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage("You're an absolute whopper").queue();
-        }
-        if ("stughead".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage("\uD83D\uDC40").queue();
-        }
-        if ("Africa".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage("I BLESS THE RAINS DOWN IN AAAAFRICAAA").queue();
-        }
-        if ("cool".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage("cool cool cool").queue();
-        }
-        if ("uwu".equalsIgnoreCase(msgContent)) {
-            johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(Constants.pickRandom(UWU)).queue();
-        }
-        if ("good bot".equalsIgnoreCase(msgContent)) {
-            if (601043580945170443L == event.getAuthor().getIdLong()) {
-                johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(":D!!!").queue();
-            } else {
-                johnCommand.getJohnJda().getTextChannelById(channelId).sendMessage(Constants.pickRandom(GOOD_BOT)).queue();
-            }
-        }
 
         if (JOHN_PATTERN.matcher(msgContent).find()) {
             johnCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
@@ -200,13 +213,13 @@ public class JohnMessageListener {
 
             Reminder savedReminder = reminderDao.save(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
             SnarkyReminderResponse snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
-            johnCommand.getJohnJda().getTextChannelById(message.getChannel().getIdLong())
+            johnJda.getTextChannelById(message.getChannel().getIdLong())
                     .sendMessage("(reminder #" + savedReminder.getId() + ") " +
                             snarkyReminderResponse.getResponse().replace("<name>", "<@!" + message.getAuthor().getId() + ">"))
                     .queue();
         } catch (Exception e) {
             log.error("Exception trying to parse a reminder. [msgText={}]", message.getContentRaw(), e);
-            johnCommand.getJohnJda().getTextChannelById(message.getChannel().getIdLong())
+            johnJda.getTextChannelById(message.getChannel().getIdLong())
                     .sendMessage("Error: Could not understand your reminder, " + message.getAuthor().getAsMention())
                     .queue();
         }

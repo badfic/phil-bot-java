@@ -10,7 +10,6 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +23,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class Stonks extends BaseNormalCommand {
     // TODO: Put in SwampyGamesConfig table
-    private static final Set<String> STONKS = Set.of(
+    private static final String[] STONKS = {
             "https://cdn.discordapp.com/attachments/794506942906761226/882825319722143784/stonky_bellala.png",
             "https://cdn.discordapp.com/attachments/794506942906761226/882825323308269598/stonky_betty.png",
             "https://cdn.discordapp.com/attachments/718561729105363075/945846713254576239/IMG_1832.png",
             "https://cdn.discordapp.com/attachments/741030569307275436/902294248597098557/IMG_2446.jpg"
-    );
+    };
 
     public Stonks() {
         name = "stonks";

@@ -18,7 +18,6 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -50,6 +49,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -87,6 +87,9 @@ public class PhilMessageListener extends ListenerAdapter {
     @Setter(onMethod_ = {@Autowired, @Lazy})
     private CommandClient philCommandClient;
 
+    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
+    private JDA philJda;
+
     public PhilMessageListener(@Qualifier("behradJda") JDA behradJda, BehradMessageListener behradMessageListener, KeanuMessageListener keanuMessageListener,
                                AntoniaMessageListener antoniaMessageListener, JohnMessageListener johnMessageListener, @Qualifier("keanuJda") JDA keanuJda,
                                @Qualifier("antoniaJda") JDA antoniaJda, @Qualifier("johnJda") JDA johnJda, NsfwQuoteCommand nsfwQuoteCommand,
@@ -113,9 +116,30 @@ public class PhilMessageListener extends ListenerAdapter {
         OUTSTANDING_REACTION_TASKS.put(messageId, function);
     }
 
+    @Scheduled(cron = "${swampy.schedule.phil.humpday}", zone = "${swampy.schedule.timezone}")
+    public void goodMorning() {
+        TextChannel general = philJda.getTextChannelsByName("general", false).get(0);
+        general.sendMessage("https://cdn.discordapp.com/attachments/323666308107599872/834310518478471218/mullethumpygrinch.png").queue();
+    }
+
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getChannelType() != ChannelType.TEXT) {
+            return;
+        }
+
+        String msgContent = event.getMessage().getContentRaw();
+        if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
+            return;
+        }
+
+        if (StringUtils.startsWith(msgContent, "!") && !StringUtils.trim(msgContent).equals("!")) {
+            memeCommandsService.executeCustomCommand(StringUtils.trim(StringUtils.substring(msgContent, 1)), event.getChannel().asGuildMessageChannel());
+            return;
+        }
+
+        if (AO3_PATTERN.matcher(msgContent).find()) {
+            ao3MetadataParser.parseLink(msgContent, event.getChannel().getName());
             return;
         }
 
@@ -124,28 +148,14 @@ public class PhilMessageListener extends ListenerAdapter {
         keanuMessageListener.onMessageReceived(new MessageReceivedEvent(keanuJda, event.getResponseNumber(), event.getMessage()));
         johnMessageListener.onMessageReceived(new MessageReceivedEvent(johnJda, event.getResponseNumber(), event.getMessage()));
 
-        String msgContent = event.getMessage().getContentRaw();
-
-        if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
-            return;
-        }
-
-        if (StringUtils.startsWith(msgContent, "!") && !StringUtils.trim(msgContent).equals("!")) {
-            memeCommandsService.executeCustomCommand(StringUtils.trim(StringUtils.substring(msgContent, 1)), event.getChannel().asGuildMessageChannel());
-        }
-
-        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
-
-        if (AO3_PATTERN.matcher(msgContent).find()) {
-            ao3MetadataParser.parseLink(msgContent, event.getChannel().getName());
-        }
-
-        swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, "", philCommandClient));
-
         if (PHIL_PATTERN.matcher(msgContent).find()) {
             philCommand.execute(new CommandEvent(event, Constants.PREFIX, null, philCommandClient));
             return;
         }
+
+        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
+
+        swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, "", philCommandClient));
     }
 
     @Override
@@ -169,6 +179,10 @@ public class PhilMessageListener extends ListenerAdapter {
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
+        if (event.getUser() != null && event.getUser().isBot()) {
+            return;
+        }
+
         EmojiUnion emoji = event.getReaction().getEmoji();
         if (emoji.getType() == Emoji.Type.UNICODE) {
             if (quoteCommand.getEmoji().equals(emoji.asUnicode().getName())) {
@@ -241,9 +255,6 @@ public class PhilMessageListener extends ListenerAdapter {
         });
 
         memberCount.updateCount();
-
-        Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("event-reminders", false).stream().findFirst();
-        announcementsChannel.ifPresent(channel -> channel.sendMessage("Begone Bot " + event.getUser().getName()).queue());
     }
 
     @Override
@@ -259,11 +270,6 @@ public class PhilMessageListener extends ListenerAdapter {
         });
 
         memberCount.updateCount();
-
-        if (event.getUser().isBot()) {
-            Optional<TextChannel> announcementsChannel = event.getGuild().getTextChannelsByName("event-reminders", false).stream().findFirst();
-            announcementsChannel.ifPresent(channel -> channel.sendMessage("Begone Bot " + event.getUser().getName()).queue());
-        }
     }
 
     @Override

@@ -8,7 +8,6 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import java.io.ByteArrayInputStream;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.lang3.StringUtils;
@@ -23,10 +22,10 @@ import org.springframework.util.LinkedMultiValueMap;
 @Component
 @Slf4j
 public class RssSubscriber extends BaseService {
-    private static final Set<String> FEEDS = Set.of(
+    private static final String[] FEEDS = {
             "https://archiveofourown.org/tags/39926683/feed.atom",
             "https://archiveofourown.org/tags/41072152/feed.atom"
-    );
+    };
 
     private final RssEntryRepository rssEntryRepository;
     private final Ao3MetadataParser ao3MetadataParser;

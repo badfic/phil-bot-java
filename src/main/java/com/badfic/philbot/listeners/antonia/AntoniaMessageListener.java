@@ -3,6 +3,7 @@ package com.badfic.philbot.listeners.antonia;
 import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -31,29 +32,38 @@ public class AntoniaMessageListener {
     }
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        String msgContent = event.getMessage().getContentRaw();
+        String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
         if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
             return;
         }
 
         long channelId = event.getMessage().getChannel().getIdLong();
+
+        if (msgContent.contains("kite man")) {
+            event.getJDA().getTextChannelById(channelId).sendMessage("Hell yea").queue();
+            return;
+        }
+        if (msgContent.contains("owen wilson")) {
+            event.getJDA().getTextChannelById(channelId).sendMessage("wow").queue();
+            return;
+        }
+
         LAST_WORD_MAP.compute(channelId, (key, oldValue) -> {
             if (oldValue == null) {
                 return new ImmutablePair<>(msgContent, 1L);
             }
-            if (oldValue.getLeft().equalsIgnoreCase(msgContent)) {
-                if (oldValue.getRight() + 1 >= 3 && "bird".equalsIgnoreCase(msgContent.trim())) {
-                    antoniaCommand.getAntoniaJda().getTextChannelById(channelId).sendMessage("the bird is the word").queue();
+            if (oldValue.getLeft().equals(msgContent)) {
+                if (oldValue.getRight() + 1 >= 3 && "bird".equals(msgContent)) {
+                    event.getJDA().getTextChannelById(channelId).sendMessage("the bird is the word").queue();
                     return new ImmutablePair<>(msgContent, 0L);
                 }
-                if (oldValue.getRight() + 1 >= 3 && "word".equalsIgnoreCase(msgContent.trim())) {
-                    antoniaCommand.getAntoniaJda().getTextChannelById(channelId).sendMessage("the word is the bird").queue();
+                if (oldValue.getRight() + 1 >= 3 && "word".equals(msgContent)) {
+                    event.getJDA().getTextChannelById(channelId).sendMessage("the word is the bird").queue();
                     return new ImmutablePair<>(msgContent, 0L);
                 }
-                if (oldValue.getRight() + 1 >= 3 && "mattgrinch".equalsIgnoreCase(msgContent.trim())) {
-                    antoniaCommand.getAntoniaJda()
-                            .getTextChannelById(channelId)
+                if (oldValue.getRight() + 1 >= 3 && "mattgrinch".equals(msgContent)) {
+                    event.getJDA().getTextChannelById(channelId)
                             .sendMessage("https://cdn.discordapp.com/attachments/707453916882665552/914409167610056734/unknown.png")
                             .queue();
                     return new ImmutablePair<>(msgContent, 0L);
@@ -64,17 +74,6 @@ public class AntoniaMessageListener {
                 return new ImmutablePair<>(msgContent, 1L);
             }
         });
-
-        if (StringUtils.containsIgnoreCase(msgContent, "kite man")) {
-            antoniaCommand.getAntoniaJda().getTextChannelById(channelId)
-                    .sendMessage("Hell yea").queue();
-            return;
-        }
-        if (StringUtils.containsIgnoreCase(msgContent, "owen wilson")) {
-            antoniaCommand.getAntoniaJda().getTextChannelById(channelId)
-                    .sendMessage("wow").queue();
-            return;
-        }
 
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
 

@@ -2,7 +2,6 @@ package com.badfic.philbot.commands;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
 import java.io.InputStream;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FightCommand extends BaseNormalCommand {
 
-    private List<FightOutcome> fightOutcomes;
+    private FightOutcome[] fightOutcomes;
 
     public FightCommand() {
         name = "fight";
@@ -26,7 +25,7 @@ public class FightCommand extends BaseNormalCommand {
     @PostConstruct
     public void init() throws Exception {
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("fight-outcomes.json")) {
-            fightOutcomes = objectMapper.readValue(stream, new TypeReference<>() {});
+            fightOutcomes = objectMapper.readValue(stream, FightOutcome[].class);
         }
     }
 

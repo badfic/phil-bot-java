@@ -3,38 +3,108 @@ package com.badfic.philbot.listeners.keanu;
 import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class KeanuMessageListener {
 
     private static final Pattern KEANU_PATTERN = Constants.compileWords("keanu|reeves|neo|john wick|puppy|puppies|pupper|doggo|doge");
+    private static final String[] FIGHT_GIFS = {
+            "https://cdn.discordapp.com/attachments/707453916882665552/880260103830380574/john-wick-3.gif",
+            "https://cdn.discordapp.com/attachments/794506942906761226/1095949481024954429/keanu-reeves-weird.gif",
+            "https://cdn.discordapp.com/attachments/794506942906761226/1095949755072393236/PointedMistyHog.gif",
+            "https://cdn.discordapp.com/attachments/794506942906761226/1095950269977743380/SlimCarelessDalmatian.gif",
+            "https://cdn.discordapp.com/attachments/794506942906761226/1095950252047093780/EverlastingHastyHorseshoebat.gif"
+    };
+    private static final String[] GOOD_MORNING_GIFS = {
+            "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves",
+            "https://media.giphy.com/media/8rFNes6jllJQRnHTsF/giphy.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638622099832852/donut.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638643562086432/smilesmile.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638684641230908/hecute.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638695999537192/beardrub.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638707026362368/bow.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638709043691580/keanu.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638732288393256/yeah.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638754799353887/eyy.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638757303484526/eyebrows.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638770238586950/kitteneanu.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638772667220049/gay.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638780715958403/imweird_imaweirdo.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638791629668493/keanu_by_firelight.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638807534469141/keanu_smooch.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638810201915392/keanu_stark.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638826379346031/breathtaking.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638835518734446/breath_taking.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638836797997106/winkwonk.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638849771110410/laugh.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638864857890816/keanushark.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638874966163526/keanu_marshmallow.gif",
+            "https://cdn.discordapp.com/attachments/323666308107599872/752638879500206171/keanu_confetti.gif",
+            "https://cdn.discordapp.com/attachments/741030569307275436/753991114301898762/image0.png"
+    };
+    private static final Pattern PUPPY_PATTERN = Constants.compileWords("puppy|puppies|pupper|doggo|doge");
+    private static final String HELLO_GIF = "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves";
+    private static final String PUPPIES_GIF = "https://media.giphy.com/media/8rFNes6jllJQRnHTsF/giphy.gif";
     private static final Map<String, List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = Map.of(
             "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
 
     private final KeanuCommand keanuCommand;
+    private final JDA keanuJda;
 
-    public KeanuMessageListener(KeanuCommand keanuCommand) {
+    public KeanuMessageListener(KeanuCommand keanuCommand, @Qualifier("keanuJda") JDA keanuJda) {
         this.keanuCommand = keanuCommand;
+        this.keanuJda = keanuJda;
+    }
+
+    @Scheduled(cron = "${swampy.schedule.keanu.goodmorning}", zone = "${swampy.schedule.timezone}")
+    public void goodMorning() {
+        TextChannel general = keanuJda.getTextChannelsByName("general", false).get(0);
+        general.sendMessage(Constants.pickRandom(GOOD_MORNING_GIFS)).queue();
     }
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        String msgContent = event.getMessage().getContentRaw();
+        String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
         if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
             return;
         }
 
-        if (StringUtils.containsIgnoreCase(msgContent, "lightning mcqueen")) {
-            event.getJDA().getTextChannelById(event.getChannel().getId())
+        long channelId = event.getMessage().getChannel().getIdLong();
+
+        if (msgContent.contains("lightning mcqueen")) {
+            event.getJDA().getTextChannelById(channelId)
                     .sendMessage("KACHOW!").queue();
+            return;
+        }
+
+        if (msgContent.contains("hello")) {
+            event.getJDA().getTextChannelById(channelId)
+                    .sendMessage(HELLO_GIF).queue();
+            return;
+        }
+
+        if (msgContent.contains("fight")) {
+            event.getJDA().getTextChannelById(channelId)
+                    .sendMessage(Constants.pickRandom(FIGHT_GIFS)).queue();
+            return;
+        }
+
+        if (PUPPY_PATTERN.matcher(msgContent).find()) {
+            event.getJDA().getTextChannelById(channelId)
+                    .sendMessage(PUPPIES_GIF).queue();
             return;
         }
 
