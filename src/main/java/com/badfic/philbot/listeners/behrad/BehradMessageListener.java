@@ -52,7 +52,7 @@ public class BehradMessageListener {
     }
 
     @Scheduled(cron = "${swampy.schedule.behrad.humpday}", zone = "${swampy.schedule.timezone}")
-    public void wednesday() {
+    public void humpDay() {
         TextChannel general = behradJda.getTextChannelsByName("general", false).get(0);
         general.sendMessage("https://tenor.com/view/itis-wednesdaymy-dudes-wednesday-viralyoutube-gif-18012295").queue();
     }

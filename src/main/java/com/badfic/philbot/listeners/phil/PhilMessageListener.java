@@ -117,7 +117,7 @@ public class PhilMessageListener extends ListenerAdapter {
     }
 
     @Scheduled(cron = "${swampy.schedule.phil.humpday}", zone = "${swampy.schedule.timezone}")
-    public void goodMorning() {
+    public void humpDay() {
         TextChannel general = philJda.getTextChannelsByName("general", false).get(0);
         general.sendMessage("https://cdn.discordapp.com/attachments/323666308107599872/834310518478471218/mullethumpygrinch.png").queue();
     }
