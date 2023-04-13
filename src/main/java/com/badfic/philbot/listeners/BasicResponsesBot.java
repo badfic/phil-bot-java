@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -326,6 +327,34 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         });
     }
 
-    protected abstract Optional<String> getResponse(CommandEvent event, T responsesConfig);
+    protected Optional<String> getResponse(CommandEvent event, T responsesConfig) {
+        String channelName = event.getChannel().getName();
+        Set<String> responses;
+        if (responsesConfig.getSfwConfig().channels().contains(channelName)) {
+            responses = responsesConfig.getSfwConfig().responses();
+        } else if (responsesConfig.getNsfwConfig().channels().contains(channelName)) {
+            responses = responsesConfig.getNsfwConfig().responses();
+        } else {
+            return Optional.empty();
+        }
+
+        String responseValue = Constants.pickRandom(responses);
+
+        if (StringUtils.startsWithIgnoreCase(responseValue, "http")) {
+            return Optional.of(responseValue);
+        }
+
+        String msgContent = event.getMessage().getContentRaw();
+        boolean isAllUppercase = true;
+        for (String s : msgContent.split("\\s+")) {
+            isAllUppercase &= StringUtils.isAllUpperCase(s);
+        }
+
+        if (isAllUppercase) {
+            return Optional.of(responseValue.toUpperCase(Locale.ENGLISH));
+        }
+
+        return Optional.of(responseValue);
+    }
 
 }

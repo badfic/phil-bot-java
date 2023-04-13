@@ -5,7 +5,6 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.MinuteTickable;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
 import java.io.InputStream;
@@ -32,7 +31,7 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
     // VisibleForTesting
     static final String MAP_ZIP_FILENAME = "map-trivia-flags.zip";
 
-    private List<MapTriviaObject> countries;
+    private MapTriviaObject[] countries;
 
     public MapCommand() {
         name = "map";
@@ -43,7 +42,7 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
     @PostConstruct
     public void init() throws Exception {
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("map-trivia.json")) {
-            countries = objectMapper.readValue(stream, new TypeReference<>() {});
+            countries = objectMapper.readValue(stream, MapTriviaObject[].class);
         }
     }
 
@@ -154,7 +153,7 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
     }
 
     // VisibleForTesting
-    List<MapTriviaObject> getCountries() {
+    MapTriviaObject[] getCountries() {
         return countries;
     }
 

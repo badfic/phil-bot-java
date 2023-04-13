@@ -4,17 +4,15 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.MemeCommandEntity;
 import com.badfic.philbot.data.MemeCommandRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
@@ -23,8 +21,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class MemeCommandsService extends BaseService {
-
-    private static final TypeReference<Set<String>> STRING_LIST = new TypeReference<>() {};
 
     private final MemeCommandRepository memeCommandRepository;
     private final JDA behradJda;
@@ -56,9 +52,9 @@ public class MemeCommandsService extends BaseService {
 
         if (StringUtils.startsWith(memeUrl, "[") && StringUtils.endsWith(memeUrl, "]")) {
             try {
-                Set<String> urlList = objectMapper.readValue(memeUrl, STRING_LIST);
+                String[] urlList = objectMapper.readValue(memeUrl, String[].class);
 
-                if (CollectionUtils.isEmpty(urlList)) {
+                if (ArrayUtils.isEmpty(urlList)) {
                     throw new IllegalArgumentException(String.format("\"%s\" meme command value starts and ends with brackets but is empty", memeName));
                 }
             } catch (JsonProcessingException e) {
@@ -109,7 +105,7 @@ public class MemeCommandsService extends BaseService {
 
             if (StringUtils.startsWith(url, "[") && StringUtils.endsWith(url, "]")) {
                 try {
-                    Set<String> urlList = objectMapper.readValue(url, STRING_LIST);
+                    String[] urlList = objectMapper.readValue(url, String[].class);
                     url = Constants.pickRandom(urlList);
                 } catch (JsonProcessingException e) {
                     log.error("{} meme command value starts and ends with brackets but is not a list", commandName, e);

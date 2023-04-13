@@ -2,7 +2,6 @@ package com.badfic.philbot.commands;
 
 import com.badfic.philbot.config.Constants;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RngCommand extends BaseNormalCommand {
 
-    private static final Set<String> THUMBNAILS = Set.of(
+    private static final String[] THUMBNAILS = {
             "https://cdn.discordapp.com/attachments/707453916882665552/781484144425173012/giphy9.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/781484151189930014/giphy8.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/781484155120648202/4tenor.gif",
@@ -21,7 +20,7 @@ public class RngCommand extends BaseNormalCommand {
             "https://cdn.discordapp.com/attachments/707453916882665552/781484240260300820/giphy.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/781484257977696256/200.gif",
             "https://cdn.discordapp.com/attachments/707453916882665552/781484274078580756/confusedgif.gif"
-    );
+    };
 
     public RngCommand() {
         name = "rng";

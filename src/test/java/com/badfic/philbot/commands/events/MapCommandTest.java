@@ -2,6 +2,7 @@ package com.badfic.philbot.commands.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -30,9 +31,9 @@ public class MapCommandTest {
     @Test
     public void testInit() throws Exception {
         mapCommand.init();
-        List<MapCommand.MapTriviaObject> countries = mapCommand.getCountries();
+        MapCommand.MapTriviaObject[] countries = mapCommand.getCountries();
 
-        Assertions.assertTrue(countries.stream()
+        Assertions.assertTrue(Arrays.stream(countries)
                 .noneMatch(country -> StringUtils.isBlank(country.code()) || StringUtils.isBlank(country.capital()) || StringUtils.isBlank(country.regex())));
 
         Set<String> flagzipCountryCodes = new HashSet<>();
@@ -46,7 +47,7 @@ public class MapCommandTest {
             }
         }
 
-        List<String> jsonCountryCodes = countries.stream().map(MapCommand.MapTriviaObject::code).collect(Collectors.toList());
+        List<String> jsonCountryCodes = Arrays.stream(countries).map(MapCommand.MapTriviaObject::code).collect(Collectors.toList());
         Collection<String> disjunction = CollectionUtils.disjunction(flagzipCountryCodes, jsonCountryCodes);
 
         Assertions.assertTrue(CollectionUtils.isEmpty(disjunction));
