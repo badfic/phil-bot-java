@@ -10,8 +10,10 @@ import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -49,7 +51,7 @@ public class SlotsSlashCommand extends BaseSlashCommand {
 
         discordUser.setLastSlots(now);
 
-        Set<String> slotsEmojis = swampyGamesConfig.getSlotsEmoji();
+        Set<String> slotsEmojis = Arrays.stream(swampyGamesConfig.getSlotsEmoji()).collect(Collectors.toSet());
         int size = slotsEmojis.size();
 
         double oddsClosEnough = (1.0 / size) * (1.0 / size) * 300.0;

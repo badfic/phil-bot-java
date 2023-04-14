@@ -294,7 +294,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
 
         discordUser.setLastSlots(now);
 
-        Set<String> slotsEmojis = swampyGamesConfig.getSlotsEmoji();
+        Set<String> slotsEmojis = Arrays.stream(swampyGamesConfig.getSlotsEmoji()).collect(Collectors.toSet());
         int size = slotsEmojis.size();
 
         double oddsClosEnough = (1.0 / size) * (1.0 / size) * 300.0;

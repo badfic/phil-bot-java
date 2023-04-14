@@ -1,6 +1,5 @@
 package com.badfic.philbot.data.converters;
 
-import com.badfic.philbot.data.Family;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.core.convert.converter.Converter;
@@ -9,20 +8,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ReadingConverter
-public class JsonToFamilyConverter implements Converter<String, Family> {
+public class JsonToStringArrayConverter implements Converter<String, String[]> {
 
     private static ObjectMapper OBJECT_MAPPER;
 
-    public JsonToFamilyConverter(ObjectMapper objectMapper) {
+    public JsonToStringArrayConverter(ObjectMapper objectMapper) {
         OBJECT_MAPPER = objectMapper;
     }
 
     @Override
     @SneakyThrows
-    public Family convert(String s) {
-        if (s == null) {
+    public String[] convert(String source) {
+        if (source == null) {
             return null;
         }
-        return OBJECT_MAPPER.readValue(s, Family.class);
+        return OBJECT_MAPPER.readValue(source, String[].class);
     }
 }

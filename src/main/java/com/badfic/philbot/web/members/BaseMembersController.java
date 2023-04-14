@@ -7,6 +7,7 @@ import com.badfic.philbot.config.UnauthorizedException;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
@@ -43,6 +44,9 @@ public abstract class BaseMembersController {
 
     @Setter(onMethod_ = {@Autowired})
     protected BaseConfig baseConfig;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected ObjectMapper objectMapper;
 
     @Setter(onMethod_ = {@Autowired})
     protected RestTemplate restTemplate;

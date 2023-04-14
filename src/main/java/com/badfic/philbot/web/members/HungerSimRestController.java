@@ -327,12 +327,19 @@ public class HungerSimRestController extends BaseMembersController {
             throw new IllegalArgumentException("You can't start a game with less than 2 players");
         }
 
-        List<Player> players = playerRepository.findAllById(game.playerIds);
+        // Rest all players to "not in a game"
+        List<Player> allPlayers = playerRepository.findAll();
+        for (Player player : allPlayers) {
+            player.setGame(null);
+        }
+        playerRepository.saveAll(allPlayers);
 
+        // Set only the specific players in this game to 10HP and Game.SINGLETON_ID
+        List<Player> players = playerRepository.findAllById(game.playerIds);
         for (Player player : players) {
             player.setHp(10);
+            player.setGame(Game.SINGLETON_ID);
         }
-
         players = playerRepository.saveAll(players);
 
         for (Player player : players) {
@@ -341,7 +348,9 @@ public class HungerSimRestController extends BaseMembersController {
 
         List<String> outcomes = new ArrayList<>();
         outcomes.add("Here are our tributes!");
-        outcomes.addAll(players.stream().map(Player::getEffectiveName).toList());
+        for (Player player : players) {
+            outcomes.add(player.getEffectiveName());
+        }
 
         Optional<Game> optionalGame = gameRepository.findById(Game.SINGLETON_ID);
 
@@ -351,7 +360,7 @@ public class HungerSimRestController extends BaseMembersController {
         gameEntity.setName(game.name);
         gameEntity.setRound(openingRound.get(0).getId());
         gameEntity.setRoundCounter(0);
-        gameEntity.setCurrentOutcomes(outcomes);
+        gameEntity.setCurrentOutcomes(outcomes.toArray(String[]::new));
         gameEntity.setPlayers(players);
 
         if (optionalGame.isPresent()) {
@@ -366,9 +375,7 @@ public class HungerSimRestController extends BaseMembersController {
         checkSession(httpServletRequest, true);
         Game game = gameRepository.findById(Game.SINGLETON_ID).orElseThrow(() -> new IllegalArgumentException("Unable to load game"));
 
-        if (game == null) {
-            return null;
-        }
+        game.setPlayers(playerRepository.findByGame(game.getId()));
 
         game.getPlayers().forEach(p -> p.setEffectiveNameViaJda(philJda));
 

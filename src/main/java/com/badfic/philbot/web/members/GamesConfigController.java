@@ -3,7 +3,6 @@ package com.badfic.philbot.web.members;
 import com.badfic.philbot.config.ControllerConfigurable;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDao;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -91,7 +89,7 @@ public class GamesConfigController extends BaseMembersController {
                 case STRING_SET -> {
                     String fieldValueRaw = configEntry.fieldValue();
 
-                    Set<String> fieldValue = objectMapper.readValue(fieldValueRaw, new TypeReference<>() {});
+                    String[] fieldValue = objectMapper.readValue(fieldValueRaw, String[].class);
 
                     declaredField.set(swampyGamesConfig, fieldValue);
                 }

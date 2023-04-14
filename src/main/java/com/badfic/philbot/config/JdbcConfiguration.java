@@ -13,7 +13,7 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 public class JdbcConfiguration extends AbstractJdbcConfiguration {
 
     @Setter(onMethod_ = {@Autowired})
-    private List<Converter> converters;
+    private List<Converter<?, ?>> converters;
 
     @Override
     protected List<?> userConverters() {

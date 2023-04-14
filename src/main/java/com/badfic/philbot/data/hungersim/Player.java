@@ -36,6 +36,9 @@ public class Player {
     @Column
     private String name;
 
+    @Column("game_id")
+    private Short game;
+
     @Transient
     private String effectiveName;
 

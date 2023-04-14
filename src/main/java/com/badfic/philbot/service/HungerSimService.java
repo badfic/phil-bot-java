@@ -45,6 +45,9 @@ public class HungerSimService extends BaseService {
         Game game = gameRepository.findById(Game.SINGLETON_ID)
                 .orElseThrow(() -> new IllegalArgumentException("You must start a new game before running a step"));
 
+        List<Player> players = playerRepository.findByGame(Game.SINGLETON_ID);
+        game.setPlayers(players);
+
         Deque<Player> alivePlayers = game.getPlayers()
                 .stream()
                 .filter(p -> p.getHp() > 0)
@@ -56,13 +59,13 @@ public class HungerSimService extends BaseService {
 
         if (alivePlayers.size() <= 1) {
             if (alivePlayers.size() <= 0) {
-                game.setCurrentOutcomes(Collections.singletonList("Everybody died!"));
+                game.setCurrentOutcomes(new String[] {"Everybody died!"});
                 return gameRepository.save(game);
             }
 
             Player winner = alivePlayers.pop();
             winner.setEffectiveNameViaJda(philJda);
-            game.setCurrentOutcomes(Collections.singletonList("<b>" + StringEscapeUtils.escapeHtml4(winner.getEffectiveName()) + "</b> has won!"));
+            game.setCurrentOutcomes(new String[] {"<b>" + StringEscapeUtils.escapeHtml4(winner.getEffectiveName()) + "</b> has won!"});
             return gameRepository.save(game);
         }
 
@@ -115,7 +118,7 @@ public class HungerSimService extends BaseService {
         }
 
         game.setRound(round.getId());
-        game.setCurrentOutcomes(appliedOutcomes);
+        game.setCurrentOutcomes(appliedOutcomes.toArray(String[]::new));
         game.setRoundCounter(game.getRoundCounter() + 1);
         return gameRepository.save(game);
     }

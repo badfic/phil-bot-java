@@ -1,20 +1,17 @@
 package com.badfic.philbot.data.hungersim;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 
 @Table("hg_game")
-@NoArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -29,9 +26,6 @@ public class Game {
     @Column
     private String name;
 
-    @MappedCollection
-    private List<Player> players = new ArrayList<>();
-
     @Column
     private Integer roundCounter = 0;
 
@@ -39,13 +33,9 @@ public class Game {
     private Long round;
 
     @Column
-    private List<String> currentOutcomes = new ArrayList<>();
+    private String[] currentOutcomes = {};
 
-    public Game(String name, List<Player> players, Round round) {
-        this.id = SINGLETON_ID;
-        this.name = name;
-        this.players = players;
-        this.round = round.getId();
-    }
+    @Transient
+    private List<Player> players;
 
 }

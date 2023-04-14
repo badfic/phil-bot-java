@@ -4,13 +4,8 @@ spring:
   datasource:
     driverClassName: "org.postgresql.Driver"
     hikari:
-      data-source-properties:
-        stringtype: "unspecified"
       maximum-pool-size: 4
       max-lifetime: 300000
-
-  jpa:
-    open-in-view: false
   main:
     banner-mode: "off"
 

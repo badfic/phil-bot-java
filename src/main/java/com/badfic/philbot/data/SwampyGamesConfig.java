@@ -2,7 +2,6 @@ package com.badfic.philbot.data;
 
 import com.badfic.philbot.config.ControllerConfigurable;
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -331,19 +330,19 @@ public class SwampyGamesConfig {
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
-    private Set<String> slotsEmoji = Set.of("🍓","🍍","🍊","🍋","🍇","🍉","🍌","🍒","🍎");
+    private String[] slotsEmoji = {"🍓","🍍","🍊","🍋","🍇","🍉","🍌","🍒","🍎"};
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
-    private Set<String> boostWords = Set.of("boost");
+    private String[] boostWords = {"boost"};
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
-    private Set<String> monthlyColors = Set.of("#599111");
+    private String[] monthlyColors = {"#599111"};
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
-    private Set<String> embedFooters = Set.of("powered by 777");
+    private String[] embedFooters = {"powered by 777"};
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.LONG)
