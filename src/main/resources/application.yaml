@@ -19,9 +19,15 @@ server:
   servlet:
     session:
       timeout: 2592000
+    encoding:
+      force: true
   error:
     whitelabel:
       enabled: false
+  undertow:
+    threads:
+      io: 1
+      worker: 1
 
 swampy:
   schedule:
