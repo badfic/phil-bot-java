@@ -1,12 +1,12 @@
 package com.badfic.philbot.data;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+
 import java.time.LocalDateTime;
 import lombok.NoArgsConstructor;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
-@Table(name = "quote")
+
+@Table("quote")
 @NoArgsConstructor
 public class Quote extends BaseQuote {
 

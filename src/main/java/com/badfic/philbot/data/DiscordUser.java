@@ -1,22 +1,17 @@
 package com.badfic.philbot.data;
 
-import com.badfic.philbot.data.converters.FamilyJsonConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import java.time.LocalDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
-@Table(name = "discord_user")
+@Table("discord_user")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -39,36 +34,34 @@ public class DiscordUser {
     private long swiperParticipations;
 
     @Column
-    @Convert(converter = FamilyJsonConverter.class)
     @JsonIgnore
     private Family family;
 
-    @Column(columnDefinition = "TIMESTAMP")
-    @UpdateTimestamp
+    @Column
     @JsonIgnore
     private LocalDateTime updateTime = LocalDateTime.now();
 
-    @Column(columnDefinition = "TIMESTAMP")
+    @Column
     @JsonIgnore
     private LocalDateTime voiceJoined;
 
-    @Column(columnDefinition = "TIMESTAMP")
+    @Column
     @JsonIgnore
     private LocalDateTime lastSlots = LocalDateTime.now();
 
-    @Column(columnDefinition = "TIMESTAMP")
+    @Column
     @JsonIgnore
     private LocalDateTime lastMessageBonus = LocalDateTime.now();
 
-    @Column(columnDefinition = "TIMESTAMP")
+    @Column
     @JsonIgnore
     private LocalDateTime lastVote = LocalDateTime.now();
 
-    @Column(columnDefinition = "TIMESTAMP")
+    @Column
     @JsonIgnore
     private LocalDateTime acceptedBoost = LocalDateTime.now();
 
-    @Column(columnDefinition = "TIMESTAMP")
+    @Column
     @JsonIgnore
     private LocalDateTime acceptedMapTrivia = LocalDateTime.now();
 

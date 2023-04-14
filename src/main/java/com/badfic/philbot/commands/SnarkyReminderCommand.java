@@ -32,7 +32,7 @@ public class SnarkyReminderCommand extends BaseNormalCommand {
     @PostConstruct
     public void init() {
         if (snarkyReminderResponseRepository.count() < 1) {
-            snarkyReminderResponseRepository.save(new SnarkyReminderResponse("sure thing, <name>"));
+            jdbcAggregateTemplate.insert(new SnarkyReminderResponse("sure thing, <name>"));
         }
     }
 
@@ -40,7 +40,7 @@ public class SnarkyReminderCommand extends BaseNormalCommand {
     protected void execute(CommandEvent event) {
         if (StringUtils.containsIgnoreCase(event.getArgs(), "add")) {
             String snark = event.getArgs().replace("add", "").trim();
-            SnarkyReminderResponse savedResponse = snarkyReminderResponseRepository.save(new SnarkyReminderResponse(snark));
+            SnarkyReminderResponse savedResponse = jdbcAggregateTemplate.insert(new SnarkyReminderResponse(snark));
             event.replySuccess("Saved Reminder Response #" + savedResponse.getId());
         } else if (StringUtils.isBlank(event.getArgs())) {
             List<SnarkyReminderResponse> reminders = snarkyReminderResponseRepository.findAll();

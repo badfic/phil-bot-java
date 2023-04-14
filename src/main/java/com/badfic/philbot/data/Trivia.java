@@ -1,17 +1,16 @@
 package com.badfic.philbot.data;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
-@Table(name = "trivia")
+
+@Table("trivia")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,13 +23,13 @@ public class Trivia {
     @Column
     private String question;
 
-    @Column(name = "answer_a")
+    @Column("answer_a")
     private String answerA;
 
-    @Column(name = "answer_b")
+    @Column("answer_b")
     private String answerB;
 
-    @Column(name = "answer_c")
+    @Column("answer_c")
     private String answerC;
 
     @Column

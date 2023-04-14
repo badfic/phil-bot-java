@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,9 +23,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class TriviaController extends BaseMembersController {
 
     private final TriviaRepository triviaRepository;
+    private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
-    public TriviaController(TriviaRepository triviaRepository) {
+    public TriviaController(TriviaRepository triviaRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.triviaRepository = triviaRepository;
+        this.jdbcAggregateTemplate = jdbcAggregateTemplate;
     }
 
     @GetMapping(value = "/trivia", produces = MediaType.TEXT_HTML_VALUE)
@@ -62,7 +65,7 @@ public class TriviaController extends BaseMembersController {
         trivia.setAnswerC(form.answerC());
         trivia.setCorrectAnswer((short) form.correctAnswer().ordinal());
 
-        triviaRepository.save(trivia);
+        jdbcAggregateTemplate.insert(trivia);
 
         return ResponseEntity.ok("Successfully created new trivia question! Thank you for your submission! Refresh to see it below.");
     }

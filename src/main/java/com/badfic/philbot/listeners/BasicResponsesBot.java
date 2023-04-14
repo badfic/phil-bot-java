@@ -34,6 +34,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 
 @Slf4j
 public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends Command implements ModHelpAware {
@@ -57,8 +58,8 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         }
     }
 
-    public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository, ObjectMapper objectMapper, String name,
-                             Supplier<T> responsesConfigConstructor) {
+    public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository, JdbcAggregateTemplate jdbcAggregateTemplate, ObjectMapper objectMapper,
+                             String name, Supplier<T> responsesConfigConstructor) {
         this.configRepository = configRepository;
         this.objectMapper = objectMapper;
 
@@ -91,7 +92,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
             responsesConfig.setSfwConfig(kidFriendlyConfig);
             responsesConfig.setNsfwConfig(nsfwConfig);
 
-            configRepository.save(responsesConfig);
+            jdbcAggregateTemplate.insert(responsesConfig);
         }
     }
 

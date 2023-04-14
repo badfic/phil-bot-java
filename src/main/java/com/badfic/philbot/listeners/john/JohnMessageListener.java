@@ -211,7 +211,7 @@ public class JohnMessageListener {
                 dueDate = dueDate.plus(number, ChronoUnit.DAYS);
             }
 
-            Reminder savedReminder = reminderDao.save(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
+            Reminder savedReminder = reminderDao.insert(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
             SnarkyReminderResponse snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
             johnJda.getTextChannelById(message.getChannel().getIdLong())
                     .sendMessage("(reminder #" + savedReminder.getId() + ") " +

@@ -6,6 +6,7 @@ import com.badfic.philbot.data.DailyMarvelMemeEntity;
 import com.badfic.philbot.data.DailyMarvelMemeRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +21,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,11 +31,13 @@ public class DailyMarvelMemeService extends BaseNormalCommand {
     private static final String SEARCH_STRING = "Out of context Marvel meme";
 
     private final DailyMarvelMemeRepository dailyMarvelMemeRepository;
+    private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
-    public DailyMarvelMemeService(DailyMarvelMemeRepository dailyMarvelMemeRepository) {
+    public DailyMarvelMemeService(DailyMarvelMemeRepository dailyMarvelMemeRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         name = "updateDailyMarvelMemes";
         ownerCommand = true;
         this.dailyMarvelMemeRepository = dailyMarvelMemeRepository;
+        this.jdbcAggregateTemplate = jdbcAggregateTemplate;
     }
 
     @Override
@@ -94,7 +97,7 @@ public class DailyMarvelMemeService extends BaseNormalCommand {
                                     message.getTimeCreated().toLocalDateTime(),
                                     message.getTimeEdited() != null ? message.getTimeEdited().toLocalDateTime() : message.getTimeCreated().toLocalDateTime());
 
-                            dailyMarvelMemeRepository.save(storedMessage);
+                            jdbcAggregateTemplate.insert(storedMessage);
                         }
                     }
                 }
@@ -113,8 +116,9 @@ public class DailyMarvelMemeService extends BaseNormalCommand {
     }
 
     public List<String> getMessages() {
-        return dailyMarvelMemeRepository.findAll(Sort.by(Sort.Direction.DESC, "timeCreated"))
+        return dailyMarvelMemeRepository.findAll()
                 .stream()
+                .sorted(Comparator.comparing(DailyMarvelMemeEntity::getTimeCreated))
                 .map(entity -> StringEscapeUtils.escapeHtml4(entity.getMessage()) + "<br/>\n<img src=\"" + entity.getImageUrl() + "\" class=\"img-fluid\">")
                 .collect(Collectors.toList());
     }

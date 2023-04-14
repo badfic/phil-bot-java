@@ -17,6 +17,7 @@ import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
@@ -37,6 +38,10 @@ public abstract class BaseSlashCommand extends SlashCommand implements BaseComma
     @Setter(onMethod_ = {@Autowired})
     @Getter
     protected ObjectMapper objectMapper;
+
+    @Setter(onMethod_ = {@Autowired})
+    @Getter
+    protected JdbcAggregateTemplate jdbcAggregateTemplate;
 
     @Setter(onMethod_ = {@Autowired})
     @Getter

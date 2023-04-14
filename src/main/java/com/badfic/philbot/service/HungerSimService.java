@@ -4,8 +4,10 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.hungersim.Game;
 import com.badfic.philbot.data.hungersim.GameRepository;
 import com.badfic.philbot.data.hungersim.Outcome;
+import com.badfic.philbot.data.hungersim.OutcomeRepository;
 import com.badfic.philbot.data.hungersim.Player;
 import com.badfic.philbot.data.hungersim.PlayerRepository;
+import com.badfic.philbot.data.hungersim.PronounRepository;
 import com.badfic.philbot.data.hungersim.Round;
 import com.badfic.philbot.data.hungersim.RoundOutcome;
 import com.badfic.philbot.data.hungersim.RoundOutcomeRepository;
@@ -25,19 +27,26 @@ public class HungerSimService extends BaseService {
     private final GameRepository gameRepository;
     private final RoundRepository roundRepository;
     private final RoundOutcomeRepository roundOutcomeRepository;
+    private final OutcomeRepository outcomeRepository;
     private final PlayerRepository playerRepository;
+    private final PronounRepository pronounRepository;
 
     public HungerSimService(GameRepository gameRepository, RoundRepository roundRepository, RoundOutcomeRepository roundOutcomeRepository,
-                            PlayerRepository playerRepository) {
+                            OutcomeRepository outcomeRepository, PlayerRepository playerRepository, PronounRepository pronounRepository) {
         this.gameRepository = gameRepository;
         this.roundRepository = roundRepository;
         this.roundOutcomeRepository = roundOutcomeRepository;
+        this.outcomeRepository = outcomeRepository;
         this.playerRepository = playerRepository;
+        this.pronounRepository = pronounRepository;
     }
 
     public synchronized Game runNextStep() {
         Game game = gameRepository.findById(Game.SINGLETON_ID)
                 .orElseThrow(() -> new IllegalArgumentException("You must start a new game before running a step"));
+
+        List<Player> players = playerRepository.findByGame(Game.SINGLETON_ID);
+        game.setPlayers(players);
 
         Deque<Player> alivePlayers = game.getPlayers()
                 .stream()
@@ -50,13 +59,13 @@ public class HungerSimService extends BaseService {
 
         if (alivePlayers.size() <= 1) {
             if (alivePlayers.size() <= 0) {
-                game.setCurrentOutcomes(Collections.singletonList("Everybody died!"));
+                game.setCurrentOutcomes(new String[] {"Everybody died!"});
                 return gameRepository.save(game);
             }
 
             Player winner = alivePlayers.pop();
             winner.setEffectiveNameViaJda(philJda);
-            game.setCurrentOutcomes(Collections.singletonList("<b>" + StringEscapeUtils.escapeHtml4(winner.getEffectiveName()) + "</b> has won!"));
+            game.setCurrentOutcomes(new String[] {"<b>" + StringEscapeUtils.escapeHtml4(winner.getEffectiveName()) + "</b> has won!"});
             return gameRepository.save(game);
         }
 
@@ -77,15 +86,18 @@ public class HungerSimService extends BaseService {
     }
 
     private Game runRoundAndGetResult(Game game, Deque<Player> activePlayers, Round round) {
-        List<Outcome> outcomes = roundOutcomeRepository.findByRound(round).stream().map(RoundOutcome::getOutcome).toList();
+        List<Long> outcomes = roundOutcomeRepository.findByRound(round.getId()).stream().map(RoundOutcome::getOutcome).toList();
         List<String> appliedOutcomes = new ArrayList<>();
 
         while (!activePlayers.isEmpty()) {
             List<Player> outcomePlayerSet = new ArrayList<>();
-            Outcome outcome = Constants.pickRandom(outcomes);
+            Long outcomeId = Constants.pickRandom(outcomes);
+
+            Outcome outcome = outcomeRepository.findById(outcomeId).orElseThrow();
 
             while (outcome.getNumPlayers() > activePlayers.size()) {
-                outcome = Constants.pickRandom(outcomes);
+                outcomeId = Constants.pickRandom(outcomes);
+                outcome = outcomeRepository.findById(outcomeId).orElseThrow();
             }
 
             for (int i = 0; i < outcome.getNumPlayers(); i++) {
@@ -93,19 +105,20 @@ public class HungerSimService extends BaseService {
             }
 
             switch (outcome.getNumPlayers()) {
-                case 1 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), philJda));
-                case 2 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), philJda));
-                case 3 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), outcomePlayerSet.get(2), philJda));
+                case 1 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), philJda, pronounRepository));
+                case 2 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), philJda, pronounRepository));
+                case 3 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), outcomePlayerSet.get(2), philJda,
+                        pronounRepository));
                 case 4 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), outcomePlayerSet.get(2), outcomePlayerSet.get(3),
-                        philJda));
+                        philJda, pronounRepository));
                 default -> throw new IllegalArgumentException("Found Outcome that somehow had more than 4 players");
             }
 
             playerRepository.saveAll(outcomePlayerSet);
         }
 
-        game.setRound(round);
-        game.setCurrentOutcomes(appliedOutcomes);
+        game.setRound(round.getId());
+        game.setCurrentOutcomes(appliedOutcomes.toArray(String[]::new));
         game.setRoundCounter(game.getRoundCounter() + 1);
         return gameRepository.save(game);
     }

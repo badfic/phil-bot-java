@@ -3,7 +3,6 @@ package com.badfic.philbot.web.members;
 import com.badfic.philbot.config.ControllerConfigurable;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDao;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -33,7 +31,7 @@ public class GamesConfigController extends BaseMembersController {
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.getSwampyGamesConfig();
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
 
         List<ConfigEntryGet> configEntries = new ArrayList<>();
 
@@ -76,7 +74,7 @@ public class GamesConfigController extends BaseMembersController {
                 return ResponseEntity.badRequest().build();
             }
 
-            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.getSwampyGamesConfig();
+            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
 
             switch (controllerConfigurableAnnotation.type()) {
                 case INT -> {
@@ -91,14 +89,14 @@ public class GamesConfigController extends BaseMembersController {
                 case STRING_SET -> {
                     String fieldValueRaw = configEntry.fieldValue();
 
-                    Set<String> fieldValue = objectMapper.readValue(fieldValueRaw, new TypeReference<>() {});
+                    String[] fieldValue = objectMapper.readValue(fieldValueRaw, String[].class);
 
                     declaredField.set(swampyGamesConfig, fieldValue);
                 }
                 default -> throw new IllegalStateException();
             }
 
-            swampyGamesConfigDao.saveSwampyGamesConfig(swampyGamesConfig);
+            swampyGamesConfigDao.update(swampyGamesConfig);
         }
 
         return ResponseEntity.ok("Saved. If it was an image you'll have to refresh to see the new image.");

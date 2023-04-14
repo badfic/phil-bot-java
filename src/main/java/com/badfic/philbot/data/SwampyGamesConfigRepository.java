@@ -1,9 +1,8 @@
 package com.badfic.philbot.data;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-interface SwampyGamesConfigRepository extends JpaRepository<SwampyGamesConfig, Short>, JpaSpecificationExecutor<SwampyGamesConfig> {
+interface SwampyGamesConfigRepository extends ListCrudRepository<SwampyGamesConfig, Short> {
 }

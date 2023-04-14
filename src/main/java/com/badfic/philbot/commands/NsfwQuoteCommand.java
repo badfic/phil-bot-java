@@ -7,9 +7,9 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.DailyTickable;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.DayOfWeek;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,8 +24,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -109,20 +107,26 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
         }
 
         if (StringUtils.isBlank(event.getArgs())) {
-            int count = (int) nsfwQuoteRepository.count();
+            List<Long> ids = nsfwQuoteRepository.findAllIds();
 
-            if (count < 1) {
+            if (CollectionUtils.isEmpty(ids)) {
                 keanuJda.getTextChannelById(event.getChannel().getIdLong())
-                        .sendMessage("Could not find any nsfwQuotes")
+                        .sendMessage("Could not find any quotes")
                         .queue();
                 return;
             }
 
-            int idx = ThreadLocalRandom.current().nextInt(0, count);
-            Page<NsfwQuote> quotes = nsfwQuoteRepository.findAll(PageRequest.of(idx, 1));
-            NsfwQuote quote = quotes.getContent().get(0);
+            long idx = Constants.pickRandom(ids);
+            Optional<NsfwQuote> optionalQuote = nsfwQuoteRepository.findById(idx);
 
-            respondWithQuote(event, quote);
+            if (optionalQuote.isEmpty()) {
+                keanuJda.getTextChannelById(event.getChannel().getIdLong())
+                        .sendMessage("Could not find any quotes")
+                        .queue();
+                return;
+            }
+
+            respondWithQuote(event, optionalQuote.get());
             return;
         }
 
@@ -159,8 +163,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
             DayOfWeek day = mode.getLeft();
             int count = mode.getRight();
 
-//            long mostQuotedUserId = nsfwQuoteRepository.getMostQuotedUser();
-            long mostQuotedUserId = philJda.getSelfUser().getIdLong(); // TODO: Fix
+            long mostQuotedUserId = nsfwQuoteRepository.getMostQuotedUser();
             Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
 
             keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Cursed Quote Statistics",
@@ -235,7 +238,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
                     image = msg.getAttachments().get(0).getUrl();
                 }
 
-                NsfwQuote savedQuote = nsfwQuoteRepository.save(new NsfwQuote(messageId, channelId, msg.getContentRaw(), image,
+                NsfwQuote savedQuote = jdbcAggregateTemplate.insert(new NsfwQuote(messageId, channelId, msg.getContentRaw(), image,
                         msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
 
                 msg.addReaction(Emoji.fromUnicode(EGGPLANT_EMOJI)).queue();

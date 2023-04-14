@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +32,7 @@ public class NsfwQuoteController extends BaseMembersController {
         addCommonProps(httpServletRequest.getSession(), props);
         props.put("pageTitle", "\uD83C\uDF46 Quotes");
 
-        props.put("quotes", nsfwQuoteRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream().map(q -> {
+        props.put("quotes", nsfwQuoteRepository.findAll().stream().sorted((a, b) -> (int) (a.getId() - b.getId())).map(q -> {
             Member memberById = guild.getMemberById(q.getUserId());
             return new SimpleQuote(memberById != null ? memberById.getEffectiveName() : Long.toString(q.getUserId()),
                     q.getId(),

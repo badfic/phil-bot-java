@@ -1,26 +1,17 @@
 package com.badfic.philbot.data.hungersim;
 
-import com.badfic.philbot.data.converters.JsonListConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
-@Table(name = "hg_game")
-@NoArgsConstructor
+
+@Table("hg_game")
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -35,25 +26,16 @@ public class Game {
     @Column
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "game_id")
-    private List<Player> players = new ArrayList<>();
-
     @Column
     private Integer roundCounter = 0;
 
-    @OneToOne
-    private Round round;
+    @Column("round_id")
+    private Long round;
 
     @Column
-    @Convert(converter = JsonListConverter.class)
-    private List<String> currentOutcomes = new ArrayList<>();
+    private String[] currentOutcomes = {};
 
-    public Game(String name, List<Player> players, Round round) {
-        this.id = SINGLETON_ID;
-        this.name = name;
-        this.players = players;
-        this.round = round;
-    }
+    @Transient
+    private List<Player> players;
 
 }

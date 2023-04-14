@@ -4,15 +4,18 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import java.util.Collection;
 import java.util.Optional;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CourtCaseDao {
     private final CourtCaseRepository courtCaseRepository;
+    private final JdbcAggregateTemplate jdbcAggregateTemplate;
     private final Cache<Long, CourtCase> cache;
 
-    public CourtCaseDao(CourtCaseRepository courtCaseRepository) {
+    public CourtCaseDao(CourtCaseRepository courtCaseRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.courtCaseRepository = courtCaseRepository;
+        this.jdbcAggregateTemplate = jdbcAggregateTemplate;
         cache = Caffeine.newBuilder().build();
 
         for (CourtCase courtCase : courtCaseRepository.findAll()) {
@@ -20,8 +23,14 @@ public class CourtCaseDao {
         }
     }
 
-    public CourtCase save(CourtCase courtCase) {
+    public CourtCase update(CourtCase courtCase) {
         CourtCase saved = courtCaseRepository.save(courtCase);
+        cache.put(saved.getDefendantId(), saved);
+        return saved;
+    }
+
+    public CourtCase insert(CourtCase courtCase) {
+        CourtCase saved = jdbcAggregateTemplate.insert(courtCase);
         cache.put(saved.getDefendantId(), saved);
         return saved;
     }

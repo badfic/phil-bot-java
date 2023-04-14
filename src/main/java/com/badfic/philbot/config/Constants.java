@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
@@ -69,7 +68,7 @@ public class Constants {
     }
 
     public static Color colorOfTheMonth() {
-        Set<String> colors = SINGLETON.swampyGamesConfigDao.getSwampyGamesConfig().getMonthlyColors();
+        String[] colors = SINGLETON.swampyGamesConfigDao.get().getMonthlyColors();
         String color = pickRandom(colors);
         return Color.decode(color);
     }
@@ -265,7 +264,7 @@ public class Constants {
             finalDesc = null;
         }
 
-        Set<String> footers = SINGLETON.swampyGamesConfigDao.getSwampyGamesConfig().getEmbedFooters();
+        String[] footers = SINGLETON.swampyGamesConfigDao.get().getEmbedFooters();
         String footerAddition = pickRandom(footers);
 
         footer = footer != null ? (footer + "\n" + footerAddition) : footerAddition;

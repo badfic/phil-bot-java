@@ -1,14 +1,10 @@
 package com.badfic.philbot.data;
 
-import com.badfic.philbot.data.converters.GenericBotResponsesConfigJsonConverter;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 
-@MappedSuperclass
 @Getter
 @Setter
 public abstract class BaseResponsesConfig {
@@ -18,11 +14,9 @@ public abstract class BaseResponsesConfig {
     private Short id;
 
     @Column
-    @Convert(converter = GenericBotResponsesConfigJsonConverter.class)
     private GenericBotResponsesConfigJson nsfwConfig;
 
     @Column
-    @Convert(converter = GenericBotResponsesConfigJsonConverter.class)
     private GenericBotResponsesConfigJson sfwConfig;
 
 }

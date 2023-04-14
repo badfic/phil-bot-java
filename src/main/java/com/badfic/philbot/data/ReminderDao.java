@@ -4,15 +4,18 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import java.util.Collection;
 import java.util.Optional;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ReminderDao {
     private final ReminderRepository reminderRepository;
+    private final JdbcAggregateTemplate jdbcAggregateTemplate;
     private final Cache<Long, Reminder> cache;
 
-    public ReminderDao(ReminderRepository reminderRepository) {
+    public ReminderDao(ReminderRepository reminderRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.reminderRepository = reminderRepository;
+        this.jdbcAggregateTemplate = jdbcAggregateTemplate;
         cache = Caffeine.newBuilder().build();
 
         for (Reminder reminder : reminderRepository.findAll()) {
@@ -20,8 +23,8 @@ public class ReminderDao {
         }
     }
 
-    public Reminder save(Reminder reminder) {
-        Reminder saved = reminderRepository.save(reminder);
+    public Reminder insert(Reminder reminder) {
+        Reminder saved = jdbcAggregateTemplate.insert(reminder);
         cache.put(saved.getId(), saved);
         return saved;
     }

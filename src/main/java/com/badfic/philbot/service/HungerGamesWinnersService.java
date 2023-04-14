@@ -6,6 +6,7 @@ import com.badfic.philbot.data.HungerGamesWinnerEntity;
 import com.badfic.philbot.data.HungerGamesWinnerRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +25,7 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,11 +35,13 @@ public class HungerGamesWinnersService extends BaseNormalCommand implements Dail
     private static final String REACTION_EMOJI = "\uD83C\uDFC1";
 
     private final HungerGamesWinnerRepository hungerGamesWinnerRepository;
+    private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
-    public HungerGamesWinnersService(HungerGamesWinnerRepository hungerGamesWinnerRepository) {
+    public HungerGamesWinnersService(HungerGamesWinnerRepository hungerGamesWinnerRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         name = "updateHungerGamesWinners";
         ownerCommand = true;
         this.hungerGamesWinnerRepository = hungerGamesWinnerRepository;
+        this.jdbcAggregateTemplate = jdbcAggregateTemplate;
     }
 
     @Override
@@ -98,7 +101,7 @@ public class HungerGamesWinnersService extends BaseNormalCommand implements Dail
 
                         storedMessage = new HungerGamesWinnerEntity(message.getIdLong(), content, message.getTimeCreated().toLocalDateTime(),
                                 message.getTimeEdited() != null ? message.getTimeEdited().toLocalDateTime() : message.getTimeCreated().toLocalDateTime());
-                        hungerGamesWinnerRepository.save(storedMessage);
+                        jdbcAggregateTemplate.insert(storedMessage);
                     }
                 }
             }
@@ -116,8 +119,9 @@ public class HungerGamesWinnersService extends BaseNormalCommand implements Dail
     }
 
     public List<String> getMessages() {
-        return hungerGamesWinnerRepository.findAll(Sort.by(Sort.Direction.DESC, "timeCreated"))
+        return hungerGamesWinnerRepository.findAll()
                 .stream()
+                .sorted(Comparator.comparing(HungerGamesWinnerEntity::getTimeCreated))
                 .map(HungerGamesWinnerEntity::getMessage)
                 .collect(Collectors.toList());
     }
