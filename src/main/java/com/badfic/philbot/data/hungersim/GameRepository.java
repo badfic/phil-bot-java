@@ -1,9 +1,8 @@
 package com.badfic.philbot.data.hungersim;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GameRepository extends JpaRepository<Game, Short>, JpaSpecificationExecutor<Game> {
+public interface GameRepository extends ListCrudRepository<Game, Short> {
 }

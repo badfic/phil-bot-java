@@ -4,6 +4,7 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.HowWeBecameCursedEntity;
 import com.badfic.philbot.data.HowWeBecameCursedRepository;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +21,7 @@ import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,9 +29,11 @@ import org.springframework.stereotype.Component;
 public class HowWeBecameCursedService extends BaseService implements DailyTickable {
 
     private final HowWeBecameCursedRepository howWeBecameCursedRepository;
+    private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
-    public HowWeBecameCursedService(HowWeBecameCursedRepository howWeBecameCursedRepository) {
+    public HowWeBecameCursedService(HowWeBecameCursedRepository howWeBecameCursedRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.howWeBecameCursedRepository = howWeBecameCursedRepository;
+        this.jdbcAggregateTemplate = jdbcAggregateTemplate;
     }
 
     @Override
@@ -82,7 +85,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
 
                     storedMessage = new HowWeBecameCursedEntity(message.getIdLong(), content, message.getTimeCreated().toLocalDateTime(),
                             message.getTimeEdited() != null ? message.getTimeEdited().toLocalDateTime() : message.getTimeCreated().toLocalDateTime());
-                    howWeBecameCursedRepository.save(storedMessage);
+                    jdbcAggregateTemplate.insert(storedMessage);
                 }
             }
         }
@@ -99,8 +102,9 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
     }
 
     public List<String> getMessages() {
-        return howWeBecameCursedRepository.findAll(Sort.by(Sort.Direction.ASC, "timeCreated"))
+        return howWeBecameCursedRepository.findAll()
                 .stream()
+                .sorted(Comparator.comparing(HowWeBecameCursedEntity::getTimeCreated))
                 .map(HowWeBecameCursedEntity::getMessage)
                 .collect(Collectors.toList());
     }

@@ -6,6 +6,7 @@ import com.badfic.philbot.data.DailyRiverdaleMemeEntity;
 import com.badfic.philbot.data.DailyRiverdaleMemeRepository;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +21,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,11 +31,13 @@ public class DailyRiverdaleMemeService extends BaseNormalCommand {
     private static final String SEARCH_STRING = "out of context riverdale meme";
 
     private final DailyRiverdaleMemeRepository dailyRiverdaleMemeRepository;
+    private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
-    public DailyRiverdaleMemeService(DailyRiverdaleMemeRepository dailyRiverdaleMemeRepository) {
+    public DailyRiverdaleMemeService(DailyRiverdaleMemeRepository dailyRiverdaleMemeRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         name = "updateDailyRiverdaleMemes";
         ownerCommand = true;
         this.dailyRiverdaleMemeRepository = dailyRiverdaleMemeRepository;
+        this.jdbcAggregateTemplate = jdbcAggregateTemplate;
     }
 
     @Override
@@ -94,7 +97,7 @@ public class DailyRiverdaleMemeService extends BaseNormalCommand {
                                     message.getTimeCreated().toLocalDateTime(),
                                     message.getTimeEdited() != null ? message.getTimeEdited().toLocalDateTime() : message.getTimeCreated().toLocalDateTime());
 
-                            dailyRiverdaleMemeRepository.save(storedMessage);
+                            jdbcAggregateTemplate.insert(storedMessage);
                         }
                     }
                 }
@@ -113,8 +116,9 @@ public class DailyRiverdaleMemeService extends BaseNormalCommand {
     }
 
     public List<String> getMessages() {
-        return dailyRiverdaleMemeRepository.findAll(Sort.by(Sort.Direction.DESC, "timeCreated"))
+        return dailyRiverdaleMemeRepository.findAll()
                 .stream()
+                .sorted(Comparator.comparing(DailyRiverdaleMemeEntity::getTimeCreated))
                 .map(entity -> StringEscapeUtils.escapeHtml4(entity.getMessage()) + "<br/>\n<img src=\"" + entity.getImageUrl() + "\" class=\"img-fluid\">")
                 .collect(Collectors.toList());
     }

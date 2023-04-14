@@ -33,7 +33,7 @@ public class GamesConfigController extends BaseMembersController {
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.getSwampyGamesConfig();
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
 
         List<ConfigEntryGet> configEntries = new ArrayList<>();
 
@@ -76,7 +76,7 @@ public class GamesConfigController extends BaseMembersController {
                 return ResponseEntity.badRequest().build();
             }
 
-            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.getSwampyGamesConfig();
+            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
 
             switch (controllerConfigurableAnnotation.type()) {
                 case INT -> {
@@ -98,7 +98,7 @@ public class GamesConfigController extends BaseMembersController {
                 default -> throw new IllegalStateException();
             }
 
-            swampyGamesConfigDao.saveSwampyGamesConfig(swampyGamesConfig);
+            swampyGamesConfigDao.update(swampyGamesConfig);
         }
 
         return ResponseEntity.ok("Saved. If it was an image you'll have to refresh to see the new image.");

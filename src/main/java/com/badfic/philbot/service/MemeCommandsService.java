@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,15 +23,17 @@ import org.springframework.stereotype.Component;
 public class MemeCommandsService extends BaseService {
 
     private final MemeCommandRepository memeCommandRepository;
+    private final JdbcAggregateTemplate jdbcAggregateTemplate;
     private final JDA behradJda;
 
-    public MemeCommandsService(MemeCommandRepository memeCommandRepository, @Qualifier("behradJda") JDA behradJda) {
+    public MemeCommandsService(MemeCommandRepository memeCommandRepository, @Qualifier("behradJda") JDA behradJda, JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.memeCommandRepository = memeCommandRepository;
+        this.jdbcAggregateTemplate = jdbcAggregateTemplate;
         this.behradJda = behradJda;
     }
 
     public List<MemeCommandEntity> findAll() {
-        List<MemeCommandEntity> memes = memeCommandRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+        List<MemeCommandEntity> memes = memeCommandRepository.findAll();
         memes.forEach(meme -> {
             meme.setUrlIsImage(Constants.urlIsImage(meme.getUrl()));
             meme.setUrlIsList(StringUtils.startsWith(meme.getUrl(), "[") && StringUtils.endsWith(meme.getUrl(), "]"));
@@ -73,7 +75,7 @@ public class MemeCommandsService extends BaseService {
             throw new IllegalArgumentException("A meme by that name already exists");
         }
 
-        memeCommandRepository.save(new MemeCommandEntity(lowercaseName, memeUrl));
+        jdbcAggregateTemplate.insert(new MemeCommandEntity(lowercaseName, memeUrl));
     }
 
     public void deleteMeme(String memeName) {

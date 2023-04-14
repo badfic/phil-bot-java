@@ -253,7 +253,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
             roleById.delete().queue();
         }
 
-        Optional<Player> optionalPlayer = playerRepository.findByDiscordUser_id(id);
+        Optional<Player> optionalPlayer = playerRepository.findByDiscordUser(id);
         optionalPlayer.ifPresent(playerRepository::delete);
 
         if (discordUserRepository.existsById(id)) {

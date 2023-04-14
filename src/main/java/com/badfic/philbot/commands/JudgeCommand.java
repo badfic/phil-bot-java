@@ -126,7 +126,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
         swampysChannel.sendMessageEmbeds(Constants.simpleEmbedThumbnail("Jury Summons", description, defendant.getEffectiveAvatarUrl())).queue(msg -> {
             CourtCase courtCase = new CourtCase(defendant.getIdLong(), accuser.getIdLong(), msg.getIdLong(), finalCrime,
                     LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
-            courtCaseDao.save(courtCase);
+            courtCaseDao.insert(courtCase);
 
             msg.addReaction(Emoji.fromUnicode(Sentence.ACQUIT.getEmoji())).queue();
             msg.addReaction(Emoji.fromUnicode(Sentence.ONE_HOUR.getEmoji())).queue();
@@ -192,7 +192,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                                 guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusHours(1));
-                                courtCaseDao.save(courtCase);
+                                courtCaseDao.update(courtCase);
                                 swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
                                         + courtCase.getCrime()).queue();
                                 megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
@@ -202,7 +202,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                                 guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusHours(5));
-                                courtCaseDao.save(courtCase);
+                                courtCaseDao.update(courtCase);
                                 swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 5 hours in mega hell for "
                                         + courtCase.getCrime()).queue();
                                 megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 5 hours in mega hell for "
@@ -212,7 +212,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                                 guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusDays(1));
-                                courtCaseDao.save(courtCase);
+                                courtCaseDao.update(courtCase);
                                 swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 day in mega hell for "
                                         + courtCase.getCrime()).queue();
                                 megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 day in mega hell for "

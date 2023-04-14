@@ -69,7 +69,7 @@ public class Constants {
     }
 
     public static Color colorOfTheMonth() {
-        Set<String> colors = SINGLETON.swampyGamesConfigDao.getSwampyGamesConfig().getMonthlyColors();
+        Set<String> colors = SINGLETON.swampyGamesConfigDao.get().getMonthlyColors();
         String color = pickRandom(colors);
         return Color.decode(color);
     }
@@ -265,7 +265,7 @@ public class Constants {
             finalDesc = null;
         }
 
-        Set<String> footers = SINGLETON.swampyGamesConfigDao.getSwampyGamesConfig().getEmbedFooters();
+        Set<String> footers = SINGLETON.swampyGamesConfigDao.get().getEmbedFooters();
         String footerAddition = pickRandom(footers);
 
         footer = footer != null ? (footer + "\n" + footerAddition) : footerAddition;

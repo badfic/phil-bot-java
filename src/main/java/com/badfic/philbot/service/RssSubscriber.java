@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,10 +29,12 @@ public class RssSubscriber extends BaseService {
     };
 
     private final RssEntryRepository rssEntryRepository;
+    private final JdbcAggregateTemplate jdbcAggregateTemplate;
     private final Ao3MetadataParser ao3MetadataParser;
 
-    public RssSubscriber(RssEntryRepository rssEntryRepository, Ao3MetadataParser ao3MetadataParser) {
+    public RssSubscriber(RssEntryRepository rssEntryRepository, JdbcAggregateTemplate jdbcAggregateTemplate, Ao3MetadataParser ao3MetadataParser) {
         this.rssEntryRepository = rssEntryRepository;
+        this.jdbcAggregateTemplate = jdbcAggregateTemplate;
         this.ao3MetadataParser = ao3MetadataParser;
     }
 
@@ -60,7 +63,7 @@ public class RssSubscriber extends BaseService {
                     String link = entry.getLink();
 
                     if (!rssEntryRepository.existsById(link)) {
-                        rssEntryRepository.save(new RssEntry(link, url));
+                        jdbcAggregateTemplate.insert(new RssEntry(link, url));
                         addedLinks++;
 
                         if (!initialLoad) {

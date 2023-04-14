@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import okhttp3.OkHttpClient;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,6 +41,8 @@ public interface BaseCommand {
 
     ObjectMapper getObjectMapper();
 
+    JdbcAggregateTemplate getJdbcAggregateTemplate();
+
     BaseConfig getBaseConfig();
 
     RestTemplate getRestTemplate();
@@ -56,7 +59,7 @@ public interface BaseCommand {
         if (optionalUserEntity.isEmpty()) {
             DiscordUser newUser = new DiscordUser();
             newUser.setId(userId);
-            optionalUserEntity = Optional.of(discordUserRepository.save(newUser));
+            optionalUserEntity = Optional.of(getJdbcAggregateTemplate().insert(newUser));
         }
 
         return optionalUserEntity.get();
@@ -133,11 +136,11 @@ public interface BaseCommand {
     }
 
     default SwampyGamesConfig getSwampyGamesConfig()  {
-        return getSwampyGamesConfigDao().getSwampyGamesConfig();
+        return getSwampyGamesConfigDao().get();
     }
 
     default SwampyGamesConfig saveSwampyGamesConfig(SwampyGamesConfig swampyGamesConfig) {
-        return getSwampyGamesConfigDao().saveSwampyGamesConfig(swampyGamesConfig);
+        return getSwampyGamesConfigDao().update(swampyGamesConfig);
     }
 
 }

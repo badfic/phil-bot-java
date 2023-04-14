@@ -1,56 +1,50 @@
 package com.badfic.philbot.data.hungersim;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import java.util.Objects;
 
-@Entity
-@Table(name = "hg_round_outcome")
+import java.util.Objects;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
+
+@Table("hg_round_outcome")
 public class RoundOutcome {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "round_id")
-    private Round round;
+    @Column("round_id")
+    private Long round;
 
-    @ManyToOne
-    @JoinColumn(name = "outcome_id")
-    private Outcome outcome;
+    @Column("outcome_id")
+    private Long outcome;
 
     public RoundOutcome() {
     }
 
     public RoundOutcome(Round round, Outcome outcome) {
-        this.round = round;
-        this.outcome = outcome;
+        this.round = round.getId();
+        this.outcome = outcome.getId();
     }
 
     public Long getId() {
         return id;
     }
 
-    public Round getRound() {
+    public Long getRound() {
         return round;
     }
 
     public void setRound(Round round) {
-        this.round = round;
+        this.round = round.getId();
     }
 
-    public Outcome getOutcome() {
+    public Long getOutcome() {
         return outcome;
     }
 
     public void setOutcome(Outcome outcome) {
-        this.outcome = outcome;
+        this.outcome = outcome.getId();
     }
 
     @Override

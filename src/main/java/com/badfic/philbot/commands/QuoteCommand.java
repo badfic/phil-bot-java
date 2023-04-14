@@ -7,9 +7,9 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.DailyTickable;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.DayOfWeek;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,8 +24,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -107,20 +105,26 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
         }
 
         if (StringUtils.isBlank(event.getArgs())) {
-            int count = (int) quoteRepository.count();
+            List<Long> ids = quoteRepository.findAllIds();
 
-            if (count < 1) {
+            if (CollectionUtils.isEmpty(ids)) {
                 johnJda.getTextChannelById(event.getChannel().getIdLong())
                         .sendMessage("Could not find any quotes")
                         .queue();
                 return;
             }
 
-            int idx = ThreadLocalRandom.current().nextInt(0, count);
-            Page<Quote> quotes = quoteRepository.findAll(PageRequest.of(idx, 1));
-            Quote quote = quotes.getContent().get(0);
+            long idx = Constants.pickRandom(ids);
+            Optional<Quote> optionalQuote = quoteRepository.findById(idx);
 
-            respondWithQuote(event, quote);
+            if (optionalQuote.isEmpty()) {
+                johnJda.getTextChannelById(event.getChannel().getIdLong())
+                        .sendMessage("Could not find any quotes")
+                        .queue();
+                return;
+            }
+
+            respondWithQuote(event, optionalQuote.get());
             return;
         }
 
@@ -157,8 +161,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
             DayOfWeek day = mode.getLeft();
             int count = mode.getRight();
 
-//            long mostQuotedUserId = nsfwQuoteRepository.getMostQuotedUser();
-            long mostQuotedUserId = philJda.getSelfUser().getIdLong(); // TODO: Fix
+            long mostQuotedUserId = quoteRepository.getMostQuotedUser();
             Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
 
             johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Quote Statistics",
@@ -233,7 +236,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
                     image = msg.getAttachments().get(0).getUrl();
                 }
 
-                Quote savedQuote = quoteRepository.save(new Quote(messageId, channelId, msg.getContentRaw(), image,
+                Quote savedQuote = jdbcAggregateTemplate.insert(new Quote(messageId, channelId, msg.getContentRaw(), image,
                         msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
 
                 msg.addReaction(Emoji.fromUnicode(SPEECH_BUBBLE_EMOJI)).queue();

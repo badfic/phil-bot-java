@@ -1,15 +1,14 @@
 package com.badfic.philbot.data;
 
 import java.util.Set;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface HowWeBecameCursedRepository extends JpaRepository<HowWeBecameCursedEntity, Long>, JpaSpecificationExecutor<HowWeBecameCursedEntity> {
+public interface HowWeBecameCursedRepository extends ListCrudRepository<HowWeBecameCursedEntity, Long> {
 
-    @Query("SELECT messageId FROM HowWeBecameCursedEntity")
+    @Query("SELECT message_id FROM how_we_became_cursed")
     Set<Long> findAllIds();
 
 }
