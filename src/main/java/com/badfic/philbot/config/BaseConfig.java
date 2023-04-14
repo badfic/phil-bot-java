@@ -23,7 +23,6 @@ import com.jagrosh.jdautilities.command.SlashCommand;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -220,7 +219,7 @@ public class BaseConfig {
                 .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
                 .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
                 .setHttpClient(okHttpClient)
-                .setActivity(Activity.listening(ANTONIA_STATUS_LIST[ThreadLocalRandom.current().nextInt(ANTONIA_STATUS_LIST.length)]))
+                .setActivity(Activity.listening(Constants.pickRandom(ANTONIA_STATUS_LIST)))
                 .build();
     }
 
@@ -248,7 +247,7 @@ public class BaseConfig {
                 .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
                 .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
                 .setHttpClient(okHttpClient)
-                .setActivity(Activity.playing(BEHRAD_STATUS_LIST[ThreadLocalRandom.current().nextInt(BEHRAD_STATUS_LIST.length)]))
+                .setActivity(Activity.playing(Constants.pickRandom(BEHRAD_STATUS_LIST)))
                 .build();
     }
 
@@ -262,7 +261,7 @@ public class BaseConfig {
                 .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
                 .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
                 .setHttpClient(okHttpClient)
-                .setActivity(Activity.watching(KEANU_STATUS_LIST[ThreadLocalRandom.current().nextInt(KEANU_STATUS_LIST.length)]))
+                .setActivity(Activity.watching(Constants.pickRandom(KEANU_STATUS_LIST)))
                 .build();
     }
 
