@@ -17,7 +17,6 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class SwampyGamesConfig {
-    public static final Short SINGLETON_ID = 1;
 
     @Id
     private Short id;

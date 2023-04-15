@@ -5,9 +5,11 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
@@ -49,11 +51,9 @@ public class Pride extends BaseFlagCommand {
                 split = new String[] {"gay"};
             }
 
-            BufferedImage prideImage = PRIDE_IMAGES.get(split[0]);
-
-            if (prideImage == null) {
-                event.replyError("Could not find flag for: " + split[0]);
-                return;
+            BufferedImage prideImage;
+            try (InputStream prideFlagStream = getClass().getClassLoader().getResourceAsStream("flags/" + split[0] + ".png")) {
+                prideImage = ImageIO.read(Objects.requireNonNull(prideFlagStream));
             }
 
             String effectiveAvatarUrl = member.getEffectiveAvatarUrl();

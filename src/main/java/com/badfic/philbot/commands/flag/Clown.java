@@ -5,7 +5,6 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
@@ -19,19 +18,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class Clown extends BaseFlagCommand {
 
-    private final BufferedImage image;
-
     public Clown() {
         name = "clown";
         help = "Display the clown emote with various pride flags.\n" +
                 Arrays.toString(FLAG_NAMES) +
                 "\n`!!clown demi`: display a demi clown emote";
-
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("flags/clown.png")) {
-            image = ImageIO.read(Objects.requireNonNull(stream));
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to load clown png", e);
-        }
     }
 
     @Override
@@ -42,14 +33,17 @@ public class Clown extends BaseFlagCommand {
                 split = new String[] {"gay"};
             }
 
-            BufferedImage prideImage = PRIDE_IMAGES.get(split[0]);
-
-            if (prideImage == null) {
-                event.replyError("Could not find flag for: " + split[0]);
-                return;
+            BufferedImage prideImage;
+            try (InputStream prideFlagStream = getClass().getClassLoader().getResourceAsStream("flags/" + split[0] + ".png")) {
+                prideImage = ImageIO.read(Objects.requireNonNull(prideFlagStream));
             }
 
-            BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage clown;
+            try (InputStream stream = getClass().getClassLoader().getResourceAsStream("flags/clown.png")) {
+                clown = ImageIO.read(Objects.requireNonNull(stream));
+            }
+
+            BufferedImage newImg = new BufferedImage(clown.getWidth(), clown.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = newImg.createGraphics();
 
             graphics.setComposite(AlphaComposite.Clear);
@@ -59,7 +53,7 @@ public class Clown extends BaseFlagCommand {
             graphics.drawImage(prideImage, 0, 0, null);
 
             graphics.setComposite(AlphaComposite.SrcOver);
-            graphics.drawImage(image, 0, 0, null);
+            graphics.drawImage(clown, 0, 0, null);
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(newImg, "png", outputStream);

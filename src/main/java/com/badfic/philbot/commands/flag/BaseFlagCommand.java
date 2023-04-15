@@ -1,14 +1,6 @@
 package com.badfic.philbot.commands.flag;
 
 import com.badfic.philbot.commands.BaseNormalCommand;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import javax.imageio.ImageIO;
 
 public abstract class BaseFlagCommand extends BaseNormalCommand {
     public static final String[] FLAG_NAMES = new String[] {
@@ -32,21 +24,4 @@ public abstract class BaseFlagCommand extends BaseNormalCommand {
             "achillean",
             "poly"
     };
-    protected static final Map<String, BufferedImage> PRIDE_IMAGES;
-
-    static {
-        Map<String, BufferedImage> map = new HashMap<>();
-
-        for (String flagName : FLAG_NAMES) {
-            try (InputStream prideFlagStream = BaseFlagCommand.class.getClassLoader().getResourceAsStream("flags/" + flagName + ".png")) {
-                BufferedImage image = ImageIO.read(Objects.requireNonNull(prideFlagStream));
-                map.put(flagName, image);
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-
-        PRIDE_IMAGES = Collections.unmodifiableMap(map);
-    }
-
 }

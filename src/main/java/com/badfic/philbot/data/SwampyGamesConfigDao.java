@@ -1,5 +1,6 @@
 package com.badfic.philbot.data;
 
+import com.badfic.philbot.config.Constants;
 import java.util.concurrent.atomic.AtomicReference;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
@@ -13,9 +14,9 @@ public class SwampyGamesConfigDao {
     public SwampyGamesConfigDao(SwampyGamesConfigRepository swampyGamesConfigRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.swampyGamesConfigRepository = swampyGamesConfigRepository;
 
-        SwampyGamesConfig config = swampyGamesConfigRepository.findById(SwampyGamesConfig.SINGLETON_ID).orElseGet(() -> {
+        SwampyGamesConfig config = swampyGamesConfigRepository.findById(Constants.DATA_SINGLETON_ID).orElseGet(() -> {
             SwampyGamesConfig singleton = new SwampyGamesConfig();
-            singleton.setId(SwampyGamesConfig.SINGLETON_ID);
+            singleton.setId(Constants.DATA_SINGLETON_ID);
             return jdbcAggregateTemplate.insert(singleton);
         });
 

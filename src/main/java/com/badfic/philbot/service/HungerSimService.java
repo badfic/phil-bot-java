@@ -42,10 +42,10 @@ public class HungerSimService extends BaseService {
     }
 
     public synchronized Game runNextStep() {
-        Game game = gameRepository.findById(Game.SINGLETON_ID)
+        Game game = gameRepository.findById(Constants.DATA_SINGLETON_ID)
                 .orElseThrow(() -> new IllegalArgumentException("You must start a new game before running a step"));
 
-        List<Player> players = playerRepository.findByGame(Game.SINGLETON_ID);
+        List<Player> players = playerRepository.findByGame(Constants.DATA_SINGLETON_ID);
         game.setPlayers(players);
 
         Deque<Player> alivePlayers = game.getPlayers()

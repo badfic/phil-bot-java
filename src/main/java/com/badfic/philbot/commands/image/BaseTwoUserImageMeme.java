@@ -23,20 +23,18 @@ public abstract class BaseTwoUserImageMeme extends BaseNormalCommand {
     private final int recipientScale;
     private final int recipientX;
     private final int recipientY;
-    private final BufferedImage mainImage;
+    private final String mainImageLocation;
     private final String memeName;
 
     public BaseTwoUserImageMeme(int authorScale, int authorX, int authorY, int recipientScale, int recipientX, int recipientY, String mainImageLocation,
-                                String memeName) throws Exception {
+                                String memeName) {
         this.authorScale = authorScale;
         this.authorX = authorX;
         this.authorY = authorY;
         this.recipientScale = recipientScale;
         this.recipientX = recipientX;
         this.recipientY = recipientY;
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream(mainImageLocation)) {
-            this.mainImage = ImageIO.read(Objects.requireNonNull(stream));
-        }
+        this.mainImageLocation = mainImageLocation;
         this.memeName = memeName;
     }
 
@@ -92,6 +90,10 @@ public abstract class BaseTwoUserImageMeme extends BaseNormalCommand {
     }
 
     private byte[] makeMemeBytes(String authorFaceUrl, String recipientFaceUrl) throws Exception {
+        BufferedImage mainImage;
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream(mainImageLocation)) {
+            mainImage = ImageIO.read(Objects.requireNonNull(stream));
+        }
         return makeTwoUserMemeImageBytes(authorFaceUrl, authorScale, authorX, authorY, recipientFaceUrl, recipientScale, recipientX, recipientY, mainImage);
     }
 

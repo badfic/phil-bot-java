@@ -17,8 +17,6 @@ import org.springframework.data.relational.core.mapping.Table;
 @EqualsAndHashCode(of = "id")
 public class Game {
 
-    public static final Short SINGLETON_ID = 1;
-
     @Id
     @JsonIgnore
     private Short id;

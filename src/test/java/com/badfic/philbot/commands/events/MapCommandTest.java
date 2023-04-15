@@ -30,7 +30,6 @@ public class MapCommandTest {
 
     @Test
     public void testInit() throws Exception {
-        mapCommand.init();
         MapCommand.MapTriviaObject[] countries = mapCommand.getCountries();
 
         Assertions.assertTrue(Arrays.stream(countries)
