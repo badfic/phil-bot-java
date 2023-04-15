@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class DailyTicker extends BaseService {
-    private static final ExecutorService DAILY_TICKER_EXECUTOR = Executors.newSingleThreadExecutor();
-
     private final List<DailyTickable> dailyTickables;
 
     public DailyTicker(List<DailyTickable> dailyTickables) {
@@ -19,9 +17,10 @@ public class DailyTicker extends BaseService {
     }
 
     @Scheduled(cron = "${swampy.schedule.daily}", zone = "${swampy.schedule.timezone}")
-    public void masterTick() {
+    public void tick() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
         for (DailyTickable tickable : dailyTickables) {
-            DAILY_TICKER_EXECUTOR.execute(() -> {
+            executor.execute(() -> {
                 try {
                     tickable.runDailyTask();
                 } catch (Exception e) {
@@ -29,6 +28,7 @@ public class DailyTicker extends BaseService {
                 }
             });
         }
+        executor.shutdown();
     }
 
 }

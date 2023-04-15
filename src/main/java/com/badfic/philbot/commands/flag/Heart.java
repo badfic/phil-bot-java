@@ -5,7 +5,6 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
@@ -19,21 +18,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class Heart extends BaseFlagCommand {
 
-    private final BufferedImage heart;
-
     public Heart() {
         name = "heart";
         help = "`Display the heart emote with various pride flags.\n" +
                 Arrays.toString(FLAG_NAMES) +
                 "\n`!!heart demi`: display a demi heart emote";
-
-        try {
-            try (InputStream stream = getClass().getClassLoader().getResourceAsStream("flags/heart.png")) {
-                heart = ImageIO.read(Objects.requireNonNull(stream));
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to load heart png", e);
-        }
     }
 
     @Override
@@ -44,11 +33,14 @@ public class Heart extends BaseFlagCommand {
                 split = new String[] {"gay"};
             }
 
-            BufferedImage prideImage = PRIDE_IMAGES.get(split[0]);
+            BufferedImage prideImage;
+            try (InputStream prideFlagStream = getClass().getClassLoader().getResourceAsStream("flags/" + split[0] + ".png")) {
+                prideImage = ImageIO.read(Objects.requireNonNull(prideFlagStream));
+            }
 
-            if (prideImage == null) {
-                event.replyError("Could not find flag for: " + split[0]);
-                return;
+            BufferedImage heart;
+            try (InputStream stream = getClass().getClassLoader().getResourceAsStream("flags/heart.png")) {
+                heart = ImageIO.read(Objects.requireNonNull(stream));
             }
 
             BufferedImage newImg = new BufferedImage(heart.getWidth(), heart.getHeight(), BufferedImage.TYPE_INT_ARGB);

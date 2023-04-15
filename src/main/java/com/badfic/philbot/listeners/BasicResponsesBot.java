@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
@@ -39,8 +38,6 @@ import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 @Slf4j
 public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends Command implements ModHelpAware {
 
-    private static final BufferedImage HUG;
-
     private final BaseResponsesConfigRepository<T> configRepository;
     private final ObjectMapper objectMapper;
     private final String fullCmdPrefix;
@@ -49,14 +46,6 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
     @Setter(onMethod_ = {@Autowired})
     private BaseConfig baseConfig;
-
-    static {
-        try (InputStream stream = BasicResponsesBot.class.getClassLoader().getResourceAsStream("flags/hug.png")) {
-            HUG = ImageIO.read(Objects.requireNonNull(stream));
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not load hug.png");
-        }
-    }
 
     public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository, JdbcAggregateTemplate jdbcAggregateTemplate, ObjectMapper objectMapper,
                              String name, Supplier<T> responsesConfigConstructor) {
@@ -82,13 +71,13 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                 """, "<name>", name, -1);
 
         // seed data if needed
-        if (configRepository.findById(BaseResponsesConfig.SINGLETON_ID).isEmpty()) {
+        if (configRepository.findById(Constants.DATA_SINGLETON_ID).isEmpty()) {
             GenericBotResponsesConfigJson kidFriendlyConfig = new GenericBotResponsesConfigJson(Set.of(Constants.SWAMPYS_CHANNEL), Set.of("yes", "no"));
 
             GenericBotResponsesConfigJson nsfwConfig = new GenericBotResponsesConfigJson(Set.of(Constants.CURSED_SWAMP_CHANNEL), Set.of("heck yes", "heck no"));
 
             T responsesConfig = responsesConfigConstructor.get();
-            responsesConfig.setId(BaseResponsesConfig.SINGLETON_ID);
+            responsesConfig.setId(Constants.DATA_SINGLETON_ID);
             responsesConfig.setSfwConfig(kidFriendlyConfig);
             responsesConfig.setNsfwConfig(nsfwConfig);
 
@@ -105,7 +94,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         final JDA selfJda = event.getJDA();
         final Guild guild = selfJda.getGuildById(baseConfig.guildId);
 
-        Optional<T> optionalConfig = configRepository.findById(BaseResponsesConfig.SINGLETON_ID);
+        Optional<T> optionalConfig = configRepository.findById(Constants.DATA_SINGLETON_ID);
         if (optionalConfig.isEmpty()) {
             selfJda.getTextChannelById(event.getChannel().getId())
                     .sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name)
@@ -308,7 +297,12 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
                 Member authorMember = guild.getMemberById(authorId);
                 String authorAvatarUrl = authorMember != null ? authorMember.getEffectiveAvatarUrl() : event.getAuthor().getEffectiveAvatarUrl();
 
-                byte[] bytes = BaseTwoUserImageMeme.makeTwoUserMemeImageBytes(selfAvatarUrl, 160, 27, 63, authorAvatarUrl, 160, 187, 24, HUG);
+                BufferedImage hugImage;
+                try (InputStream stream = BasicResponsesBot.class.getClassLoader().getResourceAsStream("flags/hug.png")) {
+                    hugImage = ImageIO.read(Objects.requireNonNull(stream));
+                }
+
+                byte[] bytes = BaseTwoUserImageMeme.makeTwoUserMemeImageBytes(selfAvatarUrl, 160, 27, 63, authorAvatarUrl, 160, 187, 24, hugImage);
 
                 selfJda.getTextChannelById(event.getChannel().getId())
                         .sendMessage(" ")

@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -210,7 +209,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
     }
 
     public void emote(MessageReactionAddEvent event) {
-        if (event.retrieveUser().timeout(30, TimeUnit.SECONDS).complete().isBot()) {
+        if (event.getUser() == null || event.getUser().isBot()) {
             return;
         }
 
@@ -218,7 +217,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
 
         givePointsToMember(swampyGamesConfig.getReactionPoints(), event.getMember(), PointsStat.REACTOR_POINTS);
         long messageId = event.getMessageIdLong();
-        long reactionGiverId = event.retrieveMember().timeout(30, TimeUnit.SECONDS).complete().getIdLong();
+        long reactionGiverId = event.getMember().getIdLong();
         GuildMessageChannel channel = event.getChannel().asGuildMessageChannel();
         channel.retrieveMessageById(messageId).queue(msg -> {
             if (msg != null && msg.getMember() != null && msg.getMember().getIdLong() != reactionGiverId) {

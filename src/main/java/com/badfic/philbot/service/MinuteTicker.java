@@ -20,7 +20,7 @@ public class MinuteTicker extends BaseService {
     }
 
     @Scheduled(cron = "${swampy.schedule.minutely}", zone = "${swampy.schedule.timezone}")
-    public void masterTick() {
+    public void tick() {
         if (philJda == null || CollectionUtils.isEmpty(philJda.getGuilds())) {
             log.info("Still setting up philJDA, MinuteTicker shows it as null");
             return; // Context is still setting up and the minute rolled over before phil received the ready message from discord api.

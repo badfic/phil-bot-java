@@ -60,6 +60,8 @@ public class Constants {
 
     public static final Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
 
+    public static final Short DATA_SINGLETON_ID = 1;
+
     private final SwampyGamesConfigDao swampyGamesConfigDao;
 
     @PostConstruct

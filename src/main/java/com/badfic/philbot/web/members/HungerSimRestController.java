@@ -1,5 +1,6 @@
 package com.badfic.philbot.web.members;
 
+import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.hungersim.Game;
 import com.badfic.philbot.data.hungersim.GameRepository;
@@ -338,7 +339,7 @@ public class HungerSimRestController extends BaseMembersController {
         List<Player> players = playerRepository.findAllById(game.playerIds);
         for (Player player : players) {
             player.setHp(10);
-            player.setGame(Game.SINGLETON_ID);
+            player.setGame(Constants.DATA_SINGLETON_ID);
         }
         players = playerRepository.saveAll(players);
 
@@ -352,11 +353,11 @@ public class HungerSimRestController extends BaseMembersController {
             outcomes.add(player.getEffectiveName());
         }
 
-        Optional<Game> optionalGame = gameRepository.findById(Game.SINGLETON_ID);
+        Optional<Game> optionalGame = gameRepository.findById(Constants.DATA_SINGLETON_ID);
 
         Game gameEntity = optionalGame.orElseGet(Game::new);
 
-        gameEntity.setId(Game.SINGLETON_ID);
+        gameEntity.setId(Constants.DATA_SINGLETON_ID);
         gameEntity.setName(game.name);
         gameEntity.setRound(openingRound.get(0).getId());
         gameEntity.setRoundCounter(0);
@@ -373,7 +374,7 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/game", produces = MediaType.APPLICATION_JSON_VALUE)
     public Game getGame(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        Game game = gameRepository.findById(Game.SINGLETON_ID).orElseThrow(() -> new IllegalArgumentException("Unable to load game"));
+        Game game = gameRepository.findById(Constants.DATA_SINGLETON_ID).orElseThrow(() -> new IllegalArgumentException("Unable to load game"));
 
         game.setPlayers(playerRepository.findByGame(game.getId()));
 
