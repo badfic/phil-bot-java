@@ -7,21 +7,16 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SuperlativesCommand extends BaseNormalCommand {
 
-    private final JDA behradJda;
-
-    public SuperlativesCommand(@Qualifier("behradJda") JDA behradJda) {
-        this.behradJda = behradJda;
+    public SuperlativesCommand() {
         this.name = "superlatives";
         this.requiredRole = Constants.ADMIN_ROLE;
         this.help = "Announce the superlatives (highest person on each category of the leaderboard)";
@@ -30,7 +25,7 @@ public class SuperlativesCommand extends BaseNormalCommand {
     @Override
     protected void execute(CommandEvent event) {
         long channelId = event.getChannel().getIdLong();
-        MessageChannel channel = behradJda.getChannelById(MessageChannel.class, channelId);
+        MessageChannel channel = philJda.getChannelById(MessageChannel.class, channelId);
 
         if (Objects.isNull(channel)) {
             event.replyError("Channel does not exist");

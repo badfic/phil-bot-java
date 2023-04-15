@@ -1,21 +1,23 @@
 package com.badfic.philbot.listeners.antonia;
 
+import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.listeners.BaseTalk;
-import net.dv8tion.jda.api.JDA;
-import org.springframework.beans.factory.annotation.Qualifier;
+import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AntoniaTalk extends BaseTalk {
-    private final JDA antoniaJda;
-
-    public AntoniaTalk(@Qualifier("antoniaJda") JDA antoniaJda) {
+    public AntoniaTalk() {
         super("antoniaTalk");
-        this.antoniaJda = antoniaJda;
     }
 
     @Override
-    public JDA getJda() {
-        return antoniaJda;
+    public Function<SwampyGamesConfig, String> usernameGetter() {
+        return SwampyGamesConfig::getAntoniaNickname;
+    }
+
+    @Override
+    public Function<SwampyGamesConfig, String> avatarGetter() {
+        return SwampyGamesConfig::getAntoniaAvatar;
     }
 }

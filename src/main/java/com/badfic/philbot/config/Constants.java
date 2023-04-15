@@ -1,6 +1,7 @@
 package com.badfic.philbot.config;
 
 import com.badfic.philbot.data.SwampyGamesConfigDao;
+import com.badfic.philbot.listeners.DiscordWebhookSendService;
 import jakarta.annotation.PostConstruct;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -198,7 +199,8 @@ public class Constants {
         return ImmutablePair.of(DayOfWeek.of(mode), maxCount);
     }
 
-    public static void checkUserTriggerWords(MessageReceivedEvent event, Map<String, List<Pair<Pattern, String>>> userTriggerWords) {
+    public static void checkUserTriggerWords(MessageReceivedEvent event, Map<String, List<Pair<Pattern, String>>> userTriggerWords,
+                                             String username, String avatar, DiscordWebhookSendService discordWebhookSendService) {
         List<Pair<Pattern, String>> userTriggers = userTriggerWords.get(event.getAuthor().getId());
         if (CollectionUtils.isNotEmpty(userTriggers)) {
             Optional<String> match = Optional.empty();
@@ -213,7 +215,14 @@ public class Constants {
                 }
             }
 
-            match.ifPresent(s -> event.getJDA().getTextChannelById(event.getChannel().getIdLong()).sendMessage(s).queue());
+            match.ifPresent(s -> {
+                if (username == null) {
+                    event.getJDA().getTextChannelById(event.getChannel().getIdLong()).sendMessage(s).queue();
+                    return;
+                }
+
+                discordWebhookSendService.sendMessage(event.getChannel().getIdLong(), username, avatar, s);
+            });
         }
     }
 

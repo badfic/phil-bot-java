@@ -3,26 +3,24 @@ package com.badfic.philbot.commands;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.Reminder;
 import com.badfic.philbot.data.ReminderDao;
+import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.MinuteTickable;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RemindersCommand extends BaseNormalCommand implements MinuteTickable {
 
     private final ReminderDao reminderDao;
-    private final JDA johnJda;
 
-    public RemindersCommand(ReminderDao reminderDao, @Qualifier("johnJda") JDA johnJda) {
+    public RemindersCommand(ReminderDao reminderDao) {
         name = "reminders";
         aliases = new String[] {"reminder"};
         help = """
@@ -31,7 +29,6 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
                 `!!reminders 5` Show reminder number 5
                 `!!reminders delete 5` Delete reminder number 5""";
         this.reminderDao = reminderDao;
-        this.johnJda = johnJda;
     }
 
     @Override
@@ -108,10 +105,12 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
         LocalDateTime now = LocalDateTime.now();
         for (Reminder reminder : reminderDao.findAll()) {
             if (now.isEqual(reminder.getDueDate()) || now.isAfter(reminder.getDueDate())) {
-                TextChannel textChannelById = johnJda.getTextChannelById(reminder.getChannelId());
+                TextChannel textChannelById = philJda.getTextChannelById(reminder.getChannelId());
 
                 if (textChannelById != null) {
-                    textChannelById.sendMessage("(reminder #" + reminder.getId() + ") <@!" + reminder.getUserId() + "> " + reminder.getReminder()).queue();
+                    SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+                    discordWebhookSendService.sendMessage(textChannelById.getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
+                            "(reminder #" + reminder.getId() + ") <@!" + reminder.getUserId() + "> " + reminder.getReminder());
                     reminderDao.deleteById(reminder.getId());
                 }
             }

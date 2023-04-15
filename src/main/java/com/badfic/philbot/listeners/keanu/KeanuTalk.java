@@ -1,23 +1,24 @@
 package com.badfic.philbot.listeners.keanu;
 
+import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.listeners.BaseTalk;
-import net.dv8tion.jda.api.JDA;
-import org.springframework.beans.factory.annotation.Qualifier;
+import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 @Component
 public class KeanuTalk extends BaseTalk {
 
-    private final JDA keanuJda;
-
-    public KeanuTalk(@Qualifier("keanuJda") JDA keanuJda) {
+    public KeanuTalk() {
         super("keanuTalk");
-        this.keanuJda = keanuJda;
     }
 
     @Override
-    public JDA getJda() {
-        return keanuJda;
+    public Function<SwampyGamesConfig, String> usernameGetter() {
+        return SwampyGamesConfig::getKeanuNickname;
     }
 
+    @Override
+    public Function<SwampyGamesConfig, String> avatarGetter() {
+        return SwampyGamesConfig::getKeanuAvatar;
+    }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import net.dv8tion.jda.api.JDA;
+import java.util.concurrent.locks.LockSupport;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -23,7 +23,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -31,10 +30,9 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
 
     private static final String SPEECH_BUBBLE_EMOJI = "\uD83D\uDCAC";
 
-    private final JDA johnJda;
     private final QuoteRepository quoteRepository;
 
-    public QuoteCommand(@Qualifier("johnJda") JDA johnJda, QuoteRepository quoteRepository) {
+    public QuoteCommand(QuoteRepository quoteRepository) {
         name = "quote";
         aliases = new String[] {"quotes"};
         help = """
@@ -44,7 +42,6 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
                 `!!quote stats` returns statistics about all quotes
                 `!!quote stats @Santiago` returns statistics about Santiago
                 `!!quote cache` runs the meme saver if a channel is configured""";
-        this.johnJda = johnJda;
         this.quoteRepository = quoteRepository;
     }
 
@@ -57,10 +54,9 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
             Set<String> images = quoteRepository.findAllNonNullImages();
 
             TextChannel philLookedUpChannel = philJda.getTextChannelById(channelId);
-            TextChannel johnLookedUpChannel = johnJda.getTextChannelById(channelId);
 
-            if (philLookedUpChannel == null || johnLookedUpChannel == null) {
-                Constants.debugToTestChannel(johnJda, "Could not update nsfw saved memes channel, it does not exist");
+            if (philLookedUpChannel == null) {
+                Constants.debugToTestChannel(philJda, "Could not update nsfw saved memes channel, it does not exist");
                 return;
             }
 
@@ -83,12 +79,13 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
             }
 
             for (String image : images) {
-                johnLookedUpChannel.sendMessage(image).queue();
+                discordWebhookSendService.sendMessage(philLookedUpChannel.getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), image);
+                LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
             }
 
-            Constants.debugToTestChannel(johnJda, "Successfully updated sfw saved memes channel");
+            Constants.debugToTestChannel(philJda, "Successfully updated sfw saved memes channel");
         } else {
-            Constants.debugToTestChannel(johnJda, "Could not update sfw saved memes channel, no channel is configured");
+            Constants.debugToTestChannel(philJda, "Could not update sfw saved memes channel, no channel is configured");
         }
     }
 
@@ -108,7 +105,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
             List<Long> ids = quoteRepository.findAllIds();
 
             if (CollectionUtils.isEmpty(ids)) {
-                johnJda.getTextChannelById(event.getChannel().getIdLong())
+                philJda.getTextChannelById(event.getChannel().getIdLong())
                         .sendMessage("Could not find any quotes")
                         .queue();
                 return;
@@ -118,7 +115,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
             Optional<Quote> optionalQuote = quoteRepository.findById(idx);
 
             if (optionalQuote.isEmpty()) {
-                johnJda.getTextChannelById(event.getChannel().getIdLong())
+                philJda.getTextChannelById(event.getChannel().getIdLong())
                         .sendMessage("Could not find any quotes")
                         .queue();
                 return;
@@ -138,7 +135,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
                 DayOfWeek day = mode.getLeft();
                 int count = mode.getRight();
 
-                johnJda.getTextChannelById(event.getChannel().getIdLong()).
+                philJda.getTextChannelById(event.getChannel().getIdLong()).
                         sendMessageEmbeds(Constants.simpleEmbed("User Quote Statistics",
                                 String.format("""
                                                 %s Statistics:
@@ -164,7 +161,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
             long mostQuotedUserId = quoteRepository.getMostQuotedUser();
             Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
 
-            johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Quote Statistics",
+            philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Quote Statistics",
                     String.format("""
                                     Day of the week with the most quotes: %s
                                     Total number of quotes on %sS: %d
@@ -190,12 +187,12 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
 
                 if (optionalQuote.isPresent()) {
                     quoteRepository.deleteById(id);
-                    johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " successfully deleted").queue();
+                    philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " successfully deleted").queue();
                 } else {
-                    johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " does not exist").queue();
+                    philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " does not exist").queue();
                 }
             } catch (NumberFormatException e) {
-                johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Could not parse quote number from: " + split[1]).queue();
+                philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Could not parse quote number from: " + split[1]).queue();
             }
 
             return;
@@ -206,13 +203,13 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
             Optional<Quote> optionalQuote = quoteRepository.findById(id);
 
             if (optionalQuote.isEmpty()) {
-                johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " does not exist").queue();
+                philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " does not exist").queue();
                 return;
             }
 
             respondWithQuote(event, optionalQuote.get());
         } catch (NumberFormatException e) {
-            johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Did not recognize number " + event.getArgs()).queue();
+            philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Did not recognize number " + event.getArgs()).queue();
         }
     }
 
@@ -227,7 +224,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
         long quoterId = event.getUserIdLong();
 
         if (!quoteRepository.existsByMessageId(messageId)) {
-            johnJda.getTextChannelById(channelId).retrieveMessageById(messageId).queue(msg -> {
+            philJda.getTextChannelById(channelId).retrieveMessageById(messageId).queue(msg -> {
                 String image = null;
                 if (CollectionUtils.isNotEmpty(msg.getEmbeds())) {
                     image = msg.getEmbeds().get(0).getUrl();
@@ -246,7 +243,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
                 MessageEmbed messageEmbed = Constants.simpleEmbed("Quote #" + savedQuote.getId() + " Added",
                         "<@!" + quoterId + "> Added quote #" + savedQuote.getId() + msgLink);
 
-                johnJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(messageEmbed).queue();
+                philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(messageEmbed).queue();
             });
         }
     }
@@ -261,7 +258,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
                 .append(quote.getUserId())
                 .append("> ")
                 .append(msgLink);
-        johnJda.getTextChannelById(event.getChannel().getIdLong())
+        philJda.getTextChannelById(event.getChannel().getIdLong())
                 .sendMessageEmbeds(Constants.simpleEmbed("Quote #" + quote.getId(), description.toString(), quote.getImage(),
                         TIMESTAMP_FORMAT.format(quote.getCreated()))).queue();
     }

@@ -1,6 +1,8 @@
 package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.BaseConfig;
+import com.badfic.philbot.data.SwampyGamesConfigDao;
+import com.badfic.philbot.listeners.DiscordWebhookSendService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
@@ -26,5 +28,11 @@ public abstract class BaseService {
 
     @Setter(onMethod_ = {@Autowired})
     protected ObjectMapper objectMapper;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected SwampyGamesConfigDao swampyGamesConfigDao;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected DiscordWebhookSendService discordWebhookSendService;
 
 }

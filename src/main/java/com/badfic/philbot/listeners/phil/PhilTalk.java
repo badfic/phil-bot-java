@@ -1,7 +1,8 @@
 package com.badfic.philbot.listeners.phil;
 
+import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.listeners.BaseTalk;
-import net.dv8tion.jda.api.JDA;
+import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,8 +13,12 @@ public class PhilTalk extends BaseTalk {
     }
 
     @Override
-    public JDA getJda() {
-        return philJda;
+    public Function<SwampyGamesConfig, String> usernameGetter() {
+        return null;
     }
 
+    @Override
+    public Function<SwampyGamesConfig, String> avatarGetter() {
+        return null;
+    }
 }

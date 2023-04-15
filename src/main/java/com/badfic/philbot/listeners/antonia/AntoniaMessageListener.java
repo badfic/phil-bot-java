@@ -1,6 +1,8 @@
 package com.badfic.philbot.listeners.antonia;
 
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.data.SwampyGamesConfig;
+import com.badfic.philbot.service.BaseService;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import java.util.Locale;
@@ -8,15 +10,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AntoniaMessageListener {
+@RequiredArgsConstructor
+public class AntoniaMessageListener extends BaseService {
 
     private static final Pattern ANTONIA_PATTERN = Constants.compileWords("antonia|toni|tony|stark|tash|iron man|tin can");
     private static final Map<String, List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = Map.of(
@@ -27,25 +30,19 @@ public class AntoniaMessageListener {
 
     private final AntoniaCommand antoniaCommand;
 
-    public AntoniaMessageListener(AntoniaCommand antoniaCommand) {
-        this.antoniaCommand = antoniaCommand;
-    }
-
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
-        if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
-            return;
-        }
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
 
         long channelId = event.getMessage().getChannel().getIdLong();
 
         if (msgContent.contains("kite man")) {
-            event.getJDA().getTextChannelById(channelId).sendMessage("Hell yea").queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(), "Hell yea");
             return;
         }
         if (msgContent.contains("owen wilson")) {
-            event.getJDA().getTextChannelById(channelId).sendMessage("wow").queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(), "wow");
             return;
         }
 
@@ -55,17 +52,18 @@ public class AntoniaMessageListener {
             }
             if (oldValue.getLeft().equals(msgContent)) {
                 if (oldValue.getRight() + 1 >= 3 && "bird".equals(msgContent)) {
-                    event.getJDA().getTextChannelById(channelId).sendMessage("the bird is the word").queue();
+                    discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
+                            "the bird is the word");
                     return new ImmutablePair<>(msgContent, 0L);
                 }
                 if (oldValue.getRight() + 1 >= 3 && "word".equals(msgContent)) {
-                    event.getJDA().getTextChannelById(channelId).sendMessage("the word is the bird").queue();
+                    discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
+                            "the word is the bird");
                     return new ImmutablePair<>(msgContent, 0L);
                 }
                 if (oldValue.getRight() + 1 >= 3 && "mattgrinch".equals(msgContent)) {
-                    event.getJDA().getTextChannelById(channelId)
-                            .sendMessage("https://cdn.discordapp.com/attachments/707453916882665552/914409167610056734/unknown.png")
-                            .queue();
+                    discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
+                            "https://cdn.discordapp.com/attachments/707453916882665552/914409167610056734/unknown.png");
                     return new ImmutablePair<>(msgContent, 0L);
                 }
 
@@ -75,7 +73,8 @@ public class AntoniaMessageListener {
             }
         });
 
-        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
+        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
+                discordWebhookSendService);
 
         if (ANTONIA_PATTERN.matcher(msgContent).find()) {
             antoniaCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
