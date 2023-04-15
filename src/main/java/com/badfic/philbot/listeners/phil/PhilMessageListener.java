@@ -69,10 +69,6 @@ public class PhilMessageListener extends ListenerAdapter {
     private final KeanuMessageListener keanuMessageListener;
     private final AntoniaMessageListener antoniaMessageListener;
     private final JohnMessageListener johnMessageListener;
-    private final JDA behradJda;
-    private final JDA keanuJda;
-    private final JDA antoniaJda;
-    private final JDA johnJda;
     private final NsfwQuoteCommand nsfwQuoteCommand;
     private final QuoteCommand quoteCommand;
     private final SwampyCommand swampyCommand;
@@ -90,19 +86,14 @@ public class PhilMessageListener extends ListenerAdapter {
     @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
     private JDA philJda;
 
-    public PhilMessageListener(@Qualifier("behradJda") JDA behradJda, BehradMessageListener behradMessageListener, KeanuMessageListener keanuMessageListener,
-                               AntoniaMessageListener antoniaMessageListener, JohnMessageListener johnMessageListener, @Qualifier("keanuJda") JDA keanuJda,
-                               @Qualifier("antoniaJda") JDA antoniaJda, @Qualifier("johnJda") JDA johnJda, NsfwQuoteCommand nsfwQuoteCommand,
-                               QuoteCommand quoteCommand, MemeCommandsService memeCommandsService, Ao3MetadataParser ao3MetadataParser,
-                               MemberCount memberCount, BaseConfig baseConfig, SwampyCommand swampyCommand) {
-        this.behradJda = behradJda;
+    public PhilMessageListener(BehradMessageListener behradMessageListener, KeanuMessageListener keanuMessageListener,
+                               AntoniaMessageListener antoniaMessageListener, JohnMessageListener johnMessageListener, NsfwQuoteCommand nsfwQuoteCommand,
+                               QuoteCommand quoteCommand, MemeCommandsService memeCommandsService, Ao3MetadataParser ao3MetadataParser, MemberCount memberCount,
+                               BaseConfig baseConfig, SwampyCommand swampyCommand) {
         this.behradMessageListener = behradMessageListener;
         this.keanuMessageListener = keanuMessageListener;
         this.antoniaMessageListener = antoniaMessageListener;
         this.johnMessageListener = johnMessageListener;
-        this.keanuJda = keanuJda;
-        this.antoniaJda = antoniaJda;
-        this.johnJda = johnJda;
         this.nsfwQuoteCommand = nsfwQuoteCommand;
         this.quoteCommand = quoteCommand;
         this.memeCommandsService = memeCommandsService;
@@ -143,17 +134,17 @@ public class PhilMessageListener extends ListenerAdapter {
             return;
         }
 
-        antoniaMessageListener.onMessageReceived(new MessageReceivedEvent(antoniaJda, event.getResponseNumber(), event.getMessage()));
-        behradMessageListener.onMessageReceived(new MessageReceivedEvent(behradJda, event.getResponseNumber(), event.getMessage()));
-        keanuMessageListener.onMessageReceived(new MessageReceivedEvent(keanuJda, event.getResponseNumber(), event.getMessage()));
-        johnMessageListener.onMessageReceived(new MessageReceivedEvent(johnJda, event.getResponseNumber(), event.getMessage()));
+        antoniaMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
+        behradMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
+        keanuMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
+        johnMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
 
         if (PHIL_PATTERN.matcher(msgContent).find()) {
             philCommand.execute(new CommandEvent(event, Constants.PREFIX, null, philCommandClient));
             return;
         }
 
-        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
+        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, null, null, null);
 
         swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, "", philCommandClient));
     }
@@ -164,7 +155,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
         log.info("Received ready event for [user={}]", event.getJDA().getSelfUser());
         MessageEmbed messageEmbed = Constants.simpleEmbed("Restarted",
-                String.format("We just restarted\ngit sha: %s\ncommit msg: %s", baseConfig.commitSha, baseConfig.commitMessage), Constants.SWAMP_GREEN);
+                String.format("I just restarted\ngit sha: %s\ncommit msg: %s", baseConfig.commitSha, baseConfig.commitMessage), Constants.SWAMP_GREEN);
         event.getJDA().getTextChannelsByName("test-channel", false).get(0).sendMessageEmbeds(messageEmbed).queue();
     }
 

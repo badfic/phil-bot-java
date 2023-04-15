@@ -5,6 +5,8 @@ import com.badfic.philbot.data.Reminder;
 import com.badfic.philbot.data.ReminderDao;
 import com.badfic.philbot.data.SnarkyReminderResponse;
 import com.badfic.philbot.data.SnarkyReminderResponseRepository;
+import com.badfic.philbot.data.SwampyGamesConfig;
+import com.badfic.philbot.service.BaseService;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -14,8 +16,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -24,12 +26,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
-public class JohnMessageListener {
+public class JohnMessageListener extends BaseService {
     private static final Pattern JOHN_PATTERN = Constants.compileWords("john|constantine|johnno|johnny|hellblazer");
     private static final Pattern REMINDER_PATTER = Pattern.compile("\\b(remind me in |remind <@![0-9]+> in )[0-9]+\\b", Pattern.CASE_INSENSITIVE);
     private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
@@ -98,59 +100,51 @@ public class JohnMessageListener {
     private final JohnCommand johnCommand;
     private final ReminderDao reminderDao;
     private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
-    private final JDA johnJda;
-
-    public JohnMessageListener(JohnCommand johnCommand, ReminderDao reminderDao, SnarkyReminderResponseRepository snarkyReminderResponseRepository,
-                               @Qualifier("johnJda") JDA johnJda) {
-        this.johnCommand = johnCommand;
-        this.reminderDao = reminderDao;
-        this.snarkyReminderResponseRepository = snarkyReminderResponseRepository;
-        this.johnJda = johnJda;
-    }
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
-        if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
-            return;
-        }
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
 
         if (REMINDER_PATTER.matcher(msgContent).find()) {
-            addReminder(event.getMessage());
+            addReminder(event.getMessage(), swampyGamesConfig);
             return;
         }
 
         long channelId = event.getMessage().getChannel().getIdLong();
 
         if ("ayy".equals(msgContent)) {
-            event.getJDA().getTextChannelById(channelId).sendMessage("lmao").queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), "lmao");
             return;
         }
         if ("slang".equals(msgContent)) {
-            event.getJDA().getTextChannelById(channelId).sendMessage("You're an absolute whopper").queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
+                    "You're an absolute whopper");
             return;
         }
         if ("stughead".equals(msgContent)) {
-            event.getJDA().getTextChannelById(channelId).sendMessage("\uD83D\uDC40").queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), "\uD83D\uDC40");
             return;
         }
         if ("africa".equals(msgContent)) {
-            event.getJDA().getTextChannelById(channelId).sendMessage("I BLESS THE RAINS DOWN IN AAAAFRICAAA").queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
+                    "I BLESS THE RAINS DOWN IN AAAAFRICAAA");
             return;
         }
         if ("cool".equals(msgContent)) {
-            event.getJDA().getTextChannelById(channelId).sendMessage("cool cool cool").queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), "cool cool cool");
             return;
         }
         if ("uwu".equals(msgContent)) {
-            event.getJDA().getTextChannelById(channelId).sendMessage(Constants.pickRandom(UWU)).queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), Constants.pickRandom(UWU));
             return;
         }
         if ("good bot".equals(msgContent)) {
             if (601043580945170443L == event.getAuthor().getIdLong()) {
-                event.getJDA().getTextChannelById(channelId).sendMessage(":D!!!").queue();
+                discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), ":D!!!");
             } else {
-                event.getJDA().getTextChannelById(channelId).sendMessage(Constants.pickRandom(GOOD_BOT)).queue();
+                discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
+                        Constants.pickRandom(GOOD_BOT));
             }
             return;
         }
@@ -161,7 +155,7 @@ public class JohnMessageListener {
             }
             if (oldValue.getLeft().equalsIgnoreCase(msgContent)) {
                 if (oldValue.getRight() + 1 >= 5) {
-                    event.getJDA().getTextChannelById(channelId).sendMessage(msgContent).queue();
+                    discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), msgContent);
                     return new ImmutablePair<>(msgContent, 0L);
                 }
 
@@ -171,7 +165,7 @@ public class JohnMessageListener {
             }
         });
 
-        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
+        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), discordWebhookSendService);
 
         if (JOHN_PATTERN.matcher(msgContent).find()) {
             johnCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
@@ -179,7 +173,7 @@ public class JohnMessageListener {
         }
     }
 
-    private void addReminder(Message message) {
+    private void addReminder(Message message, SwampyGamesConfig swampyGamesConfig) {
         try {
             String reminder;
             int remindIdx = StringUtils.indexOfIgnoreCase(message.getContentRaw(), "remind");
@@ -213,15 +207,14 @@ public class JohnMessageListener {
 
             Reminder savedReminder = reminderDao.insert(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
             SnarkyReminderResponse snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
-            johnJda.getTextChannelById(message.getChannel().getIdLong())
-                    .sendMessage("(reminder #" + savedReminder.getId() + ") " +
-                            snarkyReminderResponse.getResponse().replace("<name>", "<@!" + message.getAuthor().getId() + ">"))
-                    .queue();
+
+            discordWebhookSendService.sendMessage(message.getChannel().getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
+                    "(reminder #" + savedReminder.getId() + ") " + snarkyReminderResponse.getResponse().replace("<name>", "<@!" + message.getAuthor().getId() + ">"));
         } catch (Exception e) {
             log.error("Exception trying to parse a reminder. [msgText={}]", message.getContentRaw(), e);
-            johnJda.getTextChannelById(message.getChannel().getIdLong())
-                    .sendMessage("Error: Could not understand your reminder, " + message.getAuthor().getAsMention())
-                    .queue();
+
+            discordWebhookSendService.sendMessage(message.getChannel().getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
+                    "Error: Could not understand your reminder, " + message.getAuthor().getAsMention());
         }
     }
 

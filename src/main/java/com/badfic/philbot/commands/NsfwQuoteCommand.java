@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import net.dv8tion.jda.api.JDA;
+import java.util.concurrent.locks.LockSupport;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -23,7 +23,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -31,10 +30,9 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
 
     private static final String EGGPLANT_EMOJI = "\uD83C\uDF46";
 
-    private final JDA keanuJda;
     private final NsfwQuoteRepository nsfwQuoteRepository;
 
-    public NsfwQuoteCommand(NsfwQuoteRepository nsfwQuoteRepository, @Qualifier("keanuJda") JDA keanuJda) {
+    public NsfwQuoteCommand(NsfwQuoteRepository nsfwQuoteRepository) {
         name = "nsfwQuote";
         aliases = new String[]{"nsfwQuotes", "cursedQuote", "cursedQuotes"};
         nsfwOnly = true;
@@ -47,7 +45,6 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
                 `!!nsfwQuote stats @Santiago` returns statistics about Santiago
                 `!!nsfwQuote cache` runs the meme saver if a channel is configured""";
         this.nsfwQuoteRepository = nsfwQuoteRepository;
-        this.keanuJda = keanuJda;
     }
 
     @Override
@@ -59,10 +56,9 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
             Set<String> images = nsfwQuoteRepository.findAllNonNullImages();
 
             TextChannel philLookedUpChannel = philJda.getTextChannelById(channelId);
-            TextChannel keanuLookedUpChannel = keanuJda.getTextChannelById(channelId);
 
-            if (philLookedUpChannel == null || keanuLookedUpChannel == null) {
-                Constants.debugToTestChannel(keanuJda, "Could not update nsfw saved memes channel, it does not exist");
+            if (philLookedUpChannel == null) {
+                Constants.debugToTestChannel(philJda, "Could not update nsfw saved memes channel, it does not exist");
                 return;
             }
 
@@ -85,12 +81,14 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
             }
 
             for (String image : images) {
-                keanuLookedUpChannel.sendMessage(image).queue();
+                discordWebhookSendService.sendMessage(philLookedUpChannel.getIdLong(), swampyGamesConfig.getKeanuNickname(),
+                        swampyGamesConfig.getKeanuAvatar(), image);
+                LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
             }
 
-            Constants.debugToTestChannel(keanuJda, "Successfully updated nsfw saved memes channel");
+            Constants.debugToTestChannel(philJda, "Successfully updated nsfw saved memes channel");
         } else {
-            Constants.debugToTestChannel(keanuJda, "Could not update nsfw saved memes channel, no channel is configured");
+            Constants.debugToTestChannel(philJda, "Could not update nsfw saved memes channel, no channel is configured");
         }
     }
 
@@ -110,7 +108,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
             List<Long> ids = nsfwQuoteRepository.findAllIds();
 
             if (CollectionUtils.isEmpty(ids)) {
-                keanuJda.getTextChannelById(event.getChannel().getIdLong())
+                philJda.getTextChannelById(event.getChannel().getIdLong())
                         .sendMessage("Could not find any quotes")
                         .queue();
                 return;
@@ -120,7 +118,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
             Optional<NsfwQuote> optionalQuote = nsfwQuoteRepository.findById(idx);
 
             if (optionalQuote.isEmpty()) {
-                keanuJda.getTextChannelById(event.getChannel().getIdLong())
+                philJda.getTextChannelById(event.getChannel().getIdLong())
                         .sendMessage("Could not find any quotes")
                         .queue();
                 return;
@@ -140,7 +138,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
                 DayOfWeek day = mode.getLeft();
                 int count = mode.getRight();
 
-                keanuJda.getTextChannelById(event.getChannel().getIdLong()).
+                philJda.getTextChannelById(event.getChannel().getIdLong()).
                         sendMessageEmbeds(Constants.simpleEmbed("User Cursed Quote Statistics",
                                 String.format("""
                                                 %s Statistics:
@@ -166,7 +164,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
             long mostQuotedUserId = nsfwQuoteRepository.getMostQuotedUser();
             Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
 
-            keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Cursed Quote Statistics",
+            philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Cursed Quote Statistics",
                     String.format("""
                                     Day of the week with the most cursed quotes: %s
                                     Total number of cursed quotes on %sS: %d
@@ -192,12 +190,12 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
 
                 if (optionalQuote.isPresent()) {
                     nsfwQuoteRepository.deleteById(id);
-                    keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("NsfwQuote #" + id + " successfully deleted").queue();
+                    philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("NsfwQuote #" + id + " successfully deleted").queue();
                 } else {
-                    keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("NsfwQuote #" + id + " does not exist").queue();
+                    philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("NsfwQuote #" + id + " does not exist").queue();
                 }
             } catch (NumberFormatException e) {
-                keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Could not parse quote number from: " + split[1]).queue();
+                philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Could not parse quote number from: " + split[1]).queue();
             }
 
             return;
@@ -208,13 +206,13 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
             Optional<NsfwQuote> optionalQuote = nsfwQuoteRepository.findById(id);
 
             if (optionalQuote.isEmpty()) {
-                keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("NsfwQuote #" + id + " does not exist").queue();
+                philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("NsfwQuote #" + id + " does not exist").queue();
                 return;
             }
 
             respondWithQuote(event, optionalQuote.get());
         } catch (NumberFormatException e) {
-            keanuJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Did not recognize number " + event.getArgs()).queue();
+            philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Did not recognize number " + event.getArgs()).queue();
         }
     }
 
@@ -229,7 +227,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
         long quoterId = event.getUserIdLong();
 
         if (!nsfwQuoteRepository.existsByMessageId(messageId)) {
-            keanuJda.getTextChannelById(channelId).retrieveMessageById(messageId).queue(msg -> {
+            philJda.getTextChannelById(channelId).retrieveMessageById(messageId).queue(msg -> {
                 String image = null;
                 if (CollectionUtils.isNotEmpty(msg.getEmbeds())) {
                     image = msg.getEmbeds().get(0).getUrl();
@@ -248,7 +246,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
                 MessageEmbed messageEmbed = Constants.simpleEmbed("NsfwQuote #" + savedQuote.getId() + " Added",
                         "<@!" + quoterId + "> Added NsfwQuote #" + savedQuote.getId() + msgLink);
 
-                keanuJda.getTextChannelById(channelId).sendMessageEmbeds(messageEmbed).queue();
+                philJda.getTextChannelById(channelId).sendMessageEmbeds(messageEmbed).queue();
             });
         }
     }
@@ -263,7 +261,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
                 .append(quote.getUserId())
                 .append("> ")
                 .append(msgLink);
-        keanuJda.getTextChannelById(event.getChannel().getIdLong())
+        philJda.getTextChannelById(event.getChannel().getIdLong())
                 .sendMessageEmbeds(Constants.simpleEmbed("NsfwQuote #" + quote.getId(), description.toString(), quote.getImage(),
                         TIMESTAMP_FORMAT.format(quote.getCreated()))).queue();
     }

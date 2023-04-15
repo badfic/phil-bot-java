@@ -21,7 +21,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.CommandListener;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -51,77 +50,9 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @Slf4j
 public class BaseConfig {
-    private static final String[] KEANU_STATUS_LIST = {
-            "Bill & Ted Face the Music",
-            "The SpongeBob Movie: Sponge on the Run",
-            "Toy Story 4",
-            "Always Be My Maybe",
-            "John Wick: Chapter 3 - Parabellum",
-            "Replicas",
-            "Destination Wedding",
-            "Siberia",
-            "John Wick: Chapter 2",
-            "Keanu",
-            "John Wick",
-            "Constantine",
-            "Something's Gotta Give",
-            "The Matrix Revolutions",
-            "The Matrix Reloaded",
-            "The Matrix",
-            "Speed",
-            "Bill & Ted's Bogus Journey",
-            "Bill & Ted's Excellent Adventure"
-    };
-
-    private static final String[] BEHRAD_STATUS_LIST = {
-            "Tekken",
-            "in Heyworld",
-            "Street Fighter",
-            "Overwatch",
-            "Super Smash Bros",
-            "Dragon Age Origins",
-            "Ocarina of Time",
-            "Mass Effect",
-            "Mario & Sonic at the Olympic Games",
-            "Sonic the Hedgehog",
-            "Super Mario Bros",
-            "Resident Evil",
-            "Wii Sports"
-    };
-
-    private static final String[] ANTONIA_STATUS_LIST = {
-            "Back in Black - AC/DC",
-            "Highway to Hell - AC/DC",
-            "You Shook Me All Night Long AC/DC",
-            "Shoot to Thrill - AC/DC",
-            "Driving With the Top Down - Ryeland Allison",
-            "Iron Man - Black Sabbath",
-            "For Whom the Bell Tolls - Metallica",
-            "Amerika - Rammstein",
-            "Back in the Saddle - Aerosmith",
-            "Irresistible - Fall Out Boy",
-            "Mad Sounds - Arctic Monkeys",
-            "I Want it All - Queen",
-            "Rock and Roll - Led Zeppelin",
-            "Mr. Brightside - The Killers",
-            "I Write Sins not Tragedies - Panic! At the Disco",
-            "Sugar We're Goin Down - Fall Out Boy"
-    };
 
     @Value("${PHIL_BOT_TOKEN}")
     public String philBotToken;
-
-    @Value("${KEANU_BOT_TOKEN}")
-    public String keanuBotToken;
-
-    @Value("${BEHRAD_BOT_TOKEN}")
-    public String behradBotToken;
-
-    @Value("${ANTONIA_BOT_TOKEN}")
-    public String antoniaBotToken;
-
-    @Value("${JOHN_BOT_TOKEN}")
-    public String johnBotToken;
 
     @Value("${git.commit.id}")
     public String commitSha;
@@ -207,62 +138,6 @@ public class BaseConfig {
         propsConfig.setIgnoreResourceNotFound(true);
         propsConfig.setIgnoreUnresolvablePlaceholders(true);
         return propsConfig;
-    }
-
-    @Bean(name = "antoniaJda")
-    public JDA antoniaJda(ThreadPoolTaskScheduler taskScheduler,
-                          ThreadPoolTaskExecutor threadPoolTaskExecutor,
-                          OkHttpClient okHttpClient) {
-        return JDABuilder.createLight(antoniaBotToken, Collections.emptyList())
-                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
-                .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
-                .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
-                .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
-                .setHttpClient(okHttpClient)
-                .setActivity(Activity.listening(Constants.pickRandom(ANTONIA_STATUS_LIST)))
-                .build();
-    }
-
-    @Bean(name = "johnJda")
-    public JDA johnJda(ThreadPoolTaskScheduler taskScheduler,
-                       ThreadPoolTaskExecutor threadPoolTaskExecutor,
-                       OkHttpClient okHttpClient) {
-        return JDABuilder.createLight(johnBotToken, Collections.emptyList())
-                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
-                .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
-                .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
-                .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
-                .setHttpClient(okHttpClient)
-                .setActivity(Activity.watching("Constantine"))
-                .build();
-    }
-
-    @Bean(name = "behradJda")
-    public JDA behradJda(ThreadPoolTaskScheduler taskScheduler,
-                         ThreadPoolTaskExecutor threadPoolTaskExecutor,
-                         OkHttpClient okHttpClient) {
-        return JDABuilder.createLight(behradBotToken, Collections.emptyList())
-                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
-                .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
-                .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
-                .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
-                .setHttpClient(okHttpClient)
-                .setActivity(Activity.playing(Constants.pickRandom(BEHRAD_STATUS_LIST)))
-                .build();
-    }
-
-    @Bean(name = "keanuJda")
-    public JDA keanuJda(ThreadPoolTaskScheduler taskScheduler,
-                        ThreadPoolTaskExecutor threadPoolTaskExecutor,
-                        OkHttpClient okHttpClient) {
-        return JDABuilder.createLight(keanuBotToken, Collections.emptyList())
-                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
-                .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
-                .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
-                .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
-                .setHttpClient(okHttpClient)
-                .setActivity(Activity.watching(Constants.pickRandom(KEANU_STATUS_LIST)))
-                .build();
     }
 
     @Bean(name = "philCommandClient")

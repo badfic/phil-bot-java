@@ -1,21 +1,24 @@
 package com.badfic.philbot.listeners.behrad;
 
+import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.listeners.BaseTalk;
-import net.dv8tion.jda.api.JDA;
-import org.springframework.beans.factory.annotation.Qualifier;
+import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BehradTalk extends BaseTalk {
-    private final JDA behradJda;
 
-    public BehradTalk(@Qualifier("behradJda") JDA behradJda) {
+    public BehradTalk() {
         super("behradTalk");
-        this.behradJda = behradJda;
     }
 
     @Override
-    public JDA getJda() {
-        return behradJda;
+    public Function<SwampyGamesConfig, String> usernameGetter() {
+        return SwampyGamesConfig::getBehradNickname;
+    }
+
+    @Override
+    public Function<SwampyGamesConfig, String> avatarGetter() {
+        return SwampyGamesConfig::getBehradAvatar;
     }
 }

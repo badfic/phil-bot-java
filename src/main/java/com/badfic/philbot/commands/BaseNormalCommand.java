@@ -4,6 +4,7 @@ import com.badfic.philbot.BaseCommand;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.SwampyGamesConfigDao;
+import com.badfic.philbot.listeners.DiscordWebhookSendService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.Command;
 import lombok.Getter;
@@ -30,6 +31,10 @@ public abstract class BaseNormalCommand extends Command implements BaseCommand {
     @Setter(onMethod_ = {@Autowired})
     @Getter
     protected SwampyGamesConfigDao swampyGamesConfigDao;
+
+    @Setter(onMethod_ = {@Autowired})
+    @Getter
+    protected DiscordWebhookSendService discordWebhookSendService;
 
     @Setter(onMethod_ = {@Autowired})
     @Getter

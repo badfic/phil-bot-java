@@ -1,27 +1,25 @@
 package com.badfic.philbot.listeners.behrad;
 
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.data.SwampyGamesConfig;
+import com.badfic.philbot.service.BaseService;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
-import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BehradMessageListener {
+@RequiredArgsConstructor
+public class BehradMessageListener extends BaseService {
 
     private static final Pattern BEHRAD_PATTERN = Constants.compileWords("behrad|shayan|sobhian|marijuana|weed|420|stoned|stoner|kush|hey b|sup sloth");
     private static final String[] SHAYAN_IMGS = {
@@ -44,64 +42,53 @@ public class BehradMessageListener {
             "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
 
     private final BehradCommand behradCommand;
-    private final JDA behradJda;
-
-    public BehradMessageListener(BehradCommand behradCommand, @Qualifier("behradJda") JDA behradJda) {
-        this.behradCommand = behradCommand;
-        this.behradJda = behradJda;
-    }
 
     @Scheduled(cron = "${swampy.schedule.behrad.humpday}", zone = "${swampy.schedule.timezone}")
     public void humpDay() {
-        TextChannel general = behradJda.getTextChannelsByName("general", false).get(0);
-        general.sendMessage("https://tenor.com/view/itis-wednesdaymy-dudes-wednesday-viralyoutube-gif-18012295").queue();
+        TextChannel general = philJda.getTextChannelsByName("general", false).get(0);
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+
+        discordWebhookSendService.sendMessage(general.getIdLong(), swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
+                "https://tenor.com/view/itis-wednesdaymy-dudes-wednesday-viralyoutube-gif-18012295");
     }
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
-        if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
-            return;
-        }
-
         long channelId = event.getMessage().getChannel().getIdLong();
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
 
         if (msgContent.contains("i'm gay")) {
-            event.getJDA().getTextChannelById(channelId).sendMessage("same").queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(), "same");
             return;
         }
 
         if (msgContent.contains("salsa")) {
-            event.getJDA().getTextChannelById(channelId).sendMessage("you know the rule about salsa ( ͡° ͜ʖ ͡°)").queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
+                    "you know the rule about salsa ( ͡° ͜ʖ ͡°)");
             return;
         }
 
         if (msgContent.contains("sup sloth")) {
-            event.getJDA().getTextChannelById(channelId)
-                    .sendMessage(Constants.pickRandom(SLOTH_GIFS)).queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
+                    Constants.pickRandom(SLOTH_GIFS));
             return;
         }
 
         if (msgContent.contains("shayan") || msgContent.contains("sobhian")) {
-            event.getJDA().getTextChannelById(channelId)
-                    .sendMessage(Constants.pickRandom(SHAYAN_IMGS)).queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
+                    Constants.pickRandom(SHAYAN_IMGS));
             return;
         }
 
         if (WEED_PATTERN.matcher(msgContent).find()) {
-            MessageEmbed messageEmbed = Constants.simpleEmbed(null, null,
-                    "https://cdn.discordapp.com/attachments/323666308107599872/750575541266022410/cfff6b4479a51d245d26cd82e16d4f3f.png",
-                    Constants.SWAMP_GREEN);
-            MessageCreateData message = new MessageCreateBuilder()
-                    .setEmbeds(messageEmbed)
-                    .setContent("420 whatcha smokin?")
-                    .build();
-            event.getJDA().getTextChannelById(channelId)
-                    .sendMessage(message).queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
+                    "420 whatcha smokin? https://cdn.discordapp.com/attachments/323666308107599872/750575541266022410/cfff6b4479a51d245d26cd82e16d4f3f.png");
             return;
         }
 
-        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
+        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
+                discordWebhookSendService);
 
         if (BEHRAD_PATTERN.matcher(msgContent).find()) {
             behradCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));

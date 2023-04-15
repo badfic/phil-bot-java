@@ -3,6 +3,7 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.MemeCommandEntity;
 import com.badfic.philbot.data.MemeCommandRepository;
+import com.badfic.philbot.data.SwampyGamesConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.net.URL;
 import java.util.List;
@@ -10,11 +11,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
 
@@ -24,12 +23,10 @@ public class MemeCommandsService extends BaseService {
 
     private final MemeCommandRepository memeCommandRepository;
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
-    private final JDA behradJda;
 
-    public MemeCommandsService(MemeCommandRepository memeCommandRepository, @Qualifier("behradJda") JDA behradJda, JdbcAggregateTemplate jdbcAggregateTemplate) {
+    public MemeCommandsService(MemeCommandRepository memeCommandRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.memeCommandRepository = memeCommandRepository;
         this.jdbcAggregateTemplate = jdbcAggregateTemplate;
-        this.behradJda = behradJda;
     }
 
     public List<MemeCommandEntity> findAll() {
@@ -114,9 +111,8 @@ public class MemeCommandsService extends BaseService {
                 }
             }
 
-            behradJda.getChannelById(textChannel.getClass(), textChannel.getIdLong())
-                    .sendMessage(url)
-                    .queue();
+            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+            discordWebhookSendService.sendMessage(textChannel.getIdLong(), swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(), url);
         }
     }
 

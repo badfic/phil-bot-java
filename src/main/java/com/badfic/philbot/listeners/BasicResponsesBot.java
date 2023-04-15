@@ -1,15 +1,14 @@
 package com.badfic.philbot.listeners;
 
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.commands.ModHelpAware;
 import com.badfic.philbot.commands.image.BaseTwoUserImageMeme;
-import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.BaseResponsesConfig;
 import com.badfic.philbot.data.BaseResponsesConfigRepository;
 import com.badfic.philbot.data.GenericBotResponsesConfigJson;
+import com.badfic.philbot.data.SwampyGamesConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
@@ -18,10 +17,10 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.imageio.ImageIO;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -32,25 +31,24 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 
 @Slf4j
-public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends Command implements ModHelpAware {
+public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends BaseNormalCommand implements ModHelpAware {
 
     private final BaseResponsesConfigRepository<T> configRepository;
-    private final ObjectMapper objectMapper;
+    private final Function<SwampyGamesConfig, String> usernameGetter;
+    private final Function<SwampyGamesConfig, String> avatarGetter;
     private final String fullCmdPrefix;
     @Getter
     private final String modHelp;
 
-    @Setter(onMethod_ = {@Autowired})
-    private BaseConfig baseConfig;
-
-    public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository, JdbcAggregateTemplate jdbcAggregateTemplate, ObjectMapper objectMapper,
-                             String name, Supplier<T> responsesConfigConstructor) {
+    public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository, JdbcAggregateTemplate jdbcAggregateTemplate,
+                             String name, Supplier<T> responsesConfigConstructor, Function<SwampyGamesConfig, String> usernameGetter,
+                             Function<SwampyGamesConfig, String> avatarGetter) {
         this.configRepository = configRepository;
-        this.objectMapper = objectMapper;
+        this.usernameGetter = usernameGetter;
+        this.avatarGetter = avatarGetter;
 
         this.name = name;
         this.fullCmdPrefix = Constants.PREFIX + name;
@@ -95,8 +93,9 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
         final Guild guild = selfJda.getGuildById(baseConfig.guildId);
 
         Optional<T> optionalConfig = configRepository.findById(Constants.DATA_SINGLETON_ID);
+        long channelId = event.getChannel().getIdLong();
         if (optionalConfig.isEmpty()) {
-            selfJda.getTextChannelById(event.getChannel().getId())
+            selfJda.getTextChannelById(channelId)
                     .sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name)
                     .queue();
             return;
@@ -304,21 +303,31 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends C
 
                 byte[] bytes = BaseTwoUserImageMeme.makeTwoUserMemeImageBytes(selfAvatarUrl, 160, 27, 63, authorAvatarUrl, 160, 187, 24, hugImage);
 
-                selfJda.getTextChannelById(event.getChannel().getId())
-                        .sendMessage(" ")
+                // TODO: Fix bot hugs
+                selfJda.getTextChannelById(channelId)
+                        .sendMessage("ALL HUGS COME FROM PHIL NOW \uD83D\uDE08")
                         .addFiles(FileUpload.fromData(bytes, "hug.png"))
                         .queue();
 
                 return;
             } catch (Exception e) {
                 log.error("{} could not hug [user={}]", getClass().getSimpleName(), event.getAuthor().getAsMention(), e);
-                selfJda.getTextChannelById(event.getChannel().getId()).sendMessage("\uD83E\uDD17").queue();
+                selfJda.getTextChannelById(channelId).sendMessage("\uD83E\uDD17").queue();
             }
         }
 
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+
         getResponse(event, responsesConfig).ifPresent(response -> {
-            selfJda.getTextChannelById(event.getChannel().getId())
-                    .sendMessage(StringUtils.startsWithIgnoreCase(response, "http") ? response : (event.getAuthor().getAsMention() + ", " + response)).queue();
+            String message = StringUtils.startsWithIgnoreCase(response, "http") ? response : (event.getAuthor().getAsMention() + ", " + response);
+            if (usernameGetter == null) {
+                selfJda.getTextChannelById(channelId)
+                        .sendMessage(message)
+                        .queue();
+                return;
+            }
+
+            discordWebhookSendService.sendMessage(channelId, usernameGetter.apply(swampyGamesConfig), avatarGetter.apply(swampyGamesConfig), message);
         });
     }
 

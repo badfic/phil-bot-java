@@ -1,26 +1,16 @@
 package com.badfic.philbot.listeners;
 
-import com.badfic.philbot.config.BaseConfig;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
-import com.jagrosh.jdautilities.command.Command;
+import com.badfic.philbot.data.SwampyGamesConfig;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.concurrent.TimeUnit;
-import lombok.Setter;
-import net.dv8tion.jda.api.JDA;
+import java.util.function.Function;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 
-public abstract class BaseTalk extends Command {
-
-    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
-    protected JDA philJda;
-
-    @Setter(onMethod_ = {@Autowired})
-    private BaseConfig baseConfig;
+public abstract class BaseTalk extends BaseNormalCommand {
 
     public BaseTalk(String name) {
         this.name = name;
@@ -28,7 +18,8 @@ public abstract class BaseTalk extends Command {
         help = Constants.PREFIX + name + " #channel Type Your Message\nExample: !!philTalk #general Hello Swamplings";
     }
 
-    public abstract JDA getJda();
+    public abstract Function<SwampyGamesConfig, String> usernameGetter();
+    public abstract Function<SwampyGamesConfig, String> avatarGetter();
 
     @Override
     public void execute(CommandEvent event) {
@@ -52,15 +43,24 @@ public abstract class BaseTalk extends Command {
         msg = StringUtils.replaceIgnoreCase(msg, Constants.PREFIX + name + " ", "");
         msg = msg.replace(split[0], "").trim();
 
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+
         String finalMsg = msg;
-        getJda()
-                .getTextChannelsByName(split[0].replace("#", ""), true)
+        philJda.getTextChannelsByName(split[0].replace("#", ""), true)
                 .stream()
                 .findFirst()
                 .ifPresent(channel -> {
-                    channel.sendTyping()
-                            .submit()
-                            .thenRun(() -> channel.sendMessage(finalMsg).queueAfter(5, TimeUnit.SECONDS));
+                    long channelId = channel.getIdLong();
+
+                    if (usernameGetter() == null) {
+                        channel.sendTyping()
+                                .submit()
+                                .thenRun(() -> channel.sendMessage(finalMsg).queueAfter(5, TimeUnit.SECONDS));
+                        return;
+                    }
+
+                    discordWebhookSendService.sendMessage(channelId, usernameGetter().apply(swampyGamesConfig), avatarGetter().apply(swampyGamesConfig),
+                            finalMsg);
                 });
     }
 

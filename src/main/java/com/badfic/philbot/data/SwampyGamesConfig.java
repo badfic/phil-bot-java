@@ -344,6 +344,38 @@ public class SwampyGamesConfig {
     private String[] embedFooters = {"powered by 777"};
 
     @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String antoniaNickname = "Antonia";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String antoniaAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096712794457526342/antonia-april-2023.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String behradNickname = "Behrad";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String behradAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096715373245632558/behrad-april-2023.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String johnNickname = "John";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String johnAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096715500895076412/john-april-2023.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    private String keanuNickname = "Keanu";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    private String keanuAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096715831330754560/keanu-april-2023.png";
+
+    @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.LONG)
     private long sfwSavedMemesChannelId = 0;
 

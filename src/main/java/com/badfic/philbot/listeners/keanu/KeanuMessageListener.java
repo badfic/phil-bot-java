@@ -1,24 +1,25 @@
 package com.badfic.philbot.listeners.keanu;
 
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.data.SwampyGamesConfig;
+import com.badfic.philbot.service.BaseService;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
-import net.dv8tion.jda.api.JDA;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KeanuMessageListener {
+@RequiredArgsConstructor
+public class KeanuMessageListener extends BaseService {
 
     private static final Pattern KEANU_PATTERN = Constants.compileWords("keanu|reeves|neo|john wick|puppy|puppies|pupper|doggo|doge");
     private static final String[] FIGHT_GIFS = {
@@ -62,53 +63,45 @@ public class KeanuMessageListener {
             "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
 
     private final KeanuCommand keanuCommand;
-    private final JDA keanuJda;
-
-    public KeanuMessageListener(KeanuCommand keanuCommand, @Qualifier("keanuJda") JDA keanuJda) {
-        this.keanuCommand = keanuCommand;
-        this.keanuJda = keanuJda;
-    }
 
     @Scheduled(cron = "${swampy.schedule.keanu.goodmorning}", zone = "${swampy.schedule.timezone}")
     public void goodMorning() {
-        TextChannel general = keanuJda.getTextChannelsByName("general", false).get(0);
-        general.sendMessage(Constants.pickRandom(GOOD_MORNING_GIFS)).queue();
+        TextChannel general = philJda.getTextChannelsByName("general", false).get(0);
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+
+        discordWebhookSendService.sendMessage(general.getIdLong(), swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(),
+                Constants.pickRandom(GOOD_MORNING_GIFS));
     }
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
-        if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
-            return;
-        }
-
         long channelId = event.getMessage().getChannel().getIdLong();
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
 
         if (msgContent.contains("lightning mcqueen")) {
-            event.getJDA().getTextChannelById(channelId)
-                    .sendMessage("KACHOW!").queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(), "KACHOW!");
             return;
         }
 
         if (msgContent.contains("hello")) {
-            event.getJDA().getTextChannelById(channelId)
-                    .sendMessage(HELLO_GIF).queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(), HELLO_GIF);
             return;
         }
 
         if (msgContent.contains("fight")) {
-            event.getJDA().getTextChannelById(channelId)
-                    .sendMessage(Constants.pickRandom(FIGHT_GIFS)).queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(),
+                    Constants.pickRandom(FIGHT_GIFS));
             return;
         }
 
         if (PUPPY_PATTERN.matcher(msgContent).find()) {
-            event.getJDA().getTextChannelById(channelId)
-                    .sendMessage(PUPPIES_GIF).queue();
+            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(), PUPPIES_GIF);
             return;
         }
 
-        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS);
+        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(),
+                discordWebhookSendService);
 
         if (KEANU_PATTERN.matcher(msgContent).find()) {
             keanuCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
