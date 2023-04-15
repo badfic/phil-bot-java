@@ -6,7 +6,6 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.MinuteTickable;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import jakarta.annotation.PostConstruct;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -31,19 +31,10 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
     // VisibleForTesting
     static final String MAP_ZIP_FILENAME = "map-trivia-flags.zip";
 
-    private MapTriviaObject[] countries;
-
     public MapCommand() {
         name = "map";
         help = "!!map\nTo trigger a Map trivia question that will last 15 minutes";
         requiredRole = Constants.ADMIN_ROLE;
-    }
-
-    @PostConstruct
-    public void init() throws Exception {
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("map-trivia.json")) {
-            countries = objectMapper.readValue(stream, MapTriviaObject[].class);
-        }
     }
 
     @Override
@@ -62,7 +53,7 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
             return;
         }
 
-        MapTriviaObject mapTriviaObject = Constants.pickRandom(countries);
+        MapTriviaObject mapTriviaObject = Constants.pickRandom(getCountries());
         TriviaType triviaType = Constants.pickRandom(TriviaType.values());
 
         swampyGamesConfig.setMapPhrase(mapTriviaObject.regex());
@@ -153,8 +144,11 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
     }
 
     // VisibleForTesting
+    @SneakyThrows
     MapTriviaObject[] getCountries() {
-        return countries;
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("map-trivia.json")) {
+            return objectMapper.readValue(stream, MapTriviaObject[].class);
+        }
     }
 
     // VisibleForTesting
