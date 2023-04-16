@@ -284,14 +284,14 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
             return;
         }
 
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+
         if (StringUtils.containsIgnoreCase(msgContent, "hug")) {
             // Width and Height for scaled profile images: 160px
             // Left image coordinates: (27, 63)
             // Right image coordinate: (187, 24)
 
             try {
-                String selfAvatarUrl = selfJda.getSelfUser().getEffectiveAvatarUrl();
-
                 long authorId = event.getAuthor().getIdLong();
                 Member authorMember = guild.getMemberById(authorId);
                 String authorAvatarUrl = authorMember != null ? authorMember.getEffectiveAvatarUrl() : event.getAuthor().getEffectiveAvatarUrl();
@@ -301,11 +301,17 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                     hugImage = ImageIO.read(Objects.requireNonNull(stream));
                 }
 
-                byte[] bytes = BaseTwoUserImageMeme.makeTwoUserMemeImageBytes(selfAvatarUrl, 160, 27, 63, authorAvatarUrl, 160, 187, 24, hugImage);
+                String botAvatarUrl;
+                if (usernameGetter == null) {
+                    botAvatarUrl = selfJda.getSelfUser().getEffectiveAvatarUrl();
+                } else {
+                    botAvatarUrl = avatarGetter.apply(swampyGamesConfig);
+                }
 
-                // TODO: Fix bot hugs
+                byte[] bytes = BaseTwoUserImageMeme.makeTwoUserMemeImageBytes(botAvatarUrl, 160, 27, 63, authorAvatarUrl, 160, 187, 24, hugImage);
+
                 selfJda.getTextChannelById(channelId)
-                        .sendMessage("ALL HUGS COME FROM PHIL NOW \uD83D\uDE08")
+                        .sendMessage(" ")
                         .addFiles(FileUpload.fromData(bytes, "hug.png"))
                         .queue();
 
@@ -315,8 +321,6 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 selfJda.getTextChannelById(channelId).sendMessage("\uD83E\uDD17").queue();
             }
         }
-
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
 
         getResponse(event, responsesConfig).ifPresent(response -> {
             String message = StringUtils.startsWithIgnoreCase(response, "http") ? response : (event.getAuthor().getAsMention() + ", " + response);
