@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DailyRandomNumber extends NonCommandSwampy {
+public class DailyRandomNumber extends BaseService {
 
     @Scheduled(cron = "${swampy.schedule.phil.dailyrandomnumber}", zone = "${swampy.schedule.timezone}")
     public void dailyRandomNumber() {
