@@ -37,6 +37,8 @@ swampy:
     phil:
       dadjoke: "0 17 7 * * *"
       humpday: "0 1 7 * * WED"
+#      dailyrandomnumber: "0 1 19 * * *"
+      dailyrandomnumber: "0 34 23 * * *"
 
     behrad:
       humpday: "0 2 7 * * WED"
