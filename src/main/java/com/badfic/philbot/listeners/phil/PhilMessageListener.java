@@ -27,7 +27,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
@@ -49,7 +48,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -105,12 +103,6 @@ public class PhilMessageListener extends ListenerAdapter {
 
     public static void addReactionTask(String messageId, Function<MessageReactionAddEvent, Boolean> function) {
         OUTSTANDING_REACTION_TASKS.put(messageId, function);
-    }
-
-    @Scheduled(cron = "${swampy.schedule.phil.humpday}", zone = "${swampy.schedule.timezone}")
-    public void humpDay() {
-        TextChannel general = philJda.getTextChannelsByName("general", false).get(0);
-        general.sendMessage("https://cdn.discordapp.com/attachments/323666308107599872/834310518478471218/mullethumpygrinch.png").queue();
     }
 
     @Override

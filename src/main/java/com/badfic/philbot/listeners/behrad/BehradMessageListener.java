@@ -9,12 +9,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -42,15 +40,6 @@ public class BehradMessageListener extends BaseService {
             "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
 
     private final BehradCommand behradCommand;
-
-    @Scheduled(cron = "${swampy.schedule.behrad.humpday}", zone = "${swampy.schedule.timezone}")
-    public void humpDay() {
-        TextChannel general = philJda.getTextChannelsByName("general", false).get(0);
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
-
-        discordWebhookSendService.sendMessage(general.getIdLong(), swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
-                "https://tenor.com/view/itis-wednesdaymy-dudes-wednesday-viralyoutube-gif-18012295");
-    }
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
