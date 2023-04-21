@@ -1,23 +1,28 @@
 <configuration>
-    <!-- Configure the Console appender -->
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Configure the Sentry appender, overriding the logging threshold to the WARN level -->
+    <!-- For the Sentry appender, the logging threshold is automatically set to ERROR by default -->
     <appender name="Sentry" class="io.sentry.logback.SentryAppender">
         <options>
-            <!-- NOTE: Replace the test DSN below with YOUR OWN DSN to see the events from this app in your Sentry project/dashboard -->
             <dsn>${SENTRY_URL}</dsn>
         </options>
     </appender>
 
-    <!-- Enable the Console and Sentry appenders, Console is provided as an example
- of a non-Sentry logger that is set to a different logging threshold -->
+    <appender name="Logflare" class="com.badfic.philbot.log.LogflareAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <logflareUrl>${LOGFLARE_URL}</logflareUrl>
+        <logflareApiKey>${LOGFLARE_API_KEY}</logflareApiKey>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="Console" />
+        <appender-ref ref="Logflare" />
         <appender-ref ref="Sentry" />
     </root>
 </configuration>

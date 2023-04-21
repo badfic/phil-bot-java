@@ -28,11 +28,20 @@ DISCORD_CLIENT_SECRET
 
 HOSTNAME
 
-SENTRY_URL
-
 TUMBLR_CONSUMER_KEY
 
 OWNCAST_INSTANCE
+```
+
+For error handling, a sentry.io account can be setup and the following env var is required
+```
+SENTRY_URL
+```
+
+For log management, a logflare.app account can be setup and the following env vars are required
+```
+LOGFLARE_URL
+LOGFLARE_API_KEY
 ```
 
 ---
