@@ -11,6 +11,7 @@ import com.badfic.philbot.listeners.behrad.BehradMessageListener;
 import com.badfic.philbot.listeners.john.JohnMessageListener;
 import com.badfic.philbot.listeners.keanu.KeanuMessageListener;
 import com.badfic.philbot.service.Ao3MetadataParser;
+import com.badfic.philbot.service.HungerGamesWinnersService;
 import com.badfic.philbot.service.MemeCommandsService;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
@@ -50,6 +52,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class PhilMessageListener extends ListenerAdapter {
@@ -69,6 +72,7 @@ public class PhilMessageListener extends ListenerAdapter {
     private final JohnMessageListener johnMessageListener;
     private final NsfwQuoteCommand nsfwQuoteCommand;
     private final QuoteCommand quoteCommand;
+    private final HungerGamesWinnersService hungerGamesWinnersService;
     private final SwampyCommand swampyCommand;
     private final MemeCommandsService memeCommandsService;
     private final Ao3MetadataParser ao3MetadataParser;
@@ -83,23 +87,6 @@ public class PhilMessageListener extends ListenerAdapter {
 
     @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
     private JDA philJda;
-
-    public PhilMessageListener(BehradMessageListener behradMessageListener, KeanuMessageListener keanuMessageListener,
-                               AntoniaMessageListener antoniaMessageListener, JohnMessageListener johnMessageListener, NsfwQuoteCommand nsfwQuoteCommand,
-                               QuoteCommand quoteCommand, MemeCommandsService memeCommandsService, Ao3MetadataParser ao3MetadataParser, MemberCount memberCount,
-                               BaseConfig baseConfig, SwampyCommand swampyCommand) {
-        this.behradMessageListener = behradMessageListener;
-        this.keanuMessageListener = keanuMessageListener;
-        this.antoniaMessageListener = antoniaMessageListener;
-        this.johnMessageListener = johnMessageListener;
-        this.nsfwQuoteCommand = nsfwQuoteCommand;
-        this.quoteCommand = quoteCommand;
-        this.memeCommandsService = memeCommandsService;
-        this.ao3MetadataParser = ao3MetadataParser;
-        this.memberCount = memberCount;
-        this.baseConfig = baseConfig;
-        this.swampyCommand = swampyCommand;
-    }
 
     public static void addReactionTask(String messageId, Function<MessageReactionAddEvent, Boolean> function) {
         OUTSTANDING_REACTION_TASKS.put(messageId, function);
@@ -174,6 +161,10 @@ public class PhilMessageListener extends ListenerAdapter {
 
             if (nsfwQuoteCommand.getEmoji().equals(emoji.asUnicode().getName())) {
                 nsfwQuoteCommand.saveQuote(event);
+            }
+
+            if (hungerGamesWinnersService.getEmoji().equals(emoji.asUnicode().getName())) {
+                hungerGamesWinnersService.addWinner(event);
             }
         }
 
