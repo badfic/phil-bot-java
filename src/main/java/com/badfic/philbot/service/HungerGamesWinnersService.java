@@ -67,7 +67,7 @@ public class HungerGamesWinnersService extends BaseNormalCommand {
 
         TextChannel textChannel = philJda.getTextChannelById(channelId);
 
-        if (!"the-hungerdome".equals(textChannel.getName())) {
+        if (!Constants.HUNGERDOME_CHANNEL.equals(textChannel.getName())) {
             return;
         }
 
