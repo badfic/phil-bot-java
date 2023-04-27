@@ -21,8 +21,8 @@ public class PhilsJokes extends BaseService {
         ResponseEntity<String> dadJoke = restTemplate.exchange("https://icanhazdadjoke.com/", HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
         if (dadJoke.getBody() != null) {
-            philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).stream().findAny().ifPresent(swampysChannel -> {
-                swampysChannel.sendMessage(dadJoke.getBody()).queue();
+            philJda.getTextChannelsByName("general", false).stream().findAny().ifPresent(channel -> {
+                channel.sendMessage(dadJoke.getBody()).queue();
             });
         }
     }
