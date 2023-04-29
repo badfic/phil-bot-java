@@ -2,9 +2,9 @@ name: Docker
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 env:
   REGISTRY: ghcr.io
@@ -18,30 +18,32 @@ jobs:
       packages: write
 
     steps:
+      # https://github.com/actions/checkout
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v3
+      # https://github.com/actions/setup-java
+      - name: Setup Java
+        uses: actions/setup-java@v3
         with:
           distribution: 'liberica'
           java-version: '17'
           cache: 'maven'
+
       - name: Build with Maven
         env:
           AIRTABLE_API_TOKEN: ${{ secrets.AIRTABLE_API_TOKEN }}
         run: mvn install
 
-      # Login to a Docker registry
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
+        if: ${{ github.event_name != 'pull_request' }}
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
@@ -49,10 +51,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
-        id: build-and-push
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -61,7 +61,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       # https://github.com/appleboy/ssh-action
-      - name: executing remote ssh commands using password
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.10
         if: ${{ github.event_name != 'pull_request' }}
         with:
