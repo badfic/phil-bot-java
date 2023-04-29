@@ -63,7 +63,7 @@ jobs:
       # https://github.com/appleboy/ssh-action
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.10
-#        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
