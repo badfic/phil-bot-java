@@ -1,6 +1,6 @@
 package com.badfic.philbot.web.members;
 
-import com.badfic.philbot.data.ReminderDao;
+import com.badfic.philbot.data.ReminderDal;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.ZoneId;
 import java.util.HashMap;
@@ -17,10 +17,10 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class RemindersController extends BaseMembersController {
 
-    private final ReminderDao reminderDao;
+    private final ReminderDal reminderDal;
 
-    public RemindersController(ReminderDao reminderDao) {
-        this.reminderDao = reminderDao;
+    public RemindersController(ReminderDal reminderDal) {
+        this.reminderDal = reminderDal;
     }
 
     @GetMapping(value = "/reminders", produces = MediaType.TEXT_HTML_VALUE)
@@ -28,7 +28,7 @@ public class RemindersController extends BaseMembersController {
         checkSession(httpServletRequest, false);
         Guild guild = philJda.getGuildById(baseConfig.guildId);
 
-        List<SimpleReminder> simpleReminderList = reminderDao.findAll()
+        List<SimpleReminder> simpleReminderList = reminderDal.findAll()
                 .stream()
                 .map(r -> {
                     long userId = r.getUserId();

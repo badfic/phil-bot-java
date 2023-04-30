@@ -2,7 +2,7 @@ package com.badfic.philbot.listeners.john;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.Reminder;
-import com.badfic.philbot.data.ReminderDao;
+import com.badfic.philbot.data.ReminderDal;
 import com.badfic.philbot.data.SnarkyReminderResponse;
 import com.badfic.philbot.data.SnarkyReminderResponseRepository;
 import com.badfic.philbot.data.SwampyGamesConfig;
@@ -98,13 +98,13 @@ public class JohnMessageListener extends BaseService {
             "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
 
     private final JohnCommand johnCommand;
-    private final ReminderDao reminderDao;
+    private final ReminderDal reminderDal;
     private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
         if (REMINDER_PATTER.matcher(msgContent).find()) {
             addReminder(event.getMessage(), swampyGamesConfig);
@@ -205,7 +205,7 @@ public class JohnMessageListener extends BaseService {
                 dueDate = dueDate.plus(number, ChronoUnit.DAYS);
             }
 
-            Reminder savedReminder = reminderDao.insert(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
+            Reminder savedReminder = reminderDal.insert(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
             SnarkyReminderResponse snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
 
             discordWebhookSendService.sendMessage(message.getChannel().getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),

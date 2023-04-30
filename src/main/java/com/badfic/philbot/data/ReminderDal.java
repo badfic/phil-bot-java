@@ -8,12 +8,12 @@ import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReminderDao {
+public class ReminderDal {
     private final ReminderRepository reminderRepository;
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
     private final Cache<Long, Reminder> cache;
 
-    public ReminderDao(ReminderRepository reminderRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+    public ReminderDal(ReminderRepository reminderRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.reminderRepository = reminderRepository;
         this.jdbcAggregateTemplate = jdbcAggregateTemplate;
         cache = Caffeine.newBuilder().build();

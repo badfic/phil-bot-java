@@ -2,7 +2,7 @@ package com.badfic.philbot.commands;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.CourtCase;
-import com.badfic.philbot.data.CourtCaseDao;
+import com.badfic.philbot.data.CourtCaseDal;
 import com.badfic.philbot.service.MinuteTickable;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.Duration;
@@ -47,15 +47,15 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
         }
     }
 
-    private final CourtCaseDao courtCaseDao;
+    private final CourtCaseDal courtCaseDal;
 
-    public JudgeCommand(CourtCaseDao courtCaseDao) {
+    public JudgeCommand(CourtCaseDal courtCaseDal) {
         name = "judge";
         help = """
                 `!!judge @user for such and such crime` To judge a user for various crimes. People then vote on their sentence in mega-hell
                 `!!judge mistrial @user` if you accidentally judged them you can cancel the trial, but only if they have not been convicted yet.
                 `!!judge show @user` to see how much longer the person has for their trial or their sentence.""";
-        this.courtCaseDao = courtCaseDao;
+        this.courtCaseDal = courtCaseDal;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
         Member accuser = event.getMember();
         Member defendant = event.getMessage().getMentions().getMembers().get(0);
 
-        Optional<CourtCase> optionalExistingCase = courtCaseDao.findById(defendant.getIdLong());
+        Optional<CourtCase> optionalExistingCase = courtCaseDal.findById(defendant.getIdLong());
 
         if (event.getArgs().startsWith("mistrial")) {
             if (optionalExistingCase.isPresent()) {
@@ -78,7 +78,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                         && accuser.getIdLong() == courtCase.getAccuserId()
                         && courtCase.getReleaseDate() == null) {
                     long trialMessageId = courtCase.getTrialMessageId();
-                    courtCaseDao.deleteById(courtCase.getDefendantId());
+                    courtCaseDal.deleteById(courtCase.getDefendantId());
                     swampysChannel.retrieveMessageById(trialMessageId)
                             .queue(msg -> msg.delete().queue());
                     event.reply("The accuser has declared a mistrial. " + defendant.getEffectiveName() + " is free to go");
@@ -126,7 +126,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
         swampysChannel.sendMessageEmbeds(Constants.simpleEmbedThumbnail("Jury Summons", description, defendant.getEffectiveAvatarUrl())).queue(msg -> {
             CourtCase courtCase = new CourtCase(defendant.getIdLong(), accuser.getIdLong(), msg.getIdLong(), finalCrime,
                     LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
-            courtCaseDao.insert(courtCase);
+            courtCaseDal.insert(courtCase);
 
             msg.addReaction(Emoji.fromUnicode(Sentence.ACQUIT.getEmoji())).queue();
             msg.addReaction(Emoji.fromUnicode(Sentence.ONE_HOUR.getEmoji())).queue();
@@ -143,7 +143,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
         TextChannel megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).get(0);
         LocalDateTime now = LocalDateTime.now();
 
-        for (CourtCase courtCase : courtCaseDao.findAll()) {
+        for (CourtCase courtCase : courtCaseDal.findAll()) {
             try {
                 if (courtCase.getTrialDate() != null && courtCase.getTrialDate().isBefore(now)) {
                     try {
@@ -174,7 +174,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
 
                         if (sentenceMap.entrySet().stream().allMatch(e -> e.getValue().getValue() == 0)) {
                             swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been acquitted").queue();
-                            courtCaseDao.deleteById(courtCase.getDefendantId());
+                            courtCaseDal.deleteById(courtCase.getDefendantId());
                             continue;
                         }
 
@@ -186,13 +186,13 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                         switch (winningSentence) {
                             case ACQUIT -> {
                                 swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been acquitted").queue();
-                                courtCaseDao.deleteById(courtCase.getDefendantId());
+                                courtCaseDal.deleteById(courtCase.getDefendantId());
                             }
                             case ONE_HOUR -> {
                                 guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusHours(1));
-                                courtCaseDao.update(courtCase);
+                                courtCaseDal.update(courtCase);
                                 swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
                                         + courtCase.getCrime()).queue();
                                 megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
@@ -202,7 +202,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                                 guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusHours(5));
-                                courtCaseDao.update(courtCase);
+                                courtCaseDal.update(courtCase);
                                 swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 5 hours in mega hell for "
                                         + courtCase.getCrime()).queue();
                                 megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 5 hours in mega hell for "
@@ -212,7 +212,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                                 guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusDays(1));
-                                courtCaseDao.update(courtCase);
+                                courtCaseDal.update(courtCase);
                                 swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 day in mega hell for "
                                         + courtCase.getCrime()).queue();
                                 megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 day in mega hell for "
@@ -221,11 +221,11 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                         }
                     } catch (Exception e) {
                         log.error("Error with trial for [userId={}]", courtCase.getDefendantId(), e);
-                        courtCaseDao.deleteById(courtCase.getDefendantId());
+                        courtCaseDal.deleteById(courtCase.getDefendantId());
                         swampysChannel.sendMessage("Trial for <@!" + courtCase.getDefendantId() + "> aborted.").queue();
                     }
                 } else if (courtCase.getReleaseDate() != null && courtCase.getReleaseDate().isBefore(now)) {
-                    courtCaseDao.deleteById(courtCase.getDefendantId());
+                    courtCaseDal.deleteById(courtCase.getDefendantId());
 
                     try {
                         guild.removeRoleFromMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();

@@ -2,7 +2,7 @@ package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.data.SwampyGamesConfigDao;
+import com.badfic.philbot.data.SwampyGamesConfigDal;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -29,7 +29,7 @@ public class Ao3MetadataParserTest {
     private RestTemplate restTemplate;
 
     @Mock
-    private SwampyGamesConfigDao swampyGamesConfigDao;
+    private SwampyGamesConfigDal swampyGamesConfigDal;
 
     @InjectMocks
     private Ao3MetadataParser ao3MetadataParser;
@@ -38,8 +38,8 @@ public class Ao3MetadataParserTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        Mockito.doReturn(new SwampyGamesConfig()).when(swampyGamesConfigDao).get();
-        new Constants(swampyGamesConfigDao).init();
+        Mockito.doReturn(new SwampyGamesConfig()).when(swampyGamesConfigDal).get();
+        new Constants(swampyGamesConfigDal).init();
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("ao3-test.html")) {
             work = new String(Objects.requireNonNull(stream).readAllBytes(), StandardCharsets.UTF_8);
         }

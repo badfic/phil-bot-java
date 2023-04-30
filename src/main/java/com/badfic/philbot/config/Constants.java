@@ -1,6 +1,6 @@
 package com.badfic.philbot.config;
 
-import com.badfic.philbot.data.SwampyGamesConfigDao;
+import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.listeners.DiscordWebhookSendService;
 import jakarta.annotation.PostConstruct;
 import java.awt.Color;
@@ -63,7 +63,7 @@ public class Constants {
 
     public static final Short DATA_SINGLETON_ID = 1;
 
-    private final SwampyGamesConfigDao swampyGamesConfigDao;
+    private final SwampyGamesConfigDal swampyGamesConfigDal;
 
     @PostConstruct
     public void init() {
@@ -71,7 +71,7 @@ public class Constants {
     }
 
     public static Color colorOfTheMonth() {
-        String[] colors = SINGLETON.swampyGamesConfigDao.get().getMonthlyColors();
+        String[] colors = SINGLETON.swampyGamesConfigDal.get().getMonthlyColors();
         String color = pickRandom(colors);
         return Color.decode(color);
     }
@@ -275,7 +275,7 @@ public class Constants {
             finalDesc = null;
         }
 
-        String[] footers = SINGLETON.swampyGamesConfigDao.get().getEmbedFooters();
+        String[] footers = SINGLETON.swampyGamesConfigDal.get().getEmbedFooters();
         String footerAddition = pickRandom(footers);
 
         footer = footer != null ? (footer + "\n" + footerAddition) : footerAddition;

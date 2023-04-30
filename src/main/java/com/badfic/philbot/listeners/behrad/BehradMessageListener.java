@@ -45,7 +45,7 @@ public class BehradMessageListener extends BaseService {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
         long channelId = event.getMessage().getChannel().getIdLong();
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
         if (msgContent.contains("i'm gay")) {
             discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(), "same");
