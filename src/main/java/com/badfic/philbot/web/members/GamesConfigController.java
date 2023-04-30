@@ -2,7 +2,7 @@ package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.ControllerConfigurable;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.data.SwampyGamesConfigDao;
+import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
@@ -24,14 +24,14 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 public class GamesConfigController extends BaseMembersController {
 
-    private final SwampyGamesConfigDao swampyGamesConfigDao;
+    private final SwampyGamesConfigDal swampyGamesConfigDal;
     private final ObjectMapper objectMapper;
 
     @GetMapping(value = "/games-config", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
         List<ConfigEntryGet> configEntries = new ArrayList<>();
 
@@ -74,7 +74,7 @@ public class GamesConfigController extends BaseMembersController {
                 return ResponseEntity.badRequest().build();
             }
 
-            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
             switch (controllerConfigurableAnnotation.type()) {
                 case INT -> {
@@ -96,7 +96,7 @@ public class GamesConfigController extends BaseMembersController {
                 default -> throw new IllegalStateException();
             }
 
-            swampyGamesConfigDao.update(swampyGamesConfig);
+            swampyGamesConfigDal.update(swampyGamesConfig);
         }
 
         return ResponseEntity.ok("Saved. If it was an image you'll have to refresh to see the new image.");

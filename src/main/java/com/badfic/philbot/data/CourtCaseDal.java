@@ -8,12 +8,12 @@ import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CourtCaseDao {
+public class CourtCaseDal {
     private final CourtCaseRepository courtCaseRepository;
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
     private final Cache<Long, CourtCase> cache;
 
-    public CourtCaseDao(CourtCaseRepository courtCaseRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+    public CourtCaseDal(CourtCaseRepository courtCaseRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.courtCaseRepository = courtCaseRepository;
         this.jdbcAggregateTemplate = jdbcAggregateTemplate;
         cache = Caffeine.newBuilder().build();

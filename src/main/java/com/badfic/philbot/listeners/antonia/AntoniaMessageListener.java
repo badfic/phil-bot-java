@@ -33,7 +33,7 @@ public class AntoniaMessageListener extends BaseService {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
         long channelId = event.getMessage().getChannel().getIdLong();
 

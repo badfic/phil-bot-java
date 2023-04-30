@@ -67,7 +67,7 @@ public class KeanuMessageListener extends BaseService {
     @Scheduled(cron = "${swampy.schedule.keanu.goodmorning}", zone = "${swampy.schedule.timezone}")
     public void goodMorning() {
         TextChannel general = philJda.getTextChannelsByName("general", false).get(0);
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
         discordWebhookSendService.sendMessage(general.getIdLong(), swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(),
                 Constants.pickRandom(GOOD_MORNING_GIFS));
@@ -77,7 +77,7 @@ public class KeanuMessageListener extends BaseService {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
         long channelId = event.getMessage().getChannel().getIdLong();
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
         if (msgContent.contains("lightning mcqueen")) {
             discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(), "KACHOW!");

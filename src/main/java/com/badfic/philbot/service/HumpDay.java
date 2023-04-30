@@ -17,7 +17,7 @@ public class HumpDay extends BaseService {
     @Scheduled(cron = "${swampy.schedule.behrad.humpday}", zone = "${swampy.schedule.timezone}")
     public void behradHumpDay() {
         philJda.getTextChannelsByName("general", false).stream().findAny().ifPresent(channel -> {
-            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
             discordWebhookSendService.sendMessage(channel.getIdLong(), swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
                     "https://tenor.com/view/itis-wednesdaymy-dudes-wednesday-viralyoutube-gif-18012295");

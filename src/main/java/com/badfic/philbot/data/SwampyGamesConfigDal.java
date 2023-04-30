@@ -6,12 +6,12 @@ import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SwampyGamesConfigDao {
+public class SwampyGamesConfigDal {
 
     private final SwampyGamesConfigRepository swampyGamesConfigRepository;
     private final AtomicReference<SwampyGamesConfig> reference;
 
-    public SwampyGamesConfigDao(SwampyGamesConfigRepository swampyGamesConfigRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+    public SwampyGamesConfigDal(SwampyGamesConfigRepository swampyGamesConfigRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.swampyGamesConfigRepository = swampyGamesConfigRepository;
 
         SwampyGamesConfig config = swampyGamesConfigRepository.findById(Constants.DATA_SINGLETON_ID).orElseGet(() -> {

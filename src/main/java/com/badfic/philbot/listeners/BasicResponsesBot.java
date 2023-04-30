@@ -284,7 +284,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
             return;
         }
 
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
         if (StringUtils.containsIgnoreCase(msgContent, "hug")) {
             // Width and Height for scaled profile images: 160px

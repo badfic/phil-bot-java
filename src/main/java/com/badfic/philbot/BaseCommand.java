@@ -7,7 +7,7 @@ import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.data.SwampyGamesConfigDao;
+import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
@@ -37,7 +37,7 @@ public interface BaseCommand {
 
     DiscordUserRepository getDiscordUserRepository();
 
-    SwampyGamesConfigDao getSwampyGamesConfigDao();
+    SwampyGamesConfigDal getSwampyGamesConfigDal();
 
     ObjectMapper getObjectMapper();
 
@@ -136,11 +136,11 @@ public interface BaseCommand {
     }
 
     default SwampyGamesConfig getSwampyGamesConfig()  {
-        return getSwampyGamesConfigDao().get();
+        return getSwampyGamesConfigDal().get();
     }
 
     default SwampyGamesConfig saveSwampyGamesConfig(SwampyGamesConfig swampyGamesConfig) {
-        return getSwampyGamesConfigDao().update(swampyGamesConfig);
+        return getSwampyGamesConfigDal().update(swampyGamesConfig);
     }
 
 }

@@ -2,7 +2,7 @@ package com.badfic.philbot.commands;
 
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.Reminder;
-import com.badfic.philbot.data.ReminderDao;
+import com.badfic.philbot.data.ReminderDal;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.MinuteTickable;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -18,9 +18,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class RemindersCommand extends BaseNormalCommand implements MinuteTickable {
 
-    private final ReminderDao reminderDao;
+    private final ReminderDal reminderDal;
 
-    public RemindersCommand(ReminderDao reminderDao) {
+    public RemindersCommand(ReminderDal reminderDal) {
         name = "reminders";
         aliases = new String[] {"reminder"};
         help = """
@@ -28,13 +28,13 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
                 `!!reminders` lists all reminders
                 `!!reminders 5` Show reminder number 5
                 `!!reminders delete 5` Delete reminder number 5""";
-        this.reminderDao = reminderDao;
+        this.reminderDal = reminderDal;
     }
 
     @Override
     protected void execute(CommandEvent event) {
         if (StringUtils.isBlank(event.getArgs())) {
-            Collection<Reminder> reminders = reminderDao.findAll();
+            Collection<Reminder> reminders = reminderDal.findAll();
 
             StringBuilder description = new StringBuilder();
             for (Reminder reminder : reminders) {
@@ -55,8 +55,8 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
 
             try {
                 long toDelete = Long.parseLong(number);
-                if (reminderDao.existsById(toDelete)) {
-                    reminderDao.deleteById(toDelete);
+                if (reminderDal.existsById(toDelete)) {
+                    reminderDal.deleteById(toDelete);
                     event.replySuccess("Deleted reminder #" + toDelete);
                 } else {
                     event.replySuccess("Reminder #" + toDelete + " doesn't exist");
@@ -69,7 +69,7 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
 
             try {
                 long toLookup = Long.parseLong(number);
-                Optional<Reminder> optionalReminder = reminderDao.findById(toLookup);
+                Optional<Reminder> optionalReminder = reminderDal.findById(toLookup);
 
                 if (optionalReminder.isPresent()) {
                     Reminder reminder = optionalReminder.get();
@@ -103,15 +103,15 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
     @Override
     public void runMinutelyTask() {
         LocalDateTime now = LocalDateTime.now();
-        for (Reminder reminder : reminderDao.findAll()) {
+        for (Reminder reminder : reminderDal.findAll()) {
             if (now.isEqual(reminder.getDueDate()) || now.isAfter(reminder.getDueDate())) {
                 TextChannel textChannelById = philJda.getTextChannelById(reminder.getChannelId());
 
                 if (textChannelById != null) {
-                    SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDao.get();
+                    SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
                     discordWebhookSendService.sendMessage(textChannelById.getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
                             "(reminder #" + reminder.getId() + ") <@!" + reminder.getUserId() + "> " + reminder.getReminder());
-                    reminderDao.deleteById(reminder.getId());
+                    reminderDal.deleteById(reminder.getId());
                 }
             }
         }
