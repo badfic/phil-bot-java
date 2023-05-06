@@ -1,29 +1,43 @@
 {{> members-header}}
 <div class="container-fluid">
     <h1>Games Config</h1>
+    <h5>Click on a category below:</h5>
 
-    {{#configEntries}}
-        <div class="row">
-            <form id="{{fieldName}}" class="form-inline p-3">
-                <div class="form-group mx-sm-3 mb-2">
-                    <span>{{fieldName}}&nbsp;&nbsp;</span>
-                    {{#valueIsSet}}
-                        <textarea id="{{fieldName}}-value">{{fieldValue}}</textarea>
-                    {{/valueIsSet}}
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+    {{#categories}}
+        <li class="nav-item" role="presentation" id="{{.}}">
+            <button class="nav-link" id="{{.}}" data-toggle="tab" data-target="#{{.}}-panel" type="button" role="tab" aria-controls="home" aria-selected="false">{{.}}</button>
+        </li>
+    {{/categories}}
+    </ul>
+    <div class="tab-content" id="categories-tabs-content">
+        {{#configEntries}}
+            <div class="tab-pane fade" id="{{key}}-panel" role="tabpanel" aria-labelledby="{{key}}">
+                {{#value}}
+                    <div class="row">
+                        <form id="{{fieldName}}" class="form-inline p-3">
+                            <div class="form-group mx-sm-3 mb-2">
+                                <span>{{fieldName}}&nbsp;&nbsp;</span>
+                                {{#valueIsSet}}
+                                    <textarea id="{{fieldName}}-value">{{fieldValue}}</textarea>
+                                {{/valueIsSet}}
 
-                    {{^valueIsSet}}
-                        <input type="text" class="form-control" id="{{fieldName}}-value" value="{{fieldValue}}">
-                    {{/valueIsSet}}
+                                {{^valueIsSet}}
+                                    <input type="text" class="form-control" id="{{fieldName}}-value" value="{{fieldValue}}">
+                                {{/valueIsSet}}
 
-                    {{#valueIsImg}}
-                        &nbsp;&nbsp;<img src="{{fieldValue}}" height="70" width="70"/>
-                    {{/valueIsImg}}
-                    <span></span>
-                </div>
-                <button type="submit" class="btn btn-dark mb-2">Save</button>
-            </form>
-        </div>
-    {{/configEntries}}
+                                {{#valueIsImg}}
+                                    &nbsp;&nbsp;<img src="{{fieldValue}}" height="70" width="70"/>
+                                {{/valueIsImg}}
+                                <span></span>
+                            </div>
+                            <button type="submit" class="btn btn-dark mb-2">Save</button>
+                        </form>
+                    </div>
+                {{/value}}
+            </div>
+        {{/configEntries}}
+    </div>
 </div>
 
 <script>

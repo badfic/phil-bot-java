@@ -6,15 +6,15 @@ import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +33,7 @@ public class GamesConfigController extends BaseMembersController {
 
         SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
-        List<ConfigEntryGet> configEntries = new ArrayList<>();
+        MultiValueMap<ControllerConfigurable.Category, ConfigEntryGet> configEntries = new LinkedMultiValueMap<>();
 
         for (Field declaredField : SwampyGamesConfig.class.getDeclaredFields()) {
             ControllerConfigurable annotation = declaredField.getAnnotation(ControllerConfigurable.class);
@@ -42,11 +42,11 @@ public class GamesConfigController extends BaseMembersController {
 
                 switch (annotation.type()) {
                     case INT, LONG, STRING ->
-                            configEntries.add(new ConfigEntryGet(declaredField.getName(), declaredField.get(swampyGamesConfig).toString(), false, false));
+                            configEntries.add(annotation.category(), new ConfigEntryGet(declaredField.getName(), declaredField.get(swampyGamesConfig).toString(), false, false));
                     case IMG ->
-                            configEntries.add(new ConfigEntryGet(declaredField.getName(), declaredField.get(swampyGamesConfig).toString(), true, false));
+                            configEntries.add(annotation.category(), new ConfigEntryGet(declaredField.getName(), declaredField.get(swampyGamesConfig).toString(), true, false));
                     case STRING_SET ->
-                            configEntries.add(new ConfigEntryGet(declaredField.getName(), objectMapper.writeValueAsString(declaredField.get(swampyGamesConfig)), false, true));
+                            configEntries.add(annotation.category(), new ConfigEntryGet(declaredField.getName(), objectMapper.writeValueAsString(declaredField.get(swampyGamesConfig)), false, true));
                     default -> throw new IllegalStateException();
                 }
             }
@@ -55,7 +55,8 @@ public class GamesConfigController extends BaseMembersController {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Games Config");
         addCommonProps(httpServletRequest.getSession(), props);
-        props.put("configEntries", configEntries);
+        props.put("configEntries", configEntries.entrySet());
+        props.put("categories", ControllerConfigurable.Category.values());
 
         return new ModelAndView("games-config", props);
     }

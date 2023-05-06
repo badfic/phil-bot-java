@@ -76,311 +76,311 @@ public class SwampyGamesConfig {
     private LocalDateTime nsfwQuoteTriviaExpiration;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.MESSAGE)
     private int normalMsgPoints = 5;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.MESSAGE)
     private int pictureMsgPoints = 250;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.MESSAGE)
     private int pictureMsgTimeoutMinutes = 3;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.MESSAGE)
     private int reactionPoints = 7;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.MESSAGE)
     private int vcPointsPerMinute = 5;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.MESSAGE)
     private int noNoWordsPoints = 100;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.UPVOTE)
     private int upvotePointsToUpvotee = 500;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.UPVOTE)
     private int upvotePointsToUpvoter = 125;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.UPVOTE)
     private int upvoteTimeoutMinutes = 1;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.UPVOTE)
     private int downvotePointsFromDownvotee = 100;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.UPVOTE)
     private int downvotePointsToDownvoter = 50;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.UPVOTE)
     private int downvoteTimeoutMinutes = 1;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SLOTS)
     private int slotsWinPoints = 10000;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SLOTS)
     private int slotsTwoOfThreePoints = 50;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SLOTS)
     private int slotsTimeoutMinutes = 3;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET, category = ControllerConfigurable.Category.SLOTS)
+    private String[] slotsEmoji = {"🍓","🍍","🍊","🍋","🍇","🍉","🍌","🍒","🍎"};
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.CARROT)
     private int carrotEventPoints = 1000;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.CARROT)
     private String carrotImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.CARROT)
     private String carrotName = "The Carrot Person";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.POTATO)
     private int potatoEventPoints = 1000;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.POTATO)
     private String potatoImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.POTATO)
     private String potatoName = "The Potato Person";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.GLITTER)
     private int glitterEventPoints = 1000;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.GLITTER)
     private String glitterImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.GLITTER)
     private String glitterName = "The Glitter Person";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.BOOST)
     private int boostEventPoints = 1000;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.BOOST)
     private int percentChanceBoostHappensOnHour = 15;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.BOOST)
     private String boostStartImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.BOOST)
     private String boostEndImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET, category = ControllerConfigurable.Category.BOOST)
+    private String[] boostWords = {"boost"};
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TRIVIAS)
     private int mapEventPoints = 100;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TRIVIAS)
     private int triviaEventPoints = 100;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TRIVIAS)
     private int quoteTriviaEventPoints = 100;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TRIVIAS)
     private int nsfwQuoteTriviaEventPoints = 100;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.REFUND)
     private int robinhoodMinPercent = 5;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.REFUND)
     private int robinhoodMaxPercent = 16;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.REFUND)
     private int percentChanceRobinhoodNotHappen = 30;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.REFUND)
     private String robinhoodPerson = "Guy Fieri";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.REFUND)
     private String robinhoodStopperPerson = "Saundra Lee";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.REFUND)
     private String robinhoodStopperPhrase = "I NEED TO SPEAK TO THE MANAGER!!!";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.REFUND)
     private String robinhoodImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.REFUND)
     private String robinhoodStoppedImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SCOOT)
     private int scooterAnklePoints = 25000;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.SCOOT)
     private String scooterAnkleImg = "https://cdn.discordapp.com/attachments/752665380182425677/780324301311049728/scooter_ankle.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.STONK_SHREK)
     private int shrekoningMinPoints = 200;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.STONK_SHREK)
     private int shrekoningMaxPoints = 4000;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.STONK_SHREK)
     private String shrekoningImg = "https://cdn.discordapp.com/attachments/741053845098201099/763280555793580042/the_shrekoning.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.STONK_SHREK)
     private int stonksMaxPoints = 4000;
 
     // TODO: Stonks image list
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SWEEPSTAKES)
     private int sweepstakesPoints = 4000;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.SWEEPSTAKES)
     private String sweepstakesImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SWIPER)
     private int swiperPoints = 1500;
 
     // TODO: Add the various swiper personas here too?
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TAXES)
     private int taxesMinPercent = 5;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TAXES)
     private int taxesMaxPercent = 16;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TAXES)
     private int percentChanceTaxesNotHappen = 30;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.TAXES)
     private String taxesPerson = "Guy Fieri";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.TAXES)
     private String taxesStopperPerson = "Saundra Lee";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.TAXES)
     private String taxesStopperPhrase = "I NEED TO SPEAK TO THE MANAGER!!!";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.TAXES)
     private String taxesImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.TAXES)
     private String taxesStoppedImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.THIS_OR_THAT)
     private int trickOrTreatPoints = 500;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.THIS_OR_THAT)
     private String trickOrTreatImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.THIS_OR_THAT)
     private String trickOrTreatName = "Checkout or Trampled";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.THIS_OR_THAT)
     private String trickOrTreatTreatEmoji = "\uD83D\uDED2";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.THIS_OR_THAT)
     private String trickOrTreatTrickEmoji = "\uD83D\uDEA7";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
-    private String[] slotsEmoji = {"🍓","🍍","🍊","🍋","🍇","🍉","🍌","🍒","🍎"};
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
-    private String[] boostWords = {"boost"};
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET, category = ControllerConfigurable.Category.COLORS_FOOTERS)
     private String[] monthlyColors = {"#599111"};
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET, category = ControllerConfigurable.Category.COLORS_FOOTERS)
     private String[] embedFooters = {"powered by 777"};
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
-    private String antoniaNickname = "Antonia";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
-    private String antoniaAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096712794457526342/antonia-april-2023.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
-    private String behradNickname = "Behrad";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
-    private String behradAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096715373245632558/behrad-april-2023.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
-    private String johnNickname = "John";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
-    private String johnAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096715500895076412/john-april-2023.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING)
-    private String keanuNickname = "Keanu";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG)
-    private String keanuAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096715831330754560/keanu-april-2023.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.LONG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.LONG, category = ControllerConfigurable.Category.SAVED_MEMES_CHANNELS)
     private long sfwSavedMemesChannelId = 0;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.LONG)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.LONG, category = ControllerConfigurable.Category.SAVED_MEMES_CHANNELS)
     private long nsfwSavedMemesChannelId = 0;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.BOTS)
+    private String antoniaNickname = "Antonia";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.BOTS)
+    private String antoniaAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096712794457526342/antonia-april-2023.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.BOTS)
+    private String behradNickname = "Behrad";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.BOTS)
+    private String behradAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096715373245632558/behrad-april-2023.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.BOTS)
+    private String johnNickname = "John";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.BOTS)
+    private String johnAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096715500895076412/john-april-2023.png";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.BOTS)
+    private String keanuNickname = "Keanu";
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.BOTS)
+    private String keanuAvatar = "https://cdn.discordapp.com/attachments/794506942906761226/1096715831330754560/keanu-april-2023.png";
 
 }

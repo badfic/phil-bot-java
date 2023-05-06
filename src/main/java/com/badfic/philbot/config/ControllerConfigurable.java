@@ -9,6 +9,13 @@ public @interface ControllerConfigurable {
         INT, LONG, STRING, STRING_SET, IMG
     }
 
+    enum Category {
+        MESSAGE, UPVOTE, SLOTS, CARROT, POTATO, GLITTER, BOOST, REFUND, SWEEPSTAKES, TAXES, THIS_OR_THAT, BOTS, COLORS_FOOTERS, TRIVIAS, SCOOT, STONK_SHREK,
+        SWIPER, SAVED_MEMES_CHANNELS
+    }
+
     Type type();
+
+    Category category();
 
 }
