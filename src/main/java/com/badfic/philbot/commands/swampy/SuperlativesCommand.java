@@ -78,7 +78,7 @@ public class SuperlativesCommand extends BaseNormalCommand {
     }
 
     private void buildSuperlativeDescription(StringBuilder description, List<DiscordUser> list) {
-        String trickOrTreatName = getSwampyGamesConfig().getTrickOrTreatName();
+        String trickOrTreatName = getSwampyGamesConfig().getThisOrThatName();
 
         list.stream().max((a, b) -> (int) (a.getTrickOrTreatPoints() - b.getTrickOrTreatPoints())).ifPresent(user -> {
             description.append(trickOrTreatName).append(": <@!").append(user.getId()).append(">\n");

@@ -51,24 +51,24 @@ public class TrickOrTreat extends BaseNormalCommand {
                     Member memberById = guild.getMemberById(user.getId());
                     if (memberById != null && !isNotParticipating(memberById)) {
                         if (ThreadLocalRandom.current().nextInt() % 2 == 0) {
-                            futures.add(givePointsToMember(swampyGamesConfig.getTrickOrTreatPoints(), memberById, PointsStat.TRICK_OR_TREAT));
-                            totalGiven += swampyGamesConfig.getTrickOrTreatPoints();
+                            futures.add(givePointsToMember(swampyGamesConfig.getThisOrThatPoints(), memberById, PointsStat.TRICK_OR_TREAT));
+                            totalGiven += swampyGamesConfig.getThisOrThatPoints();
 
                             description
-                                    .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getTrickOrTreatPoints()))
+                                    .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getThisOrThatPoints()))
                                     .append(' ')
-                                    .append(swampyGamesConfig.getTrickOrTreatTreatEmoji())
+                                    .append(swampyGamesConfig.getThisOrThatGiveEmoji())
                                     .append(" given to <@!")
                                     .append(user.getId())
                                     .append(">\n");
                         } else {
-                            futures.add(takePointsFromMember(swampyGamesConfig.getTrickOrTreatPoints(), memberById, PointsStat.TRICK_OR_TREAT));
-                            totalTaken += swampyGamesConfig.getTrickOrTreatPoints();
+                            futures.add(takePointsFromMember(swampyGamesConfig.getThisOrThatPoints(), memberById, PointsStat.TRICK_OR_TREAT));
+                            totalTaken += swampyGamesConfig.getThisOrThatPoints();
 
                             description
-                                    .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getTrickOrTreatPoints()))
+                                    .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getThisOrThatPoints()))
                                     .append(' ')
-                                    .append(swampyGamesConfig.getTrickOrTreatTrickEmoji())
+                                    .append(swampyGamesConfig.getThisOrThatTakeEmoji())
                                     .append(" taken from <@!")
                                     .append(user.getId())
                                     .append(">\n");
@@ -83,11 +83,11 @@ public class TrickOrTreat extends BaseNormalCommand {
         String footer = "I gave " + NumberFormat.getIntegerInstance().format(totalGiven) + " points and took "
                 + NumberFormat.getIntegerInstance().format(totalTaken);
 
-        String title = swampyGamesConfig.getTrickOrTreatTreatEmoji() + " "
-                + swampyGamesConfig.getTrickOrTreatName() + " "
-                + swampyGamesConfig.getTrickOrTreatTrickEmoji();
+        String title = swampyGamesConfig.getThisOrThatGiveEmoji() + " "
+                + swampyGamesConfig.getThisOrThatName() + " "
+                + swampyGamesConfig.getThisOrThatTakeEmoji();
 
-        MessageEmbed message = Constants.simpleEmbed(title, description.toString(), swampyGamesConfig.getTrickOrTreatImg(), footer);
+        MessageEmbed message = Constants.simpleEmbed(title, description.toString(), swampyGamesConfig.getThisOrThatImage(), footer);
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)

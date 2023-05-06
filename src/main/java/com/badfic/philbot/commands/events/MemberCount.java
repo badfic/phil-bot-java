@@ -48,7 +48,7 @@ public class MemberCount extends BaseNormalCommand implements DailyTickable {
             }
 
             SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-            swampyGamesConfig.setMemberCountChannel(voiceChannelId);
+            swampyGamesConfig.setMemberCountVoiceChannelId(voiceChannelId);
             saveSwampyGamesConfig(swampyGamesConfig);
 
             voiceChannelById.getManager().setName(event.getGuild().getMembers().size() + " members").queue();
@@ -72,7 +72,7 @@ public class MemberCount extends BaseNormalCommand implements DailyTickable {
     public boolean updateCount() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         Guild guild = philJda.getGuildById(baseConfig.guildId);
-        VoiceChannel voiceChannelById = philJda.getVoiceChannelById(swampyGamesConfig.getMemberCountChannel());
+        VoiceChannel voiceChannelById = philJda.getVoiceChannelById(swampyGamesConfig.getMemberCountVoiceChannelId());
         if (voiceChannelById != null) {
             voiceChannelById.getManager().setName(guild.getMembers().size() + " members").queue();
             Constants.debugToTestChannel(philJda, "Successfully updated member count channel");

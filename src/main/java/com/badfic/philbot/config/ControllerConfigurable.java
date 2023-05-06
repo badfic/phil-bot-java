@@ -11,7 +11,7 @@ public @interface ControllerConfigurable {
 
     enum Category {
         MESSAGE, UPVOTE, SLOTS, CARROT, POTATO, GLITTER, BOOST, REFUND, SWEEPSTAKES, TAXES, THIS_OR_THAT, BOTS, COLORS_FOOTERS, TRIVIAS, SCOOT, STONK_SHREK,
-        SWIPER, SAVED_MEMES_CHANNELS
+        SWIPER, CHANNEL_IDS
     }
 
     Type type();
