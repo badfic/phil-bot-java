@@ -70,9 +70,6 @@ public class SwampyGamesConfig {
     private Short nsfwQuoteTriviaCorrectAnswer;
 
     @Column
-    private long memberCountChannel;
-
-    @Column
     private LocalDateTime nsfwQuoteTriviaExpiration;
 
     @Column
@@ -213,35 +210,35 @@ public class SwampyGamesConfig {
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.REFUND)
-    private int robinhoodMinPercent = 5;
+    private int refundMinimumPercent = 5;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.REFUND)
-    private int robinhoodMaxPercent = 16;
+    private int refundMaximumPercent = 16;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.REFUND)
-    private int percentChanceRobinhoodNotHappen = 30;
+    private int percentChanceRefundDoesNotHappen = 30;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.REFUND)
-    private String robinhoodPerson = "Guy Fieri";
+    private String refundPerson = "Guy Fieri";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.REFUND)
-    private String robinhoodStopperPerson = "Saundra Lee";
+    private String noRefundPerson = "Saundra Lee";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.REFUND)
-    private String robinhoodStopperPhrase = "I NEED TO SPEAK TO THE MANAGER!!!";
+    private String noRefundPhrase = "I NEED TO SPEAK TO THE MANAGER!!!";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.REFUND)
-    private String robinhoodImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+    private String refundImage = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.REFUND)
-    private String robinhoodStoppedImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+    private String noRefundImage = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SCOOT)
@@ -285,15 +282,15 @@ public class SwampyGamesConfig {
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TAXES)
-    private int taxesMinPercent = 5;
+    private int taxesMinimumPercent = 5;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TAXES)
-    private int taxesMaxPercent = 16;
+    private int taxesMaximumPercent = 16;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TAXES)
-    private int percentChanceTaxesNotHappen = 30;
+    private int percentChanceTaxesDoesNotHappen = 30;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.TAXES)
@@ -301,39 +298,39 @@ public class SwampyGamesConfig {
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.TAXES)
-    private String taxesStopperPerson = "Saundra Lee";
+    private String noTaxesPerson = "Saundra Lee";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.TAXES)
-    private String taxesStopperPhrase = "I NEED TO SPEAK TO THE MANAGER!!!";
+    private String noTaxesPhrase = "I NEED TO SPEAK TO THE MANAGER!!!";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.TAXES)
-    private String taxesImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+    private String taxesImage = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.TAXES)
-    private String taxesStoppedImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+    private String noTaxesImage = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.THIS_OR_THAT)
-    private int trickOrTreatPoints = 500;
+    private int thisOrThatPoints = 500;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.THIS_OR_THAT)
-    private String trickOrTreatImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
+    private String thisOrThatImage = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.THIS_OR_THAT)
-    private String trickOrTreatName = "Checkout or Trampled";
+    private String thisOrThatName = "Checkout or Trampled";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.THIS_OR_THAT)
-    private String trickOrTreatTreatEmoji = "\uD83D\uDED2";
+    private String thisOrThatGiveEmoji = "\uD83D\uDED2";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.THIS_OR_THAT)
-    private String trickOrTreatTrickEmoji = "\uD83D\uDEA7";
+    private String thisOrThatTakeEmoji = "\uD83D\uDEA7";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING_SET, category = ControllerConfigurable.Category.COLORS_FOOTERS)
@@ -344,12 +341,16 @@ public class SwampyGamesConfig {
     private String[] embedFooters = {"powered by 777"};
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.LONG, category = ControllerConfigurable.Category.SAVED_MEMES_CHANNELS)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.LONG, category = ControllerConfigurable.Category.CHANNEL_IDS)
     private long sfwSavedMemesChannelId = 0;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.LONG, category = ControllerConfigurable.Category.SAVED_MEMES_CHANNELS)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.LONG, category = ControllerConfigurable.Category.CHANNEL_IDS)
     private long nsfwSavedMemesChannelId = 0;
+
+    @Column
+    @ControllerConfigurable(type = ControllerConfigurable.Type.LONG, category = ControllerConfigurable.Category.CHANNEL_IDS)
+    private long memberCountVoiceChannelId = 0;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.BOTS)

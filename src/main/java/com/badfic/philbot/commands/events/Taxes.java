@@ -42,11 +42,11 @@ public class Taxes extends BaseNormalCommand {
     private void doTaxes(boolean force) {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
-        if (!force && ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceTaxesNotHappen()) {
+        if (!force && ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceTaxesDoesNotHappen()) {
             MessageEmbed message = Constants.simpleEmbed(
-                    swampyGamesConfig.getTaxesStopperPhrase(), swampyGamesConfig.getTaxesStopperPerson() + " caught "
+                    swampyGamesConfig.getNoTaxesPhrase(), swampyGamesConfig.getNoTaxesPerson() + " caught "
                             + swampyGamesConfig.getTaxesPerson() + " before they could take taxes from the swamp.",
-                    swampyGamesConfig.getTaxesStoppedImg());
+                    swampyGamesConfig.getNoTaxesImage());
 
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
                     .get(0)
@@ -65,7 +65,7 @@ public class Taxes extends BaseNormalCommand {
         for (DiscordUser user : allUsers) {
             if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD) {
                 try {
-                    long taxRate = ThreadLocalRandom.current().nextInt(swampyGamesConfig.getTaxesMinPercent(), swampyGamesConfig.getTaxesMaxPercent());
+                    long taxRate = ThreadLocalRandom.current().nextInt(swampyGamesConfig.getTaxesMinimumPercent(), swampyGamesConfig.getTaxesMaximumPercent());
                     taxRate = Math.max(1, taxRate); // Always make sure it's at least 1 percent.
                     long taxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRate)).longValue();
                     Member memberById = guild.getMemberById(user.getId());
@@ -95,7 +95,7 @@ public class Taxes extends BaseNormalCommand {
 
         MessageEmbed message = Constants.simpleEmbed("Tax time! " + NumberFormat.getIntegerInstance().format(totalTaxes)
                         + " points in taxes have been paid to " + swampyGamesConfig.getTaxesPerson(),
-                description.toString(), swampyGamesConfig.getTaxesImg());
+                description.toString(), swampyGamesConfig.getTaxesImage());
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)
