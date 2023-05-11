@@ -1,48 +1,15 @@
 package com.badfic.philbot.config;
 
-import static net.dv8tion.jda.api.requests.GatewayIntent.DIRECT_MESSAGES;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_EMOJIS_AND_STICKERS;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MEMBERS;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGE_REACTIONS;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MODERATION;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
-import static net.dv8tion.jda.api.requests.GatewayIntent.MESSAGE_CONTENT;
-
-import com.badfic.philbot.commands.swampy.SwampyCommand;
-import com.badfic.philbot.listeners.phil.PhilMessageListener;
-import com.badfic.philbot.service.MemeCommandsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandClient;
-import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.CommandListener;
-import com.jagrosh.jdautilities.command.SlashCommand;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
+import discord4j.core.DiscordClient;
+import discord4j.core.GatewayDiscordClient;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import okhttp3.ConnectionPool;
-import okhttp3.Dispatcher;
-import okhttp3.OkHttpClient;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.mutable.MutableObject;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
@@ -108,17 +75,6 @@ public class BaseConfig {
     }
 
     @Bean
-    public OkHttpClient okHttpClient(ThreadPoolTaskExecutor threadPoolTaskExecutor) {
-        Dispatcher dispatcher = new Dispatcher(threadPoolTaskExecutor.getThreadPoolExecutor());
-        dispatcher.setMaxRequestsPerHost(25);
-        ConnectionPool connectionPool = new ConnectionPool(4, 10, TimeUnit.SECONDS);
-        return new OkHttpClient.Builder()
-                .connectionPool(connectionPool)
-                .dispatcher(dispatcher)
-                .build();
-    }
-
-    @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
@@ -127,8 +83,8 @@ public class BaseConfig {
     }
 
     @Bean
-    public RestTemplate restTemplate(OkHttpClient okHttpClient) {
-        return new RestTemplate(new OkHttp3ClientHttpRequestFactory(okHttpClient));
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
     @Bean
@@ -140,84 +96,9 @@ public class BaseConfig {
         return propsConfig;
     }
 
-    @Bean(name = "philCommandClient")
-    public CommandClient philCommandClient(ThreadPoolTaskScheduler taskScheduler,
-                                           List<Command> commands,
-                                           SwampyCommand swampyCommand,
-                                           MemeCommandsService memeCommandsService) {
-        CommandClientBuilder builder = new CommandClientBuilder();
-
-        builder.setOwnerId(ownerId)
-                .setPrefix(Constants.PREFIX)
-                .forceGuildOnly(guildId)
-                .useHelpBuilder(false)
-                .setScheduleExecutor(taskScheduler.getScheduledExecutor())
-                .setActivity(Activity.playing("with our feelings"))
-                .setEmojis("✅", "⚠️", "❌");
-
-        for (Command command : commands) {
-            if (command instanceof SlashCommand) {
-                builder.addSlashCommands((SlashCommand) command);
-            } else {
-                builder.addCommand(command);
-            }
-        }
-
-        final MutableObject<CommandClient> thisClient = new MutableObject<>();
-        builder.setListener(new CommandListener() {
-            @Override
-            public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
-                log.error("Exception in [command={}]", command.getName(), throwable);
-            }
-
-            @Override
-            public void onNonCommandMessage(MessageReceivedEvent event) {
-                String contentRaw = event.getMessage().getContentRaw();
-
-                if (StringUtils.startsWith(contentRaw, Constants.PREFIX)) {
-                    String message = StringUtils.substring(contentRaw, 2);
-                    message = StringUtils.trim(message);
-
-                    String[] parts;
-                    if (StringUtils.isNotBlank(message)) {
-                        if ((parts = message.split("\\s+")).length >= 2) {
-                            if (Stream.of("help", "rank", "up", "down", "slots")
-                                    .anyMatch(arg -> StringUtils.equalsIgnoreCase(arg, parts[1]))) {
-                                swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, parts[1], thisClient.getValue()));
-                                return;
-                            }
-                        }
-
-                        memeCommandsService.executeCustomCommand(parts[0], event.getChannel().asGuildMessageChannel());
-                    }
-                }
-            }
-        });
-
-        thisClient.setValue(builder.build());
-        return thisClient.getValue();
-    }
-
-    @Bean(name = "philJda")
-    public JDA philJda(ThreadPoolTaskScheduler taskScheduler,
-                       ThreadPoolTaskExecutor threadPoolTaskExecutor,
-                       OkHttpClient okHttpClient,
-                       PhilMessageListener philMessageListener,
-                       @Qualifier("philCommandClient") CommandClient philCommandClient) throws Exception {
-        List<GatewayIntent> intents = Arrays.asList(GUILD_MEMBERS, GUILD_MODERATION, GUILD_MESSAGES, MESSAGE_CONTENT, GUILD_VOICE_STATES,
-                GUILD_MESSAGE_REACTIONS, GUILD_EMOJIS_AND_STICKERS, DIRECT_MESSAGES);
-
-        return JDABuilder.create(philBotToken, intents)
-                .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.FORUM_TAGS,
-                        CacheFlag.ROLE_TAGS, CacheFlag.SCHEDULED_EVENTS, CacheFlag.STICKER, CacheFlag.MEMBER_OVERRIDES)
-                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
-                .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
-                .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
-                .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
-                .setHttpClient(okHttpClient)
-                .addEventListeners(philMessageListener, philCommandClient)
-                .setActivity(Activity.playing("with our feelings"))
-                .build();
+    @Bean
+    public GatewayDiscordClient gatewayDiscordClient() {
+        return DiscordClient.create(philBotToken).login().block();
     }
 
 }

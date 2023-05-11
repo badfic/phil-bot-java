@@ -15,20 +15,33 @@ import com.badfic.philbot.service.HungerGamesWinnersService;
 import com.badfic.philbot.service.MemeCommandsService;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import discord4j.core.GatewayDiscordClient;
+import discord4j.core.event.ReactiveEventAdapter;
+import discord4j.core.event.domain.UserUpdateEvent;
+import discord4j.core.event.domain.guild.BanEvent;
+import discord4j.core.event.domain.guild.MemberJoinEvent;
+import discord4j.core.event.domain.guild.MemberLeaveEvent;
+import discord4j.core.event.domain.guild.MemberUpdateEvent;
+import discord4j.core.event.domain.lifecycle.ConnectEvent;
+import discord4j.core.event.domain.lifecycle.ReadyEvent;
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.event.domain.message.ReactionAddEvent;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
+import discord4j.core.object.entity.channel.Channel;
+import discord4j.core.object.entity.channel.MessageChannel;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
@@ -40,22 +53,21 @@ import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameE
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class PhilMessageListener extends ListenerAdapter {
+public class PhilMessageListener extends ReactiveEventAdapter {
     private static final Cache<String, Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = Caffeine.newBuilder()
             .maximumSize(200)
             .expireAfterWrite(15, TimeUnit.MINUTES)
@@ -83,49 +95,92 @@ public class PhilMessageListener extends ListenerAdapter {
     private PhilCommand philCommand;
 
     @Setter(onMethod_ = {@Autowired, @Lazy})
-    private CommandClient philCommandClient;
-
-    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
-    private JDA philJda;
+    private GatewayDiscordClient gatewayDiscordClient;
 
     public static void addReactionTask(String messageId, Function<MessageReactionAddEvent, Boolean> function) {
         OUTSTANDING_REACTION_TASKS.put(messageId, function);
     }
 
     @Override
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getChannelType() != ChannelType.TEXT) {
-            return;
+    public Publisher<?> onMessageCreate(MessageCreateEvent event) {
+        final Message message = event.getMessage();
+        final MessageChannel channel = message.getChannel().block();
+
+        if (Objects.nonNull(channel) && channel.getType() != Channel.Type.GUILD_TEXT) {
+            return Mono.justOrEmpty(Optional.empty());
         }
 
-        String msgContent = event.getMessage().getContentRaw();
-        if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
-            return;
+        String msgContent = message.getContent();
+        if (StringUtils.isBlank(msgContent) || event.getMember().map(User::isBot).orElse(false)) {
+            return Mono.justOrEmpty(Optional.empty());
+        }
+
+        if (msgContent.startsWith(Constants.PREFIX)) {
+            String commandName = msgContent.substring(2).trim();
         }
 
         if (StringUtils.startsWith(msgContent, "!") && !StringUtils.trim(msgContent).equals("!")) {
             memeCommandsService.executeCustomCommand(StringUtils.trim(StringUtils.substring(msgContent, 1)), event.getChannel().asGuildMessageChannel());
-            return;
+            return Mono.justOrEmpty(Optional.empty());
         }
 
         if (AO3_PATTERN.matcher(msgContent).find()) {
             ao3MetadataParser.parseLink(msgContent, event.getChannel().getName());
-            return;
+            return Mono.justOrEmpty(Optional.empty());
         }
 
-        antoniaMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
-        behradMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
-        keanuMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
-        johnMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
+        antoniaMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), message));
+        behradMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), message));
+        keanuMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), message));
+        johnMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), message));
 
         if (PHIL_PATTERN.matcher(msgContent).find()) {
             philCommand.execute(new CommandEvent(event, Constants.PREFIX, null, philCommandClient));
-            return;
+            return Mono.justOrEmpty(Optional.empty());
         }
 
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, null, null, null);
 
         swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, "", philCommandClient));
+    }
+
+    @Override
+    public Publisher<?> onReactionAdd(ReactionAddEvent event) {
+        return super.onReactionAdd(event);
+    }
+
+    @Override
+    public Publisher<?> onMemberJoin(MemberJoinEvent event) {
+        return super.onMemberJoin(event);
+    }
+
+    @Override
+    public Publisher<?> onMemberLeave(MemberLeaveEvent event) {
+        return super.onMemberLeave(event);
+    }
+
+    @Override
+    public Publisher<?> onMemberUpdate(MemberUpdateEvent event) {
+        return super.onMemberUpdate(event);
+    }
+
+    @Override
+    public Publisher<?> onBan(BanEvent event) {
+        return super.onBan(event);
+    }
+
+    @Override
+    public Publisher<?> onUserUpdate(UserUpdateEvent event) {
+        return super.onUserUpdate(event);
+    }
+
+    @Override
+    public Publisher<?> onConnect(ConnectEvent event) {
+        return super.onConnect(event);
+    }
+
+    public void onMessageReceived(MessageCreateEvent event) {
+
     }
 
     @Override

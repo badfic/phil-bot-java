@@ -2,6 +2,11 @@ package com.badfic.philbot.config;
 
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.listeners.DiscordWebhookSendService;
+import discord4j.common.util.Snowflake;
+import discord4j.core.GatewayDiscordClient;
+import discord4j.core.object.entity.channel.GuildMessageChannel;
+import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.discordjson.possible.Possible;
 import jakarta.annotation.PostConstruct;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -22,13 +27,6 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -231,48 +229,54 @@ public class Constants {
         jda.getTextChannelsByName(Constants.TEST_CHANNEL, false).get(0).sendMessage(msg).queue();
     }
 
-    public static void debugToModLogsChannel(JDA jda, MessageEmbed messageEmbed) {
+    public static void debugToModLogsChannel(GatewayDiscordClient gatewayDiscordClient, EmbedCreateSpec messageEmbed) {
         jda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).get(0).sendMessageEmbeds(messageEmbed).queue();
     }
 
-    public static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {
+    public static GuildMessageChannel getChannelByname(GatewayDiscordClient gatewayDiscordClient, long guildId) {
+        gatewayDiscordClient.getGuildChannels(Snowflake.of(guildId)).subscribe(channel -> {
+
+        })
+    }
+
+    public static EmbedCreateSpec simpleEmbedThumbnail(String title, String description, String thumbnail) {
         return simpleEmbed(title, description, null, null, null, thumbnail);
     }
 
-    public static MessageEmbed simpleEmbedThumbnail(String title, String description, String image, String thumbnail) {
+    public static EmbedCreateSpec simpleEmbedThumbnail(String title, String description, String image, String thumbnail) {
         return simpleEmbed(title, description, image, null, null, thumbnail);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description) {
+    public static EmbedCreateSpec simpleEmbed(String title, String description) {
         return simpleEmbed(title, description, null, null, null, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, Color color) {
+    public static EmbedCreateSpec simpleEmbed(String title, String description, Color color) {
         return simpleEmbed(title, description, null, null, color, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, String image) {
+    public static EmbedCreateSpec simpleEmbed(String title, String description, String image) {
         return simpleEmbed(title, description, image, null, null, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, String image, Color color) {
+    public static EmbedCreateSpec simpleEmbed(String title, String description, String image, Color color) {
         return simpleEmbed(title, description, image, null, color, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, String image, String footer) {
+    public static EmbedCreateSpec simpleEmbed(String title, String description, String image, String footer) {
         return simpleEmbed(title, description, image, footer, null, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color) {
+    public static EmbedCreateSpec simpleEmbed(String title, String description, String image, String footer, Color color) {
         return simpleEmbed(title, description, image, footer, color, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color, String thumbnail) {
-        final String finalDesc;
+    public static EmbedCreateSpec simpleEmbed(String title, String description, String image, String footer, Color color, String thumbnail) {
+        final Possible<String> finalDesc;
         if (StringUtils.isNotBlank(description)) {
-            finalDesc = description.length() > 2048 ? (description.substring(0, 2044) + "...") : description;
+            finalDesc = Possible.of(description.length() > 2048 ? (description.substring(0, 2044) + "...") : description);
         } else {
-            finalDesc = null;
+            finalDesc = Possible.absent();
         }
 
         String[] footers = SINGLETON.swampyGamesConfigDal.get().getEmbedFooters();
@@ -281,13 +285,13 @@ public class Constants {
         footer = footer != null ? (footer + "\n" + footerAddition) : footerAddition;
         footer = footer.length() > 2048 ? (footer.substring(0, 2044) + "777") : footer;
 
-        return new EmbedBuilder()
-                .setTitle(title)
-                .setDescription(finalDesc)
-                .setImage(imageUrlOrElseNull(image))
-                .setColor(color != null ? color : colorOfTheMonth())
-                .setFooter(footer)
-                .setThumbnail(imageUrlOrElseNull(thumbnail))
+        return EmbedCreateSpec.builder()
+                .title(title)
+                .description(finalDesc)
+                .image(Optional.ofNullable(imageUrlOrElseNull(image)).map(Possible::of).orElse(Possible.absent()))
+                .color(color != null ? discord4j.rest.util.Color.of(color.getRGB()) : discord4j.rest.util.Color.of(colorOfTheMonth().getRGB()))
+                .footer(footer, null)
+                .thumbnail(Optional.ofNullable(imageUrlOrElseNull(thumbnail)).map(Possible::of).orElse(Possible.absent()))
                 .build();
     }
 

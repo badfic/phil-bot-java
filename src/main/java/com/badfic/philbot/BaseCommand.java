@@ -9,17 +9,17 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import discord4j.common.util.Snowflake;
+import discord4j.core.GatewayDiscordClient;
+import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.Role;
+import discord4j.core.object.entity.channel.GuildMessageChannel;
+import discord4j.core.spec.EmbedCreateSpec;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import okhttp3.OkHttpClient;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
@@ -33,7 +33,7 @@ public interface BaseCommand {
     long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 999;
     long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 999;
 
-    JDA getPhilJda();
+    GatewayDiscordClient getGatewayDiscordClient();
 
     DiscordUserRepository getDiscordUserRepository();
 
@@ -47,12 +47,10 @@ public interface BaseCommand {
 
     RestTemplate getRestTemplate();
 
-    OkHttpClient getOkHttpClient();
-
     ThreadPoolTaskExecutor getThreadPoolTaskExecutor();
 
     default DiscordUser getDiscordUserByMember(Member member) {
-        String userId = member.getId();
+        String userId = member.getId().asString();
         DiscordUserRepository discordUserRepository = getDiscordUserRepository();
         Optional<DiscordUser> optionalUserEntity = discordUserRepository.findById(userId);
 
@@ -84,13 +82,19 @@ public interface BaseCommand {
         Rank newRank = Rank.byXp(newXp);
 
         if (newRank != rankZero && existingRank != newRank) {
-            TextChannel swampysChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+            CompletableFuture<Message> future = new CompletableFuture<>();
 
-            MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + newRank.getLevel() + '!',
-                    newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()),
-                    newRank.getRankUpImage(), newRank.getColor());
+            getGatewayDiscordClient().getGuildChannels(Snowflake.of(getBaseConfig().guildId)).subscribe(channel -> {
+                if (Constants.SWAMPYS_CHANNEL.equals(channel.getName())) {
+                    EmbedCreateSpec embedCreateSpec = Constants.simpleEmbed("Level " + newRank.getLevel() + '!',
+                            newRank.getRankUpMessage().replace("<name>", member.getMention()).replace("<rolename>", newRank.getRoleName()),
+                            newRank.getRankUpImage(), newRank.getColor());
 
-            return swampysChannel.sendMessageEmbeds(messageEmbed).submit();
+                    ((GuildMessageChannel) channel).createMessage(embedCreateSpec).subscribe(future::complete, future::completeExceptionally);
+                }
+            });
+
+            return future;
         }
 
         return CompletableFuture.completedFuture(null);
@@ -109,30 +113,17 @@ public interface BaseCommand {
     }
 
     default boolean isNotParticipating(Member member) {
-        List<Role> roles = member.getRoles();
-
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0; i < roles.size(); i++) {
-            String roleName = roles.get(i).getName();
-
-            if (Constants.CHAOS_CHILDREN_ROLE.equals(roleName) || Constants.EIGHTEEN_PLUS_ROLE.equals(roleName)) {
-                return false;
-            }
-        }
-
-        return true;
+        return Boolean.TRUE.equals(member.getRoles()
+                .map(Role::getName)
+                .any(roleName -> Constants.CHAOS_CHILDREN_ROLE.equals(roleName) || Constants.EIGHTEEN_PLUS_ROLE.equals(roleName))
+                .block());
     }
 
     default boolean hasRole(Member member, String role) {
-        List<Role> roles = member.getRoles();
-
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0; i < roles.size(); i++) {
-            if (roles.get(i).getName().equalsIgnoreCase(role)) {
-                return true;
-            }
-        }
-        return false;
+        return Boolean.TRUE.equals(member.getRoles()
+                .map(Role::getName)
+                .any(roleName -> roleName.equalsIgnoreCase(role))
+                .block());
     }
 
     default SwampyGamesConfig getSwampyGamesConfig()  {
