@@ -5,7 +5,6 @@ import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.Getter;
@@ -56,11 +55,6 @@ public abstract class BaseSlashCommand implements BaseCommand {
     protected String name;
     protected String help;
     protected List<OptionData> options;
-
-    @PostConstruct
-    public void init() {
-
-    }
 
     public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
         // do nothing

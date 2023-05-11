@@ -217,6 +217,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
         Guild guildById = philJda.getGuildById(baseConfig.guildId);
 
+        // TODO: Remove after deploy
         guildById.retrieveCommands().queue(currentCommands -> {
             for (Command currentCommand : currentCommands) {
                 if ("swampys".equalsIgnoreCase(currentCommand.getName())) {
