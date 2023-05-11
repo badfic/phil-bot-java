@@ -1,9 +1,9 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.BaseConfig;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.Instant;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class Tumblr extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         String[] split = event.getArgs().split("\\s+");
 
         if (ArrayUtils.getLength(split) != 1) {

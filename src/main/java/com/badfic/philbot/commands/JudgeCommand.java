@@ -1,10 +1,10 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.CourtCase;
 import com.badfic.philbot.data.CourtCaseDal;
 import com.badfic.philbot.service.MinuteTickable;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -59,7 +59,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) != 1) {
             event.replyError("Please mention a user to accuse. Example `!!judge @user for such and such crime`");
             return;

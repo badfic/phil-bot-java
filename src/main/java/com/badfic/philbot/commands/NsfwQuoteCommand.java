@@ -1,11 +1,11 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.NsfwQuote;
 import com.badfic.philbot.data.NsfwQuoteRepository;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.DailyTickable;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
@@ -93,7 +93,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "cache")) {
             if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
                 event.replyError("You do not have permission to execute this command");

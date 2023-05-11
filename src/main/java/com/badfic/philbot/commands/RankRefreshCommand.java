@@ -1,8 +1,8 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -31,7 +31,7 @@ public class RankRefreshCommand extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         try {
             Rank.init(restTemplate, baseConfig.airtableApiToken);
             event.replySuccess("Refreshed ranks from Airtable");

@@ -1,7 +1,7 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.Color;
 import java.util.Optional;
 import net.dv8tion.jda.api.entities.Guild;
@@ -19,7 +19,7 @@ public class ColorMe extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         final Guild guild = event.getGuild();
         final Member member = event.getMember();
         final String userId = member.getUser().getId();

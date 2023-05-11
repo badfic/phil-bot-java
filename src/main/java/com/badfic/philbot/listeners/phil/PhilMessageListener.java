@@ -1,8 +1,11 @@
 package com.badfic.philbot.listeners.phil;
 
+import com.badfic.philbot.CommandEvent;
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.commands.NsfwQuoteCommand;
 import com.badfic.philbot.commands.QuoteCommand;
 import com.badfic.philbot.commands.events.MemberCount;
+import com.badfic.philbot.commands.slash.BaseSlashCommand;
 import com.badfic.philbot.commands.swampy.SwampyCommand;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
@@ -15,20 +18,23 @@ import com.badfic.philbot.service.HungerGamesWinnersService;
 import com.badfic.philbot.service.MemeCommandsService;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.jagrosh.jdautilities.command.CommandClient;
-import com.jagrosh.jdautilities.command.CommandEvent;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.attribute.IAgeRestrictedChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
@@ -38,17 +44,22 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateAvatarEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.requests.restaction.CommandCreateAction;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -57,7 +68,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class PhilMessageListener extends ListenerAdapter {
     private static final Cache<String, Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = Caffeine.newBuilder()
-            .maximumSize(200)
             .expireAfterWrite(15, TimeUnit.MINUTES)
             .build();
     private static final Pattern PHIL_PATTERN = Constants.compileWords("phil|klemmer|phellen|the cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam");
@@ -79,13 +89,16 @@ public class PhilMessageListener extends ListenerAdapter {
     private final MemberCount memberCount;
     private final BaseConfig baseConfig;
 
-    @Setter(onMethod_ = {@Autowired, @Lazy})
+    @Setter(onMethod_ = {@Autowired})
     private PhilCommand philCommand;
 
-    @Setter(onMethod_ = {@Autowired, @Lazy})
-    private CommandClient philCommandClient;
+    @Setter(onMethod_ = {@Autowired})
+    private List<BaseNormalCommand> commands;
 
-    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
+    @Setter(onMethod_ = {@Autowired})
+    private List<BaseSlashCommand> slashCommands;
+
+    @Setter(onMethod_ = {@Autowired, @Lazy})
     private JDA philJda;
 
     public static void addReactionTask(String messageId, Function<MessageReactionAddEvent, Boolean> function) {
@@ -99,7 +112,72 @@ public class PhilMessageListener extends ListenerAdapter {
         }
 
         String msgContent = event.getMessage().getContentRaw();
-        if (StringUtils.isBlank(msgContent) || msgContent.startsWith(Constants.PREFIX) || event.getAuthor().isBot()) {
+        if (StringUtils.isBlank(msgContent) || event.getAuthor().isBot()) {
+            return;
+        }
+
+        final CommandEvent commandEvent = new CommandEvent(event);
+
+        if (StringUtils.startsWith(msgContent, Constants.PREFIX)) {
+            String message = StringUtils.substring(msgContent, 2);
+            message = StringUtils.trim(message);
+
+            String[] parts = message.split("\\s+");
+            String commandName = parts[0];
+
+            for (BaseNormalCommand command : commands) {
+                if (command.getName().equalsIgnoreCase(commandName)
+                        || Arrays.stream(ArrayUtils.nullToEmpty(command.getAliases())).anyMatch(a -> a.equalsIgnoreCase(commandName))) {
+                    // owner commands
+                    if (command.isOwnerCommand()) {
+                        if (event.getAuthor().getId().equals(baseConfig.ownerId)) {
+                            command.execute(commandEvent);
+                        } else {
+                            commandEvent.replyError("This is an owner command, only Santiago can execute it");
+                        }
+
+                        return;
+                    }
+
+                    // required role check
+                    if (Objects.nonNull(command.getRequiredRole())) {
+                        String requiredRole = command.getRequiredRole();
+
+                        if (Objects.nonNull(event.getMember()) && command.hasRole(event.getMember(), requiredRole)) {
+                            command.execute(commandEvent);
+                        } else {
+                            commandEvent.replyError(String.format("You must have %s role to execute this command", requiredRole));
+                        }
+
+                        return;
+                    }
+
+                    // nsfw check
+                    if (command.isNsfwOnly()) {
+                        if (event.getChannel() instanceof IAgeRestrictedChannel ageRestrictedChannel && ageRestrictedChannel.isNSFW()) {
+                            command.execute(commandEvent);
+                        } else {
+                            commandEvent.replyError("This is an nsfw only command, it cannot be executed in this channel");
+                        }
+
+                        return;
+                    }
+
+                    command.execute(commandEvent);
+
+                    return;
+                }
+            }
+
+            if (parts.length >= 2) {
+                if (Stream.of("help", "rank", "up", "down", "slots")
+                        .anyMatch(arg -> StringUtils.equalsIgnoreCase(arg, parts[1]))) {
+                    swampyCommand.execute(commandEvent);
+                    return;
+                }
+            }
+
+            memeCommandsService.executeCustomCommand(commandName, event.getChannel().asGuildMessageChannel());
             return;
         }
 
@@ -119,13 +197,13 @@ public class PhilMessageListener extends ListenerAdapter {
         johnMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
 
         if (PHIL_PATTERN.matcher(msgContent).find()) {
-            philCommand.execute(new CommandEvent(event, Constants.PREFIX, null, philCommandClient));
+            philCommand.execute(commandEvent);
             return;
         }
 
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, null, null, null);
 
-        swampyCommand.execute(new CommandEvent(event, Constants.PREFIX, "", philCommandClient));
+        swampyCommand.execute(commandEvent);
     }
 
     @Override
@@ -136,6 +214,46 @@ public class PhilMessageListener extends ListenerAdapter {
         MessageEmbed messageEmbed = Constants.simpleEmbed("Restarted",
                 String.format("I just restarted\ngit sha: %s\ncommit msg: %s", baseConfig.commitSha, baseConfig.commitMessage), Constants.SWAMP_GREEN);
         event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).get(0).sendMessageEmbeds(messageEmbed).queue();
+
+        Guild guildById = philJda.getGuildById(baseConfig.guildId);
+
+        guildById.retrieveCommands().queue(currentCommands -> {
+            for (Command currentCommand : currentCommands) {
+                if ("swampys".equalsIgnoreCase(currentCommand.getName())) {
+                    currentCommand.delete().queue();
+                }
+            }
+        });
+
+        for (BaseSlashCommand slashCommand : slashCommands) {
+            CommandCreateAction commandCreateAction = guildById.upsertCommand(slashCommand.getName(), slashCommand.getHelp());
+
+            if (CollectionUtils.isNotEmpty(slashCommand.getOptions())) {
+                commandCreateAction = commandCreateAction.addOptions(slashCommand.getOptions());
+            }
+
+            commandCreateAction.queue();
+        }
+    }
+
+    @Override
+    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        for (BaseSlashCommand slashCommand : slashCommands) {
+            if (event.getName().equals(slashCommand.getName())) {
+                slashCommand.execute(event);
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
+        for (BaseSlashCommand slashCommand : slashCommands) {
+            if (event.getName().equals(slashCommand.getName())) {
+                slashCommand.onAutoComplete(event);
+                return;
+            }
+        }
     }
 
     @Override

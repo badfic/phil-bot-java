@@ -3,13 +3,13 @@ package com.badfic.philbot.commands.slash;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -25,7 +25,7 @@ public class DownvoteSlashCommand extends BaseSlashCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
+    public void execute(SlashCommandInteractionEvent event) {
         CompletableFuture<InteractionHook> interactionHook = event.deferReply().submit();
 
         Member member = event.getMember();

@@ -1,9 +1,9 @@
 package com.badfic.philbot.listeners.antonia;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.BaseService;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -77,7 +77,7 @@ public class AntoniaMessageListener extends BaseService {
                 discordWebhookSendService);
 
         if (ANTONIA_PATTERN.matcher(msgContent).find()) {
-            antoniaCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
+            antoniaCommand.execute(new CommandEvent(event));
             return;
         }
     }

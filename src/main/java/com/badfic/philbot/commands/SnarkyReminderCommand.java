@@ -1,9 +1,9 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SnarkyReminderResponse;
 import com.badfic.philbot.data.SnarkyReminderResponseRepository;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +37,7 @@ public class SnarkyReminderCommand extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         if (StringUtils.containsIgnoreCase(event.getArgs(), "add")) {
             String snark = event.getArgs().replace("add", "").trim();
             SnarkyReminderResponse savedResponse = jdbcAggregateTemplate.insert(new SnarkyReminderResponse(snark));

@@ -1,8 +1,8 @@
 package com.badfic.philbot.web.members;
 
+import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.commands.ModHelpAware;
 import com.badfic.philbot.config.Constants;
-import com.jagrosh.jdautilities.command.Command;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.Comparator;
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableObject;
@@ -20,13 +21,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequiredArgsConstructor
 public class CommandsController extends BaseMembersController {
 
-    private final List<Command> commands;
-
-    public CommandsController(List<Command> commands) {
-        this.commands = commands;
-    }
+    private final List<BaseNormalCommand> commands;
 
     @GetMapping(value = "/commands", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
@@ -82,7 +80,7 @@ public class CommandsController extends BaseMembersController {
         return ArrayUtils.isEmpty(array) ? null : array;
     }
 
-    private static String getModHelp(boolean isMod, Command command) {
+    private static String getModHelp(boolean isMod, BaseNormalCommand command) {
         if (isMod && command instanceof ModHelpAware) {
             return ((ModHelpAware) command).getModHelp();
         }

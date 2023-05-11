@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.commands.ModHelpAware;
 import com.badfic.philbot.commands.image.BaseTwoUserImageMeme;
@@ -9,7 +10,6 @@ import com.badfic.philbot.data.BaseResponsesConfigRepository;
 import com.badfic.philbot.data.GenericBotResponsesConfigJson;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 import javax.imageio.ImageIO;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -89,13 +88,12 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
             return;
         }
 
-        final JDA selfJda = event.getJDA();
-        final Guild guild = selfJda.getGuildById(baseConfig.guildId);
+        final Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         Optional<T> optionalConfig = configRepository.findById(Constants.DATA_SINGLETON_ID);
         long channelId = event.getChannel().getIdLong();
         if (optionalConfig.isEmpty()) {
-            selfJda.getTextChannelById(channelId)
+            philJda.getTextChannelById(channelId)
                     .sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name)
                     .queue();
             return;
@@ -303,14 +301,14 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
 
                 String botAvatarUrl;
                 if (usernameGetter == null) {
-                    botAvatarUrl = selfJda.getSelfUser().getEffectiveAvatarUrl();
+                    botAvatarUrl = philJda.getSelfUser().getEffectiveAvatarUrl();
                 } else {
                     botAvatarUrl = avatarGetter.apply(swampyGamesConfig);
                 }
 
                 byte[] bytes = BaseTwoUserImageMeme.makeTwoUserMemeImageBytes(botAvatarUrl, 160, 27, 63, authorAvatarUrl, 160, 187, 24, hugImage);
 
-                selfJda.getTextChannelById(channelId)
+                philJda.getTextChannelById(channelId)
                         .sendMessage(" ")
                         .addFiles(FileUpload.fromData(bytes, "hug.png"))
                         .queue();
@@ -318,14 +316,14 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 return;
             } catch (Exception e) {
                 log.error("{} could not hug [user={}]", getClass().getSimpleName(), event.getAuthor().getAsMention(), e);
-                selfJda.getTextChannelById(channelId).sendMessage("\uD83E\uDD17").queue();
+                philJda.getTextChannelById(channelId).sendMessage("\uD83E\uDD17").queue();
             }
         }
 
         getResponse(event, responsesConfig).ifPresent(response -> {
             String message = StringUtils.startsWithIgnoreCase(response, "http") ? response : (event.getAuthor().getAsMention() + ", " + response);
             if (usernameGetter == null) {
-                selfJda.getTextChannelById(channelId)
+                philJda.getTextChannelById(channelId)
                         .sendMessage(message)
                         .queue();
                 return;

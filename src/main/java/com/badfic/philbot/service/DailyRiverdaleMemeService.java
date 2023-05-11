@@ -1,10 +1,10 @@
 package com.badfic.philbot.service;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DailyRiverdaleMemeEntity;
 import com.badfic.philbot.data.DailyRiverdaleMemeRepository;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -41,7 +41,7 @@ public class DailyRiverdaleMemeService extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         threadPoolTaskExecutor.execute(this::runTask);
     }
 

@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
+import com.badfic.philbot.CommandEvent;
 import java.util.List;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,7 +16,7 @@ public class JumboCommand extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         List<CustomEmoji> emotes = event.getMessage().getMentions().getCustomEmojis();
 
         if (CollectionUtils.size(emotes) != 1) {

@@ -5,7 +5,6 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -16,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ public class SlotsSlashCommand extends BaseSlashCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
+    public void execute(SlashCommandInteractionEvent event) {
         CompletableFuture<InteractionHook> interactionHook = event.deferReply().submit();
         
         Member member = event.getMember();
