@@ -81,8 +81,8 @@ public class CommandsController extends BaseMembersController {
     }
 
     private static String getModHelp(boolean isMod, BaseNormalCommand command) {
-        if (isMod && command instanceof ModHelpAware) {
-            return ((ModHelpAware) command).getModHelp();
+        if (isMod && command instanceof ModHelpAware modHelpAware) {
+            return modHelpAware.getModHelp();
         }
         return null;
     }
