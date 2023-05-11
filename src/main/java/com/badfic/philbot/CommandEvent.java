@@ -33,7 +33,7 @@ public class CommandEvent {
             }
         }
 
-        String localArgs = null;
+        String localArgs = "";
         if (commandName != null) {
             localArgs = contentRaw.substring(commandName.length()).trim();
         }
