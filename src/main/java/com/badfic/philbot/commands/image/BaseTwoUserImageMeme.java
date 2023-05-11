@@ -1,8 +1,8 @@
 package com.badfic.philbot.commands.image;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -39,7 +39,7 @@ public abstract class BaseTwoUserImageMeme extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         String authorFaceUrl = event.getMember().getEffectiveAvatarUrl();
         String recipientFaceUrl = authorFaceUrl;
         if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) == 1) {
@@ -49,7 +49,7 @@ public abstract class BaseTwoUserImageMeme extends BaseNormalCommand {
         try {
             byte[] bytes = makeMemeBytes(authorFaceUrl, recipientFaceUrl);
 
-            event.getTextChannel()
+            event.getChannel()
                     .sendMessage(" ")
                     .addFiles(FileUpload.fromData(bytes, memeName + ".png"))
                     .queue();

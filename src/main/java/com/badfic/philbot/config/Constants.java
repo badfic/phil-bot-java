@@ -147,8 +147,8 @@ public class Constants {
 
     public static <T> T pickRandom(Collection<T> collection) {
         int index = ThreadLocalRandom.current().nextInt(collection.size());
-        if (collection instanceof List<T>) {
-            return ((List<T>) collection).get(index);
+        if (collection instanceof List<T> list) {
+            return list.get(index);
         }
 
         Iterator<T> iterator = collection.iterator();

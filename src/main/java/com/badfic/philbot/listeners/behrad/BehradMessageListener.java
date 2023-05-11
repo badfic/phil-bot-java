@@ -1,9 +1,9 @@
 package com.badfic.philbot.listeners.behrad;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.BaseService;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -80,7 +80,7 @@ public class BehradMessageListener extends BaseService {
                 discordWebhookSendService);
 
         if (BEHRAD_PATTERN.matcher(msgContent).find()) {
-            behradCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
+            behradCommand.execute(new CommandEvent(event));
             return;
         }
     }

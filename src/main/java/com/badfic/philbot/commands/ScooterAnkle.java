@@ -1,10 +1,10 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,14 +28,14 @@ public class ScooterAnkle extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         scooterAnkle(event);
     }
 
     private void scooterAnkle(CommandEvent event) {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
-        TextChannel swampysChannel = event.getJDA().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
         DiscordUser scooterUser = getDiscordUserByMember(event.getMember());
 
         if (scooterUser.getScooterParticipant() != 0) {

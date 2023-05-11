@@ -1,5 +1,6 @@
 package com.badfic.philbot.commands.events;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
@@ -8,7 +9,6 @@ import com.badfic.philbot.data.Trivia;
 import com.badfic.philbot.data.TriviaRepository;
 import com.badfic.philbot.service.MinuteTickable;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class TriviaCommand extends BaseNormalCommand implements MinuteTickable {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         if (event.getArgs().startsWith("dump")) {
             List<Trivia> all = triviaRepository.findAll();
             try {

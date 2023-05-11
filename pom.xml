@@ -17,8 +17,7 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<jda.version>5.0.0-beta.8</jda.version>
-		<jda-utilities.version>2.0-SNAPSHOT</jda-utilities.version>
+		<jda.version>5.0.0-beta.9</jda.version>
 		<jsoup.version>1.15.4</jsoup.version>
 		<rome.version>2.1.0</rome.version>
 		<sentry.io.version>6.17.0</sentry.io.version>
@@ -84,12 +83,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>pw.chew</groupId>
-			<artifactId>jda-chewtils</artifactId>
-			<version>${jda-utilities.version}</version>
-			<type>pom</type>
-		</dependency>
-		<dependency>
 			<groupId>com.rometools</groupId>
 			<artifactId>rome</artifactId>
 			<version>${rome.version}</version>
@@ -146,10 +139,6 @@
 			<id>central</id>
 			<name>Central Repository</name>
 			<url>https://repo.maven.apache.org/maven2</url>
-		</repository>
-		<repository>
-			<id>chew-m2</id>
-			<url>https://m2.chew.pro/snapshots</url>
 		</repository>
 	</repositories>
 

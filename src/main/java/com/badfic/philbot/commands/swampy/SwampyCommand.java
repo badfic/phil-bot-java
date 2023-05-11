@@ -1,5 +1,6 @@
 package com.badfic.philbot.commands.swampy;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.commands.ModHelpAware;
 import com.badfic.philbot.commands.Rank;
@@ -9,7 +10,6 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.hungersim.Player;
 import com.badfic.philbot.data.hungersim.PlayerRepository;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -309,7 +309,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
                 event.reply(Constants.simpleEmbed(SLOT_MACHINE + " WINNER WINNER!! " + SLOT_MACHINE, String.format("%s\n%s%s%s \nYou won "
                         + swampyGamesConfig.getSlotsWinPoints() + " points!", member.getAsMention(), one, two, three), null, footer));
 
-                event.getJDA().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).stream().findAny().ifPresent(swampysChannel -> {
+                philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).stream().findAny().ifPresent(swampysChannel -> {
                     swampysChannel.sendMessageEmbeds(Constants.simpleEmbedThumbnail("SLOTS WINNER! " + one + one + one,
                             member.getAsMention()
                                     + " just won "
@@ -604,7 +604,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
 
         givePointsToMember(pointsToGive, mentionedMember, PointsStat.MOD_GIVE);
 
-        event.replyFormatted("Added %s xp to %s", NumberFormat.getIntegerInstance().format(pointsToGive), mentionedMember.getEffectiveName());
+        event.reply(String.format("Added %s xp to %s", NumberFormat.getIntegerInstance().format(pointsToGive), mentionedMember.getEffectiveName()));
     }
 
     private void take(CommandEvent event) {
@@ -647,7 +647,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
 
         takePointsFromMember(pointsToTake, mentionedMember, PointsStat.MOD_TAKE);
 
-        event.replyFormatted("Removed %s xp from %s", NumberFormat.getIntegerInstance().format(pointsToTake), mentionedMember.getEffectiveName());
+        event.reply(String.format("Removed %s xp from %s", NumberFormat.getIntegerInstance().format(pointsToTake), mentionedMember.getEffectiveName()));
     }
 
     private void reset(CommandEvent event) {

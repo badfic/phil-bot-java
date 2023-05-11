@@ -1,9 +1,9 @@
 package com.badfic.philbot.listeners.keanu;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.BaseService;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -104,7 +104,7 @@ public class KeanuMessageListener extends BaseService {
                 discordWebhookSendService);
 
         if (KEANU_PATTERN.matcher(msgContent).find()) {
-            keanuCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
+            keanuCommand.execute(new CommandEvent(event));
             return;
         }
     }

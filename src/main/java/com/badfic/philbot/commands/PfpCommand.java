@@ -1,7 +1,7 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.List;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,7 +17,7 @@ public class PfpCommand extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         Member member = event.getMember();
         List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
         if (CollectionUtils.isNotEmpty(mentionedMembers)) {

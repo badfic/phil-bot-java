@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.flag;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
+import com.badfic.philbot.CommandEvent;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -26,7 +26,7 @@ public class Clown extends BaseFlagCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         try {
             String[] split = event.getArgs().split("\\s+");
             if (StringUtils.isBlank(event.getArgs())) {
@@ -59,7 +59,7 @@ public class Clown extends BaseFlagCommand {
             ImageIO.write(newImg, "png", outputStream);
             graphics.dispose();
 
-            event.getTextChannel().sendMessage(" ")
+            event.getChannel().sendMessage(" ")
                     .addFiles(FileUpload.fromData(outputStream.toByteArray(), "clown.png"))
                     .queue();
         } catch (Exception e) {

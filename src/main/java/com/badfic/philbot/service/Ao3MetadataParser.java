@@ -26,7 +26,7 @@ public class Ao3MetadataParser extends BaseService {
     public boolean parseLink(String link, String channelName) {
         try {
             String url = UriComponentsBuilder.fromUriString(link)
-                    .replaceQuery("")
+                    .replaceQuery(StringUtils.EMPTY)
                     .queryParam("view_adult", "true")
                     .queryParam("view_full_work", "true")
                     .build()

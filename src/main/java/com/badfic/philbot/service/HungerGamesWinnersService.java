@@ -1,10 +1,10 @@
 package com.badfic.philbot.service;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.HungerGamesWinnerEntity;
 import com.badfic.philbot.data.HungerGamesWinnerRepository;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +41,7 @@ public class HungerGamesWinnersService extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         String[] args = event.getArgs().split("\\s+");
 
         if ("delete".equalsIgnoreCase(args[0])) {

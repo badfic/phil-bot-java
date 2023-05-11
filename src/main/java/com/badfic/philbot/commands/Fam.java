@@ -1,10 +1,10 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.Family;
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.awt.Color;
 import java.util.Collection;
 import java.util.Objects;
@@ -65,7 +65,7 @@ public class Fam extends BaseNormalCommand implements ModHelpAware {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         if (isNotEligible(event.getMember(), event)) {
             return;
         }
