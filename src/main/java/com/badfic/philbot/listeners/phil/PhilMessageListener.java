@@ -51,7 +51,6 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.restaction.CommandCreateAction;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -215,15 +214,6 @@ public class PhilMessageListener extends ListenerAdapter {
         event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).get(0).sendMessageEmbeds(messageEmbed).queue();
 
         Guild guildById = philJda.getGuildById(baseConfig.guildId);
-
-        // TODO: Remove after deploy
-        guildById.retrieveCommands().queue(currentCommands -> {
-            for (Command currentCommand : currentCommands) {
-                if ("swampys".equalsIgnoreCase(currentCommand.getName())) {
-                    currentCommand.delete().queue();
-                }
-            }
-        });
 
         for (BaseSlashCommand slashCommand : slashCommands) {
             CommandCreateAction commandCreateAction = guildById.upsertCommand(slashCommand.getName(), slashCommand.getHelp());
