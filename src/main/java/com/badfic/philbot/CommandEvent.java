@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import org.apache.commons.lang3.StringUtils;
 
 @Getter
 public class CommandEvent {
@@ -33,7 +34,7 @@ public class CommandEvent {
             }
         }
 
-        String localArgs = "";
+        String localArgs = StringUtils.EMPTY;
         if (commandName != null) {
             localArgs = contentRaw.substring(commandName.length()).trim();
         }

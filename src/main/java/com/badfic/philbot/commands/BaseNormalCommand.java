@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
@@ -52,8 +54,8 @@ public abstract class BaseNormalCommand implements BaseCommand {
 
     protected String name;
     protected String requiredRole;
-    protected String help;
-    protected String[] aliases;
+    protected String help = StringUtils.EMPTY;
+    protected String[] aliases = ArrayUtils.EMPTY_STRING_ARRAY;
     protected boolean guildOnly = true;
     protected boolean ownerCommand = false;
     protected boolean nsfwOnly = false;

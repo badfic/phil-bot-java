@@ -54,7 +54,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.restaction.CommandCreateAction;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -127,7 +126,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
             for (BaseNormalCommand command : commands) {
                 if (command.getName().equalsIgnoreCase(commandName)
-                        || Arrays.stream(ArrayUtils.nullToEmpty(command.getAliases())).anyMatch(a -> a.equalsIgnoreCase(commandName))) {
+                        || Arrays.stream(command.getAliases()).anyMatch(a -> a.equalsIgnoreCase(commandName))) {
                     // owner commands
                     if (command.isOwnerCommand()) {
                         if (event.getAuthor().getId().equals(baseConfig.ownerId)) {
