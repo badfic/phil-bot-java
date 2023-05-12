@@ -1,9 +1,9 @@
 package com.badfic.philbot.listeners;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import net.dv8tion.jda.api.entities.Member;

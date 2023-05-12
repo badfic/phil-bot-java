@@ -1,7 +1,7 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ public class TimerCommand extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         String[] args = event.getArgs().split("\\s+");
 
         try {

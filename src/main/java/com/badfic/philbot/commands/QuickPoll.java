@@ -1,7 +1,7 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +17,7 @@ public class QuickPoll extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         if (StringUtils.isBlank(event.getArgs())) {
             event.replyError("Please enter a question. Example `!!qp Should I eat taco bell`");
             return;

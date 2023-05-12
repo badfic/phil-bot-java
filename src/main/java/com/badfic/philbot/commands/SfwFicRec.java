@@ -1,7 +1,7 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.service.Ao3MetadataParser;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ public class SfwFicRec extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         if (StringUtils.isBlank(event.getArgs())) {
             event.replyError("Please specify a link. Example `!!sfwficrec https://example.com`");
             return;

@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
+import com.badfic.philbot.CommandEvent;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +12,7 @@ public class HelpCommand extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         event.reply("Find help for commands here: " + baseConfig.hostname + "/members/commands");
     }
 

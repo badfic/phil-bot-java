@@ -1,11 +1,11 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.Reminder;
 import com.badfic.philbot.data.ReminderDal;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.MinuteTickable;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -32,7 +32,7 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         if (StringUtils.isBlank(event.getArgs())) {
             Collection<Reminder> reminders = reminderDal.findAll();
 

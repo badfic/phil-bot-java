@@ -1,11 +1,11 @@
 package com.badfic.philbot.commands.events;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.MinuteTickable;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -38,7 +38,7 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         doMap();
     }
 

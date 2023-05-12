@@ -1,9 +1,9 @@
 package com.badfic.philbot.commands.swampy;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +23,7 @@ public class SuperlativesCommand extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         long channelId = event.getChannel().getIdLong();
         MessageChannel channel = philJda.getChannelById(MessageChannel.class, channelId);
 

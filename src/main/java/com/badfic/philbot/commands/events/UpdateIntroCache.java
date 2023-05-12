@@ -1,11 +1,11 @@
 package com.badfic.philbot.commands.events;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.Family;
 import com.badfic.philbot.service.DailyTickable;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class UpdateIntroCache extends BaseNormalCommand implements DailyTickable
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         threadPoolTaskExecutor.execute(this::runDailyTask);
     }
 

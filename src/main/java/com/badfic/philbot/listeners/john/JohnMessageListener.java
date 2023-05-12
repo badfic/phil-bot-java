@@ -1,5 +1,6 @@
 package com.badfic.philbot.listeners.john;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.Reminder;
 import com.badfic.philbot.data.ReminderDal;
@@ -7,7 +8,6 @@ import com.badfic.philbot.data.SnarkyReminderResponse;
 import com.badfic.philbot.data.SnarkyReminderResponseRepository;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.BaseService;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -168,7 +168,7 @@ public class JohnMessageListener extends BaseService {
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), discordWebhookSendService);
 
         if (JOHN_PATTERN.matcher(msgContent).find()) {
-            johnCommand.execute(new CommandEvent(event, Constants.PREFIX, null, null));
+            johnCommand.execute(new CommandEvent(event));
             return;
         }
     }

@@ -1,8 +1,8 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
 import java.io.InputStream;
 import java.util.List;
@@ -30,7 +30,7 @@ public class FightCommand extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {

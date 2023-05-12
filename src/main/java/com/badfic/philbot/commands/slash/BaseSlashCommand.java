@@ -5,61 +5,64 @@ import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jagrosh.jdautilities.command.SlashCommand;
-import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
-public abstract class BaseSlashCommand extends SlashCommand implements BaseCommand {
+@Getter
+public abstract class BaseSlashCommand implements BaseCommand {
 
-    @Setter(onMethod_ = {@Autowired, @Qualifier("philJda"), @Lazy})
-    @Getter
+    @Setter(onMethod_ = {@Autowired, @Lazy})
     protected JDA philJda;
 
     @Setter(onMethod_ = {@Autowired})
-    @Getter
     protected DiscordUserRepository discordUserRepository;
 
     @Setter(onMethod_ = {@Autowired})
-    @Getter
     protected SwampyGamesConfigDal swampyGamesConfigDal;
 
     @Setter(onMethod_ = {@Autowired})
-    @Getter
     protected ObjectMapper objectMapper;
 
     @Setter(onMethod_ = {@Autowired})
-    @Getter
     protected JdbcAggregateTemplate jdbcAggregateTemplate;
 
     @Setter(onMethod_ = {@Autowired})
-    @Getter
     protected BaseConfig baseConfig;
 
     @Setter(onMethod_ = {@Autowired})
-    @Getter
     protected RestTemplate restTemplate;
 
     @Setter(onMethod_ = {@Autowired})
-    @Getter
     protected OkHttpClient okHttpClient;
 
     @Setter(onMethod_ = {@Autowired})
-    @Getter
     protected ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandEvent event, CompletableFuture<InteractionHook> interactionHook,
+    protected String name;
+    protected String help;
+    protected List<OptionData> options;
+
+    public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
+        // do nothing
+    }
+
+    public abstract void execute(SlashCommandInteractionEvent event);
+
+    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandInteractionEvent event, CompletableFuture<InteractionHook> interactionHook,
                                                                         MessageEmbed messageEmbed) {
         return interactionHook.whenComplete((hook, err) -> {
             if (err != null) {
@@ -71,7 +74,7 @@ public abstract class BaseSlashCommand extends SlashCommand implements BaseComma
         });
     }
 
-    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandEvent event, CompletableFuture<InteractionHook> interactionHook,
+    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandInteractionEvent event, CompletableFuture<InteractionHook> interactionHook,
                                                                         String message) {
         return interactionHook.whenComplete((hook, err) -> {
             if (err != null) {

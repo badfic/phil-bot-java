@@ -1,7 +1,7 @@
 package com.badfic.philbot.commands;
 
+import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import java.awt.AlphaComposite;
@@ -164,7 +164,7 @@ public class EmoteMe extends BaseNormalCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void execute(CommandEvent event) {
         Member member = event.getMember();
         List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
         if (CollectionUtils.isNotEmpty(mentionedMembers)) {
@@ -269,7 +269,7 @@ public class EmoteMe extends BaseNormalCommand {
             ImageIO.write(newImg, "png", outputStream);
             graphics.dispose();
 
-            event.getTextChannel().sendMessage(" ")
+            event.getChannel().sendMessage(" ")
                     .addFiles(FileUpload.fromData(outputStream.toByteArray(), "emote.png"))
                     .queue();
         } catch (Exception e) {
