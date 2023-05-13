@@ -10,4 +10,4 @@ COPY --from=builder spring-boot-loader/ ./
 COPY --from=builder snapshot-dependencies/ ./
 COPY --from=builder application/ ./
 EXPOSE 8080
-ENTRYPOINT java -XX:MaxRAM=128m -Xss512k -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -verbose:gc -Dspring.backgroundpreinitializer.ignore=true -Dspring.config.location=classpath:application.yaml -cp BOOT-INF/classes:BOOT-INF/lib/* com.badfic.philbot.BotApplication
+ENTRYPOINT java -XX:MaxRAM=128m -Xss512k -XX:MaxMetaspaceSize=70m -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -verbose:gc -Dspring.backgroundpreinitializer.ignore=true -Dspring.config.location=classpath:application.yaml -cp BOOT-INF/classes:BOOT-INF/lib/* com.badfic.philbot.BotApplication

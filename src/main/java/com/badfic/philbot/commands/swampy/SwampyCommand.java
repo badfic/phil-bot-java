@@ -90,46 +90,48 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
             return;
         }
 
-        if (StringUtils.startsWithIgnoreCase(args, "help")) {
-            if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
-                event.replyInDm(Constants.simpleEmbed("Help", modHelp));
-            } else {
-                event.replyInDm(Constants.simpleEmbed("Help", help));
-            }
-        } else if (StringUtils.startsWithIgnoreCase(args, "rank")) {
-            showRank(event);
-        } else if (StringUtils.startsWithIgnoreCase(args, "up")) {
-            upvote(event);
-        } else if (StringUtils.startsWithIgnoreCase(args, "down")) {
-            downvote(event);
-        } else if (StringUtils.startsWithIgnoreCase(args, "give")) {
-            give(event);
-        } else if (StringUtils.startsWithIgnoreCase(args, "take")) {
-            take(event);
-        } else if (StringUtils.startsWithIgnoreCase(args, "leaderboard")) {
-            leaderboard(event);
-        } else if (StringUtils.startsWithIgnoreCase(args, "slots")) {
-            slots(event);
-        } else if (StringUtils.startsWithIgnoreCase(args, "reset")) {
-            if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
-                event.replyError("You do not have permission to use this command");
-                return;
-            }
-
-            if (!awaitingResetConfirmation) {
-                event.reply(Constants.simpleEmbed("Reset The Games", "Are you sure you want to reset the Swampys? This will reset everyone's points. If you are sure, type `!!swampy reset confirm`"));
-                awaitingResetConfirmation = true;
-            } else {
-                if (!StringUtils.startsWithIgnoreCase(args, "reset confirm")) {
-                    event.reply(Constants.simpleEmbed("Abort Reset", "Swampy reset aborted. You must type `!!swampy reset` and then confirm it with `!!swampy reset confirm`."));
-                    awaitingResetConfirmation = false;
+        if (StringUtils.startsWith(msgContent, Constants.PREFIX)) {
+            if (StringUtils.startsWithIgnoreCase(args, "help")) {
+                if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
+                    event.replyInDm(Constants.simpleEmbed("Help", modHelp));
+                } else {
+                    event.replyInDm(Constants.simpleEmbed("Help", help));
+                }
+            } else if (StringUtils.startsWithIgnoreCase(args, "rank")) {
+                showRank(event);
+            } else if (StringUtils.startsWithIgnoreCase(args, "up")) {
+                upvote(event);
+            } else if (StringUtils.startsWithIgnoreCase(args, "down")) {
+                downvote(event);
+            } else if (StringUtils.startsWithIgnoreCase(args, "give")) {
+                give(event);
+            } else if (StringUtils.startsWithIgnoreCase(args, "take")) {
+                take(event);
+            } else if (StringUtils.startsWithIgnoreCase(args, "leaderboard")) {
+                leaderboard(event);
+            } else if (StringUtils.startsWithIgnoreCase(args, "slots")) {
+                slots(event);
+            } else if (StringUtils.startsWithIgnoreCase(args, "reset")) {
+                if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
+                    event.replyError("You do not have permission to use this command");
                     return;
                 }
-                reset(event);
-                awaitingResetConfirmation = false;
+
+                if (!awaitingResetConfirmation) {
+                    event.reply(Constants.simpleEmbed("Reset The Games", "Are you sure you want to reset the Swampys? This will reset everyone's points. If you are sure, type `!!swampy reset confirm`"));
+                    awaitingResetConfirmation = true;
+                } else {
+                    if (!StringUtils.startsWithIgnoreCase(args, "reset confirm")) {
+                        event.reply(Constants.simpleEmbed("Abort Reset", "Swampy reset aborted. You must type `!!swampy reset` and then confirm it with `!!swampy reset confirm`."));
+                        awaitingResetConfirmation = false;
+                        return;
+                    }
+                    reset(event);
+                    awaitingResetConfirmation = false;
+                }
+            } else {
+                event.replyError("Unrecognized command");
             }
-        } else if (msgContent.startsWith(Constants.PREFIX)) {
-            event.replyError("Unrecognized command");
         } else {
             SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
