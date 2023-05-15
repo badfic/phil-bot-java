@@ -1,23 +1,20 @@
 package com.badfic.philbot.service;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class MinuteTicker extends BaseService {
-    private static final ExecutorService MINUTE_TICKER_EXECUTOR = Executors.newSingleThreadExecutor();
 
     private final List<MinuteTickable> minuteTickables;
-
-    public MinuteTicker(List<MinuteTickable> minuteTickables) {
-        this.minuteTickables = minuteTickables;
-    }
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Scheduled(cron = "${swampy.schedule.minutely}", zone = "${swampy.schedule.timezone}")
     public void tick() {
@@ -27,7 +24,7 @@ public class MinuteTicker extends BaseService {
         }
 
         for (MinuteTickable tickable : minuteTickables) {
-            MINUTE_TICKER_EXECUTOR.execute(() -> {
+            threadPoolTaskExecutor.execute(() -> {
                 try {
                     tickable.runMinutelyTask();
                 } catch (Exception e) {

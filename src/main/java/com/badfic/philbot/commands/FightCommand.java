@@ -3,30 +3,22 @@ package com.badfic.philbot.commands;
 import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
-import jakarta.annotation.PostConstruct;
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class FightCommand extends BaseNormalCommand {
-
-    private FightOutcome[] fightOutcomes;
 
     public FightCommand() {
         name = "fight";
         help = "!!fight @user: fight a user, get a random outcome. fun for the whole family";
-    }
-
-    @PostConstruct
-    public void init() throws Exception {
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("fight-outcomes.json")) {
-            fightOutcomes = objectMapper.readValue(stream, FightOutcome[].class);
-        }
     }
 
     @Override
@@ -40,6 +32,15 @@ public class FightCommand extends BaseNormalCommand {
 
         Member aggressor = event.getMember();
         Member victim = mentionedMembers.get(0);
+
+        FightOutcome[] fightOutcomes;
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("fight-outcomes.json")) {
+            fightOutcomes = objectMapper.readValue(stream, FightOutcome[].class);
+        } catch (Exception e) {
+            log.error("Failed to load fight outcomes", e);
+            event.replyError("Could not load fight outcomes, nobody wins!");
+            return;
+        }
 
         FightOutcome fightOutcome = Constants.pickRandom(fightOutcomes);
 

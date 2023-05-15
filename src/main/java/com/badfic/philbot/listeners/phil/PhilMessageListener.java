@@ -18,6 +18,7 @@ import com.badfic.philbot.service.HungerGamesWinnersService;
 import com.badfic.philbot.service.MemeCommandsService;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -210,7 +211,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
         log.info("Received ready event for [user={}]", event.getJDA().getSelfUser());
         MessageEmbed messageEmbed = Constants.simpleEmbed("Restarted",
-                String.format("I just restarted\ngit sha: %s\ncommit msg: %s", baseConfig.commitSha, baseConfig.commitMessage), Constants.SWAMP_GREEN);
+                String.format("I just restarted\ngit sha: %s\ncommit msg: %s", baseConfig.commitSha, baseConfig.commitMessage), new Color(89, 145, 17));
         event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).get(0).sendMessageEmbeds(messageEmbed).queue();
 
         Guild guildById = philJda.getGuildById(baseConfig.guildId);

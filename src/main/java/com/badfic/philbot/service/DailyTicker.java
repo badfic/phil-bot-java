@@ -1,26 +1,23 @@
 package com.badfic.philbot.service;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 @Slf4j
 public class DailyTicker extends BaseService {
     private final List<DailyTickable> dailyTickables;
-
-    public DailyTicker(List<DailyTickable> dailyTickables) {
-        this.dailyTickables = dailyTickables;
-    }
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Scheduled(cron = "${swampy.schedule.daily}", zone = "${swampy.schedule.timezone}")
     public void tick() {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         for (DailyTickable tickable : dailyTickables) {
-            executor.execute(() -> {
+            threadPoolTaskExecutor.execute(() -> {
                 try {
                     tickable.runDailyTask();
                 } catch (Exception e) {
@@ -28,7 +25,6 @@ public class DailyTicker extends BaseService {
                 }
             });
         }
-        executor.shutdown();
     }
 
 }

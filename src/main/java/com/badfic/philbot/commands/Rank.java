@@ -1,11 +1,11 @@
 package com.badfic.philbot.commands;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Synchronized;
@@ -20,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 public class Rank {
     public static final long LVL_MULTIPLIER = 2000;
     private static final Map<Long, Rank> LEVEL_MAP = new HashMap<>();
-    private static final List<Rank> ALL_RANKS = new ArrayList<>();
 
     private final int ordinal;
     private final String roleName;
@@ -45,7 +44,6 @@ public class Rank {
     @Synchronized
     public static void init(RestTemplate restTemplate, String airtableApiToken) throws Exception {
         LEVEL_MAP.clear();
-        ALL_RANKS.clear();
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + airtableApiToken);
@@ -68,7 +66,6 @@ public class Rank {
             }
 
             LEVEL_MAP.put(fields.level(), rank);
-            ALL_RANKS.add(rank);
         }
     }
 
@@ -87,7 +84,7 @@ public class Rank {
 
     @Synchronized
     public static List<Rank> getAllRanks() {
-        return ALL_RANKS;
+        return LEVEL_MAP.values().stream().sorted(Comparator.comparingInt(Rank::getOrdinal)).collect(Collectors.toList());
     }
 
     public record RecordFields(String role, long level, String colour, String blurb, String image) {}

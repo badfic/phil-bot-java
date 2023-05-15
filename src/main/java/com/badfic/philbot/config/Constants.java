@@ -57,8 +57,6 @@ public class Constants {
 
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
 
-    public static final Color SWAMP_GREEN = new Color(89, 145, 17);
-
     public static final Pattern IMAGE_EXTENSION_PATTERN = Constants.compileWords("png|jpeg|jpg|gif|bmp|svg|webp|avif|ico|tiff");
 
     public static final Short DATA_SINGLETON_ID = 1;
