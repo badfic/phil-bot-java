@@ -190,18 +190,18 @@ public class NsfwQuoteTrivia extends BaseNormalCommand implements MinuteTickable
 
             Member memberById = guild.getMemberById(user.getId());
             if (memberById == null) {
-                description.append("Could not award points to <@!")
+                description.append("Could not award points to <@")
                         .append(user.getId())
                         .append(">\n");
             } else {
                 if (isNotParticipating(memberById)) {
-                    description.append("<@!")
+                    description.append("<@")
                             .append(user.getId())
                             .append("> Please ask a mod to check your roles to participate in the swampys\n");
                 } else {
                     description.append("Awarded ")
                             .append(points)
-                            .append(" points to <@!")
+                            .append(" points to <@")
                             .append(user.getId())
                             .append(">\n");
                 }

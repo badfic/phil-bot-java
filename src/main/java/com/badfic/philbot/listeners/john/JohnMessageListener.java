@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class JohnMessageListener extends BaseService {
     private static final Pattern JOHN_PATTERN = Constants.compileWords("john|constantine|johnno|johnny|hellblazer");
-    private static final Pattern REMINDER_PATTER = Pattern.compile("\\b(remind me in |remind <@![0-9]+> in )[0-9]+\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REMINDER_PATTER = Pattern.compile("\\b(remind me in |remind <@[0-9]+> in )[0-9]+\\b", Pattern.CASE_INSENSITIVE);
     private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
     private static final String[] UWU = {
             "https://tenor.com/bbmRv.gif",
@@ -182,7 +182,7 @@ public class JohnMessageListener extends BaseService {
             if (CollectionUtils.isNotEmpty(message.getMentions().getMembers())) {
                 member = message.getMentions().getMembers().get(0);
 
-                reminder = message.getContentRaw().substring(remindIdx + ("remind <@!" + member.getIdLong() + "> in ").length());
+                reminder = message.getContentRaw().substring(remindIdx + ("remind <@" + member.getIdLong() + "> in ").length());
             } else {
                 reminder = message.getContentRaw().substring(remindIdx + "remind me in ".length());
             }
@@ -209,7 +209,7 @@ public class JohnMessageListener extends BaseService {
             SnarkyReminderResponse snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
 
             discordWebhookSendService.sendMessage(message.getChannel().getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
-                    "(reminder #" + savedReminder.getId() + ") " + snarkyReminderResponse.getResponse().replace("<name>", "<@!" + message.getAuthor().getId() + ">"));
+                    "(reminder #" + savedReminder.getId() + ") " + snarkyReminderResponse.getResponse().replace("<name>", "<@" + message.getAuthor().getId() + ">"));
         } catch (Exception e) {
             log.error("Exception trying to parse a reminder. [msgText={}]", message.getContentRaw(), e);
 

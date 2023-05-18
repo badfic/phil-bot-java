@@ -173,7 +173,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
                             day,
                             day,
                             count,
-                            mostQuotedMember != null ? mostQuotedMember.getAsMention() : "<@!" + mostQuotedUserId + ">"))).queue();
+                            mostQuotedMember != null ? mostQuotedMember.getAsMention() : "<@" + mostQuotedUserId + ">"))).queue();
             return;
         }
 
@@ -244,7 +244,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
                 String msgLink = " [(jump)](https://discordapp.com/channels/" + guildId + '/' + channelId + '/' + messageId + ')';
 
                 MessageEmbed messageEmbed = Constants.simpleEmbed("NsfwQuote #" + savedQuote.getId() + " Added",
-                        "<@!" + quoterId + "> Added NsfwQuote #" + savedQuote.getId() + msgLink);
+                        "<@" + quoterId + "> Added NsfwQuote #" + savedQuote.getId() + msgLink);
 
                 philJda.getTextChannelById(channelId).sendMessageEmbeds(messageEmbed).queue();
             });
@@ -257,7 +257,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
 
         StringBuilder description = new StringBuilder()
                 .append(quote.getQuote())
-                .append("\n- <@!")
+                .append("\n- <@")
                 .append(quote.getUserId())
                 .append("> ")
                 .append(msgLink);

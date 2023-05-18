@@ -53,13 +53,13 @@ public class SuperlativesCommand extends BaseNormalCommand {
         StringBuilder description = new StringBuilder();
 
         bastards.stream().min((a, b) -> (int) (a.getTaxesPoints() - b.getTaxesPoints())).ifPresent(user -> {
-            description.append("Worst Taxes: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Worst Taxes: ").append("<@").append(user.getId()).append(">\n");
         });
         bastards.stream().max((a, b) -> (int) (a.getRobinhoodPoints() - b.getRobinhoodPoints())).ifPresent(user -> {
-            description.append("Refunds: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Refunds: ").append("<@").append(user.getId()).append(">\n");
         });
         bastards.stream().max((a, b) -> (int) (a.getStonksPoints() - b.getStonksPoints())).ifPresent(user -> {
-            description.append("Stonks: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Stonks: ").append("<@").append(user.getId()).append(">\n");
         });
 
         buildSuperlativeDescription(description, bastards);
@@ -68,7 +68,7 @@ public class SuperlativesCommand extends BaseNormalCommand {
         description.setLength(0);
 
         chaosChildren.stream().max((a, b) -> (int) (a.getShrekoningPoints() - b.getShrekoningPoints())).ifPresent(user -> {
-            description.append("Shrekoning: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Shrekoning: ").append("<@").append(user.getId()).append(">\n");
         });
 
         buildSuperlativeDescription(description, chaosChildren);
@@ -81,58 +81,58 @@ public class SuperlativesCommand extends BaseNormalCommand {
         String trickOrTreatName = getSwampyGamesConfig().getThisOrThatName();
 
         list.stream().max((a, b) -> (int) (a.getTrickOrTreatPoints() - b.getTrickOrTreatPoints())).ifPresent(user -> {
-            description.append(trickOrTreatName).append(": <@!").append(user.getId()).append(">\n");
+            description.append(trickOrTreatName).append(": <@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getSweepstakesPoints() - b.getSweepstakesPoints())).ifPresent(user -> {
-            description.append("Sweepstakes: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Sweepstakes: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getBoostPoints() - b.getBoostPoints())).ifPresent(user -> {
-            description.append("Boosts: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Boosts: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getUpvotedPoints() - b.getUpvotedPoints())).ifPresent(user -> {
-            description.append("Upvoted: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Upvoted: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getUpvoterPoints() - b.getUpvoterPoints())).ifPresent(user -> {
-            description.append("Upvoter: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Upvoter: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getMapsPoints() - b.getMapsPoints())).ifPresent(user -> {
-            description.append("Map: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Map: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getTriviaPoints() - b.getTriviaPoints())).ifPresent(user -> {
-            description.append("Trivia: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Trivia: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getQuoteTriviaPoints() - b.getQuoteTriviaPoints())).ifPresent(user -> {
-            description.append("Quote Trivia: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Quote Trivia: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getFightPoints() - b.getFightPoints())).ifPresent(user -> {
-            description.append("Fight: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Fight: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().min((a, b) -> (int) (a.getNoNoPoints() - b.getNoNoPoints())).ifPresent(user -> {
-            description.append("No No: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("No No: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getMessagePoints() - b.getMessagePoints())).ifPresent(user -> {
-            description.append("Talkative: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Talkative: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getPictureMessagePoints() - b.getPictureMessagePoints())).ifPresent(user -> {
-            description.append("Images: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Images: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getVoiceChatPoints() - b.getVoiceChatPoints())).ifPresent(user -> {
-            description.append("Voice Chat: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Voice Chat: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getReactPoints() - b.getReactPoints())).ifPresent(user -> {
-            description.append("Give Reactions: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Give Reactions: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getReactedPoints() - b.getReactedPoints())).ifPresent(user -> {
-            description.append("Receive Reactions: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Receive Reactions: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getSlotsLosses() - b.getSlotsLosses())).ifPresent(user -> {
-            description.append("Slottiest: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Slottiest: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getSlotsWinnerWinnerPoints() - b.getSlotsWinnerWinnerPoints())).ifPresent(user -> {
-            description.append("Slots Wins: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Slots Wins: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getSwiperParticipations() - b.getSwiperParticipations())).ifPresent(user -> {
-            description.append("Swiper Saves: ").append("<@!").append(user.getId()).append(">\n");
+            description.append("Swiper Saves: ").append("<@").append(user.getId()).append(">\n");
         });
     }
 }

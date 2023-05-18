@@ -170,7 +170,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
                             day,
                             day,
                             count,
-                            mostQuotedMember != null ? mostQuotedMember.getAsMention() : "<@!" + mostQuotedUserId + ">"))).queue();
+                            mostQuotedMember != null ? mostQuotedMember.getAsMention() : "<@" + mostQuotedUserId + ">"))).queue();
             return;
         }
 
@@ -241,7 +241,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
                 String msgLink = " [(jump)](https://discordapp.com/channels/" + guildId + '/' + channelId + '/' + messageId + ')';
 
                 MessageEmbed messageEmbed = Constants.simpleEmbed("Quote #" + savedQuote.getId() + " Added",
-                        "<@!" + quoterId + "> Added quote #" + savedQuote.getId() + msgLink);
+                        "<@" + quoterId + "> Added quote #" + savedQuote.getId() + msgLink);
 
                 philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(messageEmbed).queue();
             });
@@ -254,7 +254,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
 
         StringBuilder description = new StringBuilder()
                 .append(quote.getQuote())
-                .append("\n- <@!")
+                .append("\n- <@")
                 .append(quote.getUserId())
                 .append("> ")
                 .append(msgLink);

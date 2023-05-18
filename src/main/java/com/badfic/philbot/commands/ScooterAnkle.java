@@ -87,7 +87,7 @@ public class ScooterAnkle extends BaseNormalCommand {
                     throw new RuntimeException("Unable to find member " + user.getId());
                 }
             } catch (Exception e) {
-                description.append("Oop, failed to give points to user <@!")
+                description.append("Oop, failed to give points to user <@")
                         .append(user.getId())
                         .append(">\n");
                 log.error("Exception giving points to [user={}] for [scooterUser={}]'s scooter ankle", user.getId(), scooterUser.getId(), e);

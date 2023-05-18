@@ -87,7 +87,7 @@ public class Robinhood extends BaseNormalCommand {
                                 .append(NumberFormat.getIntegerInstance().format(recoveredTaxes))
                                 .append(" points (")
                                 .append(taxRateRecoveryAmountPercentage)
-                                .append("%) to <@!")
+                                .append("%) to <@")
                                 .append(user.getId())
                                 .append(">\n");
                     }

@@ -126,7 +126,7 @@ public class Fam extends BaseNormalCommand implements ModHelpAware {
             adoptPibling(event);
         } else if (args.startsWith("disown pibling")) {
             disownPibling(event);
-        } else if (args.isEmpty() || args.startsWith("<@!")) {
+        } else if (args.isEmpty() || args.startsWith("<@")) {
             show(event);
         } else {
             event.replyError("unrecognized fam command");
@@ -154,7 +154,7 @@ public class Fam extends BaseNormalCommand implements ModHelpAware {
     }
 
     private String collectionToMentions(Collection<String> collection) {
-        return collection.stream().filter(NumberUtils::isParsable).map(s -> "<@!" + s + ">").collect(Collectors.joining(" "));
+        return collection.stream().filter(NumberUtils::isParsable).map(s -> "<@" + s + ">").collect(Collectors.joining(" "));
     }
 
     private void nuke(CommandEvent event) {
@@ -450,7 +450,7 @@ public class Fam extends BaseNormalCommand implements ModHelpAware {
             description.append(relation).append(": ");
             String joinedString = supplier.get().stream().map(id -> {
                 if (NumberUtils.isParsable(id)) {
-                    return "<@!" + id + '>';
+                    return "<@" + id + '>';
                 }
                 return id;
             }).collect(Collectors.joining(", "));

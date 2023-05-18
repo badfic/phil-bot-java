@@ -233,13 +233,13 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
         MessageEmbed messageEmbed;
         if (reactionEmote.getType() == Emoji.Type.CUSTOM) {
             messageEmbed = Constants.simpleEmbedThumbnail("Reaction Event",
-                    String.format("<@!%d> reacted %s (see thumbnail) to\n%s\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
+                    String.format("<@%d> reacted %s (see thumbnail) to\n%s\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
                             reactionGiverId, reactionEmote.asCustom().getName(), channel.getAsMention(), guildId, channel.getIdLong(), messageId,
                             DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())),
                     reactionEmote.asCustom().getImageUrl());
         } else {
             messageEmbed = Constants.simpleEmbed("Reaction Event",
-                    String.format("<@!%d> reacted %s to\n%s\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
+                    String.format("<@%d> reacted %s to\n%s\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
                             reactionGiverId, reactionEmote.asUnicode().getName(), channel.getAsMention(), guildId, channel.getIdLong(), messageId,
                             DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())));
         }
@@ -390,7 +390,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
                         description.append(place.getAndIncrement());
                         if (memberById != null) {
                             description
-                                    .append(": <@!")
+                                    .append(": <@")
                                     .append(swampyUser.getId())
                                     .append(">, name: \"")
                                     .append(memberById.getEffectiveName())
@@ -401,7 +401,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
                                     .append('\n');
                         } else {
                             description
-                                    .append(": <@!")
+                                    .append(": <@")
                                     .append(swampyUser.getId())
                                     .append(">, could not find user in member cache!, xp: ")
                                     .append(NumberFormat.getIntegerInstance().format(swampyUser.getXp()))
@@ -425,7 +425,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
                     .sorted((u1, u2) -> Long.compare(stat.getter().applyAsLong(u2), stat.getter().applyAsLong(u1)))
                     .forEachOrdered(swampyUser -> {
                         description
-                                .append("<@!")
+                                .append("<@")
                                 .append(swampyUser.getId())
                                 .append("> - ")
                                 .append(NumberFormat.getIntegerInstance().format(stat.getter().applyAsLong(swampyUser)))
@@ -450,7 +450,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
             }
         }).sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())).limit(10).forEachOrdered(swampyUser -> {
             description.append(LEADERBOARD_MEDALS[place.getAndIncrement()])
-                    .append(": <@!")
+                    .append(": <@")
                     .append(swampyUser.getId())
                     .append("> - ")
                     .append(NumberFormat.getIntegerInstance().format(swampyUser.getXp()))

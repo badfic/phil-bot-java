@@ -58,7 +58,7 @@ public class TrickOrTreat extends BaseNormalCommand {
                                     .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getThisOrThatPoints()))
                                     .append(' ')
                                     .append(swampyGamesConfig.getThisOrThatGiveEmoji())
-                                    .append(" given to <@!")
+                                    .append(" given to <@")
                                     .append(user.getId())
                                     .append(">\n");
                         } else {
@@ -69,7 +69,7 @@ public class TrickOrTreat extends BaseNormalCommand {
                                     .append(NumberFormat.getIntegerInstance().format(swampyGamesConfig.getThisOrThatPoints()))
                                     .append(' ')
                                     .append(swampyGamesConfig.getThisOrThatTakeEmoji())
-                                    .append(" taken from <@!")
+                                    .append(" taken from <@")
                                     .append(user.getId())
                                     .append(">\n");
                         }

@@ -66,7 +66,7 @@ public class Player {
                 return;
             }
 
-            effectiveName = "<@!" + discordUser + ">";
+            effectiveName = "<@" + discordUser + ">";
             return;
         }
 

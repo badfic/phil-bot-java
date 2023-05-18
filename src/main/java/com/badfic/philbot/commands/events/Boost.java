@@ -62,20 +62,20 @@ public class Boost extends BaseNormalCommand {
                             }
 
                             if (isNotParticipating(memberLookedUp)) {
-                                description.append("<@!")
+                                description.append("<@")
                                         .append(u.getId())
                                         .append("> Please ask a mod to check your roles to participate in the swampys\n");
                             } else {
                                 futures.add(givePointsToMember(swampyGamesConfig.getBoostEventPoints(), memberLookedUp, PointsStat.BOOST));
                                 description.append("Gave ")
                                         .append(swampyGamesConfig.getBoostEventPoints())
-                                        .append(" points to <@!")
+                                        .append(" points to <@")
                                         .append(u.getId())
                                         .append(">\n");
                             }
                         } catch (Exception e) {
                             log.error("Failed to give boost points to user [id={}]", u.getId(), e);
-                            description.append("OOPS: Unable to give points to <@!")
+                            description.append("OOPS: Unable to give points to <@")
                                     .append(u.getId())
                                     .append(">\n");
                         }

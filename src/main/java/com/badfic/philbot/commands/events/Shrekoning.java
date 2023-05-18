@@ -65,7 +65,7 @@ public class Shrekoning extends BaseNormalCommand {
                             description
                                     .append(NumberFormat.getIntegerInstance().format(points))
                                     .append(" \uD83E\uDDC5")
-                                    .append(" for <@!")
+                                    .append(" for <@")
                                     .append(user.getId())
                                     .append(">\n");
                         }

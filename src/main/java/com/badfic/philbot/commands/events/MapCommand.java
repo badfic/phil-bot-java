@@ -125,12 +125,12 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
                             futures.add(givePointsToMember(swampyGamesConfig.getMapEventPoints(), memberLookedUp, PointsStat.MAP));
                             description.append("Gave ")
                                     .append(swampyGamesConfig.getMapEventPoints())
-                                    .append(" points to <@!")
+                                    .append(" points to <@")
                                     .append(u.getId())
                                     .append(">\n");
                         } catch (Exception e) {
                             log.error("Failed to give map trivia points to user [id={}]", u.getId(), e);
-                            description.append("OOPS: Unable to give points to <@!")
+                            description.append("OOPS: Unable to give points to <@")
                                     .append(u.getId())
                                     .append(">\n");
                         }

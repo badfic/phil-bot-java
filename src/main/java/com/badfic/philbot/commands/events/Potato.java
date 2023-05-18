@@ -68,7 +68,7 @@ public class Potato extends BaseNormalCommand {
                     totalPointsGiven.add(potatoEventPoints);
                     description
                             .append(NumberFormat.getIntegerInstance().format(potatoEventPoints))
-                            .append(" \uD83E\uDD54 for <@!")
+                            .append(" \uD83E\uDD54 for <@")
                             .append(user.getId())
                             .append(">\n");
                 }

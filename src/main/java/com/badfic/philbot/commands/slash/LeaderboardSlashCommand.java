@@ -57,7 +57,7 @@ public class LeaderboardSlashCommand extends BaseSlashCommand {
             }
         }).sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())).limit(10).forEachOrdered(swampyUser -> {
             description.append(SwampyCommand.LEADERBOARD_MEDALS[place.getAndIncrement()])
-                    .append(": <@!")
+                    .append(": <@")
                     .append(swampyUser.getId())
                     .append("> - ")
                     .append(NumberFormat.getIntegerInstance().format(swampyUser.getXp()))

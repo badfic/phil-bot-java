@@ -68,7 +68,7 @@ public class Carrot extends BaseNormalCommand {
                     totalPointsGiven.add(carrotEventPoints);
                     description
                             .append(NumberFormat.getIntegerInstance().format(carrotEventPoints))
-                            .append(" \uD83E\uDD55 for <@!")
+                            .append(" \uD83E\uDD55 for <@")
                             .append(user.getId())
                             .append(">\n");
                 }

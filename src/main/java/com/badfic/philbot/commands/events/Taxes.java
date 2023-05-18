@@ -80,7 +80,7 @@ public class Taxes extends BaseNormalCommand {
                                 .append(NumberFormat.getIntegerInstance().format(taxes))
                                 .append(" points (")
                                 .append(taxRate)
-                                .append("%) from <@!")
+                                .append("%) from <@")
                                 .append(user.getId())
                                 .append(">\n");
                     }

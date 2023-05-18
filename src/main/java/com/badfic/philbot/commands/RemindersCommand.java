@@ -40,7 +40,7 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
             for (Reminder reminder : reminders) {
                 description.append('#')
                         .append(reminder.getId())
-                        .append(" <@!")
+                        .append(" <@")
                         .append(reminder.getUserId())
                         .append("> ")
                         .append(reminder.getReminder())
@@ -76,7 +76,7 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
                     StringBuilder description = new StringBuilder();
                     description.append('#')
                             .append(reminder.getId())
-                            .append(" <@!")
+                            .append(" <@")
                             .append(reminder.getUserId())
                             .append("> ")
                             .append(reminder.getReminder())
@@ -110,7 +110,7 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
                 if (textChannelById != null) {
                     SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
                     discordWebhookSendService.sendMessage(textChannelById.getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
-                            "(reminder #" + reminder.getId() + ") <@!" + reminder.getUserId() + "> " + reminder.getReminder());
+                            "(reminder #" + reminder.getId() + ") <@" + reminder.getUserId() + "> " + reminder.getReminder());
                     reminderDal.deleteById(reminder.getId());
                 }
             }

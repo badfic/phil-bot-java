@@ -157,7 +157,7 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
             Optional<DiscordUser> victim = discordUserRepository.findById(swiperAwaiting);
 
             MessageEmbed message = Constants.simpleEmbed(theSwiper.noSwipingPhrase(),
-                    "Congratulations, <@!" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points",
+                    "Congratulations, <@" + philJda.getSelfUser().getId() + "> is a moron so nobody loses any points",
                     theSwiper.swiperLostImg(), null, null, philJda.getSelfUser().getEffectiveAvatarUrl());
 
             CompletableFuture<?> future = CompletableFuture.completedFuture(null);
@@ -171,8 +171,8 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
                                 : theSwiper.swiperLostImg();
 
                         message = Constants.simpleEmbed(theSwiper.noSwipingPhrase(),
-                                "Congratulations, <@!" + (savior.isPresent() ? savior.get().getId() : "somebody")
-                                        + "> scared them away from <@!" + victim.get().getId() + ">",
+                                "Congratulations, <@" + (savior.isPresent() ? savior.get().getId() : "somebody")
+                                        + "> scared them away from <@" + victim.get().getId() + ">",
                                 image);
 
                         if (savior.isPresent()) {
@@ -193,7 +193,7 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
                         if (memberById != null) {
                             future = takePointsFromMember(swiperPoints, memberById, PointsStat.SWIPER);
                             message = Constants.simpleEmbed(theSwiper.swiperWonPhrase(),
-                                    "You didn't save <@!" + victim.get().getId() + "> in time, they lost " + swiperPoints + " points",
+                                    "You didn't save <@" + victim.get().getId() + "> in time, they lost " + swiperPoints + " points",
                                     theSwiper.swiperWonImg());
                         }
                     } catch (Exception e) {
@@ -247,7 +247,7 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
         swampyGamesConfig.setSwiperExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
         swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
 
-        String description = "They're trying to steal from <@!" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
+        String description = "They're trying to steal from <@" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
                 + "' in this channel within 15 minutes to stop them!";
 
         MessageEmbed message = Constants.simpleEmbed(theSwiper.spottedPhrase(), description, theSwiper.spottedImg(), null, null,

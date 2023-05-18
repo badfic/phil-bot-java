@@ -108,7 +108,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
             return;
         }
 
-        String crime = event.getArgs().replace("<@!" + defendant.getIdLong() + ">", "").trim();
+        String crime = event.getArgs().replace("<@" + defendant.getIdLong() + ">", "").trim();
         if (crime.startsWith("for")) {
             crime = crime.substring(3).trim();
         }
@@ -173,7 +173,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                         trialMessage.clearReactions().queue();
 
                         if (sentenceMap.entrySet().stream().allMatch(e -> e.getValue().getValue() == 0)) {
-                            swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been acquitted").queue();
+                            swampysChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been acquitted").queue();
                             courtCaseDal.deleteById(courtCase.getDefendantId());
                             continue;
                         }
@@ -185,7 +185,7 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
 
                         switch (winningSentence) {
                             case ACQUIT -> {
-                                swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been acquitted").queue();
+                                swampysChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been acquitted").queue();
                                 courtCaseDal.deleteById(courtCase.getDefendantId());
                             }
                             case ONE_HOUR -> {
@@ -193,9 +193,9 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusHours(1));
                                 courtCaseDal.update(courtCase);
-                                swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
+                                swampysChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
                                         + courtCase.getCrime()).queue();
-                                megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
+                                megaHellChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
                                         + courtCase.getCrime()).queue();
                             }
                             case FIVE_HOUR -> {
@@ -203,9 +203,9 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusHours(5));
                                 courtCaseDal.update(courtCase);
-                                swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 5 hours in mega hell for "
+                                swampysChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 5 hours in mega hell for "
                                         + courtCase.getCrime()).queue();
-                                megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 5 hours in mega hell for "
+                                megaHellChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 5 hours in mega hell for "
                                         + courtCase.getCrime()).queue();
                             }
                             case ONE_DAY -> {
@@ -213,26 +213,26 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                                 courtCase.setTrialDate(null);
                                 courtCase.setReleaseDate(LocalDateTime.now().plusDays(1));
                                 courtCaseDal.update(courtCase);
-                                swampysChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 day in mega hell for "
+                                swampysChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 1 day in mega hell for "
                                         + courtCase.getCrime()).queue();
-                                megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been sentenced to 1 day in mega hell for "
+                                megaHellChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 1 day in mega hell for "
                                         + courtCase.getCrime()).queue();
                             }
                         }
                     } catch (Exception e) {
                         log.error("Error with trial for [userId={}]", courtCase.getDefendantId(), e);
                         courtCaseDal.deleteById(courtCase.getDefendantId());
-                        swampysChannel.sendMessage("Trial for <@!" + courtCase.getDefendantId() + "> aborted.").queue();
+                        swampysChannel.sendMessage("Trial for <@" + courtCase.getDefendantId() + "> aborted.").queue();
                     }
                 } else if (courtCase.getReleaseDate() != null && courtCase.getReleaseDate().isBefore(now)) {
                     courtCaseDal.deleteById(courtCase.getDefendantId());
 
                     try {
                         guild.removeRoleFromMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
-                        megaHellChannel.sendMessage("<@!" + courtCase.getDefendantId() + "> has been released from mega-hell").queue();
+                        megaHellChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been released from mega-hell").queue();
                     } catch (Exception e) {
                         log.error("Error with release date for [userId={}]", courtCase.getDefendantId(), e);
-                        megaHellChannel.sendMessage("Sentence for <@!" + courtCase.getDefendantId() + "> aborted.").queue();
+                        megaHellChannel.sendMessage("Sentence for <@" + courtCase.getDefendantId() + "> aborted.").queue();
                     }
                 }
             } catch (Exception e) {

@@ -16,7 +16,7 @@ public class DailyRandomNumber extends BaseService {
         Character[] letters = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'};
         int number = ThreadLocalRandom.current().nextInt(1, 15);
 
-        general.sendMessage(String.format("<@!307611036134146080>, %s%d", Constants.pickRandom(letters), number)).queue();
+        general.sendMessage(String.format("<@307611036134146080>, %s%d", Constants.pickRandom(letters), number)).queue();
     }
 
 }

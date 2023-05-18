@@ -78,7 +78,7 @@ public class Stonks extends BaseNormalCommand {
                     description
                             .append(NumberFormat.getIntegerInstance().format(pointsToGive))
                             .append(" \uD83D\uDCC8")
-                            .append(" for <@!")
+                            .append(" for <@")
                             .append(user.getId())
                             .append(">\n");
                 }

@@ -67,7 +67,7 @@ public class Glitter extends BaseNormalCommand {
                     totalPointsGiven.add(glitterEventPoints);
                     description
                             .append(NumberFormat.getIntegerInstance().format(glitterEventPoints))
-                            .append(" ✨ for <@!")
+                            .append(" ✨ for <@")
                             .append(user.getId())
                             .append(">\n");
                 }
