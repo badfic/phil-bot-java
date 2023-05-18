@@ -4,14 +4,10 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.BaseService;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -36,16 +32,13 @@ public class BehradMessageListener extends BaseService {
             "https://gfycat.com/accomplishedinstructivefish"
     };
     private static final Pattern WEED_PATTERN = Constants.compileWords("marijuana|weed|420|stoned|high|stoner|kush");
-    private static final Map<String, List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = Map.of(
-            "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
 
     private final BehradCommand behradCommand;
 
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event, SwampyGamesConfig swampyGamesConfig) {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
         long channelId = event.getMessage().getChannel().getIdLong();
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
         if (msgContent.contains("i'm gay")) {
             discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(), "same");
@@ -75,9 +68,6 @@ public class BehradMessageListener extends BaseService {
                     "420 whatcha smokin? https://cdn.discordapp.com/attachments/323666308107599872/750575541266022410/cfff6b4479a51d245d26cd82e16d4f3f.png");
             return;
         }
-
-        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
-                discordWebhookSendService);
 
         if (BEHRAD_PATTERN.matcher(msgContent).find()) {
             behradCommand.execute(new CommandEvent(event));

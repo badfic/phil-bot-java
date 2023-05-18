@@ -30,18 +30,18 @@ public class LogflareAppender extends AppenderBase<ILoggingEvent> {
 
     public LogflareAppender() {
         restTemplate = new RestTemplate();
-        queue = new ArrayBlockingQueue<>(256);
+        queue = new ArrayBlockingQueue<>(64);
         worker = new Thread(() -> {
             while (!workerStopped && !Thread.currentThread().isInterrupted()) {
                 try {
-                    String message = queue.poll();
+                    String message = queue.take();
 
-                    if (message != null) {
-                        sendMessage(message);
-                    }
+                    sendMessage(message);
 
                     // The rate limit for Logflare is 5 per second
                     LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
                 } catch (Exception ignored) {}
             }
         });

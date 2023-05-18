@@ -4,15 +4,11 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.BaseService;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -59,8 +55,6 @@ public class KeanuMessageListener extends BaseService {
     private static final Pattern PUPPY_PATTERN = Constants.compileWords("puppy|puppies|pupper|doggo|doge");
     private static final String HELLO_GIF = "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves";
     private static final String PUPPIES_GIF = "https://media.giphy.com/media/8rFNes6jllJQRnHTsF/giphy.gif";
-    private static final Map<String, List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = Map.of(
-            "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
 
     private final KeanuCommand keanuCommand;
 
@@ -73,11 +67,10 @@ public class KeanuMessageListener extends BaseService {
                 Constants.pickRandom(GOOD_MORNING_GIFS));
     }
 
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event, SwampyGamesConfig swampyGamesConfig) {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
         long channelId = event.getMessage().getChannel().getIdLong();
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
         if (msgContent.contains("lightning mcqueen")) {
             discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(), "KACHOW!");
@@ -99,9 +92,6 @@ public class KeanuMessageListener extends BaseService {
             discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(), PUPPIES_GIF);
             return;
         }
-
-        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(),
-                discordWebhookSendService);
 
         if (KEANU_PATTERN.matcher(msgContent).find()) {
             keanuCommand.execute(new CommandEvent(event));

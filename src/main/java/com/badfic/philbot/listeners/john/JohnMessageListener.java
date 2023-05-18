@@ -10,11 +10,7 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.BaseService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +19,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +28,6 @@ import org.springframework.stereotype.Service;
 public class JohnMessageListener extends BaseService {
     private static final Pattern JOHN_PATTERN = Constants.compileWords("john|constantine|johnno|johnny|hellblazer");
     private static final Pattern REMINDER_PATTER = Pattern.compile("\\b(remind me in |remind <@[0-9]+> in )[0-9]+\\b", Pattern.CASE_INSENSITIVE);
-    private static final ConcurrentMap<Long, Pair<String, Long>> LAST_WORD_MAP = new ConcurrentHashMap<>();
     private static final String[] UWU = {
             "https://tenor.com/bbmRv.gif",
             "https://tenor.com/X7Nq.gif",
@@ -94,17 +87,13 @@ public class JohnMessageListener extends BaseService {
             "https://emoji.gg/assets/emoji/1554_ablobderpyhappy.gif",
             "https://emoji.gg/assets/emoji/8783_ablobhop.gif"
     };
-    private static final Map<String, List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = Map.of(
-            "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
 
     private final JohnCommand johnCommand;
     private final ReminderDal reminderDal;
     private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
 
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event, SwampyGamesConfig swampyGamesConfig) {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
-
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
 
         if (REMINDER_PATTER.matcher(msgContent).find()) {
             addReminder(event.getMessage(), swampyGamesConfig);
@@ -148,24 +137,6 @@ public class JohnMessageListener extends BaseService {
             }
             return;
         }
-
-        LAST_WORD_MAP.compute(channelId, (key, oldValue) -> {
-            if (oldValue == null) {
-                return new ImmutablePair<>(msgContent, 1L);
-            }
-            if (oldValue.getLeft().equalsIgnoreCase(msgContent)) {
-                if (oldValue.getRight() + 1 >= 5) {
-                    discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), msgContent);
-                    return new ImmutablePair<>(msgContent, 0L);
-                }
-
-                return new ImmutablePair<>(msgContent, oldValue.getRight() + 1);
-            } else {
-                return new ImmutablePair<>(msgContent, 1L);
-            }
-        });
-
-        Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), discordWebhookSendService);
 
         if (JOHN_PATTERN.matcher(msgContent).find()) {
             johnCommand.execute(new CommandEvent(event));

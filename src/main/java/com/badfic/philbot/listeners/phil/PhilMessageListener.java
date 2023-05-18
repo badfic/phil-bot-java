@@ -9,6 +9,9 @@ import com.badfic.philbot.commands.slash.BaseSlashCommand;
 import com.badfic.philbot.commands.swampy.SwampyCommand;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.data.SwampyGamesConfig;
+import com.badfic.philbot.data.SwampyGamesConfigDal;
+import com.badfic.philbot.listeners.DiscordWebhookSendService;
 import com.badfic.philbot.listeners.antonia.AntoniaMessageListener;
 import com.badfic.philbot.listeners.behrad.BehradMessageListener;
 import com.badfic.philbot.listeners.john.JohnMessageListener;
@@ -23,6 +26,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -74,6 +79,7 @@ public class PhilMessageListener extends ListenerAdapter {
     private static final Map<String, List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = Map.of(
             "594740276568784906", List.of(ImmutablePair.of(Constants.compileWords("hubby"), "Hi boo")),
             "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
+    private static final ConcurrentMap<Long, Pair<String, Short>> LAST_WORD_MAP = new ConcurrentHashMap<>();
 
     private final BehradMessageListener behradMessageListener;
     private final KeanuMessageListener keanuMessageListener;
@@ -86,6 +92,8 @@ public class PhilMessageListener extends ListenerAdapter {
     private final MemeCommandsService memeCommandsService;
     private final Ao3MetadataParser ao3MetadataParser;
     private final MemberCount memberCount;
+    private final DiscordWebhookSendService discordWebhookSendService;
+    private final SwampyGamesConfigDal swampyGamesConfigDal;
     private final BaseConfig baseConfig;
 
     @Setter(onMethod_ = {@Autowired})
@@ -110,6 +118,7 @@ public class PhilMessageListener extends ListenerAdapter {
             return;
         }
 
+        final long channelId = event.getChannel().getIdLong();
         String msgContent = event.getMessage().getContentRaw();
         if (StringUtils.isBlank(msgContent) || event.getAuthor().isBot()) {
             return;
@@ -190,10 +199,11 @@ public class PhilMessageListener extends ListenerAdapter {
             return;
         }
 
-        antoniaMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
-        behradMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
-        keanuMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
-        johnMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()));
+        final SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
+        antoniaMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()), swampyGamesConfig);
+        behradMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()), swampyGamesConfig);
+        keanuMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()), swampyGamesConfig);
+        johnMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()), swampyGamesConfig);
 
         if (PHIL_PATTERN.matcher(msgContent).find()) {
             philCommand.execute(commandEvent);
@@ -201,6 +211,38 @@ public class PhilMessageListener extends ListenerAdapter {
         }
 
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, null, null, null);
+
+        LAST_WORD_MAP.compute(channelId, (key, oldValue) -> {
+            if ("bird".equals(msgContent) || "word".equals(msgContent) || "mattgrinch".equals(msgContent)) {
+                if (oldValue == null) {
+                    return new ImmutablePair<>(msgContent, (short) 1);
+                }
+
+                if (oldValue.getLeft().equals(msgContent)) {
+                    if (oldValue.getRight() + 1 >= 3 && "bird".equals(msgContent)) {
+                        discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
+                                "the bird is the word");
+                        return null;
+                    }
+                    if (oldValue.getRight() + 1 >= 3 && "word".equals(msgContent)) {
+                        discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
+                                "the word is the bird");
+                        return null;
+                    }
+                    if (oldValue.getRight() + 1 >= 3 && "mattgrinch".equals(msgContent)) {
+                        discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
+                                "https://cdn.discordapp.com/attachments/707453916882665552/914409167610056734/unknown.png");
+                        return null;
+                    }
+
+                    return new ImmutablePair<>(msgContent, (short) (oldValue.getRight() + 1));
+                } else {
+                    return new ImmutablePair<>(msgContent, (short) 1);
+                }
+            }
+
+            return null;
+        });
 
         swampyCommand.execute(commandEvent);
     }
