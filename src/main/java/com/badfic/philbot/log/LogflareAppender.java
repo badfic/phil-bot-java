@@ -26,13 +26,12 @@ public class LogflareAppender extends AppenderBase<ILoggingEvent> {
     private final RestTemplate restTemplate;
     private final BlockingQueue<String> queue;
     private final Thread worker;
-    private volatile boolean workerStopped;
 
     public LogflareAppender() {
         restTemplate = new RestTemplate();
         queue = new ArrayBlockingQueue<>(64);
         worker = new Thread(() -> {
-            while (!workerStopped && !Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
                     String message = queue.take();
 
@@ -45,6 +44,7 @@ public class LogflareAppender extends AppenderBase<ILoggingEvent> {
                 } catch (Exception ignored) {}
             }
         });
+        worker.setDaemon(true);
     }
 
     @Override
@@ -55,12 +55,7 @@ public class LogflareAppender extends AppenderBase<ILoggingEvent> {
 
     @Override
     public void stop() {
-        workerStopped = true;
         worker.interrupt();
-
-        try {
-            worker.join(1000);
-        } catch (Exception ignored) {}
 
         try {
             String message;

@@ -173,7 +173,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
             if (StringUtils.isNotBlank(commandEvent.getArgs())) {
                 if (Stream.of("help", "rank", "up", "down", "slots")
-                        .anyMatch(arg -> StringUtils.equalsIgnoreCase(arg, commandEvent.getArgs()))) {
+                        .anyMatch(arg -> StringUtils.startsWithIgnoreCase(commandEvent.getArgs(), arg))) {
                     swampyCommand.execute(commandEvent);
                     return;
                 }

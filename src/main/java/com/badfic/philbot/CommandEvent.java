@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 @Getter
@@ -23,29 +24,29 @@ public class CommandEvent {
     public CommandEvent(MessageReceivedEvent event) {
         this.event = event;
 
-        String contentRaw = event.getMessage().getContentRaw();
+        String message = event.getMessage().getContentRaw();
 
-        if (StringUtils.startsWith(contentRaw, Constants.PREFIX)) {
-            contentRaw = contentRaw.substring(Constants.PREFIX.length()).trim();
-
-            String commandName = contentRaw;
-
-            for (int i = 0; i < contentRaw.length(); i++) {
-                if (Character.isWhitespace(contentRaw.charAt(i))) {
-                    commandName = contentRaw.substring(0, i);
-                    break;
-                }
-            }
-
-            String localArgs = StringUtils.EMPTY;
-            if (StringUtils.isNotBlank(commandName)) {
-                localArgs = contentRaw.substring(commandName.length()).trim();
-            }
-
-            this.name = commandName;
-            this.args = localArgs;
-        } else {
+        if (!StringUtils.startsWith(message, Constants.PREFIX)) {
             this.name = StringUtils.EMPTY;
+            this.args = StringUtils.EMPTY;
+            return;
+        }
+
+        message = message.substring(Constants.PREFIX.length()).trim();
+
+        String[] split = message.split("\\s+");
+
+        if (ArrayUtils.getLength(split) < 1) {
+            this.name = StringUtils.EMPTY;
+            this.args = StringUtils.EMPTY;
+            return;
+        }
+
+        this.name = split[0];
+
+        if (ArrayUtils.getLength(split) > 1) {
+            this.args = message.substring(this.name.length()).trim();
+        } else {
             this.args = StringUtils.EMPTY;
         }
     }
