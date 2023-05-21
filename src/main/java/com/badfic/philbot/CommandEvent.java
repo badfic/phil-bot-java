@@ -17,28 +17,41 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 public class CommandEvent {
     private final MessageReceivedEvent event;
+    private final String name;
     private final String args;
 
     public CommandEvent(MessageReceivedEvent event) {
         this.event = event;
 
         String contentRaw = event.getMessage().getContentRaw();
-        contentRaw = contentRaw.substring(Constants.PREFIX.length()).trim();
 
-        String commandName = null;
+        if (StringUtils.startsWith(contentRaw, Constants.PREFIX)) {
+            contentRaw = contentRaw.substring(Constants.PREFIX.length()).trim();
 
-        for (int i = 0; i < contentRaw.length(); i++) {
-            if (Character.isWhitespace(contentRaw.charAt(i))) {
-                commandName = contentRaw.substring(0, i);
-                break;
+            String commandName = contentRaw;
+
+            for (int i = 0; i < contentRaw.length(); i++) {
+                if (Character.isWhitespace(contentRaw.charAt(i))) {
+                    commandName = contentRaw.substring(0, i);
+                    break;
+                }
             }
-        }
 
-        String localArgs = StringUtils.EMPTY;
-        if (commandName != null) {
-            localArgs = contentRaw.substring(commandName.length()).trim();
+            String localArgs = StringUtils.EMPTY;
+            if (StringUtils.isNotBlank(commandName)) {
+                localArgs = contentRaw.substring(commandName.length()).trim();
+            }
+
+            this.name = commandName;
+            this.args = localArgs;
+        } else {
+            this.name = StringUtils.EMPTY;
+            this.args = StringUtils.EMPTY;
         }
-        this.args = localArgs;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public User getAuthor() {

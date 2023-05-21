@@ -127,15 +127,9 @@ public class PhilMessageListener extends ListenerAdapter {
         final CommandEvent commandEvent = new CommandEvent(event);
 
         if (StringUtils.startsWith(msgContent, Constants.PREFIX)) {
-            String message = StringUtils.substring(msgContent, 2);
-            message = StringUtils.trim(message);
-
-            String[] parts = message.split("\\s+");
-            String commandName = parts[0];
-
             for (BaseNormalCommand command : commands) {
-                if (command.getName().equalsIgnoreCase(commandName)
-                        || Arrays.stream(command.getAliases()).anyMatch(a -> a.equalsIgnoreCase(commandName))) {
+                if (command.getName().equalsIgnoreCase(commandEvent.getName())
+                        || Arrays.stream(command.getAliases()).anyMatch(a -> a.equalsIgnoreCase(commandEvent.getName()))) {
                     // owner commands
                     if (command.isOwnerCommand()) {
                         if (event.getAuthor().getId().equals(baseConfig.ownerId)) {
@@ -177,15 +171,15 @@ public class PhilMessageListener extends ListenerAdapter {
                 }
             }
 
-            if (parts.length >= 2) {
+            if (StringUtils.isNotBlank(commandEvent.getArgs())) {
                 if (Stream.of("help", "rank", "up", "down", "slots")
-                        .anyMatch(arg -> StringUtils.equalsIgnoreCase(arg, parts[1]))) {
+                        .anyMatch(arg -> StringUtils.equalsIgnoreCase(arg, commandEvent.getArgs()))) {
                     swampyCommand.execute(commandEvent);
                     return;
                 }
             }
 
-            memeCommandsService.executeCustomCommand(commandName, event.getChannel().asGuildMessageChannel());
+            memeCommandsService.executeCustomCommand(commandEvent.getName(), event.getChannel().asGuildMessageChannel());
             return;
         }
 
