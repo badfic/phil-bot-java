@@ -39,7 +39,7 @@ public class Ao3MetadataParserTest {
     @BeforeEach
     public void setup() throws Exception {
         Mockito.doReturn(new SwampyGamesConfig()).when(swampyGamesConfigDal).get();
-        new Constants(swampyGamesConfigDal).init();
+        new Constants(swampyGamesConfigDal, null).init();
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("ao3-test.html")) {
             work = new String(Objects.requireNonNull(stream).readAllBytes(), StandardCharsets.UTF_8);
         }
