@@ -1,7 +1,8 @@
 package com.badfic.philbot.web.members;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,7 +18,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 @Controller
 @Slf4j
 public class ChatWebsocketListener {
-    private static final ConcurrentMap<String, Integer> ONLINE_MEMBERS = new ConcurrentHashMap<>();
+    private static final Object2IntMap<String> ONLINE_MEMBERS = Object2IntMaps.synchronize(new Object2IntArrayMap<>());
 
     private final SimpMessageSendingOperations messagingTemplate;
 
@@ -38,7 +39,7 @@ public class ChatWebsocketListener {
         String userAvatar = (String) headerAccessor.getSessionAttributes().get("userAvatar");
         if (username != null) {
             log.info("[User={}] Disconnected", username);
-            ONLINE_MEMBERS.compute(username, (key, oldValue) -> {
+            ONLINE_MEMBERS.computeInt(username, (key, oldValue) -> {
                 if (oldValue != null && oldValue > 1) {
                     return oldValue - 1;
                 }
@@ -65,7 +66,7 @@ public class ChatWebsocketListener {
         // Add username in web socket session
         headerAccessor.getSessionAttributes().put("username", chatMessage.sender());
         headerAccessor.getSessionAttributes().put("userAvatar", chatMessage.avatar());
-        ONLINE_MEMBERS.compute(chatMessage.sender(), (key, oldValue) -> {
+        ONLINE_MEMBERS.computeInt(chatMessage.sender(), (key, oldValue) -> {
             if (oldValue == null) {
                 messagingTemplate.convertAndSend("/topic/public", chatMessage);
                 return 1;

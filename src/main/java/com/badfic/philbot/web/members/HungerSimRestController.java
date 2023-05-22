@@ -185,7 +185,12 @@ public class HungerSimRestController extends BaseMembersController {
     @GetMapping(value = "/hunger-sim/outcome/variables", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<Integer, List<String>> getOutcomeVariables(HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        return Outcome.VARIABLES;
+        return Map.of(
+                1, List.of("{player1}", "{player1_subject}", "{player1_object}", "{player1_possessive}", "{player1_self}"),
+                2, List.of("{player2}", "{player2_subject}", "{player2_object}", "{player2_possessive}", "{player2_self}"),
+                3, List.of("{player3}", "{player3_subject}", "{player3_object}", "{player3_possessive}", "{player3_self}"),
+                4, List.of("{player4}", "{player4_subject}", "{player4_object}", "{player4_possessive}", "{player4_self}")
+        );
     }
 
     @PostMapping(value = "/hunger-sim/outcome", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -4,7 +4,6 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.Family;
-import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import java.awt.Color;
 import java.util.Collection;
 import java.util.Objects;
@@ -325,8 +324,8 @@ public class Fam extends BaseNormalCommand implements ModHelpAware {
                 msg.addReaction(Emoji.fromUnicode("✅")).queue();
                 msg.addReaction(Emoji.fromUnicode("❌")).queue();
 
-                PhilMessageListener.addReactionTask(msg.getId(), messageReactionAddEvent -> {
-                    if (messageReactionAddEvent.getUserId().equalsIgnoreCase(mentionedMember.getId())) {
+                Constants.addReactionTask(msg.getIdLong(), messageReactionAddEvent -> {
+                    if (messageReactionAddEvent.getUserIdLong() == mentionedMember.getIdLong()) {
                         if ("✅".equals(messageReactionAddEvent.getReaction().getEmoji().getName())) {
                             DiscordUser relookupUser = discordUserRepository.findById(discordUser.getId()).orElse(null);
 
@@ -335,7 +334,7 @@ public class Fam extends BaseNormalCommand implements ModHelpAware {
                                 return true;
                             }
 
-                            setGetter.apply(discordUser).add(mentionedMember.getId());
+                            setGetter.apply(relookupUser).add(mentionedMember.getId());
                             discordUserRepository.save(relookupUser);
 
                             MessageEmbed messageSuccess = Constants.simpleEmbed(argName,

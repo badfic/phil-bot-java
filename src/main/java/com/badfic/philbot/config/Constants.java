@@ -2,6 +2,9 @@ package com.badfic.philbot.config;
 
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.listeners.DiscordWebhookSendService;
+import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import jakarta.annotation.PostConstruct;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -11,13 +14,15 @@ import java.net.URI;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +33,13 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -40,6 +47,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class Constants {
     private static Constants SINGLETON;
+
+    private static final Long2ObjectMap<Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = Long2ObjectMaps.synchronize(new Long2ObjectArrayMap<>());
 
     public static final String PREFIX = "!!";
 
@@ -62,10 +71,30 @@ public class Constants {
     public static final Short DATA_SINGLETON_ID = 1;
 
     private final SwampyGamesConfigDal swampyGamesConfigDal;
+    private final ThreadPoolTaskScheduler taskScheduler;
 
     @PostConstruct
     public void init() {
         SINGLETON = this;
+    }
+
+    public static void addReactionTask(long messageId, Function<MessageReactionAddEvent, Boolean> function) {
+        OUTSTANDING_REACTION_TASKS.put(messageId, function);
+
+        SINGLETON.taskScheduler.schedule(() -> {
+            OUTSTANDING_REACTION_TASKS.remove(messageId);
+        }, Instant.now().plus(15, ChronoUnit.MINUTES));
+    }
+
+    public static void computeReactionTask(MessageReactionAddEvent event) {
+        OUTSTANDING_REACTION_TASKS.computeIfPresent(event.getMessageIdLong(), (key, function) -> {
+            boolean taskIsComplete = function.apply(event);
+
+            if (taskIsComplete) {
+                return null;
+            }
+            return function;
+        });
     }
 
     public static Color colorOfTheMonth() {
@@ -197,9 +226,9 @@ public class Constants {
         return ImmutablePair.of(DayOfWeek.of(mode), maxCount);
     }
 
-    public static void checkUserTriggerWords(MessageReceivedEvent event, Map<String, List<Pair<Pattern, String>>> userTriggerWords,
+    public static void checkUserTriggerWords(MessageReceivedEvent event, Long2ObjectMap<List<Pair<Pattern, String>>> userTriggerWords,
                                              String username, String avatar, DiscordWebhookSendService discordWebhookSendService) {
-        List<Pair<Pattern, String>> userTriggers = userTriggerWords.get(event.getAuthor().getId());
+        List<Pair<Pattern, String>> userTriggers = userTriggerWords.get(event.getAuthor().getIdLong());
         if (CollectionUtils.isNotEmpty(userTriggers)) {
             Optional<String> match = Optional.empty();
 

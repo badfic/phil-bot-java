@@ -17,6 +17,7 @@
 	<properties>
 		<java.version>17</java.version>
 
+		<fastutil.version>8.5.12</fastutil.version>
 		<jda.version>5.0.0-beta.9</jda.version>
 		<jsoup.version>1.15.4</jsoup.version>
 		<rome.version>2.1.0</rome.version>
@@ -52,10 +53,6 @@
 			<artifactId>spring-boot-starter-data-jdbc</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.github.ben-manes.caffeine</groupId>
-			<artifactId>caffeine</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.session</groupId>
 			<artifactId>spring-session-jdbc</artifactId>
 		</dependency>
@@ -70,6 +67,11 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>it.unimi.dsi</groupId>
+			<artifactId>fastutil</artifactId>
+			<version>${fastutil.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.dv8tion</groupId>

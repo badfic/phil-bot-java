@@ -1,7 +1,6 @@
 package com.badfic.philbot.data.hungersim;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,12 +20,6 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Outcome {
-
-    public static final Map<Integer, List<String>> VARIABLES = Map.of(
-            1, List.of("{player1}", "{player1_subject}", "{player1_object}", "{player1_possessive}", "{player1_self}"),
-            2, List.of("{player2}", "{player2_subject}", "{player2_object}", "{player2_possessive}", "{player2_self}"),
-            3, List.of("{player3}", "{player3_subject}", "{player3_object}", "{player3_possessive}", "{player3_self}"),
-            4, List.of("{player4}", "{player4_subject}", "{player4_object}", "{player4_possessive}", "{player4_self}"));
 
     @Id
     private Long id;

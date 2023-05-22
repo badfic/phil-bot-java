@@ -19,17 +19,14 @@ import com.badfic.philbot.listeners.keanu.KeanuMessageListener;
 import com.badfic.philbot.service.Ao3MetadataParser;
 import com.badfic.philbot.service.HungerGamesWinnersService;
 import com.badfic.philbot.service.MemeCommandsService;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -71,15 +68,13 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class PhilMessageListener extends ListenerAdapter {
-    private static final Cache<String, Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = Caffeine.newBuilder()
-            .expireAfterWrite(15, TimeUnit.MINUTES)
-            .build();
     private static final Pattern PHIL_PATTERN = Constants.compileWords("phil|klemmer|phellen|the cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam");
     private static final Pattern AO3_PATTERN = Pattern.compile("^(?:http(s)?://)?(archiveofourown\\.org/works/)([0-9]+).*$", Pattern.CASE_INSENSITIVE);
-    private static final Map<String, List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = Map.of(
-            "594740276568784906", List.of(ImmutablePair.of(Constants.compileWords("hubby"), "Hi boo")),
-            "323520695550083074", List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
-    private static final ConcurrentMap<Long, Pair<String, Short>> LAST_WORD_MAP = new ConcurrentHashMap<>();
+    private static final Long2ObjectMap<List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = new Long2ObjectArrayMap<>() {{
+        put(594740276568784906L, List.of(ImmutablePair.of(Constants.compileWords("hubby"), "Hi boo")));
+        put(323520695550083074L, List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
+    }};
+    private static final Long2ObjectMap<Pair<String, Short>> LAST_WORD_MAP = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
 
     private final BehradMessageListener behradMessageListener;
     private final KeanuMessageListener keanuMessageListener;
@@ -107,10 +102,6 @@ public class PhilMessageListener extends ListenerAdapter {
 
     @Setter(onMethod_ = {@Autowired, @Lazy})
     private JDA philJda;
-
-    public static void addReactionTask(String messageId, Function<MessageReactionAddEvent, Boolean> function) {
-        OUTSTANDING_REACTION_TASKS.put(messageId, function);
-    }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -313,14 +304,7 @@ public class PhilMessageListener extends ListenerAdapter {
             }
         }
 
-        OUTSTANDING_REACTION_TASKS.asMap().computeIfPresent(event.getMessageId(), (key, function) -> {
-            boolean taskIsComplete = function.apply(event);
-
-            if (taskIsComplete) {
-                return null;
-            }
-            return function;
-        });
+        Constants.computeReactionTask(event);
 
         swampyCommand.emote(event);
     }

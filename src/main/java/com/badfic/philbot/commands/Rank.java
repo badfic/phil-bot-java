@@ -1,10 +1,10 @@
 package com.badfic.philbot.commands;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.awt.Color;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 @EqualsAndHashCode(of = "ordinal")
 public class Rank {
     public static final long LVL_MULTIPLIER = 2000;
-    private static final Map<Long, Rank> LEVEL_MAP = new HashMap<>();
+    private static final Long2ObjectMap<Rank> LEVEL_MAP = new Long2ObjectOpenHashMap<>(100);
 
     private final int ordinal;
     private final String roleName;
