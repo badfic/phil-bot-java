@@ -19,7 +19,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import okhttp3.OkHttpClient;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
@@ -46,8 +45,6 @@ public interface BaseCommand {
     BaseConfig getBaseConfig();
 
     RestTemplate getRestTemplate();
-
-    OkHttpClient getOkHttpClient();
 
     ThreadPoolTaskExecutor getThreadPoolTaskExecutor();
 

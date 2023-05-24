@@ -15,7 +15,6 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
@@ -45,9 +44,6 @@ public abstract class BaseSlashCommand implements BaseCommand {
 
     @Setter(onMethod_ = {@Autowired})
     protected RestTemplate restTemplate;
-
-    @Setter(onMethod_ = {@Autowired})
-    protected OkHttpClient okHttpClient;
 
     @Setter(onMethod_ = {@Autowired})
     protected ThreadPoolTaskExecutor threadPoolTaskExecutor;

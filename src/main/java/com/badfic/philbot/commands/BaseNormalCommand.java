@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
-import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +44,6 @@ public abstract class BaseNormalCommand implements BaseCommand {
 
     @Setter(onMethod_ = {@Autowired})
     protected RestTemplate restTemplate;
-
-    @Setter(onMethod_ = {@Autowired})
-    protected OkHttpClient okHttpClient;
 
     @Setter(onMethod_ = {@Autowired})
     protected ThreadPoolTaskExecutor threadPoolTaskExecutor;

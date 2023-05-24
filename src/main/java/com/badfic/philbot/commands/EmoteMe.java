@@ -2,164 +2,38 @@ package com.badfic.philbot.commands;
 
 import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.utils.FileUpload;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Request;
-import okhttp3.Response;
-import okio.BufferedSink;
-import okio.Okio;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
-//@Component
+@Component
 @Slf4j
 public class EmoteMe extends BaseNormalCommand {
 
     private static final float ALPHA = 0.69f;
-    private volatile boolean emojiImageListDownloadAttempted;
-    private volatile Path emojiImageListFile;
-    private volatile boolean emojiTestListDownloadAttempted;
-    private volatile Path emojiTestListFile;
 
     public EmoteMe() {
         name = "emoteme";
         help = "`!!emoteme :shrekphil: @Santiago`: apply shrek phil to Santiago's profile picture";
-    }
-
-    @PostConstruct
-    public void init() {
-        try {
-            Request request = new Request.Builder()
-                    .url("https://unicode.org/emoji/charts/full-emoji-list.html")
-                    .addHeader(HttpHeaders.USER_AGENT, Constants.USER_AGENT)
-                    .get()
-                    .build();
-
-            okHttpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    emojiImageListDownloadAttempted = true;
-                    log.error("Failed to download emoji image list from unicode.org", e);
-                    emojiImageListFile = null;
-                }
-
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) {
-                    Path tempFile = null;
-                    try {
-                        tempFile = Files.createTempFile(null, "html");
-                        try (BufferedSink bufferedSink = Okio.buffer(Okio.sink(tempFile.toFile()))) {
-                            bufferedSink.writeAll(response.body().source());
-                        }
-                        emojiImageListFile = tempFile;
-                    } catch (Exception e) {
-                        log.error("Failed to download emoji image list from unicode.org", e);
-                        emojiImageListFile = null;
-
-                        if (tempFile != null) {
-                            try {
-                                if (Files.exists(tempFile)) {
-                                    tempFile.toFile().delete();
-                                }
-                            } catch (Exception ignored) {}
-                        }
-                    } finally {
-                        emojiImageListDownloadAttempted = true;
-                    }
-                }
-            });
-        } catch (Exception e) {
-            log.error("Failed to download emoji image list from unicode.org", e);
-            emojiImageListFile = null;
-            emojiImageListDownloadAttempted = true;
-        }
-
-        try {
-            Request request = new Request.Builder()
-                    .url("https://unicode.org/Public/emoji/latest/emoji-test.txt")
-                    .addHeader(HttpHeaders.USER_AGENT, Constants.USER_AGENT)
-                    .get()
-                    .build();
-
-            okHttpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    emojiTestListDownloadAttempted = true;
-                    log.error("Failed to download emoji test list from unicode.org", e);
-                    emojiTestListFile = null;
-                }
-
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) {
-                    Path tempFile = null;
-                    try {
-                        tempFile = Files.createTempFile(null, "txt");
-                        try (BufferedSink bufferedSink = Okio.buffer(Okio.sink(tempFile.toFile()))) {
-                            bufferedSink.writeAll(response.body().source());
-                        }
-                        emojiTestListFile = tempFile;
-                    } catch (Exception e) {
-                        log.error("Failed to download emoji test list from unicode.org", e);
-                        emojiTestListFile = null;
-
-                        if (tempFile != null) {
-                            try {
-                                if (Files.exists(tempFile)) {
-                                    tempFile.toFile().delete();
-                                }
-                            } catch (Exception ignored) {}
-                        }
-                    } finally {
-                        emojiTestListDownloadAttempted = true;
-                    }
-                }
-            });
-        } catch (Exception e) {
-            log.error("Failed to download emoji test list from unicode.org", e);
-            emojiTestListFile = null;
-            emojiTestListDownloadAttempted = true;
-        }
-    }
-
-    @PreDestroy
-    public void tearDown() {
-        try {
-            if (emojiImageListFile != null && Files.exists(emojiImageListFile)) {
-                emojiImageListFile.toFile().delete();
-            }
-        } catch (Exception ignored) {}
-
-        try {
-            if (emojiTestListFile != null && Files.exists(emojiTestListFile)) {
-                emojiTestListFile.toFile().delete();
-            }
-        } catch (Exception ignored) {}
     }
 
     @Override
@@ -186,65 +60,25 @@ public class EmoteMe extends BaseNormalCommand {
             } else {
                 String codePoints = Arrays.stream(args.trim().codePoints().toArray())
                         .mapToObj(Integer::toHexString)
-                        .collect(Collectors.joining(" "))
-                        .toUpperCase(Locale.ENGLISH);
+                        .collect(Collectors.joining("-"))
+                        .toLowerCase(Locale.ENGLISH);
 
-                boolean argsIsAnEmoji = false;
-                try (BufferedReader reader = Files.newBufferedReader(emojiTestListFile)) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        if (StringUtils.startsWith(line, codePoints)) {
-                            argsIsAnEmoji = true;
-                            break;
-                        }
-                    }
-                }
+                try {
+                    String url = "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/" + codePoints + ".png";
 
-                if (!argsIsAnEmoji) {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
+
+                    ResponseEntity<byte[]> emojiBytes = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
+                    byte[] emojiImageBytes = emojiBytes.getBody();
+                    overlayImage = ImageIO.read(new ByteArrayInputStream(emojiImageBytes));
+                } catch (Exception e) {
                     event.replyError("Could not find an emoji in your !!emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
                     return;
                 }
 
-                String emoji = args.trim();
-
-                if (!emojiImageListDownloadAttempted || !emojiTestListDownloadAttempted) {
-                    event.replyError("I haven't downloaded the emoji list yet, give me a minute");
-                    return;
-                }
-
-                if (emojiImageListFile == null || !Files.exists(emojiImageListFile) || emojiTestListFile == null || !Files.exists(emojiTestListFile)) {
-                    synchronized (EmoteMe.class) {
-                        if (emojiImageListFile == null || !Files.exists(emojiImageListFile) || emojiTestListFile == null || !Files.exists(emojiTestListFile)) {
-                            init();
-                        }
-                    }
-                }
-
-                if (emojiImageListFile == null || !Files.exists(emojiImageListFile) || emojiTestListFile == null || !Files.exists(emojiTestListFile)) {
-                    event.replyError("Could not download emoji list from unicode.org");
-                    return;
-                }
-
-                Pattern pattern = Pattern.compile(String.format("<img alt='%s' class='imga' src='data:image/png;base64,([^']+)'>", emoji));
-                try (BufferedReader reader = Files.newBufferedReader(emojiImageListFile)) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        Matcher matcher = pattern.matcher(line);
-                        if (matcher.find()) {
-                            if (matcher.groupCount() < 1) {
-                                event.replyError("Could not load image for given emoji, matches groupcount less than 1: " + emoji);
-                                return;
-                            }
-
-                            byte[] decodedEmojiBytes = Base64.getDecoder().decode(matcher.group(1));
-                            overlayImage = ImageIO.read(new ByteArrayInputStream(decodedEmojiBytes));
-                            break;
-                        }
-                    }
-                }
-
                 if (overlayImage == null) {
-                    event.replyError("Could not find image for given emoji: " + emoji);
+                    event.replyError("Could not find an image for given emoji: " + codePoints);
                     return;
                 }
             }
