@@ -36,9 +36,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @Slf4j
 public class EmoteMe extends BaseNormalCommand {
 
