@@ -105,7 +105,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getChannelType() != ChannelType.TEXT) {
+        if (event.getChannelType() != ChannelType.TEXT && event.getChannelType() != ChannelType.PRIVATE) {
             return;
         }
 
@@ -121,6 +121,14 @@ public class PhilMessageListener extends ListenerAdapter {
             for (BaseNormalCommand command : commands) {
                 if (command.getName().equalsIgnoreCase(commandEvent.getName())
                         || Arrays.stream(command.getAliases()).anyMatch(a -> a.equalsIgnoreCase(commandEvent.getName()))) {
+                    // guild only commands
+                    if (command.isGuildOnly()) {
+                        if (event.getChannel().getType() == ChannelType.PRIVATE) {
+                            commandEvent.replyError("This command can only be used in a channel, not in a private message");
+                            return;
+                        }
+                    }
+
                     // owner commands
                     if (command.isOwnerCommand()) {
                         if (event.getAuthor().getId().equals(baseConfig.ownerId)) {
