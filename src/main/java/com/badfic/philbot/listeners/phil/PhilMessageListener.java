@@ -115,28 +115,27 @@ public class PhilMessageListener extends ListenerAdapter {
             return;
         }
 
+        final boolean isCommand = StringUtils.startsWith(msgContent, Constants.PREFIX);
+
+        if (!isCommand && event.getChannel().getType() == ChannelType.PRIVATE) {
+            return;
+        }
+
         final CommandEvent commandEvent = new CommandEvent(event);
 
-        if (StringUtils.startsWith(msgContent, Constants.PREFIX)) {
+        if (isCommand) {
             for (BaseNormalCommand command : commands) {
                 if (command.getName().equalsIgnoreCase(commandEvent.getName())
                         || Arrays.stream(command.getAliases()).anyMatch(a -> a.equalsIgnoreCase(commandEvent.getName()))) {
                     // guild only commands
-                    if (command.isGuildOnly()) {
-                        if (event.getChannel().getType() == ChannelType.PRIVATE) {
-                            commandEvent.replyError("This command can only be used in a channel, not in a private message");
-                            return;
-                        }
+                    if (command.isGuildOnly() && event.getChannel().getType() == ChannelType.PRIVATE) {
+                        commandEvent.replyError("This command can only be used in a channel, not in a private message");
+                        return;
                     }
 
                     // owner commands
-                    if (command.isOwnerCommand()) {
-                        if (event.getAuthor().getId().equals(baseConfig.ownerId)) {
-                            command.execute(commandEvent);
-                        } else {
-                            commandEvent.replyError("This is an owner command, only Santiago can execute it");
-                        }
-
+                    if (command.isOwnerCommand() && !event.getAuthor().getId().equals(baseConfig.ownerId)) {
+                        commandEvent.replyError("This is an owner command, only Santiago can execute it");
                         return;
                     }
 
@@ -144,21 +143,17 @@ public class PhilMessageListener extends ListenerAdapter {
                     if (Objects.nonNull(command.getRequiredRole())) {
                         String requiredRole = command.getRequiredRole();
 
-                        if (Objects.nonNull(event.getMember()) && command.hasRole(event.getMember(), requiredRole)) {
-                            command.execute(commandEvent);
-                        } else {
+                        if (Objects.isNull(event.getMember()) || !command.hasRole(event.getMember(), requiredRole)) {
                             commandEvent.replyError(String.format("You must have %s role to execute this command", requiredRole));
+                            return;
                         }
-
-                        return;
                     }
 
                     // nsfw check
                     if (command.isNsfwOnly()) {
-                        if (event.getChannel() instanceof IAgeRestrictedChannel ageRestrictedChannel && ageRestrictedChannel.isNSFW()) {
-                            command.execute(commandEvent);
-                        } else {
+                        if (!(event.getChannel() instanceof IAgeRestrictedChannel ageRestrictedChannel) || !ageRestrictedChannel.isNSFW()) {
                             commandEvent.replyError("This is an nsfw only command, it cannot be executed in this channel");
+                            return;
                         }
 
                         return;
@@ -193,10 +188,10 @@ public class PhilMessageListener extends ListenerAdapter {
         }
 
         final SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
-        antoniaMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()), swampyGamesConfig);
-        behradMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()), swampyGamesConfig);
-        keanuMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()), swampyGamesConfig);
-        johnMessageListener.onMessageReceived(new MessageReceivedEvent(philJda, event.getResponseNumber(), event.getMessage()), swampyGamesConfig);
+        antoniaMessageListener.onMessageReceived(event, swampyGamesConfig);
+        behradMessageListener.onMessageReceived(event, swampyGamesConfig);
+        keanuMessageListener.onMessageReceived(event, swampyGamesConfig);
+        johnMessageListener.onMessageReceived(event, swampyGamesConfig);
 
         if (PHIL_PATTERN.matcher(msgContent).find()) {
             philCommand.execute(commandEvent);
