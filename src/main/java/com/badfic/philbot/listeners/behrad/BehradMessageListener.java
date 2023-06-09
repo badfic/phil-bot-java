@@ -31,7 +31,7 @@ public class BehradMessageListener extends BaseService {
             "https://gfycat.com/flatgraveharborporpoise-sloth",
             "https://gfycat.com/accomplishedinstructivefish"
     };
-    private static final Pattern WEED_PATTERN = Constants.compileWords("marijuana|weed|420|stoned|high|stoner|kush");
+    private static final Pattern WEED_PATTERN = Constants.compileWords("marijuana|weed|420|stoned|stoner|kush");
 
     private final BehradCommand behradCommand;
 
