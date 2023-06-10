@@ -42,7 +42,7 @@ public class DailyMarvelMemeService extends BaseNormalCommand {
 
     @Override
     public void execute(CommandEvent event) {
-        threadPoolTaskExecutor.execute(this::runDailyTask);
+        applicationTaskExecutor.execute(this::runDailyTask);
     }
 
     public void runDailyTask() {

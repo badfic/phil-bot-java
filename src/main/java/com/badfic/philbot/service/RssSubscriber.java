@@ -40,7 +40,7 @@ public class RssSubscriber extends BaseService {
 
     @Scheduled(cron = "${swampy.schedule.rss}", zone = "${swampy.schedule.timezone}")
     public void run() {
-        threadPoolTaskExecutor.execute(this::refresh);
+        applicationTaskExecutor.execute(this::refresh);
     }
 
     private void refresh() {

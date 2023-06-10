@@ -10,7 +10,6 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.OnJdaReady;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Optional;
@@ -45,7 +44,7 @@ public class RemindersCommand extends BaseNormalCommand implements OnJdaReady {
     @Override
     public void run() {
         for (Reminder reminder : reminderDal.findAll()) {
-            taskScheduler.schedule(() -> remind(reminder.getId()), reminder.getDueDate().toInstant(ZoneOffset.UTC));
+            scheduleTask(() -> remind(reminder.getId()), reminder.getDueDate());
         }
     }
 
@@ -152,7 +151,7 @@ public class RemindersCommand extends BaseNormalCommand implements OnJdaReady {
 
             Reminder savedReminder = reminderDal.insert(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
 
-            taskScheduler.schedule(() -> remind(savedReminder.getId()), dueDate.toInstant(ZoneOffset.UTC));
+            scheduleTask(() -> remind(savedReminder.getId()), dueDate);
 
             SnarkyReminderResponse snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
 

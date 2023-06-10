@@ -5,9 +5,9 @@ import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.extern.slf4j.Slf4j;
@@ -49,34 +49,38 @@ public class Boost extends BaseNormalCommand {
             saveSwampyGamesConfig(swampyGamesConfig);
 
             List<CompletableFuture<?>> futures = new ArrayList<>();
-            LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
             StringBuilder description = new StringBuilder();
             discordUserRepository.findAll()
                     .stream()
-                    .filter(u -> u.getAcceptedBoost().isAfter(oneHourAgo))
-                    .forEach(u -> {
+                    .filter(discordUser -> Objects.nonNull(discordUser.getAcceptedBoost()))
+                    .forEach(discordUser -> {
+                        String userId = discordUser.getId();
+
                         try {
-                            Member memberLookedUp = guild.getMemberById(u.getId());
+                            discordUser.setAcceptedBoost(null);
+                            discordUserRepository.save(discordUser);
+
+                            Member memberLookedUp = guild.getMemberById(userId);
                             if (memberLookedUp == null) {
                                 throw new RuntimeException("member not found");
                             }
 
                             if (isNotParticipating(memberLookedUp)) {
                                 description.append("<@")
-                                        .append(u.getId())
+                                        .append(userId)
                                         .append("> Please ask a mod to check your roles to participate in the swampys\n");
                             } else {
                                 futures.add(givePointsToMember(swampyGamesConfig.getBoostEventPoints(), memberLookedUp, PointsStat.BOOST));
                                 description.append("Gave ")
                                         .append(swampyGamesConfig.getBoostEventPoints())
                                         .append(" points to <@")
-                                        .append(u.getId())
+                                        .append(userId)
                                         .append(">\n");
                             }
                         } catch (Exception e) {
-                            log.error("Failed to give boost points to user [id={}]", u.getId(), e);
+                            log.error("Failed to give boost points to user [id={}]", userId, e);
                             description.append("OOPS: Unable to give points to <@")
-                                    .append(u.getId())
+                                    .append(userId)
                                     .append(">\n");
                         }
                     });

@@ -33,7 +33,7 @@ public class UpdateIntroCache extends BaseNormalCommand implements DailyTickable
 
     @Override
     public void execute(CommandEvent event) {
-        threadPoolTaskExecutor.execute(this::runDailyTask);
+        applicationTaskExecutor.execute(this::runDailyTask);
     }
 
     @Override
