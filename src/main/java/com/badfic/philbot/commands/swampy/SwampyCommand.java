@@ -135,21 +135,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
         } else {
             SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
-            if (swampyGamesConfig.getBoostPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getBoostPhrase())) {
-                acceptedBoost(event.getMember());
-            }
-
-            if (swampyGamesConfig.getMapPhrase() != null
-                    && Pattern.compile(swampyGamesConfig.getMapPhrase(), Pattern.CASE_INSENSITIVE).matcher(msgContent).find()) {
-                acceptedMap(event.getMember());
-            }
-
-            if (swampyGamesConfig.getSwiperAwaiting() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getNoSwipingPhrase())) {
-                givePointsToMember(1, event.getMember(), PointsStat.SWIPER_PARTICIPATIONS);
-                swampyGamesConfig.setSwiperSavior(event.getMember().getId());
-                swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
-            }
-
             if (NO_NO_WORDS.matcher(msgContent).find()) {
                 takePointsFromMember(swampyGamesConfig.getNoNoWordsPoints(), event.getMember(), PointsStat.NO_NO);
             }
@@ -262,16 +247,24 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
         }
     }
 
-    private void acceptedBoost(Member member) {
+    public void acceptedBoost(Member member) {
         DiscordUser discordUser = getDiscordUserByMember(member);
         discordUser.setAcceptedBoost(LocalDateTime.now());
         discordUserRepository.save(discordUser);
     }
 
-    private void acceptedMap(Member member) {
+    public void acceptedMap(Member member) {
         DiscordUser discordUser = getDiscordUserByMember(member);
         discordUser.setAcceptedMapTrivia(LocalDateTime.now());
         discordUserRepository.save(discordUser);
+    }
+
+    public SwampyGamesConfig swiperSave(Member member) {
+        givePointsToMember(1, member, PointsStat.SWIPER_PARTICIPATIONS);
+
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        swampyGamesConfig.setSwiperSavior(member.getId());
+        return saveSwampyGamesConfig(swampyGamesConfig);
     }
 
     private void slots(CommandEvent event) {

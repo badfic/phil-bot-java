@@ -7,9 +7,10 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.Trivia;
 import com.badfic.philbot.data.TriviaRepository;
-import com.badfic.philbot.service.MinuteTickable;
+import com.badfic.philbot.service.OnJdaReady;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TriviaCommand extends BaseNormalCommand implements MinuteTickable {
+public class TriviaCommand extends BaseNormalCommand implements OnJdaReady {
 
     private final TriviaRepository triviaRepository;
 
@@ -41,6 +42,15 @@ public class TriviaCommand extends BaseNormalCommand implements MinuteTickable {
                 `!!trivia dump` returns a json file with all the trivia questions and answers.
                 `!!trivia delete 44e04b28-7d39-41d8-8009-80ca6de5a04a` deleted trivia question with id 44e04b28-7d39-41d8-8009-80ca6de5a04a""";
         this.triviaRepository = triviaRepository;
+    }
+
+    @Override
+    public void run() {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+
+        if (Objects.nonNull(swampyGamesConfig.getTriviaExpiration())) {
+            taskScheduler.schedule(this::triviaComplete, swampyGamesConfig.getTriviaExpiration().toInstant(ZoneOffset.UTC));
+        }
     }
 
     @Override
@@ -98,8 +108,11 @@ public class TriviaCommand extends BaseNormalCommand implements MinuteTickable {
         swampysChannel.sendMessageEmbeds(Constants.simpleEmbed(title, description)).queue(success -> {
             swampyGamesConfig.setTriviaGuid(trivia.getId());
             swampyGamesConfig.setTriviaMsgId(success.getId());
-            swampyGamesConfig.setTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
+            LocalDateTime expiration = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15);
+            swampyGamesConfig.setTriviaExpiration(expiration);
             saveSwampyGamesConfig(swampyGamesConfig);
+
+            taskScheduler.schedule(this::triviaComplete, expiration.toInstant(ZoneOffset.UTC));
 
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE6")).queue();
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE7")).queue();
@@ -107,62 +120,63 @@ public class TriviaCommand extends BaseNormalCommand implements MinuteTickable {
         });
     }
 
-
-    @Override
-    public void runMinutelyTask() {
+    private void triviaComplete() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
-        if (Objects.nonNull(swampyGamesConfig.getTriviaMsgId())
-                && swampyGamesConfig.getTriviaExpiration().isBefore(LocalDateTime.now())) {
-            String triviaMsgId = swampyGamesConfig.getTriviaMsgId();
-            UUID triviaGuid = swampyGamesConfig.getTriviaGuid();
-            int triviaEventPoints = swampyGamesConfig.getTriviaEventPoints();
-
-            swampyGamesConfig.setTriviaMsgId(null);
-            swampyGamesConfig.setTriviaGuid(null);
-            swampyGamesConfig.setTriviaExpiration(null);
-            saveSwampyGamesConfig(swampyGamesConfig);
-
-            TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
-            Guild guild = philJda.getGuildById(baseConfig.guildId);
-
-            Optional<Trivia> optTriviaQuestion = triviaRepository.findById(triviaGuid);
-
-            if (optTriviaQuestion.isEmpty()) {
-                swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
-                return;
-            }
-            Trivia triviaQuestion = optTriviaQuestion.get();
-
-            StringBuilder description = new StringBuilder();
-
-            Message msg;
-            try {
-                msg = swampysChannel.retrieveMessageById(triviaMsgId).timeout(30, TimeUnit.SECONDS).complete();
-            } catch (Exception e) {
-                swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
-                return;
-            }
-
-            long wrongPoints = triviaEventPoints * -1;
-
-            List<CompletableFuture<?>> futures = new ArrayList<>();
-
-            List<User> users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE6")).timeout(30, TimeUnit.SECONDS).complete();
-            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 0 ? (long) triviaEventPoints : wrongPoints, futures, guild);
-
-            users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE7")).timeout(30, TimeUnit.SECONDS).complete();
-            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 1 ? (long) triviaEventPoints : wrongPoints, futures, guild);
-
-            users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE8")).timeout(30, TimeUnit.SECONDS).complete();
-            awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 2 ? (long) triviaEventPoints : wrongPoints, futures, guild);
-
-            msg.clearReactions().queue();
-
-            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
-                swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Trivia Results", description.toString())).queue();
-            });
+        if (Objects.isNull(swampyGamesConfig.getTriviaMsgId())) {
+            swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
+            return;
         }
+
+        String triviaMsgId = swampyGamesConfig.getTriviaMsgId();
+        UUID triviaGuid = swampyGamesConfig.getTriviaGuid();
+        int triviaEventPoints = swampyGamesConfig.getTriviaEventPoints();
+
+        swampyGamesConfig.setTriviaMsgId(null);
+        swampyGamesConfig.setTriviaGuid(null);
+        swampyGamesConfig.setTriviaExpiration(null);
+        saveSwampyGamesConfig(swampyGamesConfig);
+
+
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
+
+        Optional<Trivia> optTriviaQuestion = triviaRepository.findById(triviaGuid);
+
+        if (optTriviaQuestion.isEmpty()) {
+            swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
+            return;
+        }
+        Trivia triviaQuestion = optTriviaQuestion.get();
+
+        StringBuilder description = new StringBuilder();
+
+        Message msg;
+        try {
+            msg = swampysChannel.retrieveMessageById(triviaMsgId).timeout(30, TimeUnit.SECONDS).complete();
+        } catch (Exception e) {
+            swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
+            return;
+        }
+
+        long wrongPoints = triviaEventPoints * -1;
+
+        List<CompletableFuture<?>> futures = new ArrayList<>();
+
+        List<User> users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE6")).timeout(30, TimeUnit.SECONDS).complete();
+        awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 0 ? (long) triviaEventPoints : wrongPoints, futures, guild);
+
+        users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE7")).timeout(30, TimeUnit.SECONDS).complete();
+        awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 1 ? (long) triviaEventPoints : wrongPoints, futures, guild);
+
+        users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE8")).timeout(30, TimeUnit.SECONDS).complete();
+        awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 2 ? (long) triviaEventPoints : wrongPoints, futures, guild);
+
+        msg.clearReactions().queue();
+
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
+            swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Trivia Results", description.toString())).queue();
+        });
     }
 
     private void awardPoints(StringBuilder description, List<User> users, long points, List<CompletableFuture<?>> futures, Guild guild) {

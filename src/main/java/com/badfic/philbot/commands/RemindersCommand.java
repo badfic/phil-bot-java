@@ -4,23 +4,33 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.Reminder;
 import com.badfic.philbot.data.ReminderDal;
+import com.badfic.philbot.data.SnarkyReminderResponse;
+import com.badfic.philbot.data.SnarkyReminderResponseRepository;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.service.MinuteTickable;
+import com.badfic.philbot.service.OnJdaReady;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.FileUpload;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RemindersCommand extends BaseNormalCommand implements MinuteTickable {
+@Slf4j
+public class RemindersCommand extends BaseNormalCommand implements OnJdaReady {
 
     private final ReminderDal reminderDal;
+    private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
 
-    public RemindersCommand(ReminderDal reminderDal) {
+    public RemindersCommand(ReminderDal reminderDal, SnarkyReminderResponseRepository snarkyReminderResponseRepository) {
         name = "reminders";
         aliases = new String[] {"reminder"};
         help = """
@@ -29,6 +39,14 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
                 `!!reminders 5` Show reminder number 5
                 `!!reminders delete 5` Delete reminder number 5""";
         this.reminderDal = reminderDal;
+        this.snarkyReminderResponseRepository = snarkyReminderResponseRepository;
+    }
+
+    @Override
+    public void run() {
+        for (Reminder reminder : reminderDal.findAll()) {
+            taskScheduler.schedule(() -> remind(reminder.getId()), reminder.getDueDate().toInstant(ZoneOffset.UTC));
+        }
     }
 
     @Override
@@ -100,20 +118,64 @@ public class RemindersCommand extends BaseNormalCommand implements MinuteTickabl
         }
     }
 
-    @Override
-    public void runMinutelyTask() {
-        LocalDateTime now = LocalDateTime.now();
-        for (Reminder reminder : reminderDal.findAll()) {
-            if (now.isEqual(reminder.getDueDate()) || now.isAfter(reminder.getDueDate())) {
-                TextChannel textChannelById = philJda.getTextChannelById(reminder.getChannelId());
+    public void addReminder(Message message, SwampyGamesConfig swampyGamesConfig) {
+        try {
+            String reminder;
+            int remindIdx = StringUtils.indexOfIgnoreCase(message.getContentRaw(), "remind");
 
-                if (textChannelById != null) {
-                    SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
-                    discordWebhookSendService.sendMessage(textChannelById.getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
-                            "(reminder #" + reminder.getId() + ") <@" + reminder.getUserId() + "> " + reminder.getReminder());
-                    reminderDal.deleteById(reminder.getId());
-                }
+            Member member = message.getMember();
+            if (CollectionUtils.isNotEmpty(message.getMentions().getMembers())) {
+                member = message.getMentions().getMembers().get(0);
+
+                reminder = message.getContentRaw().substring(remindIdx + ("remind <@" + member.getIdLong() + "> in ").length());
+            } else {
+                reminder = message.getContentRaw().substring(remindIdx + "remind me in ".length());
             }
+            String[] split = reminder.split("\\s+");
+            int number = Integer.parseInt(split[0]);
+            String temporal = split[1];
+            reminder = reminder.substring((split[0] + split[1]).length() + 1).trim();
+
+            if (StringUtils.startsWithIgnoreCase(reminder, "to")) {
+                reminder = reminder.substring(2).trim();
+            }
+
+            LocalDateTime dueDate = LocalDateTime.now();
+
+            if (StringUtils.containsIgnoreCase(temporal, "minute")) {
+                dueDate = dueDate.plus(number, ChronoUnit.MINUTES);
+            } else if (StringUtils.containsIgnoreCase(temporal, "hour")) {
+                dueDate = dueDate.plus(number, ChronoUnit.HOURS);
+            } else if (StringUtils.containsIgnoreCase(temporal, "day")) {
+                dueDate = dueDate.plus(number, ChronoUnit.DAYS);
+            }
+
+            Reminder savedReminder = reminderDal.insert(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
+
+            taskScheduler.schedule(() -> remind(savedReminder.getId()), dueDate.toInstant(ZoneOffset.UTC));
+
+            SnarkyReminderResponse snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
+
+            discordWebhookSendService.sendMessage(message.getChannel().getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
+                    "(reminder #" + savedReminder.getId() + ") " + snarkyReminderResponse.getResponse().replace("<name>", "<@" + message.getAuthor().getId() + ">"));
+        } catch (Exception e) {
+            log.error("Exception trying to parse a reminder. [msgText={}]", message.getContentRaw(), e);
+
+            discordWebhookSendService.sendMessage(message.getChannel().getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
+                    "Error: Could not understand your reminder, " + message.getAuthor().getAsMention());
         }
+    }
+
+    private void remind(long reminderId) {
+        reminderDal.findById(reminderId).ifPresent(reminder -> {
+            TextChannel textChannelById = philJda.getTextChannelById(reminder.getChannelId());
+
+            if (textChannelById != null) {
+                SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+                discordWebhookSendService.sendMessage(textChannelById.getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
+                        "(reminder #" + reminder.getId() + ") <@" + reminder.getUserId() + "> " + reminder.getReminder());
+                reminderDal.deleteById(reminder.getId());
+            }
+        });
     }
 }

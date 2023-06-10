@@ -1,24 +1,15 @@
 package com.badfic.philbot.listeners.john;
 
 import com.badfic.philbot.CommandEvent;
+import com.badfic.philbot.commands.RemindersCommand;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.Reminder;
-import com.badfic.philbot.data.ReminderDal;
-import com.badfic.philbot.data.SnarkyReminderResponse;
-import com.badfic.philbot.data.SnarkyReminderResponseRepository;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.BaseService;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -89,14 +80,13 @@ public class JohnMessageListener extends BaseService {
     };
 
     private final JohnCommand johnCommand;
-    private final ReminderDal reminderDal;
-    private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
+    private final RemindersCommand remindersCommand;
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event, SwampyGamesConfig swampyGamesConfig) {
         String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
         if (REMINDER_PATTER.matcher(msgContent).find()) {
-            addReminder(event.getMessage(), swampyGamesConfig);
+            remindersCommand.addReminder(event.getMessage(), swampyGamesConfig);
             return;
         }
 
@@ -141,51 +131,6 @@ public class JohnMessageListener extends BaseService {
         if (JOHN_PATTERN.matcher(msgContent).find()) {
             johnCommand.execute(new CommandEvent(event));
             return;
-        }
-    }
-
-    private void addReminder(Message message, SwampyGamesConfig swampyGamesConfig) {
-        try {
-            String reminder;
-            int remindIdx = StringUtils.indexOfIgnoreCase(message.getContentRaw(), "remind");
-
-            Member member = message.getMember();
-            if (CollectionUtils.isNotEmpty(message.getMentions().getMembers())) {
-                member = message.getMentions().getMembers().get(0);
-
-                reminder = message.getContentRaw().substring(remindIdx + ("remind <@" + member.getIdLong() + "> in ").length());
-            } else {
-                reminder = message.getContentRaw().substring(remindIdx + "remind me in ".length());
-            }
-            String[] split = reminder.split("\\s+");
-            int number = Integer.parseInt(split[0]);
-            String temporal = split[1];
-            reminder = reminder.substring((split[0] + split[1]).length() + 1).trim();
-
-            if (StringUtils.startsWithIgnoreCase(reminder, "to")) {
-                reminder = reminder.substring(2).trim();
-            }
-
-            LocalDateTime dueDate = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-
-            if (StringUtils.containsIgnoreCase(temporal, "minute")) {
-                dueDate = dueDate.plus(number, ChronoUnit.MINUTES);
-            } else if (StringUtils.containsIgnoreCase(temporal, "hour")) {
-                dueDate = dueDate.plus(number, ChronoUnit.HOURS);
-            } else if (StringUtils.containsIgnoreCase(temporal, "day")) {
-                dueDate = dueDate.plus(number, ChronoUnit.DAYS);
-            }
-
-            Reminder savedReminder = reminderDal.insert(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
-            SnarkyReminderResponse snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
-
-            discordWebhookSendService.sendMessage(message.getChannel().getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
-                    "(reminder #" + savedReminder.getId() + ") " + snarkyReminderResponse.getResponse().replace("<name>", "<@" + message.getAuthor().getId() + ">"));
-        } catch (Exception e) {
-            log.error("Exception trying to parse a reminder. [msgText={}]", message.getContentRaw(), e);
-
-            discordWebhookSendService.sendMessage(message.getChannel().getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
-                    "Error: Could not understand your reminder, " + message.getAuthor().getAsMention());
         }
     }
 

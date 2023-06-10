@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
 @Getter
@@ -47,6 +48,9 @@ public abstract class BaseSlashCommand implements BaseCommand {
 
     @Setter(onMethod_ = {@Autowired})
     protected ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected ThreadPoolTaskScheduler taskScheduler;
 
     protected String name;
     protected String help;
