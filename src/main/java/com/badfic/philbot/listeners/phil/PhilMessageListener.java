@@ -121,6 +121,21 @@ public class PhilMessageListener extends ListenerAdapter {
             return;
         }
 
+        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
+
+        if (swampyGamesConfig.getBoostPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getBoostPhrase())) {
+            swampyCommand.acceptedBoost(event.getMember());
+        }
+
+        if (swampyGamesConfig.getMapPhrase() != null
+                && Pattern.compile(swampyGamesConfig.getMapPhrase(), Pattern.CASE_INSENSITIVE).matcher(msgContent).find()) {
+            swampyCommand.acceptedMap(event.getMember());
+        }
+
+        if (swampyGamesConfig.getSwiperAwaiting() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getNoSwipingPhrase())) {
+            swampyGamesConfig = swampyCommand.swiperSave(event.getMember());
+        }
+
         final CommandEvent commandEvent = new CommandEvent(event);
 
         if (isCommand) {
@@ -187,7 +202,6 @@ public class PhilMessageListener extends ListenerAdapter {
             return;
         }
 
-        final SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
         antoniaMessageListener.onMessageReceived(event, swampyGamesConfig);
         behradMessageListener.onMessageReceived(event, swampyGamesConfig);
         keanuMessageListener.onMessageReceived(event, swampyGamesConfig);
@@ -200,6 +214,7 @@ public class PhilMessageListener extends ListenerAdapter {
 
         Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, null, null, null);
 
+        final SwampyGamesConfig finalConfig = swampyGamesConfig;
         LAST_WORD_MAP.compute(channelId, (key, oldValue) -> {
             if ("bird".equals(msgContent) || "word".equals(msgContent) || "mattgrinch".equals(msgContent)) {
                 if (oldValue == null) {
@@ -208,17 +223,17 @@ public class PhilMessageListener extends ListenerAdapter {
 
                 if (oldValue.getLeft().equals(msgContent)) {
                     if (oldValue.getRight() + 1 >= 3 && "bird".equals(msgContent)) {
-                        discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
+                        discordWebhookSendService.sendMessage(channelId, finalConfig.getAntoniaNickname(), finalConfig.getAntoniaAvatar(),
                                 "the bird is the word");
                         return null;
                     }
                     if (oldValue.getRight() + 1 >= 3 && "word".equals(msgContent)) {
-                        discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
+                        discordWebhookSendService.sendMessage(channelId, finalConfig.getAntoniaNickname(), finalConfig.getAntoniaAvatar(),
                                 "the word is the bird");
                         return null;
                     }
                     if (oldValue.getRight() + 1 >= 3 && "mattgrinch".equals(msgContent)) {
-                        discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
+                        discordWebhookSendService.sendMessage(channelId, finalConfig.getAntoniaNickname(), finalConfig.getAntoniaAvatar(),
                                 "https://cdn.discordapp.com/attachments/707453916882665552/914409167610056734/unknown.png");
                         return null;
                     }

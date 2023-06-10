@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
 public interface BaseCommand {
@@ -47,6 +48,8 @@ public interface BaseCommand {
     RestTemplate getRestTemplate();
 
     ThreadPoolTaskExecutor getThreadPoolTaskExecutor();
+
+    ThreadPoolTaskScheduler getTaskScheduler();
 
     default DiscordUser getDiscordUserByMember(Member member) {
         String userId = member.getId();

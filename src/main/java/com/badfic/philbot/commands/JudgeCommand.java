@@ -4,9 +4,10 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.CourtCase;
 import com.badfic.philbot.data.CourtCaseDal;
-import com.badfic.philbot.service.MinuteTickable;
+import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
+public class JudgeCommand extends BaseNormalCommand {
     public enum Sentence {
         ACQUIT("❌"),
         ONE_HOUR("⏲️"),
@@ -56,6 +57,17 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
                 `!!judge mistrial @user` if you accidentally judged them you can cancel the trial, but only if they have not been convicted yet.
                 `!!judge show @user` to see how much longer the person has for their trial or their sentence.""";
         this.courtCaseDal = courtCaseDal;
+    }
+
+    @PostConstruct
+    public void init() {
+        for (CourtCase courtCase : courtCaseDal.findAll()) {
+            if (courtCase.getTrialDate() != null) {
+                taskScheduler.schedule(() -> trialComplete(courtCase.getDefendantId()), courtCase.getTrialDate().toInstant(ZoneOffset.UTC));
+            } else if (courtCase.getReleaseDate() != null) {
+                taskScheduler.schedule(() -> releaseComplete(courtCase.getDefendantId()), courtCase.getReleaseDate().toInstant(ZoneOffset.UTC));
+            }
+        }
     }
 
     @Override
@@ -135,109 +147,128 @@ public class JudgeCommand extends BaseNormalCommand implements MinuteTickable {
         });
     }
 
-    @Override
-    public void runMinutelyTask() {
+    private void trialComplete(long defendentId) {
         Guild guild = philJda.getGuildById(baseConfig.guildId);
         Role megaHellRole = guild.getRolesByName(Constants.MEGA_HELL_ROLE, false).get(0);
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
         TextChannel megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).get(0);
-        LocalDateTime now = LocalDateTime.now();
 
-        for (CourtCase courtCase : courtCaseDal.findAll()) {
-            try {
-                if (courtCase.getTrialDate() != null && courtCase.getTrialDate().isBefore(now)) {
-                    try {
-                        Message trialMessage = swampysChannel.retrieveMessageById(courtCase.getTrialMessageId()).timeout(30, TimeUnit.SECONDS).complete();
+        Optional<CourtCase> optCourtCase = courtCaseDal.findById(defendentId);
 
-                        Map<Sentence, MutableInt> sentenceMap = Map.of(
-                                JudgeCommand.Sentence.ACQUIT, new MutableInt(-1),
-                                JudgeCommand.Sentence.ONE_HOUR, new MutableInt(-1),
-                                JudgeCommand.Sentence.FIVE_HOUR, new MutableInt(-1),
-                                JudgeCommand.Sentence.ONE_DAY, new MutableInt(-1));
-                        List<MessageReaction> reactions = trialMessage.getReactions();
-                        for (MessageReaction reaction : reactions) {
-                            if (reaction.getEmoji().getType() == Emoji.Type.UNICODE) {
-                                String emoji = reaction.getEmoji().asUnicode().getName();
+        if (optCourtCase.isEmpty()) {
+            swampysChannel.sendMessage("Megahell trial for <@" + defendentId + "> failed.").queue();
+            return;
+        }
 
-                                if (JudgeCommand.Sentence.ACQUIT.getEmoji().equals(emoji)) {
-                                    sentenceMap.get(JudgeCommand.Sentence.ACQUIT).add(reaction.getCount());
-                                } else if (JudgeCommand.Sentence.ONE_HOUR.getEmoji().equals(emoji)) {
-                                    sentenceMap.get(JudgeCommand.Sentence.ONE_HOUR).add(reaction.getCount());
-                                } else if (JudgeCommand.Sentence.FIVE_HOUR.getEmoji().equals(emoji)) {
-                                    sentenceMap.get(JudgeCommand.Sentence.FIVE_HOUR).add(reaction.getCount());
-                                } else if (JudgeCommand.Sentence.ONE_DAY.getEmoji().equals(emoji)) {
-                                    sentenceMap.get(JudgeCommand.Sentence.ONE_DAY).add(reaction.getCount());
-                                }
-                            }
-                        }
-                        trialMessage.clearReactions().queue();
+        CourtCase courtCase = optCourtCase.get();
 
-                        if (sentenceMap.entrySet().stream().allMatch(e -> e.getValue().getValue() == 0)) {
-                            swampysChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been acquitted").queue();
-                            courtCaseDal.deleteById(courtCase.getDefendantId());
-                            continue;
-                        }
+        try {
+            Message trialMessage = swampysChannel.retrieveMessageById(courtCase.getTrialMessageId()).timeout(30, TimeUnit.SECONDS).complete();
 
-                        JudgeCommand.Sentence winningSentence = sentenceMap.entrySet().stream()
-                                .max(Comparator.comparingInt(a -> a.getValue().getValue()))
-                                .orElseThrow(IllegalStateException::new)
-                                .getKey();
+            Map<Sentence, MutableInt> sentenceMap = Map.of(
+                    JudgeCommand.Sentence.ACQUIT, new MutableInt(-1),
+                    JudgeCommand.Sentence.ONE_HOUR, new MutableInt(-1),
+                    JudgeCommand.Sentence.FIVE_HOUR, new MutableInt(-1),
+                    JudgeCommand.Sentence.ONE_DAY, new MutableInt(-1));
+            List<MessageReaction> reactions = trialMessage.getReactions();
+            for (MessageReaction reaction : reactions) {
+                if (reaction.getEmoji().getType() == Emoji.Type.UNICODE) {
+                    String emoji = reaction.getEmoji().asUnicode().getName();
 
-                        switch (winningSentence) {
-                            case ACQUIT -> {
-                                swampysChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been acquitted").queue();
-                                courtCaseDal.deleteById(courtCase.getDefendantId());
-                            }
-                            case ONE_HOUR -> {
-                                guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
-                                courtCase.setTrialDate(null);
-                                courtCase.setReleaseDate(LocalDateTime.now().plusHours(1));
-                                courtCaseDal.update(courtCase);
-                                swampysChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
-                                        + courtCase.getCrime()).queue();
-                                megaHellChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 1 hour in mega hell for "
-                                        + courtCase.getCrime()).queue();
-                            }
-                            case FIVE_HOUR -> {
-                                guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
-                                courtCase.setTrialDate(null);
-                                courtCase.setReleaseDate(LocalDateTime.now().plusHours(5));
-                                courtCaseDal.update(courtCase);
-                                swampysChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 5 hours in mega hell for "
-                                        + courtCase.getCrime()).queue();
-                                megaHellChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 5 hours in mega hell for "
-                                        + courtCase.getCrime()).queue();
-                            }
-                            case ONE_DAY -> {
-                                guild.addRoleToMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
-                                courtCase.setTrialDate(null);
-                                courtCase.setReleaseDate(LocalDateTime.now().plusDays(1));
-                                courtCaseDal.update(courtCase);
-                                swampysChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 1 day in mega hell for "
-                                        + courtCase.getCrime()).queue();
-                                megaHellChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been sentenced to 1 day in mega hell for "
-                                        + courtCase.getCrime()).queue();
-                            }
-                        }
-                    } catch (Exception e) {
-                        log.error("Error with trial for [userId={}]", courtCase.getDefendantId(), e);
-                        courtCaseDal.deleteById(courtCase.getDefendantId());
-                        swampysChannel.sendMessage("Trial for <@" + courtCase.getDefendantId() + "> aborted.").queue();
-                    }
-                } else if (courtCase.getReleaseDate() != null && courtCase.getReleaseDate().isBefore(now)) {
-                    courtCaseDal.deleteById(courtCase.getDefendantId());
-
-                    try {
-                        guild.removeRoleFromMember(UserSnowflake.fromId(courtCase.getDefendantId()), megaHellRole).queue();
-                        megaHellChannel.sendMessage("<@" + courtCase.getDefendantId() + "> has been released from mega-hell").queue();
-                    } catch (Exception e) {
-                        log.error("Error with release date for [userId={}]", courtCase.getDefendantId(), e);
-                        megaHellChannel.sendMessage("Sentence for <@" + courtCase.getDefendantId() + "> aborted.").queue();
+                    if (JudgeCommand.Sentence.ACQUIT.getEmoji().equals(emoji)) {
+                        sentenceMap.get(JudgeCommand.Sentence.ACQUIT).add(reaction.getCount());
+                    } else if (JudgeCommand.Sentence.ONE_HOUR.getEmoji().equals(emoji)) {
+                        sentenceMap.get(JudgeCommand.Sentence.ONE_HOUR).add(reaction.getCount());
+                    } else if (JudgeCommand.Sentence.FIVE_HOUR.getEmoji().equals(emoji)) {
+                        sentenceMap.get(JudgeCommand.Sentence.FIVE_HOUR).add(reaction.getCount());
+                    } else if (JudgeCommand.Sentence.ONE_DAY.getEmoji().equals(emoji)) {
+                        sentenceMap.get(JudgeCommand.Sentence.ONE_DAY).add(reaction.getCount());
                     }
                 }
-            } catch (Exception e) {
-                log.error("Error with court case for [userId={}]", courtCase.getDefendantId(), e);
             }
+            trialMessage.clearReactions().queue();
+
+            if (sentenceMap.entrySet().stream().allMatch(e -> e.getValue().getValue() == 0)) {
+                swampysChannel.sendMessage("<@" + defendentId + "> has been acquitted").queue();
+                courtCaseDal.deleteById(defendentId);
+                return;
+            }
+
+            JudgeCommand.Sentence winningSentence = sentenceMap.entrySet().stream()
+                    .max(Comparator.comparingInt(a -> a.getValue().getValue()))
+                    .orElseThrow(IllegalStateException::new)
+                    .getKey();
+
+            switch (winningSentence) {
+                case ACQUIT -> {
+                    swampysChannel.sendMessage("<@" + defendentId + "> has been acquitted").queue();
+                    courtCaseDal.deleteById(defendentId);
+                }
+                case ONE_HOUR -> {
+                    guild.addRoleToMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
+                    courtCase.setTrialDate(null);
+                    LocalDateTime releaseDate = LocalDateTime.now().plusHours(1);
+                    courtCase.setReleaseDate(releaseDate);
+                    courtCaseDal.update(courtCase);
+
+                    taskScheduler.schedule(() -> releaseComplete(defendentId), releaseDate.toInstant(ZoneOffset.UTC));
+
+                    swampysChannel.sendMessage("<@" + defendentId + "> has been sentenced to 1 hour in mega hell for "
+                            + courtCase.getCrime()).queue();
+                    megaHellChannel.sendMessage("<@" + defendentId + "> has been sentenced to 1 hour in mega hell for "
+                            + courtCase.getCrime()).queue();
+                }
+                case FIVE_HOUR -> {
+                    guild.addRoleToMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
+                    courtCase.setTrialDate(null);
+                    LocalDateTime releaseDate = LocalDateTime.now().plusHours(5);
+                    courtCase.setReleaseDate(releaseDate);
+                    courtCaseDal.update(courtCase);
+
+                    taskScheduler.schedule(() -> releaseComplete(defendentId), releaseDate.toInstant(ZoneOffset.UTC));
+
+                    swampysChannel.sendMessage("<@" + defendentId + "> has been sentenced to 5 hours in mega hell for "
+                            + courtCase.getCrime()).queue();
+                    megaHellChannel.sendMessage("<@" + defendentId + "> has been sentenced to 5 hours in mega hell for "
+                            + courtCase.getCrime()).queue();
+                }
+                case ONE_DAY -> {
+                    guild.addRoleToMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
+                    courtCase.setTrialDate(null);
+                    LocalDateTime releaseDate = LocalDateTime.now().plusDays(1);
+                    courtCase.setReleaseDate(releaseDate);
+                    courtCaseDal.update(courtCase);
+
+                    taskScheduler.schedule(() -> releaseComplete(defendentId), releaseDate.toInstant(ZoneOffset.UTC));
+
+                    swampysChannel.sendMessage("<@" + defendentId + "> has been sentenced to 1 day in mega hell for "
+                            + courtCase.getCrime()).queue();
+                    megaHellChannel.sendMessage("<@" + defendentId + "> has been sentenced to 1 day in mega hell for "
+                            + courtCase.getCrime()).queue();
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error with trial sentencing for [userId={}]", defendentId, e);
+            courtCaseDal.deleteById(defendentId);
+            swampysChannel.sendMessage("Megahell trial sentencing for <@" + defendentId + "> failed.").queue();
         }
     }
+
+    private void releaseComplete(long defendentId) {
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
+        Role megaHellRole = guild.getRolesByName(Constants.MEGA_HELL_ROLE, false).get(0);
+        TextChannel megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).get(0);
+
+        courtCaseDal.findById(defendentId)
+                .ifPresent(courtCase -> courtCaseDal.deleteById(defendentId));
+
+        try {
+            guild.removeRoleFromMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
+            megaHellChannel.sendMessage("<@" + defendentId + "> has been released from mega-hell").queue();
+        } catch (Exception e) {
+            log.error("Error with release date for [userId={}]", defendentId, e);
+            megaHellChannel.sendMessage("Megahell sentence release for <@" + defendentId + "> failed.").queue();
+        }
+    }
+
 }
