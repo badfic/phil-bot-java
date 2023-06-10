@@ -38,6 +38,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.attribute.IAgeRestrictedChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -54,6 +55,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.restaction.CommandCreateAction;
@@ -426,13 +428,22 @@ public class PhilMessageListener extends ListenerAdapter {
     }
 
     @Override
+    public void onUserUpdateAvatar(UserUpdateAvatarEvent event) {
+        logAvatarUpdate(event.getUser(), event.getNewAvatarUrl(), event.getOldAvatarUrl());
+    }
+
+    @Override
     public void onGuildMemberUpdateAvatar(@NotNull GuildMemberUpdateAvatarEvent event) {
-        event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
+        logAvatarUpdate(event.getUser(), event.getNewAvatarUrl(), event.getOldAvatarUrl());
+    }
+
+    private void logAvatarUpdate(User user, String oldAvatar, String newAvatar) {
+        philJda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
             channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
-                            event.getMember().getEffectiveName() + " Updated Avatar",
-                            event.getUser().getAsMention() + "\nOld avatar is thumbnail (unless phil didn't have it cached)\nNew avatar is larger image",
-                            event.getNewAvatarUrl(),
-                            event.getOldAvatarUrl()))
+                            user.getEffectiveName() + " Updated Avatar",
+                            user.getAsMention() + "\nOld avatar is thumbnail (unless phil didn't have it cached)\nNew avatar is larger image",
+                            newAvatar,
+                            oldAvatar))
                     .queue();
         });
     }
