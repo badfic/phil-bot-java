@@ -19,6 +19,7 @@ import com.badfic.philbot.listeners.keanu.KeanuMessageListener;
 import com.badfic.philbot.service.Ao3MetadataParser;
 import com.badfic.philbot.service.HungerGamesWinnersService;
 import com.badfic.philbot.service.MemeCommandsService;
+import com.badfic.philbot.service.OnJdaReady;
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
@@ -26,6 +27,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -61,6 +63,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -70,10 +73,10 @@ import org.springframework.stereotype.Component;
 public class PhilMessageListener extends ListenerAdapter {
     private static final Pattern PHIL_PATTERN = Constants.compileWords("phil|klemmer|phellen|the cw|willip|schlemmer|pharole|klaskin|phreddie|klercury|philliam");
     private static final Pattern AO3_PATTERN = Pattern.compile("^(?:http(s)?://)?(archiveofourown\\.org/works/)([0-9]+).*$", Pattern.CASE_INSENSITIVE);
-    private static final Long2ObjectMap<List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = new Long2ObjectArrayMap<>() {{
-        put(594740276568784906L, List.of(ImmutablePair.of(Constants.compileWords("hubby"), "Hi boo")));
-        put(323520695550083074L, List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?")));
-    }};
+    private static final Long2ObjectMap<List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = new Long2ObjectArrayMap<>(Map.of(
+            594740276568784906L, List.of(ImmutablePair.of(Constants.compileWords("hubby"), "Hi boo")),
+            323520695550083074L, List.of(ImmutablePair.of(Constants.compileWords("child"), "Yes father?"))
+    ));
     private static final Long2ObjectMap<Pair<String, Short>> LAST_WORD_MAP = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
 
     private final BehradMessageListener behradMessageListener;
@@ -93,6 +96,9 @@ public class PhilMessageListener extends ListenerAdapter {
 
     @Setter(onMethod_ = {@Autowired})
     private PhilCommand philCommand;
+
+    @Setter(onMethod_ = {@Autowired})
+    private ApplicationContext applicationContext;
 
     @Setter(onMethod_ = {@Autowired})
     private List<BaseNormalCommand> commands;
@@ -270,6 +276,9 @@ public class PhilMessageListener extends ListenerAdapter {
 
             commandCreateAction.queue();
         }
+
+        applicationContext.getBeansOfType(OnJdaReady.class)
+                .forEach((name, bean) -> bean.run());
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.CourtCase;
 import com.badfic.philbot.data.CourtCaseDal;
-import jakarta.annotation.PostConstruct;
+import com.badfic.philbot.service.OnJdaReady;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class JudgeCommand extends BaseNormalCommand {
+public class JudgeCommand extends BaseNormalCommand implements OnJdaReady {
     public enum Sentence {
         ACQUIT("❌"),
         ONE_HOUR("⏲️"),
@@ -59,8 +59,8 @@ public class JudgeCommand extends BaseNormalCommand {
         this.courtCaseDal = courtCaseDal;
     }
 
-    @PostConstruct
-    public void init() {
+    @Override
+    public void run() {
         for (CourtCase courtCase : courtCaseDal.findAll()) {
             if (courtCase.getTrialDate() != null) {
                 taskScheduler.schedule(() -> trialComplete(courtCase.getDefendantId()), courtCase.getTrialDate().toInstant(ZoneOffset.UTC));

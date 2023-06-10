@@ -5,9 +5,10 @@ import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.service.MinuteTickable;
+import com.badfic.philbot.service.OnJdaReady;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class MapCommand extends BaseNormalCommand implements MinuteTickable {
+public class MapCommand extends BaseNormalCommand implements OnJdaReady {
     // VisibleForTesting
     static final String MAP_ZIP_FILENAME = "map-trivia-flags.zip";
 
@@ -35,6 +36,15 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
         name = "map";
         help = "!!map\nTo trigger a Map trivia question that will last 15 minutes";
         requiredRole = Constants.ADMIN_ROLE;
+    }
+
+    @Override
+    public void run() {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+
+        if (Objects.nonNull(swampyGamesConfig.getMapPhrase()) && Objects.nonNull(swampyGamesConfig.getMapTriviaExpiration())) {
+            taskScheduler.schedule(this::mapComplete, swampyGamesConfig.getMapTriviaExpiration().toInstant(ZoneOffset.UTC));
+        }
     }
 
     @Override
@@ -57,7 +67,8 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
         TriviaType triviaType = Constants.pickRandom(TriviaType.values());
 
         swampyGamesConfig.setMapPhrase(mapTriviaObject.regex());
-        swampyGamesConfig.setMapTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
+        LocalDateTime mapTriviaExpiration = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15);
+        swampyGamesConfig.setMapTriviaExpiration(mapTriviaExpiration);
         swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
 
         String type = mapTriviaObject.code().startsWith("us-") ? "US State" : "Country";
@@ -89,58 +100,61 @@ public class MapCommand extends BaseNormalCommand implements MinuteTickable {
             swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Map Trivia", description))
                     .addFiles(FileUpload.fromData(zipFile.readAllBytes(), "map-trivia.png"))
                     .queue();
+
+            taskScheduler.schedule(this::mapComplete, mapTriviaExpiration.toInstant(ZoneOffset.UTC));
         } catch (Exception e) {
             log.error("Failed to load map image for map trivia", e);
             swampysChannel.sendMessage("Failed to load image for map trivia. The answer is " + mapTriviaObject.regex()).queue();
         }
     }
 
-    @Override
-    public void runMinutelyTask() {
+    private void mapComplete() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
-        if (Objects.nonNull(swampyGamesConfig.getMapPhrase())
-                && Objects.nonNull(swampyGamesConfig.getMapTriviaExpiration())
-                && swampyGamesConfig.getMapTriviaExpiration().isBefore(LocalDateTime.now())) {
-            swampyGamesConfig.setMapPhrase(null);
-            swampyGamesConfig.setMapTriviaExpiration(null);
-            saveSwampyGamesConfig(swampyGamesConfig);
+        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
-            TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
-            Guild guild = philJda.getGuildById(baseConfig.guildId);
-
-            List<CompletableFuture<?>> futures = new ArrayList<>();
-            LocalDateTime startTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(15);
-            StringBuilder description = new StringBuilder();
-            discordUserRepository.findAll()
-                    .stream()
-                    .filter(u -> Objects.nonNull(u.getAcceptedMapTrivia()) && u.getAcceptedMapTrivia().isAfter(startTime))
-                    .forEach(u -> {
-                        try {
-                            Member memberLookedUp = guild.getMemberById(u.getId());
-                            if (memberLookedUp == null) {
-                                throw new RuntimeException("member not found");
-                            }
-
-                            futures.add(givePointsToMember(swampyGamesConfig.getMapEventPoints(), memberLookedUp, PointsStat.MAP));
-                            description.append("Gave ")
-                                    .append(swampyGamesConfig.getMapEventPoints())
-                                    .append(" points to <@")
-                                    .append(u.getId())
-                                    .append(">\n");
-                        } catch (Exception e) {
-                            log.error("Failed to give map trivia points to user [id={}]", u.getId(), e);
-                            description.append("OOPS: Unable to give points to <@")
-                                    .append(u.getId())
-                                    .append(">\n");
-                        }
-                    });
-
-            MessageEmbed messageEmbed = Constants.simpleEmbed("Map Trivia Complete", description.toString());
-
-            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new))
-                    .thenRun(() -> swampysChannel.sendMessageEmbeds(messageEmbed).queue());
+        if (Objects.isNull(swampyGamesConfig.getMapPhrase())) {
+            swampysChannel.sendMessage("Map Trivia failed.").queue();
+            return;
         }
+
+        swampyGamesConfig.setMapPhrase(null);
+        swampyGamesConfig.setMapTriviaExpiration(null);
+        saveSwampyGamesConfig(swampyGamesConfig);
+
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
+
+        List<CompletableFuture<?>> futures = new ArrayList<>();
+        LocalDateTime startTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(15);
+        StringBuilder description = new StringBuilder();
+        discordUserRepository.findAll()
+                .stream()
+                .filter(u -> Objects.nonNull(u.getAcceptedMapTrivia()) && u.getAcceptedMapTrivia().isAfter(startTime))
+                .forEach(u -> {
+                    try {
+                        Member memberLookedUp = guild.getMemberById(u.getId());
+                        if (memberLookedUp == null) {
+                            throw new RuntimeException("member not found");
+                        }
+
+                        futures.add(givePointsToMember(swampyGamesConfig.getMapEventPoints(), memberLookedUp, PointsStat.MAP));
+                        description.append("Gave ")
+                                .append(swampyGamesConfig.getMapEventPoints())
+                                .append(" points to <@")
+                                .append(u.getId())
+                                .append(">\n");
+                    } catch (Exception e) {
+                        log.error("Failed to give map trivia points to user [id={}]", u.getId(), e);
+                        description.append("OOPS: Unable to give points to <@")
+                                .append(u.getId())
+                                .append(">\n");
+                    }
+                });
+
+        MessageEmbed messageEmbed = Constants.simpleEmbed("Map Trivia Complete", description.toString());
+
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new))
+                .thenRun(() -> swampysChannel.sendMessageEmbeds(messageEmbed).queue());
     }
 
     // VisibleForTesting

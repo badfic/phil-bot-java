@@ -7,7 +7,7 @@ import com.badfic.philbot.data.ReminderDal;
 import com.badfic.philbot.data.SnarkyReminderResponse;
 import com.badfic.philbot.data.SnarkyReminderResponseRepository;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import jakarta.annotation.PostConstruct;
+import com.badfic.philbot.service.OnJdaReady;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class RemindersCommand extends BaseNormalCommand {
+public class RemindersCommand extends BaseNormalCommand implements OnJdaReady {
 
     private final ReminderDal reminderDal;
     private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
@@ -42,8 +42,8 @@ public class RemindersCommand extends BaseNormalCommand {
         this.snarkyReminderResponseRepository = snarkyReminderResponseRepository;
     }
 
-    @PostConstruct
-    public void init() {
+    @Override
+    public void run() {
         for (Reminder reminder : reminderDal.findAll()) {
             taskScheduler.schedule(() -> remind(reminder.getId()), reminder.getDueDate().toInstant(ZoneOffset.UTC));
         }
@@ -166,7 +166,7 @@ public class RemindersCommand extends BaseNormalCommand {
         }
     }
 
-    public void remind(long reminderId) {
+    private void remind(long reminderId) {
         reminderDal.findById(reminderId).ifPresent(reminder -> {
             TextChannel textChannelById = philJda.getTextChannelById(reminder.getChannelId());
 
