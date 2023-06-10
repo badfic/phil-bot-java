@@ -33,7 +33,7 @@ public class Boost extends BaseNormalCommand {
         doBoost(true);
     }
 
-    @Scheduled(cron = "${swampy.schedule.hourly}", zone = "${swampy.schedule.timezone}")
+    @Scheduled(cron = "${swampy.schedule.events.boost}", zone = "${swampy.schedule.timezone}")
     public void boost() {
         doBoost(false);
     }

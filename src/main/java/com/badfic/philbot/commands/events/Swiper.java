@@ -6,12 +6,14 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.service.MinuteTickable;
+import com.badfic.philbot.service.OnJdaReady;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class Swiper extends BaseNormalCommand implements MinuteTickable {
+public class Swiper extends BaseNormalCommand implements OnJdaReady {
     // TODO: Investigate putting these in SwampyGamesConfig table
     public static final Map<String, TheSwiper> SWIPERS = Map.ofEntries(
             Map.entry("Swiper No Swiping", new TheSwiper(
@@ -125,6 +127,15 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
     }
 
     @Override
+    public void run() {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+
+        if (Objects.nonNull(swampyGamesConfig.getSwiperExpiration())) {
+            taskScheduler.schedule(this::swiperComplete, swampyGamesConfig.getSwiperExpiration().toInstant(ZoneOffset.UTC));
+        }
+    }
+
+    @Override
     public void execute(CommandEvent event) {
         doSwiper();
     }
@@ -134,8 +145,7 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
         doSwiper();
     }
 
-    @Override
-    public void runMinutelyTask() {
+    private void swiperComplete() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
         Guild guild = philJda.getGuildById(baseConfig.guildId);
@@ -144,9 +154,8 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
         int swiperPoints = swampyGamesConfig.getSwiperPoints();
         String swiperSavior = swampyGamesConfig.getSwiperSavior();
         String noSwipingPhrase = swampyGamesConfig.getNoSwipingPhrase();
-        LocalDateTime swiperExpiration = swampyGamesConfig.getSwiperExpiration();
 
-        if (swiperAwaiting != null && swiperExpiration.isBefore(LocalDateTime.now())) {
+        if (swiperAwaiting != null) {
             swampyGamesConfig.setNoSwipingPhrase(null);
             swampyGamesConfig.setSwiperAwaiting(null);
             swampyGamesConfig.setSwiperSavior(null);
@@ -244,8 +253,11 @@ public class Swiper extends BaseNormalCommand implements MinuteTickable {
         swampyGamesConfig.setSwiperAwaiting(member.getId());
         swampyGamesConfig.setNoSwipingPhrase(theSwiper.noSwipingPhrase());
         swampyGamesConfig.setSwiperSavior(null);
-        swampyGamesConfig.setSwiperExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
+        LocalDateTime swiperExpiration = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15);
+        swampyGamesConfig.setSwiperExpiration(swiperExpiration);
         swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
+
+        taskScheduler.schedule(this::swiperComplete, swiperExpiration.toInstant(ZoneOffset.UTC));
 
         String description = "They're trying to steal from <@" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
                 + "' in this channel within 15 minutes to stop them!";

@@ -108,11 +108,11 @@ public class TriviaCommand extends BaseNormalCommand implements OnJdaReady {
         swampysChannel.sendMessageEmbeds(Constants.simpleEmbed(title, description)).queue(success -> {
             swampyGamesConfig.setTriviaGuid(trivia.getId());
             swampyGamesConfig.setTriviaMsgId(success.getId());
-            LocalDateTime triviaExpiration = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15);
-            swampyGamesConfig.setTriviaExpiration(triviaExpiration);
+            LocalDateTime expiration = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15);
+            swampyGamesConfig.setTriviaExpiration(expiration);
             saveSwampyGamesConfig(swampyGamesConfig);
 
-            taskScheduler.schedule(this::triviaComplete, triviaExpiration.toInstant(ZoneOffset.UTC));
+            taskScheduler.schedule(this::triviaComplete, expiration.toInstant(ZoneOffset.UTC));
 
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE6")).queue();
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE7")).queue();

@@ -7,8 +7,9 @@ import com.badfic.philbot.data.NsfwQuote;
 import com.badfic.philbot.data.NsfwQuoteRepository;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.service.MinuteTickable;
+import com.badfic.philbot.service.OnJdaReady;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +35,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NsfwQuoteTrivia extends BaseNormalCommand implements MinuteTickable {
+public class NsfwQuoteTrivia extends BaseNormalCommand implements OnJdaReady {
 
     private final NsfwQuoteRepository nsfwQuoteRepository;
 
@@ -42,6 +43,15 @@ public class NsfwQuoteTrivia extends BaseNormalCommand implements MinuteTickable
         name = "nsfwQuoteTrivia";
         ownerCommand = true;
         this.nsfwQuoteRepository = nsfwQuoteRepository;
+    }
+
+    @Override
+    public void run() {
+        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+
+        if (Objects.nonNull(swampyGamesConfig.getNsfwQuoteTriviaExpiration())) {
+            taskScheduler.schedule(this::triviaComplete, swampyGamesConfig.getNsfwQuoteTriviaExpiration().toInstant(ZoneOffset.UTC));
+        }
     }
 
     @Override
@@ -124,8 +134,11 @@ public class NsfwQuoteTrivia extends BaseNormalCommand implements MinuteTickable
         triviaChannel.sendMessageEmbeds(Constants.simpleEmbed(title, description)).queue(success -> {
             swampyGamesConfig.setNsfwQuoteTriviaCorrectAnswer(correctAnswer);
             swampyGamesConfig.setNsfwQuoteTriviaMsgId(success.getId());
-            swampyGamesConfig.setNsfwQuoteTriviaExpiration(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
+            LocalDateTime expiration = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15);
+            swampyGamesConfig.setNsfwQuoteTriviaExpiration(expiration);
             saveSwampyGamesConfig(swampyGamesConfig);
+
+            taskScheduler.schedule(this::triviaComplete, expiration.toInstant(ZoneOffset.UTC));
 
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE6")).queue();
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE7")).queue();
@@ -133,53 +146,54 @@ public class NsfwQuoteTrivia extends BaseNormalCommand implements MinuteTickable
         });
     }
 
-    @Override
-    public void runMinutelyTask() {
+    private void triviaComplete() {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false).get(0);
 
-        if (Objects.nonNull(swampyGamesConfig.getNsfwQuoteTriviaMsgId())
-                && swampyGamesConfig.getNsfwQuoteTriviaExpiration().isBefore(LocalDateTime.now())) {
-            String quoteTriviaMsgId = swampyGamesConfig.getNsfwQuoteTriviaMsgId();
-            short quoteTriviaCorrectAnswer = swampyGamesConfig.getNsfwQuoteTriviaCorrectAnswer();
-            int quoteTriviaEventPoints = swampyGamesConfig.getNsfwQuoteTriviaEventPoints();
-
-            swampyGamesConfig.setNsfwQuoteTriviaCorrectAnswer(null);
-            swampyGamesConfig.setNsfwQuoteTriviaMsgId(null);
-            swampyGamesConfig.setNsfwQuoteTriviaExpiration(null);
-            saveSwampyGamesConfig(swampyGamesConfig);
-
-            TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false).get(0);
-            Guild guild = philJda.getGuildById(baseConfig.guildId);
-
-            StringBuilder description = new StringBuilder();
-
-            Message msg;
-            try {
-                msg = swampysChannel.retrieveMessageById(quoteTriviaMsgId).timeout(30, TimeUnit.SECONDS).complete();
-            } catch (Exception e) {
-                swampysChannel.sendMessage("Could not find nsfw quote trivia question anymore. Failed to award points.").queue();
-                return;
-            }
-
-            long wrongPoints = quoteTriviaEventPoints * -1;
-
-            List<CompletableFuture<?>> futures = new ArrayList<>();
-
-            List<User> users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE6")).timeout(30, TimeUnit.SECONDS).complete();
-            awardPoints(description, users, quoteTriviaCorrectAnswer == 0 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
-
-            users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE7")).timeout(30, TimeUnit.SECONDS).complete();
-            awardPoints(description, users, quoteTriviaCorrectAnswer == 1 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
-
-            users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE8")).timeout(30, TimeUnit.SECONDS).complete();
-            awardPoints(description, users, quoteTriviaCorrectAnswer == 2 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
-
-            msg.clearReactions().queue();
-
-            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
-                swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("\uD83C\uDF46 Quote Trivia Results", description.toString())).queue();
-            });
+        if (Objects.isNull(swampyGamesConfig.getNsfwQuoteTriviaMsgId())) {
+            swampysChannel.sendMessage("Could not find nsfw quote trivia question anymore. Failed to award points.").queue();
+            return;
         }
+
+        String quoteTriviaMsgId = swampyGamesConfig.getNsfwQuoteTriviaMsgId();
+        short quoteTriviaCorrectAnswer = swampyGamesConfig.getNsfwQuoteTriviaCorrectAnswer();
+        int quoteTriviaEventPoints = swampyGamesConfig.getNsfwQuoteTriviaEventPoints();
+
+        swampyGamesConfig.setNsfwQuoteTriviaCorrectAnswer(null);
+        swampyGamesConfig.setNsfwQuoteTriviaMsgId(null);
+        swampyGamesConfig.setNsfwQuoteTriviaExpiration(null);
+        saveSwampyGamesConfig(swampyGamesConfig);
+
+        Guild guild = philJda.getGuildById(baseConfig.guildId);
+
+        StringBuilder description = new StringBuilder();
+
+        Message msg;
+        try {
+            msg = swampysChannel.retrieveMessageById(quoteTriviaMsgId).timeout(30, TimeUnit.SECONDS).complete();
+        } catch (Exception e) {
+            swampysChannel.sendMessage("Could not find nsfw quote trivia question anymore. Failed to award points.").queue();
+            return;
+        }
+
+        long wrongPoints = quoteTriviaEventPoints * -1;
+
+        List<CompletableFuture<?>> futures = new ArrayList<>();
+
+        List<User> users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE6")).timeout(30, TimeUnit.SECONDS).complete();
+        awardPoints(description, users, quoteTriviaCorrectAnswer == 0 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
+
+        users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE7")).timeout(30, TimeUnit.SECONDS).complete();
+        awardPoints(description, users, quoteTriviaCorrectAnswer == 1 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
+
+        users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE8")).timeout(30, TimeUnit.SECONDS).complete();
+        awardPoints(description, users, quoteTriviaCorrectAnswer == 2 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
+
+        msg.clearReactions().queue();
+
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
+            swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("\uD83C\uDF46 Quote Trivia Results", description.toString())).queue();
+        });
     }
 
     private void awardPoints(StringBuilder description, List<User> users, long points, List<CompletableFuture<?>> futures, Guild guild) {
