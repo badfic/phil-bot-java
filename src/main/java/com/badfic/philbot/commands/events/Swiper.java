@@ -8,7 +8,6 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.OnJdaReady;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
@@ -131,7 +130,7 @@ public class Swiper extends BaseNormalCommand implements OnJdaReady {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         if (Objects.nonNull(swampyGamesConfig.getSwiperExpiration())) {
-            taskScheduler.schedule(this::swiperComplete, swampyGamesConfig.getSwiperExpiration().toInstant(ZoneOffset.UTC));
+            scheduleTask(this::swiperComplete, swampyGamesConfig.getSwiperExpiration());
         }
     }
 
@@ -257,7 +256,7 @@ public class Swiper extends BaseNormalCommand implements OnJdaReady {
         swampyGamesConfig.setSwiperExpiration(swiperExpiration);
         swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
 
-        taskScheduler.schedule(this::swiperComplete, swiperExpiration.toInstant(ZoneOffset.UTC));
+        scheduleTask(this::swiperComplete, swiperExpiration);
 
         String description = "They're trying to steal from <@" + member.getId() + ">\nType '" + swampyGamesConfig.getNoSwipingPhrase()
                 + "' in this channel within 15 minutes to stop them!";

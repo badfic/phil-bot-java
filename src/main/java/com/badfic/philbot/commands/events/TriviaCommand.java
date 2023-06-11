@@ -10,7 +10,6 @@ import com.badfic.philbot.data.TriviaRepository;
 import com.badfic.philbot.service.OnJdaReady;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +48,7 @@ public class TriviaCommand extends BaseNormalCommand implements OnJdaReady {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         if (Objects.nonNull(swampyGamesConfig.getTriviaExpiration())) {
-            taskScheduler.schedule(this::triviaComplete, swampyGamesConfig.getTriviaExpiration().toInstant(ZoneOffset.UTC));
+            scheduleTask(this::triviaComplete, swampyGamesConfig.getTriviaExpiration());
         }
     }
 
@@ -112,7 +111,7 @@ public class TriviaCommand extends BaseNormalCommand implements OnJdaReady {
             swampyGamesConfig.setTriviaExpiration(expiration);
             saveSwampyGamesConfig(swampyGamesConfig);
 
-            taskScheduler.schedule(this::triviaComplete, expiration.toInstant(ZoneOffset.UTC));
+            scheduleTask(this::triviaComplete, expiration);
 
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE6")).queue();
             success.addReaction(Emoji.fromUnicode("\uD83C\uDDE7")).queue();

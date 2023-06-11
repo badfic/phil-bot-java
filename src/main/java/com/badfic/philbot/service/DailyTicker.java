@@ -22,7 +22,7 @@ public class DailyTicker extends BaseService {
         }
 
         for (DailyTickable tickable : dailyTickables) {
-            threadPoolTaskExecutor.execute(() -> {
+            applicationTaskExecutor.execute(() -> {
                 try {
                     tickable.runDailyTask();
                 } catch (Exception e) {

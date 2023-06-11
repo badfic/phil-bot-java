@@ -72,9 +72,9 @@ public class BaseConfig {
     public String airtableApiToken;
 
     @Bean
-    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+    public ThreadPoolTaskExecutor applicationTaskExecutor() {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setAllowCoreThreadTimeOut(true);
+        threadPoolTaskExecutor.setCorePoolSize(4);
         threadPoolTaskExecutor.setRejectedExecutionHandler((runnable, executor) -> {
             log.error("Rejected task in threadPoolTaskExecutor. [runnable={}]", runnable);
         });
@@ -84,19 +84,20 @@ public class BaseConfig {
     @Bean(name = "taskScheduler")
     public ThreadPoolTaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(2);
         threadPoolTaskScheduler.setRejectedExecutionHandler((runnable, executor) -> {
             log.error("Rejected task in taskScheduler. [runnable={}]", runnable);
         });
         threadPoolTaskScheduler.setErrorHandler(t -> {
             log.error("Error in scheduled task", t);
         });
+        threadPoolTaskScheduler.initialize();
+        threadPoolTaskScheduler.setPoolSize(4);
         return threadPoolTaskScheduler;
     }
 
     @Bean
-    public OkHttpClient okHttpClient(ThreadPoolTaskExecutor threadPoolTaskExecutor) {
-        Dispatcher dispatcher = new Dispatcher(threadPoolTaskExecutor.getThreadPoolExecutor());
+    public OkHttpClient okHttpClient(ThreadPoolTaskExecutor applicationTaskExecutor) {
+        Dispatcher dispatcher = new Dispatcher(applicationTaskExecutor.getThreadPoolExecutor());
         dispatcher.setMaxRequestsPerHost(25);
         ConnectionPool connectionPool = new ConnectionPool(4, 10, TimeUnit.SECONDS);
         return new OkHttpClient.Builder()
@@ -129,7 +130,7 @@ public class BaseConfig {
 
     @Bean(name = "philJda")
     public JDA philJda(ThreadPoolTaskScheduler taskScheduler,
-                       ThreadPoolTaskExecutor threadPoolTaskExecutor,
+                       ThreadPoolTaskExecutor applicationTaskExecutor,
                        OkHttpClient okHttpClient,
                        PhilMessageListener philMessageListener) throws Exception {
         List<GatewayIntent> intents = Arrays.asList(GUILD_MEMBERS, GUILD_MODERATION, GUILD_MESSAGES, MESSAGE_CONTENT, GUILD_VOICE_STATES,
@@ -139,8 +140,8 @@ public class BaseConfig {
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.FORUM_TAGS,
                         CacheFlag.ROLE_TAGS, CacheFlag.SCHEDULED_EVENTS, CacheFlag.STICKER, CacheFlag.MEMBER_OVERRIDES)
                 .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
-                .setCallbackPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
-                .setEventPool(threadPoolTaskExecutor.getThreadPoolExecutor(), false)
+                .setCallbackPool(applicationTaskExecutor.getThreadPoolExecutor(), false)
+                .setEventPool(applicationTaskExecutor.getThreadPoolExecutor(), false)
                 .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
                 .setHttpClient(okHttpClient)
                 .addEventListeners(philMessageListener)

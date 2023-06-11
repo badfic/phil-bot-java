@@ -10,6 +10,8 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +49,7 @@ public interface BaseCommand {
 
     RestTemplate getRestTemplate();
 
-    ThreadPoolTaskExecutor getThreadPoolTaskExecutor();
+    ThreadPoolTaskExecutor getApplicationTaskExecutor();
 
     ThreadPoolTaskScheduler getTaskScheduler();
 
@@ -141,6 +143,10 @@ public interface BaseCommand {
 
     default SwampyGamesConfig saveSwampyGamesConfig(SwampyGamesConfig swampyGamesConfig) {
         return getSwampyGamesConfigDal().update(swampyGamesConfig);
+    }
+
+    default void scheduleTask(Runnable task, LocalDateTime executionTime) {
+        getTaskScheduler().schedule(task, executionTime.toInstant(ZoneOffset.UTC));
     }
 
 }

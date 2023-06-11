@@ -47,10 +47,10 @@ public abstract class BaseSlashCommand implements BaseCommand {
     protected RestTemplate restTemplate;
 
     @Setter(onMethod_ = {@Autowired})
-    protected ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    protected ThreadPoolTaskExecutor applicationTaskExecutor;
 
     @Setter(onMethod_ = {@Autowired})
-    protected ThreadPoolTaskScheduler taskScheduler;
+    private ThreadPoolTaskScheduler taskScheduler;
 
     protected String name;
     protected String help;

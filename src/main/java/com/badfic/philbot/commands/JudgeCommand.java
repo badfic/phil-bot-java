@@ -7,7 +7,6 @@ import com.badfic.philbot.data.CourtCaseDal;
 import com.badfic.philbot.service.OnJdaReady;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
@@ -63,9 +62,9 @@ public class JudgeCommand extends BaseNormalCommand implements OnJdaReady {
     public void run() {
         for (CourtCase courtCase : courtCaseDal.findAll()) {
             if (courtCase.getTrialDate() != null) {
-                taskScheduler.schedule(() -> trialComplete(courtCase.getDefendantId()), courtCase.getTrialDate().toInstant(ZoneOffset.UTC));
+                scheduleTask(() -> trialComplete(courtCase.getDefendantId()), courtCase.getTrialDate());
             } else if (courtCase.getReleaseDate() != null) {
-                taskScheduler.schedule(() -> releaseComplete(courtCase.getDefendantId()), courtCase.getReleaseDate().toInstant(ZoneOffset.UTC));
+                scheduleTask(() -> releaseComplete(courtCase.getDefendantId()), courtCase.getReleaseDate());
             }
         }
     }
@@ -211,7 +210,7 @@ public class JudgeCommand extends BaseNormalCommand implements OnJdaReady {
                     courtCase.setReleaseDate(releaseDate);
                     courtCaseDal.update(courtCase);
 
-                    taskScheduler.schedule(() -> releaseComplete(defendentId), releaseDate.toInstant(ZoneOffset.UTC));
+                    scheduleTask(() -> releaseComplete(defendentId), releaseDate);
 
                     swampysChannel.sendMessage("<@" + defendentId + "> has been sentenced to 1 hour in mega hell for "
                             + courtCase.getCrime()).queue();
@@ -225,7 +224,7 @@ public class JudgeCommand extends BaseNormalCommand implements OnJdaReady {
                     courtCase.setReleaseDate(releaseDate);
                     courtCaseDal.update(courtCase);
 
-                    taskScheduler.schedule(() -> releaseComplete(defendentId), releaseDate.toInstant(ZoneOffset.UTC));
+                    scheduleTask(() -> releaseComplete(defendentId), releaseDate);
 
                     swampysChannel.sendMessage("<@" + defendentId + "> has been sentenced to 5 hours in mega hell for "
                             + courtCase.getCrime()).queue();
@@ -239,7 +238,7 @@ public class JudgeCommand extends BaseNormalCommand implements OnJdaReady {
                     courtCase.setReleaseDate(releaseDate);
                     courtCaseDal.update(courtCase);
 
-                    taskScheduler.schedule(() -> releaseComplete(defendentId), releaseDate.toInstant(ZoneOffset.UTC));
+                    scheduleTask(() -> releaseComplete(defendentId), releaseDate);
 
                     swampysChannel.sendMessage("<@" + defendentId + "> has been sentenced to 1 day in mega hell for "
                             + courtCase.getCrime()).queue();

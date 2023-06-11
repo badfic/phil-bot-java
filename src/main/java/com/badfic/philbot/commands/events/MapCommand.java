@@ -8,7 +8,6 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.OnJdaReady;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +42,7 @@ public class MapCommand extends BaseNormalCommand implements OnJdaReady {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         if (Objects.nonNull(swampyGamesConfig.getMapPhrase()) && Objects.nonNull(swampyGamesConfig.getMapTriviaExpiration())) {
-            taskScheduler.schedule(this::mapComplete, swampyGamesConfig.getMapTriviaExpiration().toInstant(ZoneOffset.UTC));
+            scheduleTask(this::mapComplete, swampyGamesConfig.getMapTriviaExpiration());
         }
     }
 
@@ -70,6 +69,8 @@ public class MapCommand extends BaseNormalCommand implements OnJdaReady {
         LocalDateTime mapTriviaExpiration = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15);
         swampyGamesConfig.setMapTriviaExpiration(mapTriviaExpiration);
         swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
+
+        scheduleTask(this::mapComplete, mapTriviaExpiration);
 
         String type = mapTriviaObject.code().startsWith("us-") ? "US State" : "Country";
         String description = switch (triviaType) {
@@ -100,8 +101,6 @@ public class MapCommand extends BaseNormalCommand implements OnJdaReady {
             swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Map Trivia", description))
                     .addFiles(FileUpload.fromData(zipFile.readAllBytes(), "map-trivia.png"))
                     .queue();
-
-            taskScheduler.schedule(this::mapComplete, mapTriviaExpiration.toInstant(ZoneOffset.UTC));
         } catch (Exception e) {
             log.error("Failed to load map image for map trivia", e);
             swampysChannel.sendMessage("Failed to load image for map trivia. The answer is " + mapTriviaObject.regex()).queue();
@@ -118,6 +117,8 @@ public class MapCommand extends BaseNormalCommand implements OnJdaReady {
             return;
         }
 
+        LocalDateTime mapExpiration = swampyGamesConfig.getMapTriviaExpiration();
+
         swampyGamesConfig.setMapPhrase(null);
         swampyGamesConfig.setMapTriviaExpiration(null);
         saveSwampyGamesConfig(swampyGamesConfig);
@@ -125,11 +126,11 @@ public class MapCommand extends BaseNormalCommand implements OnJdaReady {
         Guild guild = philJda.getGuildById(baseConfig.guildId);
 
         List<CompletableFuture<?>> futures = new ArrayList<>();
-        LocalDateTime startTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(15);
+        LocalDateTime startTime = mapExpiration.minusMinutes(15);
         StringBuilder description = new StringBuilder();
         discordUserRepository.findAll()
                 .stream()
-                .filter(u -> Objects.nonNull(u.getAcceptedMapTrivia()) && u.getAcceptedMapTrivia().isAfter(startTime))
+                .filter(u -> Objects.nonNull(u.getAcceptedMapTrivia()) && (u.getAcceptedMapTrivia().isEqual(startTime) || u.getAcceptedMapTrivia().isAfter(startTime)))
                 .forEach(u -> {
                     try {
                         Member memberLookedUp = guild.getMemberById(u.getId());

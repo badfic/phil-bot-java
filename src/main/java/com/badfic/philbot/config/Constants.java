@@ -46,7 +46,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class Constants {
-    private static Constants SINGLETON;
+    private static volatile Constants SINGLETON;
 
     private static final Long2ObjectMap<Function<MessageReactionAddEvent, Boolean>> OUTSTANDING_REACTION_TASKS = Long2ObjectMaps.synchronize(new Long2ObjectArrayMap<>());
 
