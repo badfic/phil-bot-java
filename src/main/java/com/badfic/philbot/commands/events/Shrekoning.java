@@ -48,7 +48,7 @@ public class Shrekoning extends BaseNormalCommand {
                 "to all of the chaos children!\n\n");
 
         allUsers.stream()
-                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22)))
+                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(5)))
                 .filter(u -> {
                     Member m = guild.getMemberById(u.getId());
                     return m != null && hasRole(m, Constants.CHAOS_CHILDREN_ROLE);

@@ -8,6 +8,7 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -63,7 +64,7 @@ public class Taxes extends BaseNormalCommand {
         StringBuilder description = new StringBuilder();
         Guild guild = philJda.getGuildById(baseConfig.guildId);
         for (DiscordUser user : allUsers) {
-            if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD) {
+            if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD && user.getUpdateTime().isAfter(LocalDateTime.now().minusHours(5))) {
                 try {
                     long taxRate = ThreadLocalRandom.current().nextInt(swampyGamesConfig.getTaxesMinimumPercent(), swampyGamesConfig.getTaxesMaximumPercent());
                     taxRate = Math.max(1, taxRate); // Always make sure it's at least 1 percent.
