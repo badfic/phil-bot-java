@@ -47,7 +47,7 @@ swampy:
       # We're skipping the hours surrounding 2am (because of the daily tasks), and we're skipping 16 (because sweepstakes, taxes, robinhood, etc)
       boost: "0 0 0,3,4,5,6,7,8,9,10,11,12,13,14,15,17,18,19,20,21,22,23 * * *"
 
-      swiper: "0 20 9,12,15,18 * JAN-NOV *"
+      swiper: "0 20 9,12,15,18 * JAN-NOV MON-FRI"
 
       map: "0 37 1,5,9,13,17,21 * * *"
       quotetrivia: "0 37 2,6,10,14,18,22 * * *"

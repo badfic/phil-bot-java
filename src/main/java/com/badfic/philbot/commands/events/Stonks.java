@@ -58,7 +58,7 @@ public class Stonks extends BaseNormalCommand {
 
         List<DiscordUser> filteredUsers = allUsers.stream()
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
-                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(5)))
+                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22)))
                 .filter(u -> {
                     Member m = guild.getMemberById(u.getId());
                     return m != null && hasRole(m, Constants.EIGHTEEN_PLUS_ROLE);
