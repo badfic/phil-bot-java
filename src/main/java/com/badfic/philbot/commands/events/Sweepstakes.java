@@ -76,7 +76,7 @@ public class Sweepstakes extends BaseNormalCommand {
                         && !memberById.getUser().isBot()
                         && hasRole(memberById, role)
                         && winningUser.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD
-                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22))) {
+                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(20))) {
                     member = memberById;
                 }
             } catch (Exception ignored) {}

@@ -59,12 +59,14 @@ public class Taxes extends BaseNormalCommand {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
+        LocalDateTime twentyTwoHoursAgo = LocalDateTime.now().minusHours(20);
+
         long totalTaxes = 0;
         List<CompletableFuture<?>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder();
         Guild guild = philJda.getGuildById(baseConfig.guildId);
         for (DiscordUser user : allUsers) {
-            if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD && user.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22))) {
+            if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD && user.getUpdateTime().isAfter(twentyTwoHoursAgo)) {
                 try {
                     long taxRate = ThreadLocalRandom.current().nextInt(swampyGamesConfig.getTaxesMinimumPercent(), swampyGamesConfig.getTaxesMaximumPercent());
                     taxRate = Math.max(1, taxRate); // Always make sure it's at least 1 percent.

@@ -47,8 +47,10 @@ public class Shrekoning extends BaseNormalCommand {
         StringBuilder description = new StringBuilder("Shrek has infiltrated the swamp! He's giving \uD83E\uDDC5 \uD83E\uDDC5 \uD83E\uDDC5 " +
                 "to all of the chaos children!\n\n");
 
+        LocalDateTime twentyTwoHoursAgo = LocalDateTime.now().minusHours(20);
+
         allUsers.stream()
-                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22)))
+                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(twentyTwoHoursAgo))
                 .filter(u -> {
                     Member m = guild.getMemberById(u.getId());
                     return m != null && hasRole(m, Constants.CHAOS_CHILDREN_ROLE);

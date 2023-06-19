@@ -48,11 +48,12 @@ public class ScooterAnkle extends BaseNormalCommand {
             return;
         }
 
+        LocalDateTime yesterday = LocalDateTime.now().minusHours(24);
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         List<DiscordUser> filteredUsers = allUsers.stream()
                 .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD
                         && u.getXp() < scooterUser.getXp()
-                        && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(24)))
+                        && u.getUpdateTime().isAfter(yesterday))
                 .collect(Collectors.toList());
 
         if (filteredUsers.size() < 1) {

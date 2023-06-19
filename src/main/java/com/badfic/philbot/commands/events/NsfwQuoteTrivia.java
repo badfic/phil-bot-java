@@ -9,7 +9,6 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.OnJdaReady;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -133,7 +132,7 @@ public class NsfwQuoteTrivia extends BaseNormalCommand implements OnJdaReady {
         triviaChannel.sendMessageEmbeds(Constants.simpleEmbed(title, description)).queue(success -> {
             swampyGamesConfig.setNsfwQuoteTriviaCorrectAnswer(correctAnswer);
             swampyGamesConfig.setNsfwQuoteTriviaMsgId(success.getId());
-            LocalDateTime expiration = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15);
+            LocalDateTime expiration = LocalDateTime.now().plusMinutes(15);
             swampyGamesConfig.setNsfwQuoteTriviaExpiration(expiration);
             saveSwampyGamesConfig(swampyGamesConfig);
 

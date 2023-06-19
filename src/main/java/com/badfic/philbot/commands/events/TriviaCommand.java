@@ -10,7 +10,6 @@ import com.badfic.philbot.data.TriviaRepository;
 import com.badfic.philbot.service.OnJdaReady;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -107,7 +106,7 @@ public class TriviaCommand extends BaseNormalCommand implements OnJdaReady {
         swampysChannel.sendMessageEmbeds(Constants.simpleEmbed(title, description)).queue(success -> {
             swampyGamesConfig.setTriviaGuid(trivia.getId());
             swampyGamesConfig.setTriviaMsgId(success.getId());
-            LocalDateTime expiration = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15);
+            LocalDateTime expiration = LocalDateTime.now().plusMinutes(15);
             swampyGamesConfig.setTriviaExpiration(expiration);
             saveSwampyGamesConfig(swampyGamesConfig);
 

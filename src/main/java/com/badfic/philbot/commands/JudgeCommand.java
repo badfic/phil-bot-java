@@ -7,7 +7,6 @@ import com.badfic.philbot.data.CourtCaseDal;
 import com.badfic.philbot.service.OnJdaReady;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -136,7 +135,7 @@ public class JudgeCommand extends BaseNormalCommand implements OnJdaReady {
 
         swampysChannel.sendMessageEmbeds(Constants.simpleEmbedThumbnail("Jury Summons", description, defendant.getEffectiveAvatarUrl())).queue(msg -> {
             CourtCase courtCase = new CourtCase(defendant.getIdLong(), accuser.getIdLong(), msg.getIdLong(), finalCrime,
-                    LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15));
+                    LocalDateTime.now().plusMinutes(15));
             courtCaseDal.insert(courtCase);
 
             msg.addReaction(Emoji.fromUnicode(Sentence.ACQUIT.getEmoji())).queue();

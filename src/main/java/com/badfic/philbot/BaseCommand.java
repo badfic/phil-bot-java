@@ -32,8 +32,8 @@ public interface BaseCommand {
 
     // sweepstakes, taxes, robinhood
     BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");
-    long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 999;
-    long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 999;
+    long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 5000;
+    long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 5000;
 
     JDA getPhilJda();
 

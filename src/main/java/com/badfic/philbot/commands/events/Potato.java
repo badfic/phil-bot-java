@@ -51,9 +51,11 @@ public class Potato extends BaseNormalCommand {
 
                 """);
 
+        LocalDateTime twoHoursAgo = LocalDateTime.now().minusHours(2);
+
         List<DiscordUser> filteredUsers = allUsers.stream()
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
-                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(2)))
+                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(twoHoursAgo))
                 .filter(u -> {
                     Member m = guild.getMemberById(u.getId());
                     return m != null;

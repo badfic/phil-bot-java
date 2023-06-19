@@ -50,6 +50,8 @@ public class RemindersCommand extends BaseNormalCommand implements OnJdaReady {
 
     @Override
     public void execute(CommandEvent event) {
+        LocalDateTime now = LocalDateTime.now();
+
         if (StringUtils.isBlank(event.getArgs())) {
             Collection<Reminder> reminders = reminderDal.findAll();
 
@@ -62,7 +64,7 @@ public class RemindersCommand extends BaseNormalCommand implements OnJdaReady {
                         .append("> ")
                         .append(reminder.getReminder())
                         .append(" in ")
-                        .append(Constants.prettyPrintDuration(Duration.between(LocalDateTime.now(), reminder.getDueDate())))
+                        .append(Constants.prettyPrintDuration(Duration.between(now, reminder.getDueDate())))
                         .append('\n');
             }
 
@@ -98,7 +100,7 @@ public class RemindersCommand extends BaseNormalCommand implements OnJdaReady {
                             .append("> ")
                             .append(reminder.getReminder())
                             .append(" in ")
-                            .append(Constants.prettyPrintDuration(Duration.between(LocalDateTime.now(), reminder.getDueDate())));
+                            .append(Constants.prettyPrintDuration(Duration.between(now, reminder.getDueDate())));
 
                     String finalString = description.toString();
                     if (finalString.length() > 2_000) {

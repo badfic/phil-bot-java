@@ -8,7 +8,6 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.OnJdaReady;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -66,7 +65,7 @@ public class MapCommand extends BaseNormalCommand implements OnJdaReady {
         TriviaType triviaType = Constants.pickRandom(TriviaType.values());
 
         swampyGamesConfig.setMapPhrase(mapTriviaObject.regex());
-        LocalDateTime mapTriviaExpiration = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15);
+        LocalDateTime mapTriviaExpiration = LocalDateTime.now().plusMinutes(15);
         swampyGamesConfig.setMapTriviaExpiration(mapTriviaExpiration);
         swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
 

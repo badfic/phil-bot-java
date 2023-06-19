@@ -60,11 +60,12 @@ public class Robinhood extends BaseNormalCommand {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
+        LocalDateTime twentyTwoHoursAgo = LocalDateTime.now().minusHours(20);
         long totalRecovered = 0;
         List<CompletableFuture<?>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
-            if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD && user.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22))) {
+            if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD && user.getUpdateTime().isAfter(twentyTwoHoursAgo)) {
                 try {
                     long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current()
                             .nextInt(swampyGamesConfig.getRefundMinimumPercent(), swampyGamesConfig.getRefundMaximumPercent());

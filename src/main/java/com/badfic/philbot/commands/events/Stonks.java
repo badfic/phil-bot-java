@@ -56,9 +56,11 @@ public class Stonks extends BaseNormalCommand {
                 NumberFormat.getIntegerInstance().format(swampyGamesConfig.getStonksMaxPoints()) +
                 "\n\n");
 
+        LocalDateTime twentyTwoHoursAgo = LocalDateTime.now().minusHours(20);
+
         List<DiscordUser> filteredUsers = allUsers.stream()
                 .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
-                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22)))
+                .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && u.getUpdateTime().isAfter(twentyTwoHoursAgo))
                 .filter(u -> {
                     Member m = guild.getMemberById(u.getId());
                     return m != null && hasRole(m, Constants.EIGHTEEN_PLUS_ROLE);

@@ -8,7 +8,6 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.OnJdaReady;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -251,7 +250,7 @@ public class Swiper extends BaseNormalCommand implements OnJdaReady {
         swampyGamesConfig.setSwiperAwaiting(member.getId());
         swampyGamesConfig.setNoSwipingPhrase(theSwiper.noSwipingPhrase());
         swampyGamesConfig.setSwiperSavior(null);
-        LocalDateTime swiperExpiration = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(15);
+        LocalDateTime swiperExpiration = LocalDateTime.now().plusMinutes(15);
         swampyGamesConfig.setSwiperExpiration(swiperExpiration);
         swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
 
