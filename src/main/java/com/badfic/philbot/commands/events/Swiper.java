@@ -235,8 +235,7 @@ public class Swiper extends BaseNormalCommand implements OnJdaReady {
                 Member memberById = guild.getMemberById(winningUser.getId());
                 if (memberById != null
                         && !isNotParticipating(memberById)
-                        && winningUser.getXp() > swampyGamesConfig.getSwiperPoints()
-                        && winningUser.getUpdateTime().isAfter(LocalDateTime.now().minusHours(22))) {
+                        && winningUser.getXp() > swampyGamesConfig.getSwiperPoints()) {
                     member = memberById;
                 }
             } catch (Exception ignored) {}

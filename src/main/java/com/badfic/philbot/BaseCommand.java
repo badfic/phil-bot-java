@@ -76,6 +76,7 @@ public interface BaseCommand {
         long newXp = Math.max(0, user.getXp() + pointsToGive);
 
         user.setXp(newXp);
+        user.setUpdateTime(LocalDateTime.now());
         long pointsStatsCurrent = pointsStat.getter().applyAsLong(user);
         pointsStatsCurrent += pointsToGive;
         pointsStat.setter().accept(user, pointsStatsCurrent);
