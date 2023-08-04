@@ -87,11 +87,6 @@ public abstract class BaseMembersController {
         props.put("is18", session.getAttribute(DISCORD_IS_18));
     }
 
-    protected Member getMemberFromSession(HttpSession session) {
-        String discordId = (String) session.getAttribute(DISCORD_ID);
-        return philJda.getGuildById(baseConfig.guildId).getMemberById(discordId);
-    }
-
     private void refreshTokenIfNeeded(HttpServletRequest httpServletRequest) {
         HttpSession session = httpServletRequest.getSession();
         try {

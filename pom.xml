@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.1</version>
+		<version>3.1.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.badfic</groupId>
@@ -18,10 +18,10 @@
 		<java.version>17</java.version>
 
 		<fastutil.version>8.5.12</fastutil.version>
-		<jda.version>5.0.0-beta.11</jda.version>
-		<jsoup.version>1.15.4</jsoup.version>
+		<jda.version>5.0.0-beta.12</jda.version>
+		<jsoup.version>1.16.1</jsoup.version>
 		<rome.version>2.1.0</rome.version>
-		<sentry.io.version>6.17.0</sentry.io.version>
+		<sentry.io.version>6.27.0</sentry.io.version>
 		<zip4j.version>2.11.5</zip4j.version>
 	</properties>
 
@@ -39,10 +39,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-undertow</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

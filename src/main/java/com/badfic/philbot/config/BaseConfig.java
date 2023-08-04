@@ -65,9 +65,6 @@ public class BaseConfig {
     @Value("${TUMBLR_CONSUMER_KEY}")
     public String tumblrConsumerKey;
 
-    @Value("${OWNCAST_INSTANCE}")
-    public String owncastInstance;
-
     @Value("${AIRTABLE_API_TOKEN}")
     public String airtableApiToken;
 
