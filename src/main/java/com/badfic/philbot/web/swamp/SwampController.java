@@ -39,7 +39,6 @@ public class SwampController {
             "/commands",
             "/games-config",
             "/leaderboard",
-            "/live",
             "/logout",
             "/meme-commands",
             "/nsfw-quotes",

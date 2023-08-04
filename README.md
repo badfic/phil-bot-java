@@ -6,11 +6,10 @@ A multipurpose discord bot for "The Swamp", a community discord server (join at 
 
 # Building The Project
 
-Start up postgres and owncast before running
+Start up postgres before running
 
 ```
 docker run --rm --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:15-alpine
-docker run --rm --name owncast -p 8085:8080 -p 1935:1935 -d gabekangas/owncast:0.0.5
 ```
 
 For the java app, the following env vars are required for full functionality
@@ -29,8 +28,6 @@ DISCORD_CLIENT_SECRET
 HOSTNAME
 
 TUMBLR_CONSUMER_KEY
-
-OWNCAST_INSTANCE
 ```
 
 For error handling, a sentry.io account can be setup and the following env var is required
