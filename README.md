@@ -28,6 +28,8 @@ DISCORD_CLIENT_SECRET
 HOSTNAME
 
 TUMBLR_CONSUMER_KEY
+
+AIRTABLE_API_TOKEN
 ```
 
 For error handling, a sentry.io account can be setup and the following env var is required
