@@ -21,15 +21,15 @@ public class DailyTicker extends BaseService {
             return;
         }
 
-        for (DailyTickable tickable : dailyTickables) {
-            applicationTaskExecutor.execute(() -> {
+        new Thread(() -> {
+            for (DailyTickable tickable : dailyTickables) {
                 try {
                     tickable.runDailyTask();
                 } catch (Exception e) {
                     log.error("Exception in daily tickable [{}]", tickable.getClass().getName(), e);
                 }
-            });
-        }
+            }
+        }).start();
     }
 
 }

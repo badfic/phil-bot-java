@@ -178,8 +178,6 @@ public class PhilMessageListener extends ListenerAdapter {
                             commandEvent.replyError("This is an nsfw only command, it cannot be executed in this channel");
                             return;
                         }
-
-                        return;
                     }
 
                     command.execute(commandEvent);
