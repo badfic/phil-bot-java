@@ -28,6 +28,8 @@ DISCORD_CLIENT_SECRET
 HOSTNAME
 
 TUMBLR_CONSUMER_KEY
+
+AO3_SUMMARY_API_KEY
 ```
 
 For error handling, a sentry.io account can be setup and the following env var is required

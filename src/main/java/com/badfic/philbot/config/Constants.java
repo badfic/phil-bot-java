@@ -295,6 +295,10 @@ public class Constants {
     }
 
     public static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color, String thumbnail) {
+        return simpleEmbed(title, description, image, footer, color, thumbnail, true);
+    }
+
+    public static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color, String thumbnail, boolean include777) {
         final String finalDesc;
         if (StringUtils.isNotBlank(description)) {
             finalDesc = description.length() > 2048 ? (description.substring(0, 2044) + "...") : description;
@@ -302,11 +306,15 @@ public class Constants {
             finalDesc = null;
         }
 
-        String[] footers = SINGLETON.swampyGamesConfigDal.get().getEmbedFooters();
-        String footerAddition = pickRandom(footers);
+        if (include777) {
+            String[] footers = SINGLETON.swampyGamesConfigDal.get().getEmbedFooters();
+            String footerAddition = pickRandom(footers);
 
-        footer = footer != null ? (footer + "\n" + footerAddition) : footerAddition;
-        footer = footer.length() > 2048 ? (footer.substring(0, 2044) + "777") : footer;
+            footer = footer != null ? (footer + "\n" + footerAddition) : footerAddition;
+            footer = footer.length() > 2048 ? (footer.substring(0, 2044) + "777") : footer;
+        } else if (footer != null && footer.length() > 2048) {
+            footer = footer.substring(0, 2044) + "...";
+        }
 
         return new EmbedBuilder()
                 .setTitle(title)
