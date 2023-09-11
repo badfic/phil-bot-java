@@ -3,6 +3,7 @@ package com.badfic.philbot.web.ao3;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.service.Ao3MetadataParser;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Slf4j
 public class Ao3SummaryController {
 
     @Setter(onMethod_ = {@Autowired})
@@ -26,6 +28,7 @@ public class Ao3SummaryController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+        log.info("Received request for AO3 Summary of [link={}]", ao3SummaryRequest.ao3Url());
         ao3MetadataParser.sendSummaryToWebhook(ao3SummaryRequest.ao3Url(), ao3SummaryRequest.webhookUrl());
         return ResponseEntity.ok("ok");
     }
