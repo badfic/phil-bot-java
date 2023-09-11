@@ -44,16 +44,13 @@ public class Ao3MetadataParser extends BaseService {
                 Map<String, Object> map = messageEmbed.toData().toMap();
                 JsonNode jsonNode = objectMapper.valueToTree(map);
 
-                restTemplate.exchange(webhookUrl, HttpMethod.PATCH, new HttpEntity<>(new WebhookBody(7, new Data(new JsonNode[]{jsonNode}))), String.class);
+                restTemplate.exchange(webhookUrl, HttpMethod.PATCH, new HttpEntity<>(new Data(new JsonNode[]{jsonNode})), String.class);
                 log.info("Successfully sent AO3 Summary for [link={}]", link);
             } catch (Exception e) {
                 log.error("Failed to send AO3 Summary for [link={}]", link, e);
             }
         });
     }
-
-    public record WebhookBody(int type, Data data) {}
-    public record Data(JsonNode[] embeds) {}
 
     // Visible For Testing
     MessageEmbed parseWork(String originalLink, String work) {
@@ -245,5 +242,7 @@ public class Ao3MetadataParser extends BaseService {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
         return response.getBody();
     }
+
+    private record Data(JsonNode[] embeds) {}
 
 }
