@@ -68,6 +68,9 @@ public class BaseConfig {
     @Value("${AIRTABLE_API_TOKEN}")
     public String airtableApiToken;
 
+    @Value("${AO3_SUMMARY_API_KEY}")
+    public String ao3SummaryApiKey;
+
     @Bean
     public ThreadPoolTaskExecutor applicationTaskExecutor() {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
