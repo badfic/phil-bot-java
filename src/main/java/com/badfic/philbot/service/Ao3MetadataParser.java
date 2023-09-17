@@ -3,10 +3,14 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.awt.Color;
+import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +27,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 @Slf4j
 public class Ao3MetadataParser extends BaseService {
+
+    private static final long AO3_RATE_LIMIT_SECONDS = 10;
+    private final MutableLong lastAo3Request; // Using this field as a global rate limiter
+
+    public Ao3MetadataParser() {
+        lastAo3Request = new MutableLong(System.currentTimeMillis());
+    }
 
     public boolean parseLink(String link, String channelName) {
         try {
@@ -239,8 +250,20 @@ public class Ao3MetadataParser extends BaseService {
         LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(HttpHeaders.ACCEPT, MediaType.TEXT_HTML_VALUE);
         headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-        return response.getBody();
+
+        synchronized (lastAo3Request) {
+            try {
+                long difference = System.currentTimeMillis() - lastAo3Request.getValue();
+                if (difference < TimeUnit.SECONDS.toMillis(AO3_RATE_LIMIT_SECONDS)) {
+                    long waitTime = Duration.ofSeconds(AO3_RATE_LIMIT_SECONDS).minus(Duration.ofMillis(difference)).toNanos();
+                    LockSupport.parkNanos(waitTime);
+                }
+                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+                return response.getBody();
+            } finally {
+                lastAo3Request.setValue(System.currentTimeMillis());
+            }
+        }
     }
 
     private record Data(JsonNode[] embeds) {}
