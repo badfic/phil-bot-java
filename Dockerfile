@@ -1,10 +1,10 @@
-FROM ghcr.io/badfic/liberica-runtime-mirror:jdk-17-slim-glibc as builder
+FROM ghcr.io/bell-sw/liberica-runtime-container:jdk-17-slim-glibc as builder
 
 COPY . .
 RUN . mvnw package -DskipTests
 RUN java -Djarmode=layertools -jar target/philbot-0.0.1-SNAPSHOT.jar extract
 
-FROM ghcr.io/badfic/liberica-runtime-mirror:jre-17-slim-glibc
+FROM ghcr.io/bell-sw/liberica-runtime-container:jre-17-slim-glibc
 COPY --from=builder dependencies/ ./
 COPY --from=builder spring-boot-loader/ ./
 COPY --from=builder snapshot-dependencies/ ./
