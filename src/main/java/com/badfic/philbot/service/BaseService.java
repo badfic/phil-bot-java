@@ -4,11 +4,11 @@ import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.listeners.DiscordWebhookSendService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.concurrent.ExecutorService;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
 public abstract class BaseService {
@@ -23,7 +23,7 @@ public abstract class BaseService {
     protected RestTemplate restTemplate;
 
     @Setter(onMethod_ = {@Autowired})
-    protected ThreadPoolTaskExecutor applicationTaskExecutor;
+    protected ExecutorService executorService;
 
     @Setter(onMethod_ = {@Autowired})
     protected ObjectMapper objectMapper;

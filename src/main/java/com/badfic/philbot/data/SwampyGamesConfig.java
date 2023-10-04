@@ -201,15 +201,15 @@ public class SwampyGamesConfig {
     private String scooterAnkleImg = "https://cdn.discordapp.com/attachments/752665380182425677/780324301311049728/scooter_ankle.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.STONK_SHREK)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SHREKONING)
     private int shrekoningMinPoints = 200;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.STONK_SHREK)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SHREKONING)
     private int shrekoningMaxPoints = 4000;
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.STONK_SHREK)
+    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.SHREKONING)
     private String shrekoningImg = "https://cdn.discordapp.com/attachments/741053845098201099/763280555793580042/the_shrekoning.png";
 
     @Column

@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
@@ -25,12 +27,14 @@ import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.task.support.TaskExecutorAdapter;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
@@ -69,18 +73,19 @@ public class BaseConfig {
     public String ao3SummaryApiKey;
 
     @Bean
-    public ThreadPoolTaskExecutor applicationTaskExecutor() {
-        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(4);
-        threadPoolTaskExecutor.setRejectedExecutionHandler((runnable, executor) -> {
-            log.error("Rejected task in threadPoolTaskExecutor. [runnable={}]", runnable);
-        });
-        return threadPoolTaskExecutor;
+    public ExecutorService executorService() {
+        return Executors.newVirtualThreadPerTaskExecutor();
+    }
+
+    @Bean(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
+    public TaskExecutor applicationTaskExecutor(ExecutorService executorService) {
+        return new TaskExecutorAdapter(executorService);
     }
 
     @Bean(name = "taskScheduler")
     public ThreadPoolTaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+        threadPoolTaskScheduler.setThreadFactory(Thread.ofVirtual().factory());
         threadPoolTaskScheduler.setRejectedExecutionHandler((runnable, executor) -> {
             log.error("Rejected task in taskScheduler. [runnable={}]", runnable);
         });
@@ -93,10 +98,12 @@ public class BaseConfig {
     }
 
     @Bean
-    public OkHttpClient okHttpClient(ThreadPoolTaskExecutor applicationTaskExecutor) {
-        Dispatcher dispatcher = new Dispatcher(applicationTaskExecutor.getThreadPoolExecutor());
+    public OkHttpClient okHttpClient(ExecutorService executorService) {
+        Dispatcher dispatcher = new Dispatcher(executorService);
         dispatcher.setMaxRequestsPerHost(25);
         ConnectionPool connectionPool = new ConnectionPool(4, 10, TimeUnit.SECONDS);
+
+        //noinspection KotlinInternalInJava
         return new OkHttpClient.Builder()
                 .connectionPool(connectionPool)
                 .dispatcher(dispatcher)
@@ -127,7 +134,7 @@ public class BaseConfig {
 
     @Bean(name = "philJda")
     public JDA philJda(ThreadPoolTaskScheduler taskScheduler,
-                       ThreadPoolTaskExecutor applicationTaskExecutor,
+                       ExecutorService executorService,
                        OkHttpClient okHttpClient,
                        PhilMessageListener philMessageListener) throws Exception {
         List<GatewayIntent> intents = Arrays.asList(GUILD_MEMBERS, GUILD_MODERATION, GUILD_MESSAGES, MESSAGE_CONTENT, GUILD_VOICE_STATES,
@@ -137,8 +144,8 @@ public class BaseConfig {
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.FORUM_TAGS,
                         CacheFlag.ROLE_TAGS, CacheFlag.SCHEDULED_EVENTS, CacheFlag.STICKER, CacheFlag.MEMBER_OVERRIDES)
                 .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
-                .setCallbackPool(applicationTaskExecutor.getThreadPoolExecutor(), false)
-                .setEventPool(applicationTaskExecutor.getThreadPoolExecutor(), false)
+                .setCallbackPool(executorService, false)
+                .setEventPool(executorService, false)
                 .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
                 .setHttpClient(okHttpClient)
                 .addEventListeners(philMessageListener)

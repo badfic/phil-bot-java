@@ -7,6 +7,7 @@ import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.listeners.DiscordWebhookSendService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.concurrent.ExecutorService;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
@@ -15,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
@@ -47,7 +47,7 @@ public abstract class BaseNormalCommand implements BaseCommand {
     protected RestTemplate restTemplate;
 
     @Setter(onMethod_ = {@Autowired})
-    protected ThreadPoolTaskExecutor applicationTaskExecutor;
+    protected ExecutorService executorService;
 
     @Setter(onMethod_ = {@Autowired})
     private ThreadPoolTaskScheduler taskScheduler;

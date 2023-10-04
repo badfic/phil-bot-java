@@ -1,5 +1,6 @@
 package com.badfic.philbot.commands;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.awt.Color;
@@ -87,8 +88,13 @@ public class Rank {
         return LEVEL_MAP.values().stream().sorted(Comparator.comparingInt(Rank::getOrdinal)).collect(Collectors.toList());
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record RecordFields(String role, long level, String colour, String blurb, String image) {}
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record TableRecord(RecordFields fields) {}
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record RecordList(List<TableRecord> records) {}
 
 }

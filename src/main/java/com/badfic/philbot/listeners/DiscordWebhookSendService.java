@@ -6,13 +6,13 @@ import com.badfic.philbot.data.ChannelWebhookRepository;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,12 +22,12 @@ import org.springframework.web.client.RestTemplate;
 public class DiscordWebhookSendService {
     private final BaseConfig baseConfig;
     private final RestTemplate restTemplate;
-    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    private final ExecutorService executorService;
     private final ChannelWebhookRepository channelWebhookRepository;
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
     public void sendMessage(long channelId, String username, String avatarUrl, String content) {
-        threadPoolTaskExecutor.execute(() -> {
+        executorService.execute(() -> {
             Optional<ChannelWebhookEntity> optionalChannel = channelWebhookRepository.findById(channelId);
 
             ChannelWebhookEntity channelWebhook;
