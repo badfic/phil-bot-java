@@ -7,6 +7,7 @@ import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
@@ -18,7 +19,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
@@ -47,7 +47,7 @@ public abstract class BaseSlashCommand implements BaseCommand {
     protected RestTemplate restTemplate;
 
     @Setter(onMethod_ = {@Autowired})
-    protected ThreadPoolTaskExecutor applicationTaskExecutor;
+    protected ExecutorService executorService;
 
     @Setter(onMethod_ = {@Autowired})
     private ThreadPoolTaskScheduler taskScheduler;

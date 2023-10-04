@@ -42,7 +42,7 @@ public class DailyRiverdaleMemeService extends BaseNormalCommand {
 
     @Override
     public void execute(CommandEvent event) {
-        applicationTaskExecutor.execute(this::runTask);
+        executorService.execute(this::runTask);
     }
 
     private void runTask() {

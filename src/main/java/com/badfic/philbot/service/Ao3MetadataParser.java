@@ -48,7 +48,7 @@ public class Ao3MetadataParser extends BaseService {
     }
 
     public void sendSummaryToWebhook(String link, String webhookUrl) {
-        applicationTaskExecutor.submit(() -> {
+        executorService.submit(() -> {
             try {
                 String work = getWork(link);
                 MessageEmbed messageEmbed = parseWork(link, work);

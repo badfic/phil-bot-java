@@ -100,7 +100,7 @@ public class NsfwQuoteCommand extends BaseNormalCommand implements DailyTickable
                 return;
             }
 
-            applicationTaskExecutor.execute(this::runDailyTask);
+            executorService.execute(this::runDailyTask);
             return;
         }
 

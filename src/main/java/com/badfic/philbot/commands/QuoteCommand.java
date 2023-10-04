@@ -97,7 +97,7 @@ public class QuoteCommand extends BaseNormalCommand implements DailyTickable {
                 return;
             }
 
-            applicationTaskExecutor.execute(this::runDailyTask);
+            executorService.execute(this::runDailyTask);
             return;
         }
 

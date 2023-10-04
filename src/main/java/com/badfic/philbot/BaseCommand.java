@@ -16,13 +16,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
@@ -49,7 +49,7 @@ public interface BaseCommand {
 
     RestTemplate getRestTemplate();
 
-    ThreadPoolTaskExecutor getApplicationTaskExecutor();
+    ExecutorService getExecutorService();
 
     ThreadPoolTaskScheduler getTaskScheduler();
 

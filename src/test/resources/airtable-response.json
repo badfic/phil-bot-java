@@ -1,0 +1,26 @@
+{
+  "records": [
+    {
+      "id": "recNAD6TUXMuwGpGa",
+      "createdTime": "2023-03-11T06:26:02.000Z",
+      "fields": {
+        "role": "The Most Precious Cinnamon Roll",
+        "level": 0,
+        "colour": "#9b4722",
+        "blurb": "Congratulations <name>! You're <rolename>, welcome to Cinnabon.",
+        "image": "https://cdn.discordapp.com/attachments/794506942906761226/948140541474906132/cinnamon.gif"
+      }
+    },
+    {
+      "id": "recUE5P68vJd4mv0S",
+      "createdTime": "2023-03-11T06:26:02.000Z",
+      "fields": {
+        "role": "Super Mega Supreme Bastard",
+        "level": 100,
+        "colour": "#6b0000",
+        "blurb": "Congratulations <name>! You're <rolename>. I don't know how to say this, but you've somehow become more of a chaotic swampy wench than the actual devil. Are you okay? Do you need us to call someone?",
+        "image": "https://cdn.discordapp.com/attachments/794506942906761226/1026695082772025345/guess-who.png"
+      }
+    }
+  ]
+}
