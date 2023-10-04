@@ -21,7 +21,7 @@ public class DailyTicker extends BaseService {
             return;
         }
 
-        new Thread(() -> {
+        executorService.submit(() -> {
             for (DailyTickable tickable : dailyTickables) {
                 try {
                     tickable.runDailyTask();
@@ -29,7 +29,7 @@ public class DailyTicker extends BaseService {
                     log.error("Exception in daily tickable [{}]", tickable.getClass().getName(), e);
                 }
             }
-        }).start();
+        });
     }
 
 }

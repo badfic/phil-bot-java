@@ -30,7 +30,7 @@ public class LogflareAppender extends AppenderBase<ILoggingEvent> {
     public LogflareAppender() {
         restTemplate = new RestTemplate();
         queue = new ArrayBlockingQueue<>(64);
-        worker = new Thread(() -> {
+        worker = Thread.startVirtualThread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     String message = queue.take();
@@ -44,25 +44,23 @@ public class LogflareAppender extends AppenderBase<ILoggingEvent> {
                 } catch (Exception ignored) {}
             }
         });
-        worker.setDaemon(true);
     }
 
     @Override
     public void start() {
-        worker.start();
         super.start();
     }
 
     @Override
     public void stop() {
-        worker.interrupt();
-
         try {
             String message;
             while ((message = queue.poll()) != null) {
                 sendMessage(message);
             }
         } catch (Exception ignored) {}
+
+        worker.interrupt();
 
         super.stop();
     }
