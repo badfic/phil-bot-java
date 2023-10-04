@@ -89,12 +89,12 @@ public class Rank {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record RecordFields(String role, long level, String colour, String blurb, String image) {}
+    record RecordFields(String role, long level, String colour, String blurb, String image) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record TableRecord(RecordFields fields) {}
+    record TableRecord(RecordFields fields) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record RecordList(List<TableRecord> records) {}
+    record RecordList(List<TableRecord> records) {}
 
 }

@@ -274,7 +274,7 @@ public class PhilMessageListener extends ListenerAdapter {
         }
 
         applicationContext.getBeansOfType(OnJdaReady.class)
-                .forEach((name, bean) -> bean.run());
+                .forEach((name, bean) -> Thread.startVirtualThread(bean));
     }
 
     @Override
