@@ -259,14 +259,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
         discordUserRepository.save(discordUser);
     }
 
-    public SwampyGamesConfig swiperSave(Member member) {
-        givePointsToMember(1, member, PointsStat.SWIPER_PARTICIPATIONS);
-
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        swampyGamesConfig.setSwiperSavior(member.getId());
-        return saveSwampyGamesConfig(swampyGamesConfig);
-    }
-
     private void slots(CommandEvent event) {
         Member member = event.getMember();
         DiscordUser discordUser = getDiscordUserByMember(member);

@@ -22,18 +22,6 @@ public class SwampyGamesConfig {
     private Short id;
 
     @Column
-    private String swiperAwaiting;
-
-    @Column
-    private String swiperSavior;
-
-    @Column
-    private String noSwipingPhrase;
-
-    @Column
-    private LocalDateTime swiperExpiration;
-
-    @Column
     private String boostPhrase;
 
     @Column
@@ -137,42 +125,6 @@ public class SwampyGamesConfig {
     private String[] slotsEmoji = {"🍓","🍍","🍊","🍋","🍇","🍉","🍌","🍒","🍎"};
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.CARROT)
-    private int carrotEventPoints = 1000;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.CARROT)
-    private String carrotImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.CARROT)
-    private String carrotName = "The Carrot Person";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.POTATO)
-    private int potatoEventPoints = 1000;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.POTATO)
-    private String potatoImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.POTATO)
-    private String potatoName = "The Potato Person";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.GLITTER)
-    private int glitterEventPoints = 1000;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.GLITTER)
-    private String glitterImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.GLITTER)
-    private String glitterName = "The Glitter Person";
-
-    @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.BOOST)
     private int boostEventPoints = 1000;
 
@@ -261,22 +213,12 @@ public class SwampyGamesConfig {
     private String shrekoningImg = "https://cdn.discordapp.com/attachments/741053845098201099/763280555793580042/the_shrekoning.png";
 
     @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.STONK_SHREK)
-    private int stonksMaxPoints = 4000;
-
-    // TODO: Stonks image list
-
-    @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SWEEPSTAKES)
     private int sweepstakesPoints = 4000;
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.SWEEPSTAKES)
     private String sweepstakesImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SWIPER)
-    private int swiperPoints = 1500;
 
     // TODO: Add the various swiper personas here too?
 

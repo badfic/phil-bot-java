@@ -62,9 +62,6 @@ public class BaseConfig {
     @Value("${DISCORD_CLIENT_SECRET}")
     public String discordClientSecret;
 
-    @Value("${TUMBLR_CONSUMER_KEY}")
-    public String tumblrConsumerKey;
-
     @Value("${AIRTABLE_API_TOKEN}")
     public String airtableApiToken;
 
