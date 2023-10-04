@@ -140,10 +140,6 @@ public class PhilMessageListener extends ListenerAdapter {
             swampyCommand.acceptedMap(event.getMember());
         }
 
-        if (swampyGamesConfig.getSwiperAwaiting() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getNoSwipingPhrase())) {
-            swampyGamesConfig = swampyCommand.swiperSave(event.getMember());
-        }
-
         final CommandEvent commandEvent = new CommandEvent(event);
 
         if (isCommand) {

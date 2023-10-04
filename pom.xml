@@ -18,10 +18,10 @@
 		<java.version>17</java.version>
 
 		<fastutil.version>8.5.12</fastutil.version>
-		<jda.version>5.0.0-beta.13</jda.version>
+		<jda.version>5.0.0-beta.15</jda.version>
 		<jsoup.version>1.16.1</jsoup.version>
 		<rome.version>2.1.0</rome.version>
-		<sentry.io.version>6.28.0</sentry.io.version>
+		<sentry.io.version>6.30.0</sentry.io.version>
 		<zip4j.version>2.11.5</zip4j.version>
 	</properties>
 
