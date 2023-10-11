@@ -36,7 +36,7 @@ public class Ao3MetadataParserTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        new Constants(swampyGamesConfigDal, null).init();
+        new Constants(swampyGamesConfigDal, null, null).init();
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("ao3-test.html")) {
             work = new String(Objects.requireNonNull(stream).readAllBytes(), StandardCharsets.UTF_8);
         }
