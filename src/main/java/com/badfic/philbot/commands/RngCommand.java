@@ -2,7 +2,6 @@ package com.badfic.philbot.commands;
 
 import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
-import java.util.concurrent.ThreadLocalRandom;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 
@@ -49,7 +48,7 @@ public class RngCommand extends BaseNormalCommand {
                 return;
             }
 
-            long result = ThreadLocalRandom.current().nextLong(left, right + 1);
+            long result = randomNumberService.nextLong(left, right + 1);
 
             event.reply(Constants.simpleEmbedThumbnail("RNG",
                     "Your random number between " + left + " and " + right + " is\n\n**" + result + "**",

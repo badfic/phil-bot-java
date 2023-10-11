@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Guild;
@@ -121,7 +120,7 @@ public class NsfwQuoteTrivia extends BaseNormalCommand implements OnJdaReady {
             return;
         }
 
-        short correctAnswer = (short) ThreadLocalRandom.current().nextInt(3);
+        short correctAnswer = (short) randomNumberService.nextInt(3);
 
         String description = "Who said the following quote?" +
                 "\n\"" + finalQuote.getQuote() + '"' +

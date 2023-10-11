@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -59,7 +58,7 @@ public class Shrekoning extends BaseNormalCommand {
                     try {
                         Member memberById = guild.getMemberById(user.getId());
                         if (memberById != null) {
-                            long points = ThreadLocalRandom.current()
+                            long points = randomNumberService
                                     .nextLong(swampyGamesConfig.getShrekoningMinPoints(), swampyGamesConfig.getShrekoningMaxPoints());
 
                             futures.add(givePointsToMember(points, memberById, PointsStat.SHREKONING));

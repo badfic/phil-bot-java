@@ -5,7 +5,7 @@ import com.badfic.philbot.data.MemeCommandEntity;
 import com.badfic.philbot.data.MemeCommandRepository;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -61,8 +61,8 @@ public class MemeCommandsService extends BaseService {
             }
         } else {
             try {
-                URL u = new URL(memeUrl);
-                Objects.requireNonNull(u.toURI());
+                URI uri = URI.create(memeUrl);
+                Objects.requireNonNull(uri.toString());
             } catch (Exception e) {
                 throw new IllegalArgumentException("A meme url must be a valid url.");
             }

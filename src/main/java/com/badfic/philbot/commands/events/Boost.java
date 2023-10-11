@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -91,7 +90,7 @@ public class Boost extends BaseNormalCommand {
             return;
         }
 
-        if (force || ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceBoostHappensOnHour()) {
+        if (force || randomNumberService.nextInt(100) < swampyGamesConfig.getPercentChanceBoostHappensOnHour()) {
             String boostPhrase = Constants.pickRandom(swampyGamesConfig.getBoostWords());
             swampyGamesConfig.setBoostPhrase(boostPhrase);
             saveSwampyGamesConfig(swampyGamesConfig);

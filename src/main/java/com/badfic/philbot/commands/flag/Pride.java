@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -57,7 +57,7 @@ public class Pride extends BaseFlagCommand {
             }
 
             String effectiveAvatarUrl = member.getEffectiveAvatarUrl();
-            BufferedImage profilePic = ImageIO.read(new URL(effectiveAvatarUrl));
+            BufferedImage profilePic = ImageIO.read(URI.create(effectiveAvatarUrl).toURL());
 
             BufferedImage newImg = new BufferedImage(profilePic.getWidth(), profilePic.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = newImg.createGraphics();

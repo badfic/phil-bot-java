@@ -2,6 +2,7 @@ package com.badfic.philbot.config;
 
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.listeners.DiscordWebhookSendService;
+import com.badfic.philbot.service.RandomNumberService;
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
@@ -11,7 +12,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.net.URI;
-import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.Instant;
@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
@@ -72,6 +71,7 @@ public class Constants {
 
     private final SwampyGamesConfigDal swampyGamesConfigDal;
     private final ThreadPoolTaskScheduler taskScheduler;
+    private final RandomNumberService randomNumberService;
 
     @PostConstruct
     public void init() {
@@ -109,8 +109,7 @@ public class Constants {
         }
 
         try {
-            URL url = new URL(string);
-            URI uri = url.toURI();
+            URI uri = URI.create(string);
             return Objects.nonNull(uri.toString());
         } catch (Exception ignored) {
             return false;
@@ -142,7 +141,7 @@ public class Constants {
             return null;
         }
 
-        BufferedImage image = ImageIO.read(new URL(imageUrl));
+        BufferedImage image = ImageIO.read(URI.create(imageUrl).toURL());
 
         if (image.getWidth() == width && image.getHeight() == height) {
             return image;
@@ -173,7 +172,7 @@ public class Constants {
     }
 
     public static <T> T pickRandom(Collection<T> collection) {
-        int index = ThreadLocalRandom.current().nextInt(collection.size());
+        int index = SINGLETON.randomNumberService.nextInt(collection.size());
         if (collection instanceof List<T> list) {
             return list.get(index);
         }
@@ -186,7 +185,7 @@ public class Constants {
     }
 
     public static <T> T pickRandom(T[] collection) {
-        int index = ThreadLocalRandom.current().nextInt(collection.length);
+        int index = SINGLETON.randomNumberService.nextInt(collection.length);
         return collection[index];
     }
 
