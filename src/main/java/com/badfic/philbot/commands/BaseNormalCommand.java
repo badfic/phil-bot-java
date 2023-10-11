@@ -6,6 +6,7 @@ import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.listeners.DiscordWebhookSendService;
+import com.badfic.philbot.service.RandomNumberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.ExecutorService;
 import lombok.Getter;
@@ -48,6 +49,9 @@ public abstract class BaseNormalCommand implements BaseCommand {
 
     @Setter(onMethod_ = {@Autowired})
     protected ExecutorService executorService;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected RandomNumberService randomNumberService;
 
     @Setter(onMethod_ = {@Autowired})
     private ThreadPoolTaskScheduler taskScheduler;

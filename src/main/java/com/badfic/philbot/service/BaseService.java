@@ -34,4 +34,7 @@ public abstract class BaseService {
     @Setter(onMethod_ = {@Autowired})
     protected DiscordWebhookSendService discordWebhookSendService;
 
+    @Setter(onMethod_ = {@Autowired})
+    protected RandomNumberService randomNumberService;
+
 }

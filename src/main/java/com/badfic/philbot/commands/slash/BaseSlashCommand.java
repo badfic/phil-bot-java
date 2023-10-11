@@ -4,6 +4,7 @@ import com.badfic.philbot.BaseCommand;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
+import com.badfic.philbot.service.RandomNumberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -48,6 +49,9 @@ public abstract class BaseSlashCommand implements BaseCommand {
 
     @Setter(onMethod_ = {@Autowired})
     protected ExecutorService executorService;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected RandomNumberService randomNumberService;
 
     @Setter(onMethod_ = {@Autowired})
     private ThreadPoolTaskScheduler taskScheduler;

@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -43,7 +42,7 @@ public class Taxes extends BaseNormalCommand {
     private void doTaxes(boolean force) {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
-        if (!force && ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceTaxesDoesNotHappen()) {
+        if (!force && randomNumberService.nextInt(100) < swampyGamesConfig.getPercentChanceTaxesDoesNotHappen()) {
             MessageEmbed message = Constants.simpleEmbed(
                     swampyGamesConfig.getNoTaxesPhrase(), swampyGamesConfig.getNoTaxesPerson() + " caught "
                             + swampyGamesConfig.getTaxesPerson() + " before they could take taxes from the swamp.",
@@ -68,7 +67,7 @@ public class Taxes extends BaseNormalCommand {
         for (DiscordUser user : allUsers) {
             if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD && user.getUpdateTime().isAfter(twentyTwoHoursAgo)) {
                 try {
-                    long taxRate = ThreadLocalRandom.current().nextInt(swampyGamesConfig.getTaxesMinimumPercent(), swampyGamesConfig.getTaxesMaximumPercent());
+                    long taxRate = randomNumberService.nextInt(swampyGamesConfig.getTaxesMinimumPercent(), swampyGamesConfig.getTaxesMaximumPercent());
                     taxRate = Math.max(1, taxRate); // Always make sure it's at least 1 percent.
                     long taxes = BigDecimal.valueOf(user.getXp()).multiply(ONE_HUNDREDTH).multiply(BigDecimal.valueOf(taxRate)).longValue();
                     Member memberById = guild.getMemberById(user.getId());

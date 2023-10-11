@@ -21,7 +21,7 @@ public class DailyTicker extends BaseService {
             return;
         }
 
-        new Thread(() -> {
+        executorService.submit(() -> {
             for (DailyTickable tickable : dailyTickables) {
                 try {
                     tickable.runDailyTask();
@@ -29,7 +29,8 @@ public class DailyTicker extends BaseService {
                     log.error("Exception in daily tickable [{}]", tickable.getClass().getName(), e);
                 }
             }
-        }).start();
+            System.gc(); // Some of the daily tasks create a lot of objects, might as well force a GC to clear up what we can
+        });
     }
 
 }

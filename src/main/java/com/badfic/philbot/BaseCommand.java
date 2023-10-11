@@ -8,6 +8,7 @@ import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
+import com.badfic.philbot.service.RandomNumberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -52,6 +53,8 @@ public interface BaseCommand {
     ExecutorService getExecutorService();
 
     ThreadPoolTaskScheduler getTaskScheduler();
+
+    RandomNumberService getRandomNumberService();
 
     default DiscordUser getDiscordUserByMember(Member member) {
         String userId = member.getId();

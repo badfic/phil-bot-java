@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -52,7 +51,7 @@ public class TrickOrTreat extends BaseNormalCommand {
                 try {
                     Member memberById = guild.getMemberById(user.getId());
                     if (memberById != null && !isNotParticipating(memberById)) {
-                        if (ThreadLocalRandom.current().nextInt() % 2 == 0) {
+                        if (randomNumberService.nextInt() % 2 == 0) {
                             futures.add(givePointsToMember(swampyGamesConfig.getThisOrThatPoints(), memberById, PointsStat.TRICK_OR_TREAT));
                             totalGiven += swampyGamesConfig.getThisOrThatPoints();
 

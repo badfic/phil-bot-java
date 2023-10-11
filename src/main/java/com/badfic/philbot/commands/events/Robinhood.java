@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -44,7 +43,7 @@ public class Robinhood extends BaseNormalCommand {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
         Guild guild = philJda.getGuildById(baseConfig.guildId);
 
-        if (!force && ThreadLocalRandom.current().nextInt(100) < swampyGamesConfig.getPercentChanceRefundDoesNotHappen()) {
+        if (!force && randomNumberService.nextInt(100) < swampyGamesConfig.getPercentChanceRefundDoesNotHappen()) {
             MessageEmbed message = Constants.simpleEmbed(swampyGamesConfig.getNoRefundPhrase(),
                     swampyGamesConfig.getNoRefundPerson() + " caught " + swampyGamesConfig.getRefundPerson()
                             + " while they were trying to return taxes to the swamp.",
@@ -67,7 +66,7 @@ public class Robinhood extends BaseNormalCommand {
         for (DiscordUser user : allUsers) {
             if (user.getXp() > TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD && user.getUpdateTime().isAfter(twentyTwoHoursAgo)) {
                 try {
-                    long taxRateRecoveryAmountPercentage = ThreadLocalRandom.current()
+                    long taxRateRecoveryAmountPercentage = randomNumberService
                             .nextInt(swampyGamesConfig.getRefundMinimumPercent(), swampyGamesConfig.getRefundMaximumPercent());
                     if (user.getFamily() != null && CollectionUtils.isNotEmpty(user.getFamily().getSpouses())) {
                         taxRateRecoveryAmountPercentage -= 2;

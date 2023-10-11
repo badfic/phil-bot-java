@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -56,7 +56,7 @@ public class EmoteMe extends BaseNormalCommand {
                     return;
                 }
 
-                overlayImage = ImageIO.read(new URL(emote.getImageUrl()));
+                overlayImage = ImageIO.read(URI.create(emote.getImageUrl()).toURL());
             } else {
                 String codePoints = Arrays.stream(args.trim().codePoints().toArray())
                         .mapToObj(Integer::toHexString)
@@ -84,7 +84,7 @@ public class EmoteMe extends BaseNormalCommand {
             }
 
             String effectiveAvatarUrl = member.getEffectiveAvatarUrl();
-            BufferedImage profilePic = ImageIO.read(new URL(effectiveAvatarUrl));
+            BufferedImage profilePic = ImageIO.read(URI.create(effectiveAvatarUrl).toURL());
 
             BufferedImage newImg = new BufferedImage(profilePic.getWidth(), profilePic.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = newImg.createGraphics();
