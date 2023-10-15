@@ -1,12 +1,12 @@
 package com.badfic.philbot.commands.flag;
 
 import com.badfic.philbot.CommandEvent;
+import com.badfic.philbot.config.Constants;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -57,7 +57,7 @@ public class Pride extends BaseFlagCommand {
             }
 
             String effectiveAvatarUrl = member.getEffectiveAvatarUrl();
-            BufferedImage profilePic = ImageIO.read(URI.create(effectiveAvatarUrl).toURL());
+            BufferedImage profilePic = Constants.scaleImageUrlTo(128, 128, effectiveAvatarUrl);
 
             BufferedImage newImg = new BufferedImage(profilePic.getWidth(), profilePic.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = newImg.createGraphics();
