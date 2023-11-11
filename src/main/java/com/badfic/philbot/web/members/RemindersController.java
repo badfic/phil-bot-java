@@ -6,7 +6,6 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
@@ -36,7 +35,7 @@ public class RemindersController extends BaseMembersController {
 
                     return new SimpleReminder(r.getId(), memberById != null ? memberById.getEffectiveName() : Long.toString(userId), r.getReminder(),
                             r.getDueDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                }).collect(Collectors.toList());
+                }).toList();
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Reminders");

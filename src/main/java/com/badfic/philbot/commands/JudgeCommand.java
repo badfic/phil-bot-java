@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -29,6 +31,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class JudgeCommand extends BaseNormalCommand implements OnJdaReady {
+    @Getter
+    @RequiredArgsConstructor
     public enum Sentence {
         ACQUIT("❌"),
         ONE_HOUR("⏲️"),
@@ -36,14 +40,6 @@ public class JudgeCommand extends BaseNormalCommand implements OnJdaReady {
         ONE_DAY("\uD83D\uDCC6");
 
         private final String emoji;
-
-        Sentence(String emoji) {
-            this.emoji = emoji;
-        }
-
-        public String getEmoji() {
-            return emoji;
-        }
     }
 
     private final CourtCaseDal courtCaseDal;
@@ -142,6 +138,8 @@ public class JudgeCommand extends BaseNormalCommand implements OnJdaReady {
             msg.addReaction(Emoji.fromUnicode(Sentence.ONE_HOUR.getEmoji())).queue();
             msg.addReaction(Emoji.fromUnicode(Sentence.FIVE_HOUR.getEmoji())).queue();
             msg.addReaction(Emoji.fromUnicode(Sentence.ONE_DAY.getEmoji())).queue();
+
+            scheduleTask(() -> trialComplete(courtCase.getDefendantId()), courtCase.getTrialDate());
         });
     }
 

@@ -51,7 +51,7 @@ public class HungerSimService extends BaseService {
         Deque<Player> alivePlayers = game.getPlayers()
                 .stream()
                 .filter(p -> p.getHp() > 0)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                .collect(Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> {
                     Collections.shuffle(list);
                     return list.stream();
                 }))

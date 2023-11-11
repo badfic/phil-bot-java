@@ -470,7 +470,7 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
             }
 
             return true;
-        }).collect(Collectors.toList());
+        }).toList();
 
         if (CollectionUtils.isEmpty(eligibleMembers)) {
             event.replyError("Please mention at least one eligible user to upvote. Example `!!swampy up @Santiago`");

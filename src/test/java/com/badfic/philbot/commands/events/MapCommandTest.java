@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import net.lingala.zip4j.model.LocalFileHeader;
 import org.apache.commons.collections4.CollectionUtils;
@@ -46,7 +45,7 @@ public class MapCommandTest {
             }
         }
 
-        List<String> jsonCountryCodes = Arrays.stream(countries).map(MapCommand.MapTriviaObject::code).collect(Collectors.toList());
+        List<String> jsonCountryCodes = Arrays.stream(countries).map(MapCommand.MapTriviaObject::code).toList();
         Collection<String> disjunction = CollectionUtils.disjunction(flagzipCountryCodes, jsonCountryCodes);
 
         Assertions.assertTrue(CollectionUtils.isEmpty(disjunction));

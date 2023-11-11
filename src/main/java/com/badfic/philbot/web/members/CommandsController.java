@@ -5,6 +5,7 @@ import com.badfic.philbot.commands.ModHelpAware;
 import com.badfic.philbot.config.Constants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -64,9 +65,9 @@ public class CommandsController extends BaseMembersController {
                             getModHelp(isMod, command))
                 )
                 .sorted(Comparator.comparing(SimpleCommand::name))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        simpleCommandsList = Stream.concat(Stream.of(swampyCommand.getValue()), simpleCommandsList.stream()).collect(Collectors.toList());
+        simpleCommandsList = Stream.concat(Stream.of(swampyCommand.getValue()), simpleCommandsList.stream()).toList();
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Commands");

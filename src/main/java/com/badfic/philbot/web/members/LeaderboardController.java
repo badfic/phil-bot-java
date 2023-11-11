@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
@@ -49,7 +48,7 @@ public class LeaderboardController extends BaseMembersController {
                     user.setNickname(member.getEffectiveName());
                     user.setProfileUrl(member.getEffectiveAvatarUrl());
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping(value = "/leaderboard/children", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -70,7 +69,7 @@ public class LeaderboardController extends BaseMembersController {
                     user.setNickname(member.getEffectiveName());
                     user.setProfileUrl(member.getEffectiveAvatarUrl());
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

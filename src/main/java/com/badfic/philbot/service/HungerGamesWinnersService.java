@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -107,7 +106,7 @@ public class HungerGamesWinnersService extends BaseNormalCommand {
                 .stream()
                 .sorted(Comparator.comparing(HungerGamesWinnerEntity::getTimeCreated))
                 .map(HungerGamesWinnerEntity::getMessage)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private String getMessageContent(Message message) {

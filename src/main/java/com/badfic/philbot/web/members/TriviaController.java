@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
@@ -36,7 +35,7 @@ public class TriviaController extends BaseMembersController {
 
         List<TriviaForm> triviaList = triviaRepository.findAll().stream().map(t ->
             new TriviaForm(t.getId(), t.getQuestion(), t.getAnswerA(), t.getAnswerB(), t.getAnswerC(), TriviaForm.TriviaAnswer.values()[t.getCorrectAnswer()])
-        ).collect(Collectors.toList());
+        ).toList();
 
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Submit A New Trivia Question");

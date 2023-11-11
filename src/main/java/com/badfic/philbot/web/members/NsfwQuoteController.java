@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.MediaType;
@@ -41,7 +40,7 @@ public class NsfwQuoteController extends BaseMembersController {
                     q.getChannelId(),
                     q.getMessageId(),
                     q.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        }).collect(Collectors.toList()));
+        }).toList());
 
         return new ModelAndView("nsfw-quotes", props);
     }

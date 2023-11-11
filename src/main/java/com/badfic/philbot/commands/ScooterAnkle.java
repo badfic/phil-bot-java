@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -52,11 +51,11 @@ public class ScooterAnkle extends BaseNormalCommand {
         List<DiscordUser> allUsers = discordUserRepository.findAll();
         List<DiscordUser> filteredUsers = allUsers.stream()
                 .filter(u -> u.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD
-                        && u.getXp() < scooterUser.getXp()
+                        && u.getXp() <= scooterUser.getXp()
                         && u.getUpdateTime().isAfter(yesterday))
-                .collect(Collectors.toList());
+                .toList();
 
-        if (filteredUsers.size() < 1) {
+        if (filteredUsers.isEmpty()) {
             event.replyError("There were not enough people eligible to receive your scooter ankle points so you can't scooter ankle right now.");
             return;
         }

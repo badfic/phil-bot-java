@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
@@ -120,7 +119,7 @@ public class DailyMarvelMemeService extends BaseNormalCommand {
                 .stream()
                 .sorted(Comparator.comparing(DailyMarvelMemeEntity::getTimeCreated))
                 .map(entity -> StringEscapeUtils.escapeHtml4(entity.getMessage()) + "<br/>\n<img src=\"" + entity.getImageUrl() + "\" class=\"img-fluid\">")
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }
