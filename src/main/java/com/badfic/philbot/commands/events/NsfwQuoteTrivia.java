@@ -101,7 +101,7 @@ public class NsfwQuoteTrivia extends BaseNormalCommand implements OnJdaReady {
         final Member finalMember = member;
         final NsfwQuote finalQuote = quote;
 
-        List<Member> members = guild.getMemberCache().stream().collect(Collectors.toList());
+        List<Member> members = guild.getMemberCache().stream().collect(Collectors.toCollection(ArrayList::new));
         Collections.shuffle(members);
 
         Set<Member> otherTwoMembers = new HashSet<>();

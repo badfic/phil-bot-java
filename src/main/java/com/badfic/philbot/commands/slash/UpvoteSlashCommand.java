@@ -10,7 +10,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -55,7 +54,7 @@ public class UpvoteSlashCommand extends BaseSlashCommand {
             }
 
             return true;
-        }).collect(Collectors.toList());
+        }).toList();
 
         if (CollectionUtils.isEmpty(eligibleMembers)) {
             replyToInteractionHook(event, interactionHook, "Please mention at least one eligible user to upvote. Example `!!swampy up @Santiago`");

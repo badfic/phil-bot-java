@@ -6,7 +6,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.awt.Color;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Synchronized;
@@ -85,7 +84,7 @@ public class Rank {
 
     @Synchronized
     public static List<Rank> getAllRanks() {
-        return LEVEL_MAP.values().stream().sorted(Comparator.comparingInt(Rank::getOrdinal)).collect(Collectors.toList());
+        return LEVEL_MAP.values().stream().sorted(Comparator.comparingInt(Rank::getOrdinal)).toList();
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
