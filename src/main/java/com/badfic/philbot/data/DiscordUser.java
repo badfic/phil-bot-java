@@ -39,7 +39,7 @@ public class DiscordUser {
 
     @Column
     @JsonIgnore
-    private LocalDateTime updateTime = LocalDateTime.now();
+    private LocalDateTime updateTime;
 
     @Column
     @JsonIgnore
@@ -47,23 +47,23 @@ public class DiscordUser {
 
     @Column
     @JsonIgnore
-    private LocalDateTime lastSlots = LocalDateTime.now();
+    private LocalDateTime lastSlots;
 
     @Column
     @JsonIgnore
-    private LocalDateTime lastMessageBonus = LocalDateTime.now();
+    private LocalDateTime lastMessageBonus;
 
     @Column
     @JsonIgnore
-    private LocalDateTime lastVote = LocalDateTime.now();
+    private LocalDateTime lastVote;
 
     @Column
     @JsonIgnore
-    private LocalDateTime acceptedBoost = LocalDateTime.now();
+    private LocalDateTime acceptedBoost;
 
     @Column
     @JsonIgnore
-    private LocalDateTime acceptedMapTrivia = LocalDateTime.now();
+    private LocalDateTime acceptedMapTrivia;
 
     @Column
     private long modGavePoints;
