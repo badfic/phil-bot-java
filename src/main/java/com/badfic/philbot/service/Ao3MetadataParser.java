@@ -130,8 +130,12 @@ public class Ao3MetadataParser extends BaseService {
 
         description.append("\n\n**Summary**: ");
         Elements summaryModule = document.getElementsByClass("summary module");
-        String summary = summaryModule.get(0).getElementsByTag("blockquote").text();
-        description.append(summary.length() <= 800 ? summary : (summary.substring(0, 797) + "..."));
+        if (summaryModule.isEmpty()) {
+            description.append("No Summary Provided");
+        } else {
+            String summary = summaryModule.get(0).getElementsByTag("blockquote").text();
+            description.append(summary.length() <= 800 ? summary : (summary.substring(0, 797) + "..."));
+        }
 
         description.append("\n\n**Fandoms**: ");
         for (Element tags : workMetaGroup.getElementsByClass("fandom tags")) {
