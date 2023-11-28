@@ -33,8 +33,8 @@ public interface BaseCommand {
 
     // sweepstakes, taxes, robinhood
     BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");
-    long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 5000;
-    long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 5000;
+    long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 8000;
+    long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 8000;
 
     JDA getPhilJda();
 
@@ -64,6 +64,17 @@ public interface BaseCommand {
         if (optionalUserEntity.isEmpty()) {
             DiscordUser newUser = new DiscordUser();
             newUser.setId(userId);
+
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime yesterday = now.minusDays(1);
+
+            newUser.setUpdateTime(now);
+            newUser.setLastSlots(yesterday);
+            newUser.setLastMessageBonus(yesterday);
+            newUser.setLastVote(yesterday);
+            newUser.setAcceptedBoost(yesterday);
+            newUser.setAcceptedMapTrivia(yesterday);
+
             optionalUserEntity = Optional.of(getJdbcAggregateTemplate().insert(newUser));
         }
 
