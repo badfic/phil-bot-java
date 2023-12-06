@@ -10,7 +10,6 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.service.RandomNumberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -30,11 +29,6 @@ import org.springframework.web.client.RestTemplate;
 public interface BaseCommand {
 
     DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy HH:mm");
-
-    // sweepstakes, taxes, robinhood
-    BigDecimal ONE_HUNDREDTH = new BigDecimal("0.01");
-    long TAX_OR_ROBINHOOD_MINIMUM_POINT_THRESHOLD = 8000;
-    long SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD = 8000;
 
     JDA getPhilJda();
 
@@ -103,9 +97,9 @@ public interface BaseCommand {
         if (newRank != rankZero && existingRank != newRank) {
             TextChannel swampysChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
 
-            MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + newRank.getLevel() + '!',
+            MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + newRank.getLevel() + " | " + newRank.getRoleName(),
                     newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()),
-                    newRank.getRankUpImage(), newRank.getColor());
+                    null, null, newRank.getColor(), newRank.getRankUpImage());
 
             return swampysChannel.sendMessageEmbeds(messageEmbed).submit();
         }

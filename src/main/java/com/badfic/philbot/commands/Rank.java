@@ -18,7 +18,10 @@ import org.springframework.web.client.RestTemplate;
 @Getter
 @EqualsAndHashCode(of = "ordinal")
 public class Rank {
-    public static final long LVL_MULTIPLIER = 2000;
+    // Formula for xp to reach next level: XP = (level/0.07)^2
+    // Formula for current level: level = 0.07 * √XP
+
+    private static final double LEVEL_MODIFIER = 0.07D;
     private static final Long2ObjectMap<Rank> LEVEL_MAP = new Long2ObjectOpenHashMap<>(100);
 
     private final int ordinal;
@@ -47,7 +50,7 @@ public class Rank {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + airtableApiToken);
-        ResponseEntity<RecordList> response = restTemplate.exchange("https://api.airtable.com/v0/appYjP1F2Li4DAR1m/tblDmx7RE0kEP0p48",
+        ResponseEntity<RecordList> response = restTemplate.exchange("https://api.airtable.com/v0/appYjP1F2Li4DAR1m/tblqH0ym9Dcza7oDG",
                 HttpMethod.GET, new HttpEntity<>(httpHeaders), RecordList.class);
 
         RecordList recordList = response.getBody();
@@ -71,7 +74,7 @@ public class Rank {
 
     @Synchronized
     public static Rank byXp(long xp) {
-        long level = xp / LVL_MULTIPLIER;
+        long level = Math.round(LEVEL_MODIFIER * Math.sqrt(xp));
 
         for (long i = level; i > 0; i--) {
             if (LEVEL_MAP.containsKey(i)) {
@@ -80,6 +83,11 @@ public class Rank {
         }
 
         return LEVEL_MAP.get(0L);
+    }
+
+    @Synchronized
+    public static long xpRequiredForLevel(long xp, long level) {
+        return Math.round(Math.pow(level/ LEVEL_MODIFIER, 2) - xp);
     }
 
     @Synchronized

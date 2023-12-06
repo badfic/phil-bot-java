@@ -28,7 +28,7 @@ public class RankInitITest {
 
         Mockito.doReturn(new ResponseEntity<>(recordList, HttpStatusCode.valueOf(200)))
                 .when(restTemplate)
-                .exchange(Mockito.eq("https://api.airtable.com/v0/appYjP1F2Li4DAR1m/tblDmx7RE0kEP0p48"), Mockito.eq(HttpMethod.GET),
+                .exchange(Mockito.eq("https://api.airtable.com/v0/appYjP1F2Li4DAR1m/tblqH0ym9Dcza7oDG"), Mockito.eq(HttpMethod.GET),
                         Mockito.any(HttpEntity.class), Mockito.eq(Rank.RecordList.class));
 
         Rank.init(restTemplate, "fake-api-key");
