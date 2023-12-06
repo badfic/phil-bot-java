@@ -5,6 +5,7 @@ import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,24 +42,22 @@ public class Boost extends BaseNormalCommand {
         SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
         TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
-        Guild guild = philJda.getGuildById(baseConfig.guildId);
+        Guild guild = Objects.requireNonNull(philJda.getGuildById(baseConfig.guildId));
 
         if (swampyGamesConfig.getBoostPhrase() != null) {
             swampyGamesConfig.setBoostPhrase(null);
             saveSwampyGamesConfig(swampyGamesConfig);
 
+            LocalDateTime startTime = LocalDateTime.now().minusHours(1);
             List<CompletableFuture<?>> futures = new ArrayList<>();
             StringBuilder description = new StringBuilder();
             discordUserRepository.findAll()
                     .stream()
-                    .filter(discordUser -> Objects.nonNull(discordUser.getAcceptedBoost()))
+                    .filter(u -> Objects.nonNull(u.getAcceptedBoost()) && (u.getAcceptedBoost().isEqual(startTime) || u.getAcceptedBoost().isAfter(startTime)))
                     .forEach(discordUser -> {
                         String userId = discordUser.getId();
 
                         try {
-                            discordUser.setAcceptedBoost(null);
-                            discordUserRepository.save(discordUser);
-
                             Member memberLookedUp = guild.getMemberById(userId);
                             if (memberLookedUp == null) {
                                 throw new RuntimeException("member not found");
