@@ -27,7 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController extends BaseMembersController {
 
-    @GetMapping(value = "/home", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = {"", "/", "/home"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView home(
             @RequestParam(value = "code") Optional<String> code,
             HttpServletRequest httpServletRequest) throws Exception {

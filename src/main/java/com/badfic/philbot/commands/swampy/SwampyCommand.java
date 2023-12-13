@@ -645,10 +645,6 @@ public class SwampyCommand extends BaseNormalCommand implements ModHelpAware {
             return;
         }
 
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        swampyGamesConfig.setMostRecentTaxes(0);
-        saveSwampyGamesConfig(swampyGamesConfig);
-
         event.reply("Resetting, please wait...");
         for (DiscordUser discordUser : discordUserRepository.findAll()) {
             discordUser.setXp(0);

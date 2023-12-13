@@ -31,9 +31,6 @@ public class SwampyGamesConfig {
     private LocalDateTime mapTriviaExpiration;
 
     @Column
-    private long mostRecentTaxes;
-
-    @Column
     private String triviaMsgId;
 
     @Column
@@ -159,100 +156,6 @@ public class SwampyGamesConfig {
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TRIVIAS)
     private int nsfwQuoteTriviaEventPoints = 100;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.REFUND)
-    private int refundMinimumPercent = 5;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.REFUND)
-    private int refundMaximumPercent = 16;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.REFUND)
-    private int percentChanceRefundDoesNotHappen = 30;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.REFUND)
-    private String refundPerson = "Guy Fieri";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.REFUND)
-    private String noRefundPerson = "Saundra Lee";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.REFUND)
-    private String noRefundPhrase = "I NEED TO SPEAK TO THE MANAGER!!!";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.REFUND)
-    private String refundImage = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.REFUND)
-    private String noRefundImage = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SCOOT)
-    private int scooterAnklePoints = 25000;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.SCOOT)
-    private String scooterAnkleImg = "https://cdn.discordapp.com/attachments/752665380182425677/780324301311049728/scooter_ankle.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SHREKONING)
-    private int shrekoningMinPoints = 200;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SHREKONING)
-    private int shrekoningMaxPoints = 4000;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.SHREKONING)
-    private String shrekoningImg = "https://cdn.discordapp.com/attachments/741053845098201099/763280555793580042/the_shrekoning.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.SWEEPSTAKES)
-    private int sweepstakesPoints = 4000;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.SWEEPSTAKES)
-    private String sweepstakesImg = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
-    // TODO: Add the various swiper personas here too?
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TAXES)
-    private int taxesMinimumPercent = 5;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TAXES)
-    private int taxesMaximumPercent = 16;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.TAXES)
-    private int percentChanceTaxesDoesNotHappen = 30;
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.TAXES)
-    private String taxesPerson = "Guy Fieri";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.TAXES)
-    private String noTaxesPerson = "Saundra Lee";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.STRING, category = ControllerConfigurable.Category.TAXES)
-    private String noTaxesPhrase = "I NEED TO SPEAK TO THE MANAGER!!!";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.TAXES)
-    private String taxesImage = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
-
-    @Column
-    @ControllerConfigurable(type = ControllerConfigurable.Type.IMG, category = ControllerConfigurable.Category.TAXES)
-    private String noTaxesImage = "https://cdn.discordapp.com/attachments/752665380182425677/782811729599528960/swampy_monday_every_image_AHHHH.png";
 
     @Column
     @ControllerConfigurable(type = ControllerConfigurable.Type.INT, category = ControllerConfigurable.Category.THIS_OR_THAT)

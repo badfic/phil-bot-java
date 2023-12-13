@@ -30,22 +30,14 @@
                             <th>Profile</th>
                             <th>Name</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('xp')" v-bind:class="{ asc: {{.}}SortKey === 'xp' && {{.}}Order, desc: {{.}}SortKey === 'xp' && !{{.}}Order}">Points</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('taxesPoints')" v-bind:class="{ asc: {{.}}SortKey === 'taxesPoints' && {{.}}Order, desc: {{.}}SortKey === 'taxesPoints' && !{{.}}Order}">Taxes</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('robinhoodPoints')" v-bind:class="{ asc: {{.}}SortKey === 'robinhoodPoints' && {{.}}Order, desc: {{.}}SortKey === 'robinhoodPoints' && !{{.}}Order}">R.hood</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('taxesRobinhoodNet')" v-bind:class="{ asc: {{.}}SortKey === 'taxesRobinhoodNet' && {{.}}Order, desc: {{.}}SortKey === 'taxesRobinhoodNet' && !{{.}}Order}">T/R ±</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('trickOrTreatPoints')" v-bind:class="{ asc: {{.}}SortKey === 'trickOrTreatPoints' && {{.}}Order, desc: {{.}}SortKey === 'trickOrTreatPoints' && !{{.}}Order}">🦄/😭</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('sweepstakesPoints')" v-bind:class="{ asc: {{.}}SortKey === 'sweepstakesPoints' && {{.}}Order, desc: {{.}}SortKey === 'sweepstakesPoints' && !{{.}}Order}">🧹🥩</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('boostPoints')" v-bind:class="{ asc: {{.}}SortKey === 'boostPoints' && {{.}}Order, desc: {{.}}SortKey === 'boostPoints' && !{{.}}Order}">Boost</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('shrekoningPoints')" v-bind:class="{ asc: {{.}}SortKey === 'shrekoningPoints' && {{.}}Order, desc: {{.}}SortKey === 'shrekoningPoints' && !{{.}}Order}">Shronk</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('stonksPoints')" v-bind:class="{ asc: {{.}}SortKey === 'stonksPoints' && {{.}}Order, desc: {{.}}SortKey === 'stonksPoints' && !{{.}}Order}">Stonk</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('upvotedPoints')" v-bind:class="{ asc: {{.}}SortKey === 'upvotedPoints' && {{.}}Order, desc: {{.}}SortKey === 'upvotedPoints' && !{{.}}Order}">Up voted</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('upvoterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'upvoterPoints' && {{.}}Order, desc: {{.}}SortKey === 'upvoterPoints' && !{{.}}Order}">Up voter</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('mapsPoints')" v-bind:class="{ asc: {{.}}SortKey === 'mapsPoints' && {{.}}Order, desc: {{.}}SortKey === 'mapsPoints' && !{{.}}Order}">Map</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('triviaPoints')" v-bind:class="{ asc: {{.}}SortKey === 'triviaPoints' && {{.}}Order, desc: {{.}}SortKey === 'triviaPoints' && !{{.}}Order}">Trivia</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('quoteTriviaPoints')" v-bind:class="{ asc: {{.}}SortKey === 'quoteTriviaPoints' && {{.}}Order, desc: {{.}}SortKey === 'quoteTriviaPoints' && !{{.}}Order}">💬 Trivia</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('fightPoints')" v-bind:class="{ asc: {{.}}SortKey === 'fightPoints' && {{.}}Order, desc: {{.}}SortKey === 'fightPoints' && !{{.}}Order}">Fight</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('swiperPoints')" v-bind:class="{ asc: {{.}}SortKey === 'swiperPoints' && {{.}}Order, desc: {{.}}SortKey === 'swiperPoints' && !{{.}}Order}">Swiper'd</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('scooterPoints')" v-bind:class="{ asc: {{.}}SortKey === 'scooterPoints' && {{.}}Order, desc: {{.}}SortKey === 'scooterPoints' && !{{.}}Order}">🛴</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('noNoPoints')" v-bind:class="{ asc: {{.}}SortKey === 'noNoPoints' && {{.}}Order, desc: {{.}}SortKey === 'noNoPoints' && !{{.}}Order}">No No</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('messagePoints')" v-bind:class="{ asc: {{.}}SortKey === 'messagePoints' && {{.}}Order, desc: {{.}}SortKey === 'messagePoints' && !{{.}}Order}">Msg</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('pictureMessagePoints')" v-bind:class="{ asc: {{.}}SortKey === 'pictureMessagePoints' && {{.}}Order, desc: {{.}}SortKey === 'pictureMessagePoints' && !{{.}}Order}">Pic Msg</th>
@@ -57,7 +49,6 @@
                             <th class="user-select-none both" v-on:click="{{.}}Sort('slotsLosses')" v-bind:class="{ asc: {{.}}SortKey === 'slotsLosses' && {{.}}Order, desc: {{.}}SortKey === 'slotsLosses' && !{{.}}Order}">🎰 Loss</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('slotsCloseEnoughPoints')" v-bind:class="{ asc: {{.}}SortKey === 'slotsCloseEnoughPoints' && {{.}}Order, desc: {{.}}SortKey === 'slotsCloseEnoughPoints' && !{{.}}Order}">🎰 Close</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('slotsWinnerWinnerPoints')" v-bind:class="{ asc: {{.}}SortKey === 'slotsWinnerWinnerPoints' && {{.}}Order, desc: {{.}}SortKey === 'slotsWinnerWinnerPoints' && !{{.}}Order}">🎰 Win</th>
-                            <th class="user-select-none both" v-on:click="{{.}}Sort('swiperParticipations')" v-bind:class="{ asc: {{.}}SortKey === 'swiperParticipations' && {{.}}Order, desc: {{.}}SortKey === 'swiperParticipations' && !{{.}}Order}">Swiper Participant</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('modGavePoints')" v-bind:class="{ asc: {{.}}SortKey === 'modGavePoints' && {{.}}Order, desc: {{.}}SortKey === 'modGavePoints' && !{{.}}Order}">Mod +</th>
                             <th class="user-select-none both" v-on:click="{{.}}Sort('modTookPoints')" v-bind:class="{ asc: {{.}}SortKey === 'modTookPoints' && {{.}}Order, desc: {{.}}SortKey === 'modTookPoints' && !{{.}}Order}">Mod -</th>
                         </tr>
@@ -67,22 +58,14 @@
                             <td><img :src="item.profileUrl" width="50" height="50"></td>
                             <td>[[ item.nickname ]]</td>
                             <td>[[ item.xp ]]</td>
-                            <td>[[ item.taxesPoints ]]</td>
-                            <td>[[ item.robinhoodPoints ]]</td>
-                            <td>[[ item.taxesRobinhoodNet ]]</td>
                             <td>[[ item.trickOrTreatPoints ]]</td>
-                            <td>[[ item.sweepstakesPoints ]]</td>
                             <td>[[ item.boostPoints ]]</td>
-                            <td>[[ item.shrekoningPoints ]]</td>
-                            <td>[[ item.stonksPoints ]]</td>
                             <td>[[ item.upvotedPoints ]]</td>
                             <td>[[ item.upvoterPoints ]]</td>
                             <td>[[ item.mapsPoints ]]</td>
                             <td>[[ item.triviaPoints ]]</td>
                             <td>[[ item.quoteTriviaPoints ]]</td>
                             <td>[[ item.fightPoints ]]</td>
-                            <td>[[ item.swiperPoints ]]</td>
-                            <td>[[ item.scooterPoints ]]</td>
                             <td>[[ item.noNoPoints ]]</td>
                             <td>[[ item.messagePoints ]]</td>
                             <td>[[ item.pictureMessagePoints ]]</td>
@@ -94,7 +77,6 @@
                             <td>[[ item.slotsLosses ]]</td>
                             <td>[[ item.slotsCloseEnoughPoints ]]</td>
                             <td>[[ item.slotsWinnerWinnerPoints ]]</td>
-                            <td>[[ item.swiperParticipations ]]</td>
                             <td>[[ item.modGavePoints ]]</td>
                             <td>[[ item.modTookPoints ]]</td>
                         </tr>

@@ -28,7 +28,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
-@RequestMapping("/members/")
+@RequestMapping("/members")
 public abstract class BaseMembersController {
     protected static final String DISCORD_TOKEN = "DiscordToken";
     protected static final String DISCORD_REFRESH_TOKEN = "DiscordRefreshToken";
@@ -38,7 +38,6 @@ public abstract class BaseMembersController {
     protected static final String DISCORD_IS_MOD = "DiscordIsMod";
     protected static final String DISCORD_IS_18 = "DiscordIs18";
     protected static final String AWAITING_REDIRECT_URL = "AwaitingRedirectUrl";
-    protected static final String CHROMECAST_AUTH = "ChromecastAuth";
 
     @Setter(onMethod_ = {@Autowired})
     protected BaseConfig baseConfig;
