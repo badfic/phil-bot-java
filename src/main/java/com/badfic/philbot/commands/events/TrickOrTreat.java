@@ -47,7 +47,7 @@ public class TrickOrTreat extends BaseNormalCommand {
         List<CompletableFuture<?>> futures = new ArrayList<>();
         StringBuilder description = new StringBuilder();
         for (DiscordUser user : allUsers) {
-            if (user.getXp() > SWEEP_OR_TAX_WINNER_ORGANIC_POINT_THRESHOLD && user.getUpdateTime().isAfter(fifteenHoursAgo)) {
+            if (user.getUpdateTime().isAfter(fifteenHoursAgo)) {
                 try {
                     Member memberById = guild.getMemberById(user.getId());
                     if (memberById != null && !isNotParticipating(memberById)) {

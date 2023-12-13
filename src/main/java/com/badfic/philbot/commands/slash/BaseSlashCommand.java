@@ -58,6 +58,9 @@ public abstract class BaseSlashCommand implements BaseCommand {
 
     protected String name;
     protected String help;
+    protected String requiredRole;
+    protected boolean nsfwOnly;
+    protected boolean ownerCommand;
     protected List<OptionData> options;
 
     public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {

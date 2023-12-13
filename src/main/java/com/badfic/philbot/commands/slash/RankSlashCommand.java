@@ -54,13 +54,15 @@ public class RankSlashCommand extends BaseSlashCommand {
                         : nextRank.getLevel() + ": " + nextRank.getRoleName() + ".") +
                 "\n You have " + (rank == nextRank
                 ? "LOL NVM YOU'RE THE TOP LEVEL"
-                : NumberFormat.getIntegerInstance().format((nextRank.getLevel() * Rank.LVL_MULTIPLIER) - user.getXp()))
+                : NumberFormat.getIntegerInstance().format(Rank.xpRequiredForLevel(user.getXp(), nextRank.getLevel())))
                 + " points to go.\n\nBest of Luck in the Swampys!";
 
-        MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + rank.getLevel() + ": " + rank.getRoleName(),
+        MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + rank.getLevel() + " | " + rank.getRoleName(),
                 description,
-                rank.getRankUpImage(),
-                rank.getColor());
+                null,
+                null,
+                rank.getColor(),
+                rank.getRankUpImage());
 
         replyToInteractionHook(event, interactionHook, messageEmbed);
     }

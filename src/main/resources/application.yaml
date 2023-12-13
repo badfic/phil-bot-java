@@ -43,8 +43,8 @@ swampy:
       goodmorning: "0 0 7 * * *"
 
     events:
-      # We're skipping the hours surrounding 2am (because of the daily tasks), and we're skipping 16 (because sweepstakes, taxes, robinhood, etc)
-      boost: "0 0 0,3,4,5,6,7,8,9,10,11,12,13,14,15,17,18,19,20,21,22,23 * * *"
+      # We're skipping the hours surrounding 2am (because of the daily tasks)
+      boost: "0 0 0,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 * * *"
 
       map: "0 37 1,5,9,13,17,21 * * *"
       quotetrivia: "0 37 2,6,10,14,18,22 * * *"
@@ -52,10 +52,3 @@ swampy:
       nsfwquotetrivia: "0 37 0,4,8,12,16,20 * * *"
 
       trickortreat: "0 3 9 * * *"
-
-      sweepstakes18: "0 3 16 * * *"
-      sweepstakeschaos: "0 7 16 * * *"
-      robinhood: "0 9 16 * * *"
-
-      taxes: "0 35 16 * * *"
-      shrekoning: "0 47 16 * * *"
