@@ -31,9 +31,6 @@ public class DiscordUser {
     private long xp;
 
     @Column
-    private long swiperParticipations;
-
-    @Column
     @JsonIgnore
     private Family family;
 
@@ -90,9 +87,6 @@ public class DiscordUser {
     private long downvoterPoints;
 
     @Column
-    private long swiperPoints;
-
-    @Column
     private long slotsCloseEnoughPoints;
 
     @Column
@@ -129,13 +123,7 @@ public class DiscordUser {
     private long trickOrTreatPoints;
 
     @Column
-    private long scooterPoints;
-
-    @Column
-    private long sweepstakesPoints;
-
-    @Column
-    private long lifetimeSweepstakesWins;
+    private long lifetimeSweepstakesWins; // Keeping this for legacy reasons
 
     @Column
     private long noNoPoints;
@@ -174,25 +162,7 @@ public class DiscordUser {
     private long reactedPoints;
 
     @Column
-    private long shrekoningPoints;
-
-    @Column
-    private long stonksPoints;
-
-    @Column
     private long fightPoints;
-
-    @Column
-    private long taxesPoints;
-
-    @Column
-    private long robinhoodPoints;
-
-    @Transient
-    private long taxesRobinhoodNet;
-
-    @Column
-    private long scooterParticipant;
 
     public void setUpvotedPoints(long upvotedPoints) {
         this.upvotedPoints = upvotedPoints;
@@ -241,11 +211,6 @@ public class DiscordUser {
         }
 
         this.quoteTriviaPoints = quoteTriviaPoints;
-    }
-
-    public void setSweepstakesPoints(long sweepstakesPoints) {
-        this.sweepstakesPoints = sweepstakesPoints;
-        lifetimeSweepstakesWins++;
     }
 
     public void setNoNoPoints(long noNoPoints) {

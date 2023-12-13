@@ -52,24 +52,10 @@ public class SuperlativesCommand extends BaseNormalCommand {
 
         StringBuilder description = new StringBuilder();
 
-        bastards.stream().min((a, b) -> (int) (a.getTaxesPoints() - b.getTaxesPoints())).ifPresent(user -> {
-            description.append("Worst Taxes: ").append("<@").append(user.getId()).append(">\n");
-        });
-        bastards.stream().max((a, b) -> (int) (a.getRobinhoodPoints() - b.getRobinhoodPoints())).ifPresent(user -> {
-            description.append("Refunds: ").append("<@").append(user.getId()).append(">\n");
-        });
-        bastards.stream().max((a, b) -> (int) (a.getStonksPoints() - b.getStonksPoints())).ifPresent(user -> {
-            description.append("Stonks: ").append("<@").append(user.getId()).append(">\n");
-        });
-
         buildSuperlativeDescription(description, bastards);
         MessageEmbed bastardsSuperlatives = Constants.simpleEmbed("Swampy Bastards Superlatives", description.toString());
 
         description.setLength(0);
-
-        chaosChildren.stream().max((a, b) -> (int) (a.getShrekoningPoints() - b.getShrekoningPoints())).ifPresent(user -> {
-            description.append("Shrekoning: ").append("<@").append(user.getId()).append(">\n");
-        });
 
         buildSuperlativeDescription(description, chaosChildren);
         MessageEmbed chaosChildrenSuperlatives = Constants.simpleEmbed("Chaos Children Superlatives", description.toString());
@@ -82,9 +68,6 @@ public class SuperlativesCommand extends BaseNormalCommand {
 
         list.stream().max((a, b) -> (int) (a.getTrickOrTreatPoints() - b.getTrickOrTreatPoints())).ifPresent(user -> {
             description.append(trickOrTreatName).append(": <@").append(user.getId()).append(">\n");
-        });
-        list.stream().max((a, b) -> (int) (a.getSweepstakesPoints() - b.getSweepstakesPoints())).ifPresent(user -> {
-            description.append("Sweepstakes: ").append("<@").append(user.getId()).append(">\n");
         });
         list.stream().max((a, b) -> (int) (a.getBoostPoints() - b.getBoostPoints())).ifPresent(user -> {
             description.append("Boosts: ").append("<@").append(user.getId()).append(">\n");
@@ -130,9 +113,6 @@ public class SuperlativesCommand extends BaseNormalCommand {
         });
         list.stream().max((a, b) -> (int) (a.getSlotsWinnerWinnerPoints() - b.getSlotsWinnerWinnerPoints())).ifPresent(user -> {
             description.append("Slots Wins: ").append("<@").append(user.getId()).append(">\n");
-        });
-        list.stream().max((a, b) -> (int) (a.getSwiperParticipations() - b.getSwiperParticipations())).ifPresent(user -> {
-            description.append("Swiper Saves: ").append("<@").append(user.getId()).append(">\n");
         });
     }
 }

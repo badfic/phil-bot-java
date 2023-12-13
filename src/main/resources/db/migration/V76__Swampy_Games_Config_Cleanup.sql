@@ -46,3 +46,22 @@ ALTER TABLE swampy_games_config
     DROP COLUMN IF EXISTS taxes_image;
 ALTER TABLE swampy_games_config
     DROP COLUMN IF EXISTS no_taxes_image;
+
+ALTER TABLE discord_user
+    DROP COLUMN IF EXISTS scooter_participant;
+ALTER TABLE discord_user
+    DROP COLUMN IF EXISTS robinhood_points;
+ALTER TABLE discord_user
+    DROP COLUMN IF EXISTS taxes_points;
+ALTER TABLE discord_user
+    DROP COLUMN IF EXISTS stonks_points;
+ALTER TABLE discord_user
+    DROP COLUMN IF EXISTS shrekoning_points;
+ALTER TABLE discord_user
+    DROP COLUMN IF EXISTS sweepstakes_points;
+ALTER TABLE discord_user
+    DROP COLUMN IF EXISTS scooter_points;
+ALTER TABLE discord_user
+    DROP COLUMN IF EXISTS swiper_points;
+ALTER TABLE discord_user
+    DROP COLUMN IF EXISTS swiper_participations;
