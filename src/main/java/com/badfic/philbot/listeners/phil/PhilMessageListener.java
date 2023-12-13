@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -58,7 +59,9 @@ import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.requests.restaction.CommandCreateAction;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -256,22 +259,32 @@ public class PhilMessageListener extends ListenerAdapter {
     public void onReady(@NotNull ReadyEvent event) {
         Message.suppressContentIntentWarning(); // This is specifically for all the non-phil bots, they'll print a warning without this.
 
-        log.info("Received ready event for [user={}]", event.getJDA().getSelfUser());
+        log.info("Received ready event for [guild={}] [user={}]", baseConfig.guildId, event.getJDA().getSelfUser());
         MessageEmbed messageEmbed = Constants.simpleEmbed("Restarted",
                 String.format("I just restarted\ngit sha: %s\ncommit msg: %s", baseConfig.commitSha, baseConfig.commitMessage), new Color(89, 145, 17));
         event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).get(0).sendMessageEmbeds(messageEmbed).queue();
 
         Guild guildById = philJda.getGuildById(baseConfig.guildId);
 
-        for (BaseSlashCommand slashCommand : slashCommands) {
-            CommandCreateAction commandCreateAction = guildById.upsertCommand(slashCommand.getName(), slashCommand.getHelp());
+        CommandListUpdateAction commandListUpdateAction = guildById.updateCommands();
 
+        for (BaseSlashCommand slashCommand : slashCommands) {
             if (CollectionUtils.isNotEmpty(slashCommand.getOptions())) {
-                commandCreateAction = commandCreateAction.addOptions(slashCommand.getOptions());
+                commandListUpdateAction = commandListUpdateAction.addCommands(Commands.slash(slashCommand.getName(), slashCommand.getHelp())
+                        .addOptions(slashCommand.getOptions()));
+            } else {
+                commandListUpdateAction = commandListUpdateAction.addCommands(Commands.slash(slashCommand.getName(), slashCommand.getHelp()));
+            }
+        }
+
+        commandListUpdateAction.submit().whenComplete((success, err) -> {
+            if (err != null) {
+                log.error("Failed to upsert slash command(s) {}", success.stream().map(Command::getName).collect(Collectors.joining(", ")), err);
+                return;
             }
 
-            commandCreateAction.queue();
-        }
+            log.info("Successfully upserted slash command(s) {}", success.stream().map(Command::getName).collect(Collectors.joining(", ")));
+        });
 
         applicationContext.getBeansOfType(OnJdaReady.class)
                 .forEach((name, bean) -> Thread.startVirtualThread(bean));
@@ -281,6 +294,32 @@ public class PhilMessageListener extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         for (BaseSlashCommand slashCommand : slashCommands) {
             if (event.getName().equals(slashCommand.getName())) {
+                // no guildOnly check because all slash commands are guild only
+
+                // owner commands
+                if (slashCommand.isOwnerCommand() && !event.getUser().getId().equals(baseConfig.ownerId)) {
+                    event.reply("This is an owner command, only Santiago can execute it").queue();
+                    return;
+                }
+
+                // required role check
+                if (Objects.nonNull(slashCommand.getRequiredRole())) {
+                    String requiredRole = slashCommand.getRequiredRole();
+
+                    if (Objects.isNull(event.getMember()) || !slashCommand.hasRole(event.getMember(), requiredRole)) {
+                        event.reply(String.format("You must have %s role to execute this command", requiredRole)).queue();
+                        return;
+                    }
+                }
+
+                // nsfw check
+                if (slashCommand.isNsfwOnly()) {
+                    if (!(event.getChannel() instanceof IAgeRestrictedChannel ageRestrictedChannel) || !ageRestrictedChannel.isNSFW()) {
+                        event.reply("This is an nsfw only command, it cannot be executed in this channel").queue();
+                        return;
+                    }
+                }
+
                 slashCommand.execute(event);
                 return;
             }
