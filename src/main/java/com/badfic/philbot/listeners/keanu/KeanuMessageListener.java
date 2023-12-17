@@ -26,7 +26,6 @@ public class KeanuMessageListener extends BaseService {
             "https://cdn.discordapp.com/attachments/794506942906761226/1095950252047093780/EverlastingHastyHorseshoebat.gif"
     };
     private static final String[] GOOD_MORNING_GIFS = {
-            "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves",
             "https://media.giphy.com/media/8rFNes6jllJQRnHTsF/giphy.gif",
             "https://cdn.discordapp.com/attachments/323666308107599872/752638622099832852/donut.gif",
             "https://cdn.discordapp.com/attachments/323666308107599872/752638643562086432/smilesmile.gif",
@@ -53,7 +52,7 @@ public class KeanuMessageListener extends BaseService {
             "https://cdn.discordapp.com/attachments/741030569307275436/753991114301898762/image0.png"
     };
     private static final Pattern PUPPY_PATTERN = Constants.compileWords("puppy|puppies|pupper|doggo|doge");
-    private static final String HELLO_GIF = "https://gfycat.com/consciousambitiousantipodesgreenparakeet-squarepants-tumbelweed-spongebob-morning-reeves";
+    private static final String HELLO_GIF = "https://media.giphy.com/media/PnUatAYWMEMvmiwsyx/giphy.gif";
     private static final String PUPPIES_GIF = "https://media.giphy.com/media/8rFNes6jllJQRnHTsF/giphy.gif";
 
     private final KeanuCommand keanuCommand;
