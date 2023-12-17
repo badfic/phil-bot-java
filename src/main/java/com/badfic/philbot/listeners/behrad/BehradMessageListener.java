@@ -20,17 +20,6 @@ public class BehradMessageListener extends BaseService {
             "https://cdn.discordapp.com/attachments/323666308107599872/750575275783487598/MV5BMGEyZDE2YmYtNjRhNi00MzQwLThjNjItM2E5YjVjOTI3MDMwXkEyXkFqcGdeQXVyMTAzMjM0MjE0.png",
             "https://cdn.discordapp.com/attachments/323666308107599872/750575276026626129/MV5BYTRjOGE2OWUtMjk2MS00MGFkLTg2YjEtYmNjZDRjODAzNWI4XkEyXkFqcGdeQXVyMTAzMjM0MjE0.png"
     };
-    private static final String[] SLOTH_GIFS = {
-            "https://gfycat.com/cooperativeglamoroushoneybee-animals-sloth-cute",
-            "https://gfycat.com/ornateplumpicterinewarbler-animals-sloth-baby",
-            "https://gfycat.com/femaleastonishingflies-relax",
-            "https://gfycat.com/focusedsphericalfulmar-animals-sloth",
-            "https://gfycat.com/gaseousfrightenedavocet-animals-sloth-costa-rica-matty-baby",
-            "https://gfycat.com/jollyunpleasantcirriped-animals-sloth",
-            "https://gfycat.com/definitivetangiblefreshwatereel-sloth-animal",
-            "https://gfycat.com/flatgraveharborporpoise-sloth",
-            "https://gfycat.com/accomplishedinstructivefish"
-    };
     private static final Pattern WEED_PATTERN = Constants.compileWords("marijuana|weed|420|stoned|stoner|kush");
 
     private final BehradCommand behradCommand;
@@ -48,12 +37,6 @@ public class BehradMessageListener extends BaseService {
         if (msgContent.contains("salsa")) {
             discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
                     "you know the rule about salsa ( ͡° ͜ʖ ͡°)");
-            return;
-        }
-
-        if (msgContent.contains("sup sloth")) {
-            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
-                    Constants.pickRandom(SLOTH_GIFS));
             return;
         }
 
