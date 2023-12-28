@@ -37,7 +37,7 @@
                 <div class="form-group">
                     <label for="players">Players</label>
                     <select class="form-control" id="players" required multiple>
-                        <option v-for="player in players" :value="player.id">[[ player.effectiveName ]]</option>
+                        <option v-for="player in sortedPlayers" :value="player.id">[[ player.effectiveName ]]</option>
                     </select>
                 </div>
                 <p>Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
@@ -55,6 +55,13 @@
         delimiters: ["[[", "]]"],
         data: {
             players: []
+        },
+        computed: {
+            sortedPlayers() {
+                return this.players.toSorted((a, b) => {
+                    return a.effectiveName.toLowerCase().localeCompare(b.effectiveName.toLowerCase());
+                });
+            }
         },
         created: refreshMethod
     });
