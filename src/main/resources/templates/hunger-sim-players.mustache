@@ -50,7 +50,7 @@
             <div class="card" v-for="player in players">
                 <div class="card-body">
                     <p>ID: [[ player.id ]]</p>
-                    <p v-if="player.discordUser">Discord ID: [[ player.discordUser.id ]]</p>
+                    <p v-if="player.discordUser">Discord ID: [[ player.discordUser ]]</p>
                     <p v-if="player.discordUser">Effective Name: [[ player.effectiveName ]]</p>
                     <p v-if="player.name">Name: [[ player.name ]]</p>
                     <p>Pronouns: [[ player.pronoun.subject ]] / [[ player.pronoun.object ]]</p>
