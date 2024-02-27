@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
@@ -69,8 +70,8 @@ public abstract class BaseSlashCommand implements BaseCommand {
 
     public abstract void execute(SlashCommandInteractionEvent event);
 
-    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandInteractionEvent event, CompletableFuture<InteractionHook> interactionHook,
-                                                                        MessageEmbed messageEmbed) {
+    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandInteractionEvent event,
+            CompletableFuture<InteractionHook> interactionHook, MessageEmbed messageEmbed) {
         return interactionHook.whenComplete((hook, err) -> {
             if (err != null) {
                 event.getChannel().sendMessageEmbeds(messageEmbed).queue();
@@ -81,8 +82,8 @@ public abstract class BaseSlashCommand implements BaseCommand {
         });
     }
 
-    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandInteractionEvent event, CompletableFuture<InteractionHook> interactionHook,
-                                                                        String message) {
+    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandInteractionEvent event,
+            CompletableFuture<InteractionHook> interactionHook, String message) {
         return interactionHook.whenComplete((hook, err) -> {
             if (err != null) {
                 event.getChannel().sendMessage(message).queue();
@@ -90,6 +91,18 @@ public abstract class BaseSlashCommand implements BaseCommand {
             }
 
             hook.editOriginal(message).queue();
+        });
+    }
+
+    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandInteractionEvent event,
+            CompletableFuture<InteractionHook> interactionHook, FileUpload file) {
+        return interactionHook.whenComplete((hook, err) -> {
+            if (err != null) {
+                event.getChannel().sendMessage(" ").addFiles(file).queue();
+                return;
+            }
+
+            hook.editOriginalAttachments(file).queue();
         });
     }
 
