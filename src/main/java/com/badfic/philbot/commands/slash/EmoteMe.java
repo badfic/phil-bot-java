@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.FileUpload;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -77,21 +78,21 @@ public class EmoteMe extends BaseSlashCommand {
                     try {
                         result = codePointsToBufferedImage(codePoints);
                     } catch (Exception e) {
-                        if (e instanceof HttpStatusCodeException sce) {
-                            if (sce.getStatusCode() == HttpStatus.NOT_FOUND) {
-                                if (codesArray.length > 1) {
-                                    codePoints = Integer.toHexString(codesArray[0]).toLowerCase(Locale.ENGLISH);
+                        if (e instanceof HttpStatusCodeException sce
+                                && sce.getStatusCode() == HttpStatus.NOT_FOUND
+                                && ArrayUtils.getLength(codesArray) > 1) {
+                            codePoints = Integer.toHexString(codesArray[0]).toLowerCase(Locale.ENGLISH);
 
-                                    try {
-                                        result = codePointsToBufferedImage(codePoints);
-                                    } catch (Exception innerException) {
-                                        replyToInteractionHook(event, interactionHook, "Could not find an emoji in your !!emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
-                                        yield null;
-                                    }
-                                }
+                            try {
+                                result = codePointsToBufferedImage(codePoints);
+                            } catch (Exception innerException) {
+                                replyToInteractionHook(event, interactionHook,
+                                        "Could not find an emoji in your !!emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
+                                yield null;
                             }
                         } else {
-                            replyToInteractionHook(event, interactionHook, "Could not find an emoji in your !!emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
+                            replyToInteractionHook(event, interactionHook,
+                                    "Could not find an emoji in your !!emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
                             yield null;
                         }
                     }
