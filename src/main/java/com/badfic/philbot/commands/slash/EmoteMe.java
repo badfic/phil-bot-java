@@ -1,6 +1,7 @@
 package com.badfic.philbot.commands.slash;
 
 import com.badfic.philbot.config.Constants;
+import com.badfic.philbot.util.EmojiUtil;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -47,7 +48,7 @@ public class EmoteMe extends BaseSlashCommand {
                 new OptionData(OptionType.STRING, "emote", "Emote/Emoji to apply to user's profile picture", true),
                 new OptionData(OptionType.MENTIONABLE, "user", "User to emote", false)
         );
-        help = "`!!emoteme :shrekphil: @Santiago`: apply shrek phil to Santiago's profile picture";
+        help = "`/emoteme emote: :shrekphil: user: @Santiago`: apply shrek phil to Santiago's profile picture";
     }
 
     @Override
@@ -68,7 +69,13 @@ public class EmoteMe extends BaseSlashCommand {
 
             BufferedImage overlayImage = switch (emojiUnion.getType()) {
                 case UNICODE -> {
-                    int[] codesArray = emojiUnion.asUnicode().getName().codePoints().toArray();
+                    if (!EmojiUtil.isEmoji(emojiString)) {
+                        replyToInteractionHook(event, interactionHook,
+                                "Could not find an emoji in your /emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
+                        yield null;
+                    }
+
+                    int[] codesArray = emojiString.codePoints().toArray();
                     String codePoints = Arrays.stream(codesArray)
                             .mapToObj(Integer::toHexString)
                             .collect(Collectors.joining("-"))
@@ -87,12 +94,12 @@ public class EmoteMe extends BaseSlashCommand {
                                 result = codePointsToBufferedImage(codePoints);
                             } catch (Exception innerException) {
                                 replyToInteractionHook(event, interactionHook,
-                                        "Could not find an emoji in your !!emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
+                                        "Could not find an emoji in your /emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
                                 yield null;
                             }
                         } else {
                             replyToInteractionHook(event, interactionHook,
-                                    "Could not find an emoji in your !!emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
+                                    "Could not find an emoji in your /emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
                             yield null;
                         }
                     }
@@ -115,6 +122,10 @@ public class EmoteMe extends BaseSlashCommand {
                     yield ImageIO.read(URI.create(emote.getImageUrl()).toURL());
                 }
             };
+
+            if (overlayImage == null) {
+                return;
+            }
 
             String effectiveAvatarUrl = member.getEffectiveAvatarUrl();
             BufferedImage profilePic = ImageIO.read(URI.create(effectiveAvatarUrl).toURL());
