@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -28,8 +29,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 
 @Component
 @Slf4j
@@ -64,24 +67,33 @@ public class EmoteMe extends BaseSlashCommand {
 
             BufferedImage overlayImage = switch (emojiUnion.getType()) {
                 case UNICODE -> {
-                    String codePoints = Arrays.stream(emojiUnion.asUnicode().getName().codePoints().toArray())
+                    int[] codesArray = emojiUnion.asUnicode().getName().codePoints().toArray();
+                    String codePoints = Arrays.stream(codesArray)
                             .mapToObj(Integer::toHexString)
                             .collect(Collectors.joining("-"))
                             .toLowerCase(Locale.ENGLISH);
 
                     BufferedImage result = null;
                     try {
-                        String url = "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/" + codePoints + ".png";
-
-                        HttpHeaders headers = new HttpHeaders();
-                        headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
-
-                        ResponseEntity<byte[]> emojiBytes = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
-                        byte[] emojiImageBytes = emojiBytes.getBody();
-                        result = ImageIO.read(new ByteArrayInputStream(emojiImageBytes));
+                        result = codePointsToBufferedImage(codePoints);
                     } catch (Exception e) {
-                        replyToInteractionHook(event, interactionHook, "Could not find an emoji in your !!emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
-                        yield null;
+                        if (e instanceof HttpStatusCodeException sce) {
+                            if (sce.getStatusCode() == HttpStatus.NOT_FOUND) {
+                                if (codesArray.length > 1) {
+                                    codePoints = Integer.toHexString(codesArray[0]).toLowerCase(Locale.ENGLISH);
+
+                                    try {
+                                        result = codePointsToBufferedImage(codePoints);
+                                    } catch (Exception innerException) {
+                                        replyToInteractionHook(event, interactionHook, "Could not find an emoji in your !!emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
+                                        yield null;
+                                    }
+                                }
+                            }
+                        } else {
+                            replyToInteractionHook(event, interactionHook, "Could not find an emoji in your !!emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
+                            yield null;
+                        }
                     }
 
                     if (result == null) {
@@ -127,6 +139,17 @@ public class EmoteMe extends BaseSlashCommand {
             log.error("Failed to emoteme [user={}] [args={}]", member.getEffectiveName(), event, e);
             replyToInteractionHook(event, interactionHook, "Failed to emoteme " + member.getAsMention());
         }
+    }
+
+    private BufferedImage codePointsToBufferedImage(String codePoints) throws IOException {
+        String url = "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/" + codePoints + ".png";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
+
+        ResponseEntity<byte[]> emojiBytes = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
+        byte[] emojiImageBytes = emojiBytes.getBody();
+        return ImageIO.read(new ByteArrayInputStream(emojiImageBytes));
     }
 
 }
