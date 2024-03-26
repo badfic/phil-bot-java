@@ -1,14 +1,5 @@
 package com.badfic.philbot.config;
 
-import static net.dv8tion.jda.api.requests.GatewayIntent.DIRECT_MESSAGES;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_EMOJIS_AND_STICKERS;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MEMBERS;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGE_REACTIONS;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MODERATION;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
-import static net.dv8tion.jda.api.requests.GatewayIntent.MESSAGE_CONTENT;
-
 import com.badfic.philbot.listeners.phil.PhilMessageListener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -38,6 +29,15 @@ import org.springframework.core.task.support.TaskExecutorAdapter;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
+
+import static net.dv8tion.jda.api.requests.GatewayIntent.DIRECT_MESSAGES;
+import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_EMOJIS_AND_STICKERS;
+import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MEMBERS;
+import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
+import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGE_REACTIONS;
+import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MODERATION;
+import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
+import static net.dv8tion.jda.api.requests.GatewayIntent.MESSAGE_CONTENT;
 
 @Configuration
 @Slf4j
@@ -149,7 +149,8 @@ public class BaseConfig {
         return JDABuilder.create(philBotToken, intents)
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.FORUM_TAGS,
                         CacheFlag.ROLE_TAGS, CacheFlag.SCHEDULED_EVENTS, CacheFlag.STICKER, CacheFlag.MEMBER_OVERRIDES)
-                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
+                .setRateLimitScheduler(taskScheduler.getScheduledExecutor(), false)
+                .setRateLimitElastic(executorService, false)
                 .setCallbackPool(executorService, false)
                 .setEventPool(executorService, false)
                 .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
