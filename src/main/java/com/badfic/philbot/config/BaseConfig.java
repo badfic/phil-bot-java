@@ -149,7 +149,8 @@ public class BaseConfig {
         return JDABuilder.create(philBotToken, intents)
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.FORUM_TAGS,
                         CacheFlag.ROLE_TAGS, CacheFlag.SCHEDULED_EVENTS, CacheFlag.STICKER, CacheFlag.MEMBER_OVERRIDES)
-                .setRateLimitPool(taskScheduler.getScheduledExecutor(), false)
+                .setRateLimitScheduler(taskScheduler.getScheduledExecutor(), false)
+                .setRateLimitElastic(executorService, false)
                 .setCallbackPool(executorService, false)
                 .setEventPool(executorService, false)
                 .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
