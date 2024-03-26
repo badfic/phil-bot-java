@@ -184,9 +184,9 @@ MAVEN_PROJECTBASEDIR=${MAVEN_BASEDIR:-"$BASE_DIR"}; export MAVEN_PROJECTBASEDIR
 log "$MAVEN_PROJECTBASEDIR"
 
 echo "Base Path is "
-echo BASE_DIR
+echo $BASE_DIR
 echo "Maven Project Base Path Is "
-echo MAVEN_PROJECTBASEDIR
+echo $MAVEN_PROJECTBASEDIR
 
 ##########################################################################################
 # Extension to allow automatically downloading the maven-wrapper.jar from Maven-central
