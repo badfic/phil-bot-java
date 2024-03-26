@@ -25,6 +25,7 @@ public class Boost extends BaseNormalCommand {
     public Boost() {
         requiredRole = Constants.ADMIN_ROLE;
         name = "boost";
+        aliases = new String[] {"blitz"};
         help = "!!boost\nManually trigger a boost, it will end at the top of the hour";
     }
 
@@ -45,15 +46,17 @@ public class Boost extends BaseNormalCommand {
         Guild guild = Objects.requireNonNull(philJda.getGuildById(baseConfig.guildId));
 
         if (swampyGamesConfig.getBoostPhrase() != null) {
+            LocalDateTime startTime = Objects.requireNonNullElseGet(swampyGamesConfig.getBoostStartTime(), () -> LocalDateTime.now().minusMinutes(61));
+
             swampyGamesConfig.setBoostPhrase(null);
+            swampyGamesConfig.setBoostStartTime(null);
             saveSwampyGamesConfig(swampyGamesConfig);
 
-            LocalDateTime startTime = LocalDateTime.now().minusHours(1);
             List<CompletableFuture<?>> futures = new ArrayList<>();
             StringBuilder description = new StringBuilder();
             discordUserRepository.findAll()
                     .stream()
-                    .filter(u -> Objects.nonNull(u.getAcceptedBoost()) && (u.getAcceptedBoost().isEqual(startTime) || u.getAcceptedBoost().isAfter(startTime)))
+                    .filter(u -> Objects.nonNull(u.getAcceptedBoost()) && u.getAcceptedBoost().isAfter(startTime))
                     .forEach(discordUser -> {
                         String userId = discordUser.getId();
 
@@ -92,12 +95,13 @@ public class Boost extends BaseNormalCommand {
         if (force || randomNumberService.nextInt(100) < swampyGamesConfig.getPercentChanceBoostHappensOnHour()) {
             String boostPhrase = Constants.pickRandom(swampyGamesConfig.getBoostWords());
             swampyGamesConfig.setBoostPhrase(boostPhrase);
+            swampyGamesConfig.setBoostStartTime(LocalDateTime.now());
             saveSwampyGamesConfig(swampyGamesConfig);
 
             MessageEmbed message = Constants.simpleEmbed("BOOST BLITZ",
-                    "Type `" + boostPhrase + "` in this channel before the top of the hour to be boosted by "
+                    "Type `" + boostPhrase + "` in this channel before the top of the hour* to be boosted by "
                             + swampyGamesConfig.getBoostEventPoints() + " points",
-                    swampyGamesConfig.getBoostStartImg());
+                    swampyGamesConfig.getBoostStartImg(), "* top of the hour unless it's midnight Pacific time, then the boost runs until 3am Pacific time");
 
             swampysChannel.sendMessageEmbeds(message).queue();
         }
