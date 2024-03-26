@@ -25,6 +25,9 @@ public class SwampyGamesConfig {
     private String boostPhrase;
 
     @Column
+    private LocalDateTime boostStartTime;
+
+    @Column
     private String mapPhrase;
 
     @Column
