@@ -16,15 +16,16 @@ public class PhilsJokes extends BaseService {
     @Scheduled(cron = "${swampy.schedule.phil.dadjoke}", zone = "${swampy.schedule.timezone}")
     public void sayDadJoke() {
         LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(HttpHeaders.ACCEPT, MediaType.TEXT_PLAIN_VALUE);
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
         headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
-        ResponseEntity<String> dadJoke = restTemplate.exchange("https://icanhazdadjoke.com/", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        ResponseEntity<JokeRecord> dadJoke = restTemplate.exchange("https://icanhazdadjoke.com/", HttpMethod.GET, new HttpEntity<>(headers), JokeRecord.class);
 
         if (dadJoke.getBody() != null) {
             philJda.getTextChannelsByName("general", false).stream().findAny().ifPresent(channel -> {
-                channel.sendMessage(dadJoke.getBody()).queue();
+                channel.sendMessage(dadJoke.getBody().joke()).queue();
             });
         }
     }
 
+    record JokeRecord(String joke) {};
 }
