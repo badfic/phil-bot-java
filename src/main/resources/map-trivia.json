@@ -511,8 +511,7 @@
     },
     {
         "code": "il",
-        "regex": ".*Israel.*",
-        "capital": "Jerusalem"
+        "regex": ".*Israel.*"
     },
     {
         "code": "im",
@@ -901,8 +900,7 @@
     },
     {
         "code": "ps",
-        "regex": ".*Palestine.*",
-        "capital": "Ramallah"
+        "regex": ".*Palestine.*"
     },
     {
         "code": "pt",
