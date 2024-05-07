@@ -32,7 +32,7 @@ public class MapCommandTest {
         MapCommand.MapTriviaObject[] countries = mapCommand.getCountries();
 
         Assertions.assertTrue(Arrays.stream(countries)
-                .noneMatch(country -> StringUtils.isBlank(country.code()) || StringUtils.isBlank(country.capital()) || StringUtils.isBlank(country.regex())));
+                .noneMatch(country -> StringUtils.isBlank(country.code()) || StringUtils.isBlank(country.regex())));
 
         Set<String> flagzipCountryCodes = new HashSet<>();
 

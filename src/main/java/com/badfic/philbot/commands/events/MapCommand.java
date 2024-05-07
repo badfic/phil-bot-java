@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import net.lingala.zip4j.model.LocalFileHeader;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -62,7 +63,7 @@ public class MapCommand extends BaseNormalCommand implements OnJdaReady {
         }
 
         MapTriviaObject mapTriviaObject = Constants.pickRandom(getCountries());
-        TriviaType triviaType = Constants.pickRandom(TriviaType.values());
+        TriviaType triviaType = StringUtils.isBlank(mapTriviaObject.capital()) ? TriviaType.FLAG : Constants.pickRandom(TriviaType.values());
 
         swampyGamesConfig.setMapPhrase(mapTriviaObject.regex());
         LocalDateTime mapTriviaExpiration = LocalDateTime.now().plusMinutes(15);
