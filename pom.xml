@@ -21,7 +21,7 @@
 		<jda.version>5.0.0-beta.24</jda.version>
 		<jsoup.version>1.17.2</jsoup.version>
 		<rome.version>2.1.0</rome.version>
-		<sentry.io.version>7.9.0</sentry.io.version>
+		<sentry.io.version>7.10.0</sentry.io.version>
 		<zip4j.version>2.11.5</zip4j.version>
 	</properties>
 
