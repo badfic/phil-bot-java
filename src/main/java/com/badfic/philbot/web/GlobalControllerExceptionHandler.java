@@ -1,9 +1,8 @@
 package com.badfic.philbot.web;
 
 import com.badfic.philbot.config.BaseConfig;
-import com.badfic.philbot.config.LoginRedirectException;
-import com.badfic.philbot.config.NewSessionException;
-import com.badfic.philbot.config.UnauthorizedException;
+import com.badfic.philbot.web.members.BaseMembersController;
+import com.badfic.philbot.web.members.HomeController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
@@ -24,8 +23,8 @@ public class GlobalControllerExceptionHandler {
         this.baseConfig = baseConfig;
     }
 
-    @ExceptionHandler(NewSessionException.class)
-    public ResponseEntity<Object> handleNewSessionException(NewSessionException e) {
+    @ExceptionHandler(BaseMembersController.NewSessionException.class)
+    public ResponseEntity<Object> handleNewSessionException(BaseMembersController.NewSessionException e) {
         StringBuilder urlBuilder = new StringBuilder()
                 .append("https://discord.com/api/oauth2/authorize?client_id=")
                 .append(baseConfig.discordClientId)
@@ -35,13 +34,13 @@ public class GlobalControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, urlBuilder.toString()).build();
     }
 
-    @ExceptionHandler(LoginRedirectException.class)
-    public ResponseEntity<Object> handleLoginRedirectException(LoginRedirectException e) {
+    @ExceptionHandler(HomeController.LoginRedirectException.class)
+    public ResponseEntity<Object> handleLoginRedirectException(HomeController.LoginRedirectException e) {
         return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, baseConfig.hostname + e.getUrl()).build();
     }
 
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException e, HttpSession httpSession) {
+    @ExceptionHandler(BaseMembersController.UnauthorizedException.class)
+    public ResponseEntity<Object> handleUnauthorizedException(BaseMembersController.UnauthorizedException e, HttpSession httpSession) {
         log.error("Unauthorized Exception caught at top level", e);
         httpSession.invalidate();
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);

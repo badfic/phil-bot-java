@@ -1,7 +1,7 @@
 package com.badfic.philbot.service;
 
 import com.badfic.philbot.CommandEvent;
-import com.badfic.philbot.commands.BaseNormalCommand;
+import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DailyRiverdaleMemeEntity;
 import com.badfic.philbot.data.DailyRiverdaleMemeRepository;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class DailyRiverdaleMemeService extends BaseNormalCommand {
+public class DailyRiverdaleMemeService extends BaseBangCommand {
 
     private static final String SEARCH_STRING = "out of context riverdale meme";
 
@@ -51,7 +51,7 @@ public class DailyRiverdaleMemeService extends BaseNormalCommand {
             return;
         }
 
-        TextChannel cursedChannel = textChannelsByName.get(0);
+        TextChannel cursedChannel = textChannelsByName.getFirst();
         Set<Long> messageIds = new HashSet<>();
 
         long lastMsgId = 0;
@@ -64,13 +64,13 @@ public class DailyRiverdaleMemeService extends BaseNormalCommand {
             }
 
             lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())
-                    ? history.getRetrievedHistory().get(0).getIdLong()
+                    ? history.getRetrievedHistory().getFirst().getIdLong()
                     : -1;
 
             for (Message message : history.getRetrievedHistory()) {
                 if (StringUtils.containsIgnoreCase(message.getContentRaw(), SEARCH_STRING)) {
                     if (CollectionUtils.isNotEmpty(message.getAttachments())) {
-                        String imageUrl = message.getAttachments().get(0).getUrl();
+                        String imageUrl = message.getAttachments().getFirst().getUrl();
                         String messageContent = message.getContentRaw();
 
                         messageIds.add(message.getIdLong());

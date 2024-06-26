@@ -1,7 +1,7 @@
 package com.badfic.philbot.web.members;
 
-import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.commands.ModHelpAware;
+import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -25,7 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 public class CommandsController extends BaseMembersController {
 
-    private final List<BaseNormalCommand> commands;
+    private final List<BaseBangCommand> commands;
 
     @GetMapping(value = "/commands", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
@@ -81,7 +81,7 @@ public class CommandsController extends BaseMembersController {
         return ArrayUtils.isEmpty(array) ? null : array;
     }
 
-    private static String getModHelp(boolean isMod, BaseNormalCommand command) {
+    private static String getModHelp(boolean isMod, BaseBangCommand command) {
         if (isMod && command instanceof ModHelpAware modHelpAware) {
             return modHelpAware.getModHelp();
         }

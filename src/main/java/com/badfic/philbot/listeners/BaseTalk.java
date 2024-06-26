@@ -1,7 +1,7 @@
 package com.badfic.philbot.listeners;
 
 import com.badfic.philbot.CommandEvent;
-import com.badfic.philbot.commands.BaseNormalCommand;
+import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import java.util.concurrent.TimeUnit;
@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class BaseTalk extends BaseNormalCommand {
+public abstract class BaseTalk extends BaseBangCommand {
 
     public BaseTalk(String name) {
         this.name = name;
@@ -18,8 +18,13 @@ public abstract class BaseTalk extends BaseNormalCommand {
         help = Constants.PREFIX + name + " #channel Type Your Message\nExample: !!philTalk #general Hello Swamplings";
     }
 
-    public abstract Function<SwampyGamesConfig, String> usernameGetter();
-    public abstract Function<SwampyGamesConfig, String> avatarGetter();
+    protected Function<SwampyGamesConfig, String> usernameGetter() {
+        return null;
+    }
+
+    protected Function<SwampyGamesConfig, String> avatarGetter() {
+        return null;
+    }
 
     @Override
     public void execute(CommandEvent event) {

@@ -54,7 +54,7 @@ public class Player {
 
     public void setEffectiveNameViaJda(JDA jda) {
         if (discordUser != null) {
-            Member memberById = jda.getGuilds().get(0).getMemberById(discordUser);
+            Member memberById = jda.getGuilds().getFirst().getMemberById(discordUser);
             if (memberById != null) {
                 effectiveName = memberById.getEffectiveName();
                 return;

@@ -1,14 +1,13 @@
 package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.LoginRedirectException;
-import com.badfic.philbot.config.UnauthorizedException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -19,7 +18,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -86,9 +84,9 @@ public class HomeController extends BaseMembersController {
                 .append("&scope=identify")
                 .toString();
 
-        LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
 
         ResponseEntity<DiscordApiLoginResponse> loginResponse = restTemplate.exchange(authApi, HttpMethod.POST,
@@ -98,10 +96,10 @@ public class HomeController extends BaseMembersController {
     }
 
     private DiscordApiIdentityResponse getDiscordApiIdentityResponse(String accessToken) {
-        LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.setBearerAuth(accessToken);
         headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
         ResponseEntity<DiscordApiIdentityResponse> identityResponse = restTemplate.exchange("https://discord.com/api/users/@me", HttpMethod.GET,
                 new HttpEntity<>(headers), DiscordApiIdentityResponse.class);

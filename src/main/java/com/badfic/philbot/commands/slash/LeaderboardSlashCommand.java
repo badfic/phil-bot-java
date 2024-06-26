@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.slash;
 
-import com.badfic.philbot.commands.swampy.SwampyCommand;
+import com.badfic.philbot.commands.bang.SwampyCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import java.text.NumberFormat;
@@ -23,8 +23,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class LeaderboardSlashCommand extends BaseSlashCommand {
-    public LeaderboardSlashCommand() {
+class LeaderboardSlashCommand extends BaseSlashCommand {
+    LeaderboardSlashCommand() {
         name = "leaderboard";
         options = List.of(new OptionData(OptionType.STRING, "type", "Bastards or Chaos Children Leaderboard", true, true));
         help = "Show the Swampys leaderboard for either Bastards or Chaos Children";

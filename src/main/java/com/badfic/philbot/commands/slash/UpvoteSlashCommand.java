@@ -20,9 +20,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UpvoteSlashCommand extends BaseSlashCommand {
-
-    public UpvoteSlashCommand() {
+class UpvoteSlashCommand extends BaseSlashCommand {
+    UpvoteSlashCommand() {
         name = "upvote";
         options = List.of(new OptionData(OptionType.STRING, "user", "User(s) to upvote", true, false));
         help = "Upvote somebody(s)!";
@@ -88,5 +87,4 @@ public class UpvoteSlashCommand extends BaseSlashCommand {
 
         replyToInteractionHook(event, interactionHook, Constants.simpleEmbed("Successfully Upvoted...", description.toString()));
     }
-
 }

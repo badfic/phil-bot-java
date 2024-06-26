@@ -9,7 +9,7 @@ import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MODERATION;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
 import static net.dv8tion.jda.api.requests.GatewayIntent.MESSAGE_CONTENT;
 
-import com.badfic.philbot.listeners.phil.PhilMessageListener;
+import com.badfic.philbot.listeners.Phil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.Arrays;
@@ -28,11 +28,8 @@ import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
-import org.springframework.boot.web.embedded.tomcat.TomcatProtocolHandlerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.support.TaskExecutorAdapter;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
@@ -45,12 +42,6 @@ public class BaseConfig {
 
     @Value("${PHIL_BOT_TOKEN}")
     public String philBotToken;
-
-    @Value("${git.commit.id}")
-    public String commitSha;
-
-    @Value("${git.commit.message.short}")
-    public String commitMessage;
 
     @Value("${OWNER_ID}")
     public String ownerId;
@@ -76,11 +67,6 @@ public class BaseConfig {
     @Bean
     public ExecutorService executorService() {
         return Executors.newVirtualThreadPerTaskExecutor();
-    }
-
-    @Bean
-    public TomcatProtocolHandlerCustomizer<?> protocolHandlerVirtualThreadExecutorCustomizer(ExecutorService executorService) {
-        return protocolHandler -> protocolHandler.setExecutor(executorService);
     }
 
     @Bean(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
@@ -129,20 +115,11 @@ public class BaseConfig {
         return new RestTemplate(new OkHttp3ClientHttpRequestFactory(okHttpClient));
     }
 
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer propsConfig = new PropertySourcesPlaceholderConfigurer();
-        propsConfig.setLocation(new ClassPathResource("git.properties"));
-        propsConfig.setIgnoreResourceNotFound(true);
-        propsConfig.setIgnoreUnresolvablePlaceholders(true);
-        return propsConfig;
-    }
-
     @Bean(name = "philJda")
     public JDA philJda(ThreadPoolTaskScheduler taskScheduler,
                        ExecutorService executorService,
                        OkHttpClient okHttpClient,
-                       PhilMessageListener philMessageListener) throws Exception {
+                       Phil.MessageListener messageListener) throws Exception {
         List<GatewayIntent> intents = Arrays.asList(GUILD_MEMBERS, GUILD_MODERATION, GUILD_MESSAGES, MESSAGE_CONTENT, GUILD_VOICE_STATES,
                 GUILD_MESSAGE_REACTIONS, GUILD_EMOJIS_AND_STICKERS, DIRECT_MESSAGES);
 
@@ -155,7 +132,7 @@ public class BaseConfig {
                 .setEventPool(executorService, false)
                 .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
                 .setHttpClient(okHttpClient)
-                .addEventListeners(philMessageListener)
+                .addEventListeners(messageListener)
                 .setActivity(Activity.playing("with our feelings"))
                 .build();
     }

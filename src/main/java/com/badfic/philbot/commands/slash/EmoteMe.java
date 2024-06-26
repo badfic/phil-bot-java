@@ -1,17 +1,19 @@
 package com.badfic.philbot.commands.slash;
 
+import com.badfic.philbot.commands.bang.image.ImageUtils;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.util.EmojiUtil;
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
@@ -38,11 +40,11 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 @Component
 @Slf4j
-public class EmoteMe extends BaseSlashCommand {
+class EmoteMe extends BaseSlashCommand {
 
     private static final float ALPHA = 0.69f;
 
-    public EmoteMe() {
+    EmoteMe() {
         name = "emoteme";
         options = List.of(
                 new OptionData(OptionType.STRING, "emote", "Emote/Emoji to apply to user's profile picture", true),
@@ -69,7 +71,30 @@ public class EmoteMe extends BaseSlashCommand {
 
             BufferedImage overlayImage = switch (emojiUnion.getType()) {
                 case UNICODE -> {
-                    if (!EmojiUtil.isEmoji(emojiString)) {
+                    String hexCodePoints = emojiString.codePoints()
+                            .mapToObj(Integer::toHexString)
+                            .map(String::toUpperCase)
+                            .collect(Collectors.joining(" "));
+
+                    boolean isEmoji;
+                    try (InputStream emojiTestFileStream = this.getClass().getClassLoader().getResourceAsStream("unicode-org-emoji-test.txt");
+                         InputStreamReader inputStreamReader = new InputStreamReader(emojiTestFileStream, StandardCharsets.UTF_8);
+                         BufferedReader reader = new BufferedReader(inputStreamReader)) {
+                        isEmoji = reader.lines()
+                                .map(line -> {
+                                    if (StringUtils.isBlank(line) || line.startsWith("#")) {
+                                        return null;
+                                    }
+                                    String[] split = line.split(";");
+                                    return split[0].trim();
+                                })
+                                .filter(Objects::nonNull)
+                                .anyMatch(hex -> hex.equals(hexCodePoints));
+                    } catch (IOException e1) {
+                        isEmoji = false;
+                    }
+
+                    if (!isEmoji) {
                         replyToInteractionHook(event, interactionHook,
                                 "Could not find an emoji in your /emoteme command. If you think this is an error, contact Santiago \uD83D\uDE43");
                         yield null;
@@ -130,23 +155,9 @@ public class EmoteMe extends BaseSlashCommand {
             String effectiveAvatarUrl = member.getEffectiveAvatarUrl();
             BufferedImage profilePic = ImageIO.read(URI.create(effectiveAvatarUrl).toURL());
 
-            BufferedImage newImg = new BufferedImage(profilePic.getWidth(), profilePic.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D graphics = newImg.createGraphics();
+            byte[] imageBytes = ImageUtils.makeOverlaidImage(overlayImage, profilePic, ALPHA);
 
-            graphics.setComposite(AlphaComposite.Clear);
-            graphics.fillRect(0, 0, newImg.getWidth(), newImg.getHeight());
-
-            graphics.setComposite(AlphaComposite.SrcOver);
-            graphics.drawImage(profilePic, 0, 0, null);
-
-            graphics.setComposite(AlphaComposite.SrcOver.derive(ALPHA));
-            graphics.drawImage(overlayImage, 0, 0, null);
-
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(newImg, "png", outputStream);
-            graphics.dispose();
-
-            replyToInteractionHook(event, interactionHook, FileUpload.fromData(outputStream.toByteArray(), "emote.png"));
+            replyToInteractionHook(event, interactionHook, FileUpload.fromData(imageBytes, "emote.png"));
         } catch (Exception e) {
             log.error("Failed to emoteme [user={}] [args={}]", member.getEffectiveName(), event, e);
             replyToInteractionHook(event, interactionHook, "Failed to emoteme " + member.getAsMention());
@@ -163,5 +174,4 @@ public class EmoteMe extends BaseSlashCommand {
         byte[] emojiImageBytes = emojiBytes.getBody();
         return ImageIO.read(new ByteArrayInputStream(emojiImageBytes));
     }
-
 }

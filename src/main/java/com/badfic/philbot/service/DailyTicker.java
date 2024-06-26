@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class DailyTicker extends BaseService {
+class DailyTicker extends BaseService {
     private final List<DailyTickable> dailyTickables;
 
     @Scheduled(cron = "${swampy.schedule.daily}", zone = "${swampy.schedule.timezone}")
-    public void tick() {
+    void tick() {
         try {
             philJda.awaitReady();
         } catch (Exception e) {
@@ -32,5 +32,4 @@ public class DailyTicker extends BaseService {
             System.gc(); // Some of the daily tasks create a lot of objects, might as well force a GC to clear up what we can
         });
     }
-
 }

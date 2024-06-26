@@ -76,7 +76,7 @@ public class HungerSimService extends BaseService {
             }
 
             // DB Constraint guarantees there's only one opening round = true
-            Round openingRound = roundRepository.findByOpeningRound(true).get(0);
+            Round openingRound = roundRepository.findByOpeningRound(true).getFirst();
 
             return runRoundAndGetResult(game, alivePlayers, openingRound);
         }
@@ -105,11 +105,11 @@ public class HungerSimService extends BaseService {
             }
 
             switch (outcome.getNumPlayers()) {
-                case 1 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), philJda, pronounRepository));
-                case 2 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), philJda, pronounRepository));
-                case 3 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), outcomePlayerSet.get(2), philJda,
+                case 1 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.getFirst(), philJda, pronounRepository));
+                case 2 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.getFirst(), outcomePlayerSet.get(1), philJda, pronounRepository));
+                case 3 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.getFirst(), outcomePlayerSet.get(1), outcomePlayerSet.get(2), philJda,
                         pronounRepository));
-                case 4 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.get(0), outcomePlayerSet.get(1), outcomePlayerSet.get(2), outcomePlayerSet.get(3),
+                case 4 -> appliedOutcomes.add(outcome.apply(outcomePlayerSet.getFirst(), outcomePlayerSet.get(1), outcomePlayerSet.get(2), outcomePlayerSet.get(3),
                         philJda, pronounRepository));
                 default -> throw new IllegalArgumentException("Found Outcome that somehow had more than 4 players");
             }

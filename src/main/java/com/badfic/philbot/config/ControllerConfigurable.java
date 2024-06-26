@@ -16,5 +16,4 @@ public @interface ControllerConfigurable {
     Type type();
 
     Category category();
-
 }

@@ -349,7 +349,7 @@ public class HungerSimRestController extends BaseMembersController {
 
         gameEntity.setId(Constants.DATA_SINGLETON_ID);
         gameEntity.setName(game.name);
-        gameEntity.setRound(openingRound.get(0).getId());
+        gameEntity.setRound(openingRound.getFirst().getId());
         gameEntity.setRoundCounter(0);
 
         if (optionalGame.isPresent()) {

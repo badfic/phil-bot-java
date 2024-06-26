@@ -39,7 +39,7 @@ public class Ao3MetadataParser extends BaseService {
         try {
             String work = getWork(link);
             MessageEmbed messageEmbed = parseWork(link, work);
-            philJda.getTextChannelsByName(channelName, false).get(0).sendMessageEmbeds(messageEmbed).queue();
+            philJda.getTextChannelsByName(channelName, false).getFirst().sendMessageEmbeds(messageEmbed).queue();
             return true;
         } catch (Exception e) {
             log.error("Failed to parse ao3 [link={}]", link, e);
@@ -67,11 +67,11 @@ public class Ao3MetadataParser extends BaseService {
     MessageEmbed parseWork(String originalLink, String work) {
         Document document = Jsoup.parse(work);
 
-        String title = document.getElementsByClass("title heading").get(0).text();
+        String title = document.getElementsByClass("title heading").getFirst().text();
 
         Elements authorElement = document.getElementsByAttributeValueContaining("rel", "author");
-        String authorLink = authorElement.get(0).attr("href");
-        String authorName = authorElement.get(0).text();
+        String authorLink = authorElement.getFirst().attr("href");
+        String authorName = authorElement.getFirst().text();
 
         StringBuilder description = new StringBuilder();
         description.append("[**")
@@ -85,13 +85,13 @@ public class Ao3MetadataParser extends BaseService {
                 .append(")\n\n**Rating**: ");
 
         String rating = "Explicit";
-        Element workMetaGroup = document.getElementsByClass("work meta group").get(0);
+        Element workMetaGroup = document.getElementsByClass("work meta group").getFirst();
 
         for (Element tags : workMetaGroup.getElementsByClass("rating tags")) {
             if (tags.tagName().equalsIgnoreCase("dd")) {
                 Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.get(0).getElementsByTag("li")) {
-                    rating = li.getElementsByTag("a").get(0).text();
+                for (Element li : tagList.getFirst().getElementsByTag("li")) {
+                    rating = li.getElementsByTag("a").getFirst().text();
                     description.append(rating);
                     break;
                 }
@@ -102,8 +102,8 @@ public class Ao3MetadataParser extends BaseService {
         for (Element tags : workMetaGroup.getElementsByClass("warning tags")) {
             if (tags.tagName().equalsIgnoreCase("dd")) {
                 Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.get(0).getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").get(0).text();
+                for (Element li : tagList.getFirst().getElementsByTag("li")) {
+                    String tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -117,8 +117,8 @@ public class Ao3MetadataParser extends BaseService {
         for (Element tags : workMetaGroup.getElementsByClass("category tags")) {
             if (tags.tagName().equalsIgnoreCase("dd")) {
                 Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.get(0).getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").get(0).text();
+                for (Element li : tagList.getFirst().getElementsByTag("li")) {
+                    String tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -133,7 +133,7 @@ public class Ao3MetadataParser extends BaseService {
         if (summaryModule.isEmpty()) {
             description.append("No Summary Provided");
         } else {
-            String summary = summaryModule.get(0).getElementsByTag("blockquote").text();
+            String summary = summaryModule.getFirst().getElementsByTag("blockquote").text();
             description.append(summary.length() <= 800 ? summary : (summary.substring(0, 797) + "..."));
         }
 
@@ -141,8 +141,8 @@ public class Ao3MetadataParser extends BaseService {
         for (Element tags : workMetaGroup.getElementsByClass("fandom tags")) {
             if (tags.tagName().equalsIgnoreCase("dd")) {
                 Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.get(0).getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").get(0).text();
+                for (Element li : tagList.getFirst().getElementsByTag("li")) {
+                    String tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -156,8 +156,8 @@ public class Ao3MetadataParser extends BaseService {
         for (Element tags : workMetaGroup.getElementsByClass("relationship tags")) {
             if (tags.tagName().equalsIgnoreCase("dd")) {
                 Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.get(0).getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").get(0).text();
+                for (Element li : tagList.getFirst().getElementsByTag("li")) {
+                    String tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -171,8 +171,8 @@ public class Ao3MetadataParser extends BaseService {
         for (Element tags : workMetaGroup.getElementsByClass("character tags")) {
             if (tags.tagName().equalsIgnoreCase("dd")) {
                 Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.get(0).getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").get(0).text();
+                for (Element li : tagList.getFirst().getElementsByTag("li")) {
+                    String tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -186,8 +186,8 @@ public class Ao3MetadataParser extends BaseService {
         for (Element tags : workMetaGroup.getElementsByClass("freeform tags")) {
             if (tags.tagName().equalsIgnoreCase("dd")) {
                 Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.get(0).getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").get(0).text();
+                for (Element li : tagList.getFirst().getElementsByTag("li")) {
+                    String tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -201,7 +201,7 @@ public class Ao3MetadataParser extends BaseService {
         String chapters = null;
         for (Element outerStats : workMetaGroup.getElementsByClass("stats")) {
             if (outerStats.tagName().equalsIgnoreCase("dd")) {
-                Element innerStats = outerStats.getElementsByTag("dl").get(0);
+                Element innerStats = outerStats.getElementsByTag("dl").getFirst();
                 for (Element ddStats : innerStats.getElementsByTag("dd")) {
                     if (ddStats.className().equalsIgnoreCase("words")) {
                         words = ddStats.text();
