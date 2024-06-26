@@ -2,8 +2,6 @@ package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.config.NewSessionException;
-import com.badfic.philbot.config.UnauthorizedException;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,8 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,7 +25,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
@@ -119,9 +119,9 @@ public abstract class BaseMembersController {
                 .append(session.getAttribute(DISCORD_REFRESH_TOKEN))
                 .toString();
 
-        LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
 
         ResponseEntity<DiscordApiLoginResponse> loginResponse = restTemplate.exchange(authApi, HttpMethod.POST,
@@ -138,4 +138,17 @@ public abstract class BaseMembersController {
     public record DiscordApiLoginResponse(@JsonProperty("access_token") String accessToken, @JsonProperty("refresh_token") String refreshToken,
                                           @JsonProperty("expires_in") Long expiresIn) {}
 
+    @Getter
+    @RequiredArgsConstructor
+    public static class LoginRedirectException extends RuntimeException {
+        private final String url;
+    }
+
+    public static class NewSessionException extends RuntimeException {}
+
+    public static class UnauthorizedException extends RuntimeException {
+        public UnauthorizedException(String message) {
+            super(message);
+        }
+    }
 }

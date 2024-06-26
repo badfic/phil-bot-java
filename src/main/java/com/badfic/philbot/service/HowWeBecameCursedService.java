@@ -59,7 +59,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
             }
 
             lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())
-                    ? history.getRetrievedHistory().get(0).getIdLong()
+                    ? history.getRetrievedHistory().getFirst().getIdLong()
                     : -1;
 
             for (Message message : history.getRetrievedHistory()) {

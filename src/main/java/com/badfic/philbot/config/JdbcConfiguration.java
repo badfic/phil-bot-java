@@ -10,7 +10,7 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 
 @Configuration
 @EnableJdbcRepositories(basePackages = "com.badfic.philbot")
-public class JdbcConfiguration extends AbstractJdbcConfiguration {
+class JdbcConfiguration extends AbstractJdbcConfiguration {
 
     @Setter(onMethod_ = {@Autowired})
     private List<Converter<?, ?>> converters;

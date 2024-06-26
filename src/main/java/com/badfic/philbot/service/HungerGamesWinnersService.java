@@ -1,7 +1,7 @@
 package com.badfic.philbot.service;
 
 import com.badfic.philbot.CommandEvent;
-import com.badfic.philbot.commands.BaseNormalCommand;
+import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.HungerGamesWinnerEntity;
 import com.badfic.philbot.data.HungerGamesWinnerRepository;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class HungerGamesWinnersService extends BaseNormalCommand {
+public class HungerGamesWinnersService extends BaseBangCommand {
 
     private static final String REACTION_EMOJI = "\uD83C\uDFC1";
 

@@ -6,11 +6,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DailyRandomNumber extends BaseService {
+class DailyRandomNumber extends BaseService {
 
     @Scheduled(cron = "${swampy.schedule.phil.dailyrandomnumber}", zone = "${swampy.schedule.timezone}")
-    public void dailyRandomNumber() {
-        TextChannel general = philJda.getTextChannelsByName("general", false).get(0);
+    void dailyRandomNumber() {
+        TextChannel general = philJda.getTextChannelsByName("general", false).getFirst();
 
         Character[] letters = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'};
         int number = randomNumberService.nextInt(1, 15);

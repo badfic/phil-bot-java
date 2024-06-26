@@ -16,9 +16,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DownvoteSlashCommand extends BaseSlashCommand {
-
-    public DownvoteSlashCommand() {
+class DownvoteSlashCommand extends BaseSlashCommand {
+    DownvoteSlashCommand() {
         name = "downvote";
         options = List.of(new OptionData(OptionType.MENTIONABLE, "user", "User to downvote", true, false));
         help = "Downvote somebody!";
@@ -71,5 +70,4 @@ public class DownvoteSlashCommand extends BaseSlashCommand {
             replyToInteractionHook(event, interactionHook, "Successfully downvoted " + mentionedMember.getEffectiveName());
         }
     }
-
 }

@@ -1,6 +1,5 @@
 package com.badfic.philbot.web.members;
 
-import com.badfic.philbot.config.NewSessionException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

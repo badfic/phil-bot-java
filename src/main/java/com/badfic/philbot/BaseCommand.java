@@ -95,7 +95,7 @@ public interface BaseCommand {
         Rank newRank = Rank.byXp(newXp);
 
         if (newRank != rankZero && existingRank != newRank) {
-            TextChannel swampysChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).get(0);
+            TextChannel swampysChannel = member.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
 
             MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + newRank.getLevel() + " | " + newRank.getRoleName(),
                     newRank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", newRank.getRoleName()),

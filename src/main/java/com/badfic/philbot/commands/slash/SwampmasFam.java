@@ -15,9 +15,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SwampmasFam extends BaseSlashCommand {
-
-    public SwampmasFam() {
+class SwampmasFam extends BaseSlashCommand {
+    SwampmasFam() {
         name = "swampmasfam";
         options = List.of(new OptionData(OptionType.MENTIONABLE, "user", "user to set image for", true),
                 new OptionData(OptionType.STRING, "image", "url of image", true));

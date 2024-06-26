@@ -1,6 +1,6 @@
 package com.badfic.philbot.commands.slash;
 
-import com.badfic.philbot.commands.swampy.SwampyCommand;
+import com.badfic.philbot.commands.bang.SwampyCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
@@ -20,9 +20,8 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SlotsSlashCommand extends BaseSlashCommand {
-
-    public SlotsSlashCommand() {
+class SlotsSlashCommand extends BaseSlashCommand {
+    SlotsSlashCommand() {
         name = "slots";
         help = "Play slots to win swampy points!";
     }

@@ -254,11 +254,11 @@ public class Constants {
 
     public static void debugToTestChannel(JDA jda, String msg) {
         log.info(msg);
-        jda.getTextChannelsByName(Constants.TEST_CHANNEL, false).get(0).sendMessage(msg).queue();
+        jda.getTextChannelsByName(Constants.TEST_CHANNEL, false).getFirst().sendMessage(msg).queue();
     }
 
     public static void debugToModLogsChannel(JDA jda, MessageEmbed messageEmbed) {
-        jda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).get(0).sendMessageEmbeds(messageEmbed).queue();
+        jda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).getFirst().sendMessageEmbeds(messageEmbed).queue();
     }
 
     public static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {

@@ -17,9 +17,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RankSlashCommand extends BaseSlashCommand {
-
-    public RankSlashCommand() {
+class RankSlashCommand extends BaseSlashCommand {
+    RankSlashCommand() {
         name = "rank";
         options = List.of(new OptionData(OptionType.MENTIONABLE, "user", "user to show rank of"));
         help = "Show your swampy level (rank)";

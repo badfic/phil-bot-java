@@ -1,9 +1,9 @@
 package com.badfic.philbot.listeners;
 
 import com.badfic.philbot.CommandEvent;
-import com.badfic.philbot.commands.BaseNormalCommand;
 import com.badfic.philbot.commands.ModHelpAware;
-import com.badfic.philbot.commands.image.BaseTwoUserImageMeme;
+import com.badfic.philbot.commands.bang.BaseBangCommand;
+import com.badfic.philbot.commands.bang.image.ImageUtils;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.BaseResponsesConfig;
 import com.badfic.philbot.data.BaseResponsesConfigRepository;
@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 import javax.imageio.ImageIO;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -33,14 +34,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 
 @Slf4j
-public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends BaseNormalCommand implements ModHelpAware {
+public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends BaseBangCommand implements ModHelpAware {
 
     private final BaseResponsesConfigRepository<T> configRepository;
     private final Function<SwampyGamesConfig, String> usernameGetter;
     private final Function<SwampyGamesConfig, String> avatarGetter;
     private final String fullCmdPrefix;
-    @Getter
-    private final String modHelp;
+    @Getter private final String modHelp;
 
     public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository, JdbcAggregateTemplate jdbcAggregateTemplate,
                              String name, Supplier<T> responsesConfigConstructor, Function<SwampyGamesConfig, String> usernameGetter,
@@ -128,9 +128,9 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                     return;
                 }
 
-                responsesConfig.getNsfwConfig().channels().add(mentionedChannels.get(0).getName());
+                responsesConfig.getNsfwConfig().channels().add(mentionedChannels.getFirst().getName());
                 configRepository.save(responsesConfig);
-                event.getChannel().sendMessageFormat("%s, saved %s to nsfw config", event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention())
+                event.getChannel().sendMessageFormat("%s, saved %s to nsfw config", event.getAuthor().getAsMention(), mentionedChannels.getFirst().getAsMention())
                         .queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw remove channel")) {
                 List<TextChannel> mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
@@ -155,10 +155,10 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                     return;
                 }
 
-                responsesConfig.getNsfwConfig().channels().remove(mentionedChannels.get(0).getName());
+                responsesConfig.getNsfwConfig().channels().remove(mentionedChannels.getFirst().getName());
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessageFormat("%s, removed %s from nsfw config",
-                        event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention()).queue();
+                        event.getAuthor().getAsMention(), mentionedChannels.getFirst().getAsMention()).queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw add channel")) {
                 List<TextChannel> mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
@@ -173,9 +173,9 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                     return;
                 }
 
-                responsesConfig.getSfwConfig().channels().add(mentionedChannels.get(0).getName());
+                responsesConfig.getSfwConfig().channels().add(mentionedChannels.getFirst().getName());
                 configRepository.save(responsesConfig);
-                event.getChannel().sendMessageFormat("%s, saved %s to sfw config", event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention())
+                event.getChannel().sendMessageFormat("%s, saved %s to sfw config", event.getAuthor().getAsMention(), mentionedChannels.getFirst().getAsMention())
                         .queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw remove channel")) {
                 List<TextChannel> mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
@@ -200,10 +200,10 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                     return;
                 }
 
-                responsesConfig.getSfwConfig().channels().remove(mentionedChannels.get(0).getName());
+                responsesConfig.getSfwConfig().channels().remove(mentionedChannels.getFirst().getName());
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessageFormat("%s, removed %s from sfw config",
-                        event.getAuthor().getAsMention(), mentionedChannels.get(0).getAsMention()).queue();
+                        event.getAuthor().getAsMention(), mentionedChannels.getFirst().getAsMention()).queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw add")) {
                 String saying = msgContent.replace(fullCmdPrefix + " nsfw add", "").trim();
                 if (saying.isEmpty()) {
@@ -306,13 +306,30 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                     botAvatarUrl = avatarGetter.apply(swampyGamesConfig);
                 }
 
-                byte[] bytes = BaseTwoUserImageMeme.makeTwoUserMemeImageBytes(botAvatarUrl, 160, 27, 63, authorAvatarUrl, 160, 187, 24, hugImage);
-
                 philJda.getTextChannelById(channelId)
-                        .sendMessage(" ")
-                        .addFiles(FileUpload.fromData(bytes, "hug.png"))
-                        .queue();
+                        .sendMessageEmbeds(new EmbedBuilder().setImage(botAvatarUrl).build())
+                        .queue(msg -> {
+                            // This nightmare is because Discord disallowed hot-linking.
+                            // We have to "re-upload" the image, pull the newly generated proxyUrl, then delete the "re-uploaded" message.
+                            String fetchedUrl = msg.getEmbeds().getFirst().getImage().getProxyUrl();
 
+                            byte[] bytes;
+                            try {
+                                bytes = ImageUtils.makeTwoUserMemeImageBytes(fetchedUrl, 160, 27, 63, authorAvatarUrl, 160, 187, 24, hugImage);
+                            } catch (Exception e) {
+                                msg.delete().queue();
+                                philJda.getTextChannelById(channelId)
+                                        .sendMessage("HUG!")
+                                        .queue();
+                                return;
+                            }
+
+                            msg.delete().queue();
+                            philJda.getTextChannelById(channelId)
+                                    .sendMessage(" ")
+                                    .addFiles(FileUpload.fromData(bytes, "hug.png"))
+                                    .queue();
+                        });
                 return;
             } catch (Exception e) {
                 log.error("{} could not hug [user={}]", getClass().getSimpleName(), event.getAuthor().getAsMention(), e);
