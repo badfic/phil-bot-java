@@ -22,6 +22,7 @@
 		<jsoup.version>1.17.2</jsoup.version>
 		<rome.version>2.1.0</rome.version>
 		<sentry.io.version>7.10.0</sentry.io.version>
+		<sumologic.logback.version>1.7</sumologic.logback.version>
 		<zip4j.version>2.11.5</zip4j.version>
 	</properties>
 
@@ -95,6 +96,11 @@
 			<groupId>io.sentry</groupId>
 			<artifactId>sentry-logback</artifactId>
 			<version>${sentry.io.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sumologic.plugins.logback</groupId>
+			<artifactId>sumologic-logback-appender</artifactId>
+			<version>${sumologic.logback.version}</version>
 		</dependency>
 
 		<dependency>

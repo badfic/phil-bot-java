@@ -12,17 +12,16 @@
         </options>
     </appender>
 
-    <appender name="Logflare" class="com.badfic.philbot.log.LogflareAppender">
+    <appender name="SumoAppender" class="com.sumologic.logback.SumoLogicAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
-        <logflareUrl>${LOGFLARE_URL}</logflareUrl>
-        <logflareApiKey>${LOGFLARE_API_KEY}</logflareApiKey>
+        <url>${SUMOLOGIC_URL}</url>
     </appender>
 
     <root level="INFO">
         <appender-ref ref="Console" />
-        <appender-ref ref="Logflare" />
+        <appender-ref ref="SumoAppender" />
         <appender-ref ref="Sentry" />
     </root>
 </configuration>
