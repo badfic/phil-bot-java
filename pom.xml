@@ -121,6 +121,22 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>build-image-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<image>
+						<name>ghcr.io/badfic/phil-bot-java</name>
+						<buildpacks>
+							<buildpack>paketobuildpacks/java</buildpack>
+						</buildpacks>
+						<builder>paketobuildpacks/builder-jammy-buildpackless-tiny</builder>
+					</image>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>io.github.git-commit-id</groupId>
