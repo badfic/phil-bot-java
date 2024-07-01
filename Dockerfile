@@ -1,6 +1,7 @@
 FROM ghcr.io/bell-sw/liberica-runtime-container:jdk-21-slim-glibc as builder
 
 COPY . .
+ARG MVNW_VERBOSE=true
 RUN . mvnw package
 RUN java -Djarmode=layertools -jar target/philbot-0.0.1-SNAPSHOT.jar extract
 
