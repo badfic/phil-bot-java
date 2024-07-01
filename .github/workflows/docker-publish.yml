@@ -9,7 +9,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  DO_PUBLISH: ${{ github.event_name != 'pull_request' }}
+  DO_PUBLISH: true
 
 jobs:
   build:
