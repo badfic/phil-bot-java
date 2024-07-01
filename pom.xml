@@ -129,6 +129,13 @@
 					</execution>
 				</executions>
 				<configuration>
+					<docker>
+						<publishRegistry>
+							<username>${env.DOCKER_USERNAME}</username>
+							<password>${env.DOCKER_PASSWORD}</password>
+							<url>${env.REGISTRY}</url>
+						</publishRegistry>
+					</docker>
 					<image>
 						<name>ghcr.io/badfic/phil-bot-java</name>
 						<tags>${env.DOCKER_TAGS}</tags>
