@@ -90,7 +90,7 @@ class Keanu {
         @Scheduled(cron = "${swampy.schedule.keanu.goodmorning}", zone = "${swampy.schedule.timezone}")
         void goodMorning() {
             TextChannel general = philJda.getTextChannelsByName("general", false).getFirst();
-            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
+            SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
             discordWebhookSendService.sendMessage(general.getIdLong(), swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(),
                     Constants.pickRandom(GOOD_MORNING_GIFS));

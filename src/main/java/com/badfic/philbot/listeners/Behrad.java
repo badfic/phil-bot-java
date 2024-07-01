@@ -58,7 +58,7 @@ class Behrad {
         @Scheduled(cron = "${swampy.schedule.behrad.humpday}", zone = "${swampy.schedule.timezone}")
         void behradHumpDay() {
             philJda.getTextChannelsByName("general", false).stream().findAny().ifPresent(channel -> {
-                SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
+                SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
 
                 discordWebhookSendService.sendMessage(channel.getIdLong(), swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
                         "https://tenor.com/view/itis-wednesdaymy-dudes-wednesday-viralyoutube-gif-18012295");

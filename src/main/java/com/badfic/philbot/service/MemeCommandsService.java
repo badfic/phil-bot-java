@@ -111,7 +111,7 @@ public class MemeCommandsService extends BaseService {
                 }
             }
 
-            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
+            SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
             discordWebhookSendService.sendMessage(textChannel.getIdLong(), swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(), url);
         }
     }
