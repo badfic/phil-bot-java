@@ -141,6 +141,10 @@
 						<tags>${env.DOCKER_TAGS}</tags>
 						<publish>${env.DO_PUBLISH}</publish>
 						<builder>bellsoft/buildpacks.builder:musl</builder>
+						<env>
+							<BPL_JVM_THREAD_COUNT>64</BPL_JVM_THREAD_COUNT>
+							<JAVA_TOOL_OPTIONS>-XX:ReservedCodeCacheSize=32M -Xss512k -XX:MaxMetaspaceSize=128m -verbose:gc</JAVA_TOOL_OPTIONS>
+						</env>
 					</image>
 				</configuration>
 			</plugin>
