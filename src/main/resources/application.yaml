@@ -11,6 +11,9 @@ spring:
       max-lifetime: 300000
   main:
     banner-mode: "off"
+  data:
+    jdbc:
+      dialect: postgresql
 
 server:
   port: 8080
