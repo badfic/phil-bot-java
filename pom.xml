@@ -140,10 +140,7 @@
 						<name>ghcr.io/badfic/phil-bot-java</name>
 						<tags>${env.DOCKER_TAGS}</tags>
 						<publish>${env.DO_PUBLISH}</publish>
-						<buildpacks>
-							<buildpack>paketobuildpacks/java</buildpack>
-						</buildpacks>
-						<builder>paketobuildpacks/builder-jammy-buildpackless-tiny</builder>
+						<builder>bellsoft/buildpacks.builder:musl</builder>
 					</image>
 				</configuration>
 			</plugin>
