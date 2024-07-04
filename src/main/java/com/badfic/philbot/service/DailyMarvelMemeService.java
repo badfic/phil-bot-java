@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class DailyMarvelMemeService extends BaseBangCommand {
+public class DailyMarvelMemeService extends BaseBangCommand implements DailyTickable {
 
     private static final String SEARCH_STRING = "Out of context Marvel meme";
 
@@ -40,11 +41,78 @@ public class DailyMarvelMemeService extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
-        executorService.execute(this::runDailyTask);
+    public void runDailyTask() {
+        refreshImageUrls();
     }
 
-    public void runDailyTask() {
+    @Override
+    public void execute(CommandEvent event) {
+        executorService.execute(() -> {
+            if (event.getArgs().contains("refresh")) {
+                refreshImageUrls();
+            } else {
+                scrapeAllMarvelMemes();
+            }
+        });
+    }
+
+    public List<String> getMessages() {
+        return dailyMarvelMemeRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(DailyMarvelMemeEntity::getTimeCreated))
+                .map(entity -> StringEscapeUtils.escapeHtml4(entity.getMessage()) + "<br/>\n<img src=\"" + entity.getImageUrl() + "\" class=\"img-fluid\">")
+                .toList();
+    }
+
+    private void refreshImageUrls() {
+        var textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
+        if (CollectionUtils.isEmpty(textChannelsByName)) {
+            log.error("DailyMarvelMemeService Failed to find [channel={}]", Constants.MEMES_CHANNEL);
+            return;
+        }
+        var channel = textChannelsByName.getFirst();
+
+        var messageIds = dailyMarvelMemeRepository.findAllIds();
+
+        for (var messageId : messageIds) {
+            Message message;
+            try {
+                message = channel.retrieveMessageById(messageId).complete();
+            } catch (Exception e) {
+                log.error("Failed to find [messageId={}]", messageId, e);
+                continue;
+            }
+
+            if (CollectionUtils.isNotEmpty(message.getEmbeds())) {
+                message.getEmbeds()
+                        .stream()
+                        .findFirst()
+                        .flatMap(embed -> Optional.ofNullable(embed.getImage()))
+                        .map(MessageEmbed.ImageInfo::getProxyUrl)
+                        .ifPresent(imageUrl -> {
+                            dailyMarvelMemeRepository.findById(messageId).ifPresent(entity -> {
+                                entity.setImageUrl(imageUrl);
+                                dailyMarvelMemeRepository.save(entity);
+                            });
+                        });
+            } else if (CollectionUtils.isNotEmpty(message.getAttachments())) {
+                message.getAttachments()
+                        .stream()
+                        .findFirst()
+                        .map(Message.Attachment::getProxyUrl)
+                        .ifPresent(imageUrl -> {
+                            dailyMarvelMemeRepository.findById(messageId).ifPresent(entity -> {
+                                entity.setImageUrl(imageUrl);
+                                dailyMarvelMemeRepository.save(entity);
+                            });
+                        });
+            }
+        }
+
+        Constants.debugToTestChannel(philJda, "Successfully updated daily marvel memes image URLs");
+    }
+
+    private void scrapeAllMarvelMemes() {
         List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
             log.error("DailyMarvelMemeService Failed to find [channel={}]", Constants.MEMES_CHANNEL);
@@ -70,7 +138,7 @@ public class DailyMarvelMemeService extends BaseBangCommand {
             for (Message message : history.getRetrievedHistory()) {
                 if (StringUtils.containsIgnoreCase(message.getContentRaw(), SEARCH_STRING)) {
                     if (CollectionUtils.isNotEmpty(message.getAttachments())) {
-                        String imageUrl = message.getAttachments().getFirst().getUrl();
+                        String imageUrl = message.getAttachments().getFirst().getProxyUrl();
                         String messageContent = message.getContentRaw();
 
                         messageIds.add(message.getIdLong());
@@ -111,15 +179,6 @@ public class DailyMarvelMemeService extends BaseBangCommand {
             }
         }
 
-        Constants.debugToTestChannel(philJda, "Successfully updated daily marvel memes cache");
+        Constants.debugToTestChannel(philJda, "Successfully scraped daily marvel meme messages");
     }
-
-    public List<String> getMessages() {
-        return dailyMarvelMemeRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(DailyMarvelMemeEntity::getTimeCreated))
-                .map(entity -> StringEscapeUtils.escapeHtml4(entity.getMessage()) + "<br/>\n<img src=\"" + entity.getImageUrl() + "\" class=\"img-fluid\">")
-                .toList();
-    }
-
 }

@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class DailyRiverdaleMemeService extends BaseBangCommand {
+public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyTickable {
 
     private static final String SEARCH_STRING = "out of context riverdale meme";
 
@@ -41,10 +42,77 @@ public class DailyRiverdaleMemeService extends BaseBangCommand {
 
     @Override
     public void execute(CommandEvent event) {
-        executorService.execute(this::runTask);
+        executorService.execute(() -> {
+            if (event.getArgs().contains("refresh")) {
+                refreshImageUrls();
+            } else {
+                scrapeAllMarvelMemes();
+            }
+        });
     }
 
-    private void runTask() {
+    @Override
+    public void runDailyTask() {
+        refreshImageUrls();
+    }
+
+    public List<String> getMessages() {
+        return dailyRiverdaleMemeRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(DailyRiverdaleMemeEntity::getTimeCreated))
+                .map(entity -> StringEscapeUtils.escapeHtml4(entity.getMessage()) + "<br/>\n<img src=\"" + entity.getImageUrl() + "\" class=\"img-fluid\">")
+                .toList();
+    }
+
+    private void refreshImageUrls() {
+        var textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
+        if (CollectionUtils.isEmpty(textChannelsByName)) {
+            log.error("DailyRiverdaleMemeService Failed to find [channel={}]", Constants.CURSED_SWAMP_CHANNEL);
+            return;
+        }
+        var channel = textChannelsByName.getFirst();
+
+        var messageIds = dailyRiverdaleMemeRepository.findAllIds();
+
+        for (var messageId : messageIds) {
+            Message message;
+            try {
+                message = channel.retrieveMessageById(messageId).complete();
+            } catch (Exception e) {
+                log.error("Failed to find [messageId={}]", messageId, e);
+                continue;
+            }
+
+            if (CollectionUtils.isNotEmpty(message.getEmbeds())) {
+                message.getEmbeds()
+                        .stream()
+                        .findFirst()
+                        .flatMap(embed -> Optional.ofNullable(embed.getImage()))
+                        .map(MessageEmbed.ImageInfo::getProxyUrl)
+                        .ifPresent(imageUrl -> {
+                            dailyRiverdaleMemeRepository.findById(messageId).ifPresent(entity -> {
+                                entity.setImageUrl(imageUrl);
+                                dailyRiverdaleMemeRepository.save(entity);
+                            });
+                        });
+            } else if (CollectionUtils.isNotEmpty(message.getAttachments())) {
+                message.getAttachments()
+                        .stream()
+                        .findFirst()
+                        .map(Message.Attachment::getProxyUrl)
+                        .ifPresent(imageUrl -> {
+                            dailyRiverdaleMemeRepository.findById(messageId).ifPresent(entity -> {
+                                entity.setImageUrl(imageUrl);
+                                dailyRiverdaleMemeRepository.save(entity);
+                            });
+                        });
+            }
+        }
+
+        Constants.debugToTestChannel(philJda, "Successfully updated daily riverdale memes image URLs");
+    }
+
+    private void scrapeAllMarvelMemes() {
         List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
             log.error("DailyRiverdaleMemeService Failed to find [channel={}]", Constants.CURSED_SWAMP_CHANNEL);
@@ -111,15 +179,6 @@ public class DailyRiverdaleMemeService extends BaseBangCommand {
             }
         }
 
-        Constants.debugToTestChannel(philJda, "Successfully updated daily riverdale memes cache");
+        Constants.debugToTestChannel(philJda, "Successfully scraped daily riverdale meme messages");
     }
-
-    public List<String> getMessages() {
-        return dailyRiverdaleMemeRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(DailyRiverdaleMemeEntity::getTimeCreated))
-                .map(entity -> StringEscapeUtils.escapeHtml4(entity.getMessage()) + "<br/>\n<img src=\"" + entity.getImageUrl() + "\" class=\"img-fluid\">")
-                .toList();
-    }
-
 }
