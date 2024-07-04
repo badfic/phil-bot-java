@@ -53,21 +53,21 @@ public class SwampController {
                 .build();
     }
 
-    @GetMapping(value = {"/", "/index.html"}, produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = {"/", "/index.html", "/index"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHome() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Home — The Swamp");
         return new ModelAndView("swamp-home", props);
     }
 
-    @GetMapping(value = "/the-swampys.html", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = {"/the-swampys.html", "/the-swampys"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getSwampys() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "The Swampys — The Swamp");
         return new ModelAndView("the-swampys", props);
     }
 
-    @GetMapping(value = "/daily-riverdale-memes.html", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = {"/daily-riverdale-memes.html", "/daily-riverdale-memes"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getRiverdaleMemes() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Riverdale Memes — The Swamp");
@@ -75,7 +75,7 @@ public class SwampController {
         return new ModelAndView("riverdale-memes", props);
     }
 
-    @GetMapping(value = "/daily-marvel-memes.html", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = {"/daily-marvel-memes.html", "/daily-marvel-memes"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getMarvelMemes() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Marvel Memes — The Swamp");
@@ -83,7 +83,7 @@ public class SwampController {
         return new ModelAndView("marvel-memes", props);
     }
 
-    @GetMapping(value = "/cursed-timeline.html", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = {"/cursed-timeline.html", "/cursed-timeline"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getCursedTimeline() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Cursed Timeline — The Swamp");
@@ -91,7 +91,7 @@ public class SwampController {
         return new ModelAndView("cursed-timeline", props);
     }
 
-    @GetMapping(value = "/hunger-games-winners.html", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = {"/hunger-games-winners.html", "/hunger-games-winners"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHungerGames() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "Cursed Timeline — The Swamp");
@@ -99,7 +99,7 @@ public class SwampController {
         return new ModelAndView("hunger-games", props);
     }
 
-    @GetMapping(value = "/about-the-swamp.html", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = {"/about-the-swamp.html", "/about-the-swamp"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getAbout() {
         Map<String, Object> props = new HashMap<>();
         props.put("pageTitle", "About — The Swamp");
