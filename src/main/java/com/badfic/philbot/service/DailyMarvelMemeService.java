@@ -5,6 +5,7 @@ import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DailyMarvelMemeEntity;
 import com.badfic.philbot.data.DailyMarvelMemeRepository;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
@@ -34,8 +36,8 @@ public class DailyMarvelMemeService extends BaseBangCommand implements DailyTick
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
     public DailyMarvelMemeService(DailyMarvelMemeRepository dailyMarvelMemeRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
-        name = "updateDailyMarvelMemes";
-        ownerCommand = true;
+        this.name = "updateDailyMarvelMemes";
+        this.ownerCommand = true;
         this.dailyMarvelMemeRepository = dailyMarvelMemeRepository;
         this.jdbcAggregateTemplate = jdbcAggregateTemplate;
     }
@@ -65,49 +67,54 @@ public class DailyMarvelMemeService extends BaseBangCommand implements DailyTick
     }
 
     private void refreshImageUrls() {
-        var textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
+        final var textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
             log.error("DailyMarvelMemeService Failed to find [channel={}]", Constants.MEMES_CHANNEL);
             return;
         }
-        var channel = textChannelsByName.getFirst();
+        final var channel = textChannelsByName.getFirst();
 
-        var messageIds = dailyMarvelMemeRepository.findAllIds();
+        final var messageIds = dailyMarvelMemeRepository.findAllIds();
 
-        for (var messageId : messageIds) {
-            Message message;
-            try {
-                message = channel.retrieveMessageById(messageId).complete();
-            } catch (Exception e) {
-                log.error("Failed to find [messageId={}]", messageId, e);
-                continue;
-            }
+        final var futures = new ArrayList<CompletableFuture<Message>>();
+        for (final var messageId : messageIds) {
+            final var messageFuture = channel.retrieveMessageById(messageId).submit();
+            futures.add(messageFuture);
 
-            if (CollectionUtils.isNotEmpty(message.getEmbeds())) {
-                message.getEmbeds()
-                        .stream()
-                        .findFirst()
-                        .flatMap(embed -> Optional.ofNullable(embed.getImage()))
-                        .map(MessageEmbed.ImageInfo::getProxyUrl)
-                        .ifPresent(imageUrl -> {
-                            dailyMarvelMemeRepository.findById(messageId).ifPresent(entity -> {
-                                entity.setImageUrl(imageUrl);
-                                dailyMarvelMemeRepository.save(entity);
+            messageFuture.whenComplete((message, err) -> {
+                if (err != null) {
+                    log.error("Failed to find [messageId={}]", messageId, err);
+                    return;
+                }
+
+                if (CollectionUtils.isNotEmpty(message.getEmbeds())) {
+                    message.getEmbeds()
+                            .stream()
+                            .findFirst()
+                            .flatMap(embed -> Optional.ofNullable(embed.getImage()))
+                            .map(MessageEmbed.ImageInfo::getProxyUrl)
+                            .ifPresent(imageUrl -> {
+                                dailyMarvelMemeRepository.findById(messageId).ifPresent(entity -> {
+                                    entity.setImageUrl(imageUrl);
+                                    dailyMarvelMemeRepository.save(entity);
+                                });
                             });
-                        });
-            } else if (CollectionUtils.isNotEmpty(message.getAttachments())) {
-                message.getAttachments()
-                        .stream()
-                        .findFirst()
-                        .map(Message.Attachment::getProxyUrl)
-                        .ifPresent(imageUrl -> {
-                            dailyMarvelMemeRepository.findById(messageId).ifPresent(entity -> {
-                                entity.setImageUrl(imageUrl);
-                                dailyMarvelMemeRepository.save(entity);
+                } else if (CollectionUtils.isNotEmpty(message.getAttachments())) {
+                    message.getAttachments()
+                            .stream()
+                            .findFirst()
+                            .map(Message.Attachment::getProxyUrl)
+                            .ifPresent(imageUrl -> {
+                                dailyMarvelMemeRepository.findById(messageId).ifPresent(entity -> {
+                                    entity.setImageUrl(imageUrl);
+                                    dailyMarvelMemeRepository.save(entity);
+                                });
                             });
-                        });
-            }
+                }
+            });
         }
+
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
 
         Constants.debugToTestChannel(philJda, "Successfully updated daily marvel memes image URLs");
     }
