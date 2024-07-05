@@ -3,8 +3,8 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.DailyRiverdaleMemeEntity;
-import com.badfic.philbot.data.DailyRiverdaleMemeRepository;
+import com.badfic.philbot.data.DailyLegendsMemeEntity;
+import com.badfic.philbot.data.DailyLegendsMemeRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -28,17 +28,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyTickable {
+public class DailyLegendsMemeService extends BaseBangCommand implements DailyTickable {
 
-    private static final String SEARCH_STRING = "out of context riverdale meme";
+    private static final String SEARCH_STRING = "out of context legends of tomorrow meme";
 
-    private final DailyRiverdaleMemeRepository dailyRiverdaleMemeRepository;
+    private final DailyLegendsMemeRepository dailyLegendsMemeRepository;
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
-    public DailyRiverdaleMemeService(DailyRiverdaleMemeRepository dailyRiverdaleMemeRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
-        this.name = "updateDailyRiverdaleMemes";
+    public DailyLegendsMemeService(DailyLegendsMemeRepository dailyLegendsMemeRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+        this.name = "updateDailyLegendsMemes";
         this.ownerCommand = true;
-        this.dailyRiverdaleMemeRepository = dailyRiverdaleMemeRepository;
+        this.dailyLegendsMemeRepository = dailyLegendsMemeRepository;
         this.jdbcAggregateTemplate = jdbcAggregateTemplate;
     }
 
@@ -55,13 +55,13 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
 
     @Override
     public void runDailyTask() {
-        refreshImageUrls();
+        scrapeAllMemes();
     }
 
     public List<String> getMessages() {
-        return dailyRiverdaleMemeRepository.findAll()
+        return dailyLegendsMemeRepository.findAll()
                 .stream()
-                .sorted(Comparator.comparing(DailyRiverdaleMemeEntity::getTimeCreated))
+                .sorted(Comparator.comparing(DailyLegendsMemeEntity::getTimeCreated))
                 .map(entity -> StringEscapeUtils.escapeHtml4(entity.getMessage()) + "<br/>\n<img src=\"" + entity.getImageUrl() + "\" class=\"img-fluid\">")
                 .toList();
     }
@@ -69,12 +69,12 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
     private void refreshImageUrls() {
         final var textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
-            log.error("DailyRiverdaleMemeService Failed to find [channel={}]", Constants.CURSED_SWAMP_CHANNEL);
+            log.error("DailyLegendsMemeService Failed to find [channel={}]", Constants.CURSED_SWAMP_CHANNEL);
             return;
         }
         final var channel = textChannelsByName.getFirst();
 
-        final var messageIds = dailyRiverdaleMemeRepository.findAllIds();
+        final var messageIds = dailyLegendsMemeRepository.findAllIds();
 
         final var futures = new ArrayList<CompletableFuture<Message>>();
         for (final var messageId : messageIds) {
@@ -89,9 +89,9 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
                             .flatMap(embed -> Optional.ofNullable(embed.getImage()))
                             .map(MessageEmbed.ImageInfo::getProxyUrl)
                             .ifPresent(imageUrl -> {
-                                dailyRiverdaleMemeRepository.findById(messageId).ifPresent(entity -> {
+                                dailyLegendsMemeRepository.findById(messageId).ifPresent(entity -> {
                                     entity.setImageUrl(imageUrl);
-                                    dailyRiverdaleMemeRepository.save(entity);
+                                    dailyLegendsMemeRepository.save(entity);
                                 });
                             });
                 } else if (CollectionUtils.isNotEmpty(message.getAttachments())) {
@@ -100,9 +100,9 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
                             .findFirst()
                             .map(Message.Attachment::getProxyUrl)
                             .ifPresent(imageUrl -> {
-                                dailyRiverdaleMemeRepository.findById(messageId).ifPresent(entity -> {
+                                dailyLegendsMemeRepository.findById(messageId).ifPresent(entity -> {
                                     entity.setImageUrl(imageUrl);
-                                    dailyRiverdaleMemeRepository.save(entity);
+                                    dailyLegendsMemeRepository.save(entity);
                                 });
                             });
                 }
@@ -111,13 +111,13 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
 
-        Constants.debugToTestChannel(philJda, "Successfully updated daily riverdale memes image URLs");
+        Constants.debugToTestChannel(philJda, "Successfully updated daily legends memes image URLs");
     }
 
     private void scrapeAllMemes() {
-        List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
+        List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
-            log.error("DailyRiverdaleMemeService Failed to find [channel={}]", Constants.CURSED_SWAMP_CHANNEL);
+            log.error("DailyLegendsMemeService Failed to find [channel={}]", Constants.MEMES_CHANNEL);
             return;
         }
 
@@ -145,8 +145,8 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
 
                         messageIds.add(message.getIdLong());
 
-                        DailyRiverdaleMemeEntity storedMessage;
-                        Optional<DailyRiverdaleMemeEntity> storedMessageOpt = dailyRiverdaleMemeRepository.findById(message.getIdLong());
+                        DailyLegendsMemeEntity storedMessage;
+                        Optional<DailyLegendsMemeEntity> storedMessageOpt = dailyLegendsMemeRepository.findById(message.getIdLong());
 
                         if (storedMessageOpt.isPresent()) {
                             storedMessage = storedMessageOpt.get();
@@ -158,9 +158,9 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
                                 storedMessage.setTimeEdited(message.getTimeEdited().toLocalDateTime());
                             }
 
-                            dailyRiverdaleMemeRepository.save(storedMessage);
+                            dailyLegendsMemeRepository.save(storedMessage);
                         } else {
-                            storedMessage = new DailyRiverdaleMemeEntity(
+                            storedMessage = new DailyLegendsMemeEntity(
                                     message.getIdLong(),
                                     messageContent,
                                     imageUrl,
@@ -174,14 +174,14 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
             }
         }
 
-        Collection<Long> deletedMessageIds = CollectionUtils.disjunction(dailyRiverdaleMemeRepository.findAllIds(), messageIds);
+        Collection<Long> deletedMessageIds = CollectionUtils.disjunction(dailyLegendsMemeRepository.findAllIds(), messageIds);
 
         for (Long deletedMessageId : deletedMessageIds) {
-            if (dailyRiverdaleMemeRepository.existsById(deletedMessageId)) {
-                dailyRiverdaleMemeRepository.deleteById(deletedMessageId);
+            if (dailyLegendsMemeRepository.existsById(deletedMessageId)) {
+                dailyLegendsMemeRepository.deleteById(deletedMessageId);
             }
         }
 
-        Constants.debugToTestChannel(philJda, "Successfully scraped daily riverdale meme messages");
+        Constants.debugToTestChannel(philJda, "Successfully scraped daily legends meme messages");
     }
 }

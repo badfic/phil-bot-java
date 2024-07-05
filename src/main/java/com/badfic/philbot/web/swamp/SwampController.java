@@ -1,6 +1,7 @@
 package com.badfic.philbot.web.swamp;
 
 import com.badfic.philbot.config.BaseConfig;
+import com.badfic.philbot.service.DailyLegendsMemeService;
 import com.badfic.philbot.service.DailyMarvelMemeService;
 import com.badfic.philbot.service.DailyRiverdaleMemeService;
 import com.badfic.philbot.service.HowWeBecameCursedService;
@@ -24,14 +25,17 @@ public class SwampController {
     private final HowWeBecameCursedService howWeBecameCursedService;
     private final DailyMarvelMemeService dailyMarvelMemeService;
     private final DailyRiverdaleMemeService dailyRiverdaleMemeService;
+    private final DailyLegendsMemeService dailyLegendsMemeService;
 
     public SwampController(BaseConfig baseConfig, HungerGamesWinnersService hungerGamesWinnersService, HowWeBecameCursedService howWeBecameCursedService,
-                           DailyMarvelMemeService dailyMarvelMemeService, DailyRiverdaleMemeService dailyRiverdaleMemeService) {
+                           DailyMarvelMemeService dailyMarvelMemeService, DailyRiverdaleMemeService dailyRiverdaleMemeService,
+                           DailyLegendsMemeService dailyLegendsMemeService) {
         this.baseConfig = baseConfig;
         this.hungerGamesWinnersService = hungerGamesWinnersService;
         this.howWeBecameCursedService = howWeBecameCursedService;
         this.dailyMarvelMemeService = dailyMarvelMemeService;
         this.dailyRiverdaleMemeService = dailyRiverdaleMemeService;
+        this.dailyLegendsMemeService = dailyLegendsMemeService;
     }
 
     @GetMapping(value = {
@@ -81,6 +85,14 @@ public class SwampController {
         props.put("pageTitle", "Marvel Memes — The Swamp");
         props.put("messages", dailyMarvelMemeService.getMessages());
         return new ModelAndView("marvel-memes", props);
+    }
+
+    @GetMapping(value = {"/daily-legends-memes.html", "/daily-legends-memes"}, produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getLegendsMemes() {
+        Map<String, Object> props = new HashMap<>();
+        props.put("pageTitle", "Legends of Tomorrow Memes — The Swamp");
+        props.put("messages", dailyLegendsMemeService.getMessages());
+        return new ModelAndView("legends-memes", props);
     }
 
     @GetMapping(value = {"/cursed-timeline.html", "/cursed-timeline"}, produces = MediaType.TEXT_HTML_VALUE)

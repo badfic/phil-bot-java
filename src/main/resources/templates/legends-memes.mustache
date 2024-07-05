@@ -1,0 +1,22 @@
+{{> swamp-header}}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center">The Daily Legends of Tomorrow Memes, provided by Megan</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm"></div>
+        <div class="col-sm">
+            <div id="app">
+                {{#messages}}
+                    <div class="swamp">{{{.}}}</div>
+                {{/messages}}
+            </div>
+        </div>
+        <div class="col-sm"></div>
+    </div>
+</div>
+
+{{> footer}}
