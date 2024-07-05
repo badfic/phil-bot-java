@@ -53,7 +53,7 @@ public class DailyMarvelMemeService extends BaseBangCommand implements DailyTick
             if (event.getArgs().contains("refresh")) {
                 refreshImageUrls();
             } else {
-                scrapeAllMarvelMemes();
+                scrapeAllMemes();
             }
         });
     }
@@ -119,7 +119,7 @@ public class DailyMarvelMemeService extends BaseBangCommand implements DailyTick
         Constants.debugToTestChannel(philJda, "Successfully updated daily marvel memes image URLs");
     }
 
-    private void scrapeAllMarvelMemes() {
+    private void scrapeAllMemes() {
         List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
             log.error("DailyMarvelMemeService Failed to find [channel={}]", Constants.MEMES_CHANNEL);
@@ -155,14 +155,15 @@ public class DailyMarvelMemeService extends BaseBangCommand implements DailyTick
 
                         if (storedMessageOpt.isPresent()) {
                             storedMessage = storedMessageOpt.get();
+                            storedMessage.setImageUrl(imageUrl);
 
                             if (Objects.nonNull(message.getTimeEdited()) &&
                                     !message.getTimeEdited().toLocalDateTime().isEqual(storedMessage.getTimeEdited())) {
                                 storedMessage.setMessage(messageContent);
                                 storedMessage.setTimeEdited(message.getTimeEdited().toLocalDateTime());
-                                storedMessage.setImageUrl(imageUrl);
-                                dailyMarvelMemeRepository.save(storedMessage);
                             }
+
+                            dailyMarvelMemeRepository.save(storedMessage);
                         } else {
                             storedMessage = new DailyMarvelMemeEntity(
                                     message.getIdLong(),
