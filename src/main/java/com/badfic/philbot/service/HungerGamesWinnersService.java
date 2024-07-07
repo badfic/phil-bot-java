@@ -5,10 +5,12 @@ import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.HungerGamesWinnerEntity;
 import com.badfic.philbot.data.HungerGamesWinnerRepository;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -24,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class HungerGamesWinnersService extends BaseBangCommand {
+public class HungerGamesWinnersService extends BaseBangCommand implements DailyTickable {
 
     private static final String REACTION_EMOJI = "\uD83C\uDFC1";
 
@@ -58,6 +60,45 @@ public class HungerGamesWinnersService extends BaseBangCommand {
         }
 
         event.replyError("Could not parse arg: " + args[0]);
+    }
+
+    @Override
+    public void runDailyTask() {
+        refreshImageUrls();
+    }
+
+    private void refreshImageUrls() {
+        final var textChannelsByName = philJda.getTextChannelsByName(Constants.HUNGERDOME_CHANNEL, false);
+        if (CollectionUtils.isEmpty(textChannelsByName)) {
+            log.error("HungerGamesWinnersService Failed to find [channel={}]", Constants.HUNGERDOME_CHANNEL);
+            return;
+        }
+        final var channel = textChannelsByName.getFirst();
+
+        final var messageIds = hungerGamesWinnerRepository.findAllIds();
+
+        final var futures = new ArrayList<CompletableFuture<Message>>();
+        for (final var messageId : messageIds) {
+            final var messageFuture = channel.retrieveMessageById(messageId).submit();
+            futures.add(messageFuture);
+
+            messageFuture.whenComplete((message, err) -> {
+                if (err != null) {
+                    log.error("Failed to find [messageId={}]", messageId, err);
+                    return;
+                }
+
+                final var messageContent = getMessageContent(message);
+                hungerGamesWinnerRepository.findById(messageId).ifPresent(entity -> {
+                    entity.setMessage(messageContent);
+                    hungerGamesWinnerRepository.save(entity);
+                });
+            });
+        }
+
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
+
+        Constants.debugToTestChannel(philJda, "Successfully updated hunger games winners image URLs");
     }
 
     public void addWinner(MessageReactionAddEvent event) {
@@ -118,13 +159,13 @@ public class HungerGamesWinnersService extends BaseBangCommand {
 
         if (CollectionUtils.isNotEmpty(message.getAttachments())) {
             for (Message.Attachment attachment : message.getAttachments()) {
-                if (Constants.urlIsImage(attachment.getUrl())) {
+                if (Constants.urlIsImage(attachment.getProxyUrl())) {
                     contentBuilder.append("\n<img src=\"")
-                            .append(attachment.getUrl())
+                            .append(attachment.getProxyUrl())
                             .append("\" class=\"img-fluid\">");
                 } else {
                     contentBuilder.append("\n<a href=\"")
-                            .append(attachment.getUrl())
+                            .append(attachment.getProxyUrl())
                             .append("\" target=\"_blank\"/>");
                 }
             }
@@ -145,7 +186,7 @@ public class HungerGamesWinnersService extends BaseBangCommand {
                 }
                 if (embed.getImage() != null) {
                     contentBuilder.append("\n<img src=\"")
-                            .append(embed.getImage().getUrl())
+                            .append(embed.getImage().getProxyUrl())
                             .append("\" class=\"img-fluid\">");
                 }
             }

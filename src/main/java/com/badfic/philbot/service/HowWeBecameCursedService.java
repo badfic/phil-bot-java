@@ -71,14 +71,15 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
                 if (storedMessageOpt.isPresent()) {
                     storedMessage = storedMessageOpt.get();
 
+                    String content = getMessageContent(message);
+                    storedMessage.setMessage(content);
+
                     if (Objects.nonNull(message.getTimeEdited()) &&
                             !message.getTimeEdited().toLocalDateTime().isEqual(storedMessage.getTimeEdited())) {
-                        String content = getMessageContent(message);
-
-                        storedMessage.setMessage(content);
                         storedMessage.setTimeEdited(message.getTimeEdited().toLocalDateTime());
-                        howWeBecameCursedRepository.save(storedMessage);
                     }
+
+                    howWeBecameCursedRepository.save(storedMessage);
                 } else {
                     String content = getMessageContent(message);
 
@@ -117,13 +118,13 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
 
         if (CollectionUtils.isNotEmpty(message.getAttachments())) {
             for (Message.Attachment attachment : message.getAttachments()) {
-                if (Constants.urlIsImage(attachment.getUrl())) {
+                if (Constants.urlIsImage(attachment.getProxyUrl())) {
                     contentBuilder.append("\n<img src=\"")
-                            .append(attachment.getUrl())
+                            .append(attachment.getProxyUrl())
                             .append("\" class=\"img-fluid\">");
                 } else {
                     contentBuilder.append("\n<a href=\"")
-                            .append(attachment.getUrl())
+                            .append(attachment.getProxyUrl())
                             .append("\" target=\"_blank\"/>");
                 }
             }
@@ -144,7 +145,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
                 }
                 if (embed.getImage() != null) {
                     contentBuilder.append("\n<img src=\"")
-                            .append(embed.getImage().getUrl())
+                            .append(embed.getImage().getProxyUrl())
                             .append("\" class=\"img-fluid\">");
                 }
             }
