@@ -70,8 +70,16 @@ public class Ao3MetadataParser extends BaseService {
         String title = document.getElementsByClass("title heading").getFirst().text();
 
         Elements authorElement = document.getElementsByAttributeValueContaining("rel", "author");
-        String authorLink = authorElement.getFirst().attr("href");
-        String authorName = authorElement.getFirst().text();
+
+        String authorLink;
+        String authorName;
+        if (authorElement.isEmpty()) {
+            authorLink = "";
+            authorName = "Anonymous";
+        } else {
+            authorLink = authorElement.getFirst().attr("href");
+            authorName = authorElement.getFirst().text();
+        }
 
         StringBuilder description = new StringBuilder();
         description.append("[**")
