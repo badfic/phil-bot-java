@@ -18,10 +18,10 @@
 		<java.version>21</java.version>
 
 		<fastutil.version>8.5.13</fastutil.version>
-		<jda.version>5.0.0-beta.24</jda.version>
-		<jsoup.version>1.17.2</jsoup.version>
+		<jda.version>5.0.0</jda.version>
+		<jsoup.version>1.18.1</jsoup.version>
 		<rome.version>2.1.0</rome.version>
-		<sentry.io.version>7.10.0</sentry.io.version>
+		<sentry.io.version>7.11.0</sentry.io.version>
 		<sumologic.logback.version>1.7</sumologic.logback.version>
 		<zip4j.version>2.11.5</zip4j.version>
 	</properties>
