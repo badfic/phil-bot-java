@@ -54,7 +54,10 @@ class RssSubscriber extends BaseService {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setAccept(Collections.singletonList(MediaType.APPLICATION_ATOM_XML));
                 headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
-                ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
+
+                ResponseEntity<byte[]> response = ao3MetadataParser.doWithLock(() ->
+                        restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), byte[].class));
+
                 SyndFeed feed = new SyndFeedInput().build(new XmlReader(new ByteArrayInputStream(response.getBody())));
 
                 boolean initialLoad = rssEntryRepository.countByFeedUrl(url) == 0;
