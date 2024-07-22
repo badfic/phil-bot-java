@@ -3,14 +3,15 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.awt.Color;
-import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
+import java.util.concurrent.locks.ReentrantLock;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.mutable.MutableLong;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -28,12 +29,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 public class Ao3MetadataParser extends BaseService {
 
-    private static final long AO3_RATE_LIMIT_SECONDS = 10;
-    private final MutableLong lastAo3Request; // Using this field as a global rate limiter
-
-    public Ao3MetadataParser() {
-        lastAo3Request = new MutableLong(System.currentTimeMillis());
-    }
+    private static final long AO3_RATE_LIMIT_MILLIS = TimeUnit.SECONDS.toMillis(10);
+    private final Lock rateLimitLock = new ReentrantLock();
+    private volatile long lastAo3Request = System.currentTimeMillis();
 
     public boolean parseLink(String link, String channelName) {
         try {
@@ -61,6 +59,23 @@ public class Ao3MetadataParser extends BaseService {
                 log.error("Failed to send AO3 Summary for [link={}]", link, e);
             }
         });
+    }
+
+    public <T> T doWithLock(Callable<T> work) throws Exception {
+        rateLimitLock.lock();
+        try {
+            long difference = System.currentTimeMillis() - lastAo3Request;
+            while (difference < AO3_RATE_LIMIT_MILLIS) {
+                long waitTime = TimeUnit.MILLISECONDS.toNanos(AO3_RATE_LIMIT_MILLIS - difference);
+                LockSupport.parkNanos(waitTime);
+                difference = System.currentTimeMillis() - lastAo3Request;
+            }
+
+            return work.call();
+        } finally {
+            lastAo3Request = System.currentTimeMillis();
+            rateLimitLock.unlock();
+        }
     }
 
     // Visible For Testing
@@ -251,7 +266,7 @@ public class Ao3MetadataParser extends BaseService {
                 false);
     }
 
-    private String getWork(String link) {
+    private String getWork(String link) throws Exception {
         String url = UriComponentsBuilder.fromUriString(link)
                 .replaceQuery(StringUtils.EMPTY)
                 .queryParam("view_adult", "true")
@@ -263,19 +278,8 @@ public class Ao3MetadataParser extends BaseService {
         headers.add(HttpHeaders.ACCEPT, MediaType.TEXT_HTML_VALUE);
         headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
 
-        synchronized (lastAo3Request) {
-            try {
-                long difference = System.currentTimeMillis() - lastAo3Request.getValue();
-                if (difference < TimeUnit.SECONDS.toMillis(AO3_RATE_LIMIT_SECONDS)) {
-                    long waitTime = Duration.ofSeconds(AO3_RATE_LIMIT_SECONDS).minus(Duration.ofMillis(difference)).toNanos();
-                    LockSupport.parkNanos(waitTime);
-                }
-                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-                return response.getBody();
-            } finally {
-                lastAo3Request.setValue(System.currentTimeMillis());
-            }
-        }
+        ResponseEntity<String> response = doWithLock(() -> restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class));
+        return response.getBody();
     }
 
     private record Data(JsonNode[] embeds) {}
