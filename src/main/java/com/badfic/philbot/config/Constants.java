@@ -3,9 +3,11 @@ package com.badfic.philbot.config;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.listeners.DiscordWebhookSendService;
 import com.badfic.philbot.service.RandomNumberService;
+import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import jakarta.annotation.PostConstruct;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -36,8 +38,6 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
@@ -200,9 +200,9 @@ public class Constants {
         return Pattern.compile("\\b(" + s + ")\\b", Pattern.CASE_INSENSITIVE);
     }
 
-    public static Pair<DayOfWeek, Integer> isoDayOfWeekMode(int[] array) {
+    public static ObjectIntPair<DayOfWeek> isoDayOfWeekMode(int[] array) {
         if (ArrayUtils.isEmpty(array)) {
-            return ImmutablePair.of(DayOfWeek.SUNDAY, 0);
+            return ObjectIntPair.of(DayOfWeek.SUNDAY, 0);
         }
 
         int mode = 1;
@@ -222,7 +222,7 @@ public class Constants {
             }
         }
 
-        return ImmutablePair.of(DayOfWeek.of(mode), maxCount);
+        return ObjectIntPair.of(DayOfWeek.of(mode), maxCount);
     }
 
     public static void checkUserTriggerWords(MessageReceivedEvent event, Long2ObjectMap<List<Pair<Pattern, String>>> userTriggerWords,
@@ -234,8 +234,8 @@ public class Constants {
             //noinspection ForLoopReplaceableByForEach
             for (int i = 0; i < userTriggers.size(); i++) {
                 Pair<Pattern, String> t = userTriggers.get(i);
-                if (t.getLeft().matcher(event.getMessage().getContentRaw()).find()) {
-                    String right = t.getRight();
+                if (t.left().matcher(event.getMessage().getContentRaw()).find()) {
+                    String right = t.right();
                     match = Optional.of(right);
                     break;
                 }

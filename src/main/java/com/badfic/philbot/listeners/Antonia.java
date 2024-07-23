@@ -6,6 +6,7 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.antonia.AntoniaResponsesConfig;
 import com.badfic.philbot.data.antonia.AntoniaResponsesConfigRepository;
 import com.badfic.philbot.service.BaseService;
+import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import java.util.List;
@@ -15,8 +16,6 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
@@ -53,8 +52,8 @@ class Antonia {
     static class MessageListener extends BaseService {
         private static final Pattern ANTONIA_PATTERN = Constants.compileWords("antonia|toni|tony|stark|tash|iron man|tin can");
         private static final Long2ObjectMap<List<Pair<Pattern, String>>> USER_TRIGGER_WORDS = new Long2ObjectArrayMap<>(Map.of(
-                307611036134146080L, List.of(ImmutablePair.of(Constants.compileWords("I love you"), "I know")),
-                323520695550083074L, List.of(ImmutablePair.of(Constants.compileWords("togna"), "bologna"))
+                307611036134146080L, List.of(Pair.of(Constants.compileWords("I love you"), "I know")),
+                323520695550083074L, List.of(Pair.of(Constants.compileWords("togna"), "bologna"))
         ));
 
         private final Command antoniaCommand;

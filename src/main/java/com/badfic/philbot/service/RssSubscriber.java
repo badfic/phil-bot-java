@@ -7,7 +7,7 @@ import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
-import java.io.ByteArrayInputStream;
+import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -58,7 +58,7 @@ class RssSubscriber extends BaseService {
                 ResponseEntity<byte[]> response = ao3MetadataParser.doWithLock(() ->
                         restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), byte[].class));
 
-                SyndFeed feed = new SyndFeedInput().build(new XmlReader(new ByteArrayInputStream(response.getBody())));
+                SyndFeed feed = new SyndFeedInput().build(new XmlReader(new FastByteArrayInputStream(response.getBody())));
 
                 boolean initialLoad = rssEntryRepository.countByFeedUrl(url) == 0;
                 long addedLinks = 0;

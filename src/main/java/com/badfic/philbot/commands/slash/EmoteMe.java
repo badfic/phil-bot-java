@@ -2,9 +2,9 @@ package com.badfic.philbot.commands.slash;
 
 import com.badfic.philbot.commands.bang.image.ImageUtils;
 import com.badfic.philbot.config.Constants;
+import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -172,6 +172,6 @@ class EmoteMe extends BaseSlashCommand {
 
         ResponseEntity<byte[]> emojiBytes = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
         byte[] emojiImageBytes = emojiBytes.getBody();
-        return ImageIO.read(new ByteArrayInputStream(emojiImageBytes));
+        return ImageIO.read(new FastByteArrayInputStream(emojiImageBytes));
     }
 }

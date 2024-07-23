@@ -11,6 +11,7 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -82,13 +83,25 @@ public class Ao3MetadataParser extends BaseService {
     MessageEmbed parseWork(String originalLink, String work) {
         Document document = Jsoup.parse(work);
 
-        String title = document.getElementsByClass("title heading").getFirst().text();
+        Elements titleElement = document.getElementsByClass("title heading");
+        if (CollectionUtils.isEmpty(titleElement)) {
+            return Constants.simpleEmbed(
+                    "AO3 Summary Report",
+                    "AO3 Summary Bot does not support works that you must be logged in to view.",
+                    null,
+                    "rip",
+                    Constants.colorOfTheMonth(),
+                    "https://cdn.discordapp.com/attachments/707453916882665552/780261925212520508/wITXDY67Xw1sAAAAABJRU5ErkJggg.png",
+                    false);
+        }
+
+        String title = titleElement.getFirst().text();
 
         Elements authorElement = document.getElementsByAttributeValueContaining("rel", "author");
 
         String authorLink;
         String authorName;
-        if (authorElement.isEmpty()) {
+        if (CollectionUtils.isEmpty(authorElement)) {
             authorLink = "";
             authorName = "Anonymous";
         } else {
@@ -111,7 +124,7 @@ public class Ao3MetadataParser extends BaseService {
         Element workMetaGroup = document.getElementsByClass("work meta group").getFirst();
 
         for (Element tags : workMetaGroup.getElementsByClass("rating tags")) {
-            if (tags.tagName().equalsIgnoreCase("dd")) {
+            if ("dd".equalsIgnoreCase(tags.tagName())) {
                 Elements tagList = tags.getElementsByTag("ul");
                 for (Element li : tagList.getFirst().getElementsByTag("li")) {
                     rating = li.getElementsByTag("a").getFirst().text();
@@ -123,7 +136,7 @@ public class Ao3MetadataParser extends BaseService {
 
         description.append("\n\n**Warnings**: ");
         for (Element tags : workMetaGroup.getElementsByClass("warning tags")) {
-            if (tags.tagName().equalsIgnoreCase("dd")) {
+            if ("dd".equalsIgnoreCase(tags.tagName())) {
                 Elements tagList = tags.getElementsByTag("ul");
                 for (Element li : tagList.getFirst().getElementsByTag("li")) {
                     String tag = li.getElementsByTag("a").getFirst().text();
@@ -138,7 +151,7 @@ public class Ao3MetadataParser extends BaseService {
 
         description.append("\n\n**Categories**: ");
         for (Element tags : workMetaGroup.getElementsByClass("category tags")) {
-            if (tags.tagName().equalsIgnoreCase("dd")) {
+            if ("dd".equalsIgnoreCase(tags.tagName())) {
                 Elements tagList = tags.getElementsByTag("ul");
                 for (Element li : tagList.getFirst().getElementsByTag("li")) {
                     String tag = li.getElementsByTag("a").getFirst().text();
@@ -162,7 +175,7 @@ public class Ao3MetadataParser extends BaseService {
 
         description.append("\n\n**Fandoms**: ");
         for (Element tags : workMetaGroup.getElementsByClass("fandom tags")) {
-            if (tags.tagName().equalsIgnoreCase("dd")) {
+            if ("dd".equalsIgnoreCase(tags.tagName())) {
                 Elements tagList = tags.getElementsByTag("ul");
                 for (Element li : tagList.getFirst().getElementsByTag("li")) {
                     String tag = li.getElementsByTag("a").getFirst().text();
@@ -177,7 +190,7 @@ public class Ao3MetadataParser extends BaseService {
 
         description.append("\n\n**Relationships**: ");
         for (Element tags : workMetaGroup.getElementsByClass("relationship tags")) {
-            if (tags.tagName().equalsIgnoreCase("dd")) {
+            if ("dd".equalsIgnoreCase(tags.tagName())) {
                 Elements tagList = tags.getElementsByTag("ul");
                 for (Element li : tagList.getFirst().getElementsByTag("li")) {
                     String tag = li.getElementsByTag("a").getFirst().text();
@@ -192,7 +205,7 @@ public class Ao3MetadataParser extends BaseService {
 
         description.append("\n\n**Characters**: ");
         for (Element tags : workMetaGroup.getElementsByClass("character tags")) {
-            if (tags.tagName().equalsIgnoreCase("dd")) {
+            if ("dd".equalsIgnoreCase(tags.tagName())) {
                 Elements tagList = tags.getElementsByTag("ul");
                 for (Element li : tagList.getFirst().getElementsByTag("li")) {
                     String tag = li.getElementsByTag("a").getFirst().text();
@@ -207,7 +220,7 @@ public class Ao3MetadataParser extends BaseService {
 
         description.append("\n\n**Tags**: ");
         for (Element tags : workMetaGroup.getElementsByClass("freeform tags")) {
-            if (tags.tagName().equalsIgnoreCase("dd")) {
+            if ("dd".equalsIgnoreCase(tags.tagName())) {
                 Elements tagList = tags.getElementsByTag("ul");
                 for (Element li : tagList.getFirst().getElementsByTag("li")) {
                     String tag = li.getElementsByTag("a").getFirst().text();
@@ -223,13 +236,13 @@ public class Ao3MetadataParser extends BaseService {
         String words = null;
         String chapters = null;
         for (Element outerStats : workMetaGroup.getElementsByClass("stats")) {
-            if (outerStats.tagName().equalsIgnoreCase("dd")) {
+            if ("dd".equalsIgnoreCase(outerStats.tagName())) {
                 Element innerStats = outerStats.getElementsByTag("dl").getFirst();
                 for (Element ddStats : innerStats.getElementsByTag("dd")) {
-                    if (ddStats.className().equalsIgnoreCase("words")) {
+                    if ("words".equalsIgnoreCase(ddStats.className())) {
                         words = ddStats.text();
                     }
-                    if (ddStats.className().equalsIgnoreCase("chapters")) {
+                    if ("chapters".equalsIgnoreCase(ddStats.className())) {
                         chapters = ddStats.text();
                     }
                 }
@@ -238,7 +251,7 @@ public class Ao3MetadataParser extends BaseService {
 
         StringBuilder language = new StringBuilder("Language: ");
         for (Element tags : workMetaGroup.getElementsByClass("language")) {
-            if (tags.tagName().equalsIgnoreCase("dd")) {
+            if ("dd".equalsIgnoreCase(tags.tagName())) {
                 language.append(tags.text());
                 break;
             }

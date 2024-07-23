@@ -6,6 +6,7 @@ import com.badfic.philbot.data.Quote;
 import com.badfic.philbot.data.QuoteRepository;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.DailyTickable;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,6 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -130,10 +130,10 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
                 Member member = event.getMessage().getMentions().getMembers().getFirst();
                 long memberId = member.getIdLong();
                 int[] quoteDaysOfWeekForUser = quoteRepository.getQuoteDaysOfWeekForUser(memberId);
-                Pair<DayOfWeek, Integer> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeekForUser);
+                ObjectIntPair<DayOfWeek> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeekForUser);
 
-                DayOfWeek day = mode.getLeft();
-                int count = mode.getRight();
+                DayOfWeek day = mode.left();
+                int count = mode.rightInt();
 
                 philJda.getTextChannelById(event.getChannel().getIdLong()).
                         sendMessageEmbeds(Constants.simpleEmbed("User Quote Statistics",
@@ -153,10 +153,10 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
             }
 
             int[] quoteDaysOfWeek = quoteRepository.getQuoteDaysOfWeek();
-            Pair<DayOfWeek, Integer> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeek);
+            ObjectIntPair<DayOfWeek> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeek);
 
-            DayOfWeek day = mode.getLeft();
-            int count = mode.getRight();
+            DayOfWeek day = mode.left();
+            int count = mode.rightInt();
 
             long mostQuotedUserId = quoteRepository.getMostQuotedUser();
             Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
