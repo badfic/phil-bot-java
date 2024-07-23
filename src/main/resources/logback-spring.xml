@@ -12,16 +12,8 @@
         </options>
     </appender>
 
-    <appender name="SumoAppender" class="com.sumologic.logback.SumoLogicAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-        <url>${SUMOLOGIC_URL}</url>
-    </appender>
-
     <root level="INFO">
         <appender-ref ref="Console" />
-        <appender-ref ref="SumoAppender" />
         <appender-ref ref="Sentry" />
     </root>
 </configuration>
