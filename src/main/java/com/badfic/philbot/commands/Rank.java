@@ -85,7 +85,6 @@ public class Rank {
         return LEVEL_MAP.get(0L);
     }
 
-    @Synchronized
     public static long xpRequiredForLevel(long xp, long level) {
         return Math.round(Math.pow(level/ LEVEL_MODIFIER, 2) - xp);
     }

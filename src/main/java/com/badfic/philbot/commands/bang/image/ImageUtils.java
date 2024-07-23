@@ -1,10 +1,10 @@
 package com.badfic.philbot.commands.bang.image;
 
 import com.badfic.philbot.config.Constants;
+import it.unimi.dsi.fastutil.io.FastByteArrayOutputStream;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -32,11 +32,12 @@ public class ImageUtils {
         graphics.setComposite(AlphaComposite.SrcOver);
         graphics.drawImage(mainImage, 0, 0, null);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(outputImg, "png", outputStream);
-        graphics.dispose();
+        try (FastByteArrayOutputStream outputStream = new FastByteArrayOutputStream()) {
+            ImageIO.write(outputImg, "png", outputStream);
+            graphics.dispose();
 
-        return outputStream.toByteArray();
+            return outputStream.array;
+        }
     }
 
     public static byte[] makeOverlaidImage(BufferedImage bottomImage, BufferedImage topImage, float alpha) throws IOException {
@@ -52,10 +53,10 @@ public class ImageUtils {
         graphics.setComposite(AlphaComposite.SrcOver.derive(alpha));
         graphics.drawImage(topImage, 0, 0, null);
 
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+        try (FastByteArrayOutputStream outputStream = new FastByteArrayOutputStream()) {
             ImageIO.write(newImg, "png", outputStream);
             graphics.dispose();
-            return outputStream.toByteArray();
+            return outputStream.array;
         }
     }
 }
