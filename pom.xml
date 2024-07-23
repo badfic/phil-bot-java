@@ -22,7 +22,6 @@
 		<jsoup.version>1.18.1</jsoup.version>
 		<rome.version>2.1.0</rome.version>
 		<sentry.io.version>7.12.0</sentry.io.version>
-		<sumologic.logback.version>1.7</sumologic.logback.version>
 		<zip4j.version>2.11.5</zip4j.version>
 	</properties>
 
@@ -97,12 +96,13 @@
 			<artifactId>sentry-logback</artifactId>
 			<version>${sentry.io.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.sumologic.plugins.logback</groupId>
-			<artifactId>sumologic-logback-appender</artifactId>
-			<version>${sumologic.logback.version}</version>
-		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-docker-compose</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

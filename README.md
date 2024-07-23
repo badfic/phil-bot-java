@@ -6,11 +6,7 @@ A multipurpose discord bot for "The Swamp", a community discord server (join at 
 
 # Building The Project
 
-Start up postgres before running
-
-```
-docker run --rm --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:15-alpine
-```
+Docker is required to run the app, spring-boot-docker-compose will handle starting and stopping all necessary containers.
 
 For the java app, the following env vars are required for full functionality
 ```
@@ -33,11 +29,6 @@ AO3_SUMMARY_API_KEY
 For error handling, a sentry.io account can be setup and the following env var is required
 ```
 SENTRY_URL
-```
-
-For log management, a sumologic.com account can be setup and the following env vars are required
-```
-SUMOLOGIC_URL
 ```
 
 ---
