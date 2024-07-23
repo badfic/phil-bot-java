@@ -6,7 +6,7 @@ A multipurpose discord bot for "The Swamp", a community discord server (join at 
 
 # Building The Project
 
-Docker is required to run the app, spring-boot-docker-compose will handler starting and starting all necessary containers 
+Docker is required to run the app, spring-boot-docker-compose will handle starting and stopping all necessary containers.
 
 For the java app, the following env vars are required for full functionality
 ```
