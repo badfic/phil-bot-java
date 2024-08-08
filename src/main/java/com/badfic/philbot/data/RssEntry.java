@@ -1,5 +1,6 @@
 package com.badfic.philbot.data;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = "link")
 public class RssEntry {
     @Id
@@ -20,10 +22,4 @@ public class RssEntry {
 
     @Column
     private String feedUrl;
-
-    public RssEntry(String link, String feedUrl) {
-        this.link = link;
-        this.feedUrl = feedUrl;
-    }
-
 }

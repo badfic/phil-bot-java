@@ -31,7 +31,7 @@ public class DailyLegendsMemeEntity {
     @Column
     private LocalDateTime timeEdited;
 
-    public DailyLegendsMemeEntity(long messageId, String message, String imageUrl, LocalDateTime timeCreated, LocalDateTime timeEdited) {
+    public DailyLegendsMemeEntity(final long messageId, final String message, final String imageUrl, final LocalDateTime timeCreated, final LocalDateTime timeEdited) {
         this.messageId = messageId;
         this.message = message;
         this.imageUrl = imageUrl;

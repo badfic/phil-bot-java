@@ -33,7 +33,7 @@ public class CourtCase {
     @Column
     private LocalDateTime releaseDate;
 
-    public CourtCase(long defendantId, long accuserId, long trialMessageId, String crime, LocalDateTime trialDate) {
+    public CourtCase(final long defendantId, final long accuserId, final long trialMessageId, final String crime, final LocalDateTime trialDate) {
         this.defendantId = defendantId;
         this.accuserId = accuserId;
         this.trialMessageId = trialMessageId;

@@ -22,7 +22,7 @@ public class SnarkyReminderResponse {
     @Column
     private String response;
 
-    public SnarkyReminderResponse(String response) {
+    public SnarkyReminderResponse(final String response) {
         this.response = response;
     }
 

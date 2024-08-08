@@ -32,7 +32,7 @@ public class Reminder {
     @Column
     private LocalDateTime dueDate;
 
-    public Reminder(long userId, long channelId, String reminder, LocalDateTime dueDate) {
+    public Reminder(final long userId, final long channelId, final String reminder, final LocalDateTime dueDate) {
         this.userId = userId;
         this.channelId = channelId;
         this.reminder = reminder;

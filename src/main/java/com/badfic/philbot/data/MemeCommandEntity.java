@@ -29,7 +29,7 @@ public class MemeCommandEntity {
     @Transient
     private Boolean urlIsList;
 
-    public MemeCommandEntity(String name, String url) {
+    public MemeCommandEntity(final String name, final String url) {
         this.name = name;
         this.url = url;
     }

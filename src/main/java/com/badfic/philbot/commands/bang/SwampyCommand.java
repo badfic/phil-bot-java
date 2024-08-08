@@ -398,13 +398,13 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
             final var description = new StringBuilder();
 
             swampyUsers.stream()
-                    .sorted((u1, u2) -> Long.compare(stat.getter().applyAsLong(u2), stat.getter().applyAsLong(u1)))
+                    .sorted((u1, u2) -> Long.compare(stat.getter.applyAsLong(u2), stat.getter.applyAsLong(u1)))
                     .forEachOrdered(swampyUser -> {
                         description
                                 .append("<@")
                                 .append(swampyUser.getId())
                                 .append("> - ")
-                                .append(NumberFormat.getIntegerInstance().format(stat.getter().applyAsLong(swampyUser)))
+                                .append(NumberFormat.getIntegerInstance().format(stat.getter.applyAsLong(swampyUser)))
                                 .append('\n');
                     });
             final var messageEmbed = Constants.simpleEmbed(stat.name() + " Leaderboard", description.toString());
@@ -639,7 +639,7 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
             discordUser.setXp(0);
 
             for (final var stat : PointsStat.values()) {
-                stat.setter().accept(discordUser, 0L);
+                stat.setter.accept(discordUser, 0L);
             }
 
             discordUserRepository.save(discordUser);

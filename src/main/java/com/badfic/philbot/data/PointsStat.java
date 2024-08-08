@@ -2,7 +2,9 @@ package com.badfic.philbot.data;
 
 import java.util.function.BiConsumer;
 import java.util.function.ToLongFunction;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public enum PointsStat {
     MOD_GIVE(DiscordUser::getModGavePoints, DiscordUser::setModGavePoints),
     MOD_TAKE(DiscordUser::getModTookPoints, DiscordUser::setModTookPoints),
@@ -26,19 +28,6 @@ public enum PointsStat {
     REACTED_POINTS(DiscordUser::getReactedPoints, DiscordUser::setReactedPoints),
     FIGHT(DiscordUser::getFightPoints, DiscordUser::setFightPoints);
 
-    private final ToLongFunction<DiscordUser> getter;
-    private final BiConsumer<DiscordUser, Long> setter;
-
-    PointsStat(ToLongFunction<DiscordUser> getter, BiConsumer<DiscordUser, Long> setter) {
-        this.getter = getter;
-        this.setter = setter;
-    }
-
-    public ToLongFunction<DiscordUser> getter() {
-        return getter;
-    }
-
-    public BiConsumer<DiscordUser, Long> setter() {
-        return setter;
-    }
+    public final ToLongFunction<DiscordUser> getter;
+    public final BiConsumer<DiscordUser, Long> setter;
 }

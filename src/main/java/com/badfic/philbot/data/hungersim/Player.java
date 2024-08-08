@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
@@ -42,25 +40,25 @@ public class Player {
     @Transient
     private String effectiveName;
 
-    public Player(DiscordUser discordUser, Pronoun pronoun) {
+    public Player(final DiscordUser discordUser, final Pronoun pronoun) {
         this.discordUser = discordUser.getId();
         this.pronoun = pronoun.getId();
     }
 
-    public Player(String name, Pronoun pronoun) {
+    public Player(final String name, final Pronoun pronoun) {
         this.name = name;
         this.pronoun = pronoun.getId();
     }
 
-    public void setEffectiveNameViaJda(JDA jda) {
+    public void setEffectiveNameViaJda(final JDA jda) {
         if (discordUser != null) {
-            Member memberById = jda.getGuilds().getFirst().getMemberById(discordUser);
+            final var memberById = jda.getGuilds().getFirst().getMemberById(discordUser);
             if (memberById != null) {
                 effectiveName = memberById.getEffectiveName();
                 return;
             }
 
-            User userById = jda.getUserById(discordUser);
+            final var userById = jda.getUserById(discordUser);
             if (userById != null) {
                 effectiveName = userById.getName();
                 return;

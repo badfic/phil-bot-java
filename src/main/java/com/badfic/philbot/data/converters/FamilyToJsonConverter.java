@@ -13,13 +13,13 @@ public class FamilyToJsonConverter implements Converter<Family, String> {
 
     private static ObjectMapper OBJECT_MAPPER;
 
-    public FamilyToJsonConverter(ObjectMapper objectMapper) {
+    public FamilyToJsonConverter(final ObjectMapper objectMapper) {
         OBJECT_MAPPER = objectMapper;
     }
 
     @Override
     @SneakyThrows
-    public String convert(Family family) {
+    public String convert(final Family family) {
         if (family == null) {
             return null;
         }

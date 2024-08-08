@@ -31,7 +31,7 @@ public class Pronoun {
     @Column
     private String self;
 
-    public Pronoun(String subject, String object, String possessive, String self) {
+    public Pronoun(final String subject, final String object, final String possessive, final String self) {
         this.subject = subject;
         this.object = object;
         this.possessive = possessive;

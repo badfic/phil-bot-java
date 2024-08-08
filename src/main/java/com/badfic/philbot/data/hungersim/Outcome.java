@@ -42,7 +42,7 @@ public class Outcome {
     @Column("player_4_hp")
     private Integer player4Hp = 0;
 
-    public Outcome(String outcomeText, Integer numPlayers, Integer player1Hp, Integer player2Hp, Integer player3Hp, Integer player4Hp) {
+    public Outcome(final String outcomeText, final Integer numPlayers, final Integer player1Hp, final Integer player2Hp, final Integer player3Hp, final Integer player4Hp) {
         this.outcomeText = outcomeText;
         this.numPlayers = Objects.requireNonNullElse(numPlayers, 1);
         this.player1Hp = Objects.requireNonNullElse(player1Hp, 0);
@@ -51,41 +51,41 @@ public class Outcome {
         this.player4Hp = Objects.requireNonNullElse(player4Hp, 0);
     }
 
-    public String apply(Player player1, JDA jda, PronounRepository pronounRepository) {
+    public String apply(final Player player1, final JDA jda, final PronounRepository pronounRepository) {
         player1.setHp(minMaxHp(player1.getHp() + player1Hp));
 
-        List<Player> playerList = List.of(player1);
+        final var playerList = List.of(player1);
         return getOutcomeResultString(jda, playerList, pronounRepository);
     }
 
-    public String apply(Player player1, Player player2, JDA jda, PronounRepository pronounRepository) {
+    public String apply(final Player player1, final Player player2, final JDA jda, final PronounRepository pronounRepository) {
         player1.setHp(minMaxHp(player1.getHp() + player1Hp));
         player2.setHp(minMaxHp(player2.getHp() + player2Hp));
 
-        List<Player> playerList = List.of(player1, player2);
+        final var playerList = List.of(player1, player2);
         return getOutcomeResultString(jda, playerList, pronounRepository);
     }
 
-    public String apply(Player player1, Player player2, Player player3, JDA jda, PronounRepository pronounRepository) {
+    public String apply(final Player player1, final Player player2, final Player player3, final JDA jda, final PronounRepository pronounRepository) {
         player1.setHp(minMaxHp(player1.getHp() + player1Hp));
         player2.setHp(minMaxHp(player2.getHp() + player2Hp));
         player3.setHp(minMaxHp(player3.getHp() + player3Hp));
 
-        List<Player> playerList = List.of(player1, player2, player3);
+        final var playerList = List.of(player1, player2, player3);
         return getOutcomeResultString(jda, playerList, pronounRepository);
     }
 
-    public String apply(Player player1, Player player2, Player player3, Player player4, JDA jda, PronounRepository pronounRepository) {
+    public String apply(final Player player1, final Player player2, final Player player3, final Player player4, final JDA jda, final PronounRepository pronounRepository) {
         player1.setHp(minMaxHp(player1.getHp() + player1Hp));
         player2.setHp(minMaxHp(player2.getHp() + player2Hp));
         player3.setHp(minMaxHp(player3.getHp() + player3Hp));
         player4.setHp(minMaxHp(player4.getHp() + player4Hp));
 
-        List<Player> playerList = List.of(player1, player2, player3, player4);
+        final var playerList = List.of(player1, player2, player3, player4);
         return getOutcomeResultString(jda, playerList, pronounRepository);
     }
 
-    private int minMaxHp(int hp) {
+    private int minMaxHp(final int hp) {
         if (hp < -10) {
             return -10;
         } else {
@@ -93,8 +93,8 @@ public class Outcome {
         }
     }
 
-    private String getOutcomeResultString(JDA jda, List<Player> playerList, PronounRepository pronounRepository) {
-        String result = outcomeText;
+    private String getOutcomeResultString(final JDA jda, final List<Player> playerList, final PronounRepository pronounRepository) {
+        var result = outcomeText;
 
         for (var i = 0; i < playerList.size(); i++) {
             Player player = playerList.get(i);

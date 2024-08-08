@@ -1,7 +1,7 @@
 package com.badfic.philbot.data;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +11,7 @@ import org.springframework.data.relational.core.mapping.Column;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public abstract class BaseQuote {
 
     @Id
@@ -34,30 +35,13 @@ public abstract class BaseQuote {
     @Column
     private LocalDateTime created;
 
-    public BaseQuote(long messageId, long channelId, String quote, String image, long userId, LocalDateTime created) {
+    public BaseQuote(final long messageId, final long channelId, final String quote, final String image, final long userId, final LocalDateTime created) {
         this.messageId = messageId;
         this.channelId = channelId;
         this.quote = quote;
         this.image = image;
         this.userId = userId;
         this.created = created;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        BaseQuote baseQuote = (BaseQuote) o;
-        return id == baseQuote.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
 }

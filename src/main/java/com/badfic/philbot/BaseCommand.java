@@ -81,9 +81,9 @@ public interface BaseCommand {
 
         user.setXp(newXp);
         user.setUpdateTime(LocalDateTime.now());
-        var pointsStatsCurrent = pointsStat.getter().applyAsLong(user);
+        var pointsStatsCurrent = pointsStat.getter.applyAsLong(user);
         pointsStatsCurrent += pointsToGive;
-        pointsStat.setter().accept(user, pointsStatsCurrent);
+        pointsStat.setter.accept(user, pointsStatsCurrent);
         getDiscordUserRepository().save(user);
 
         final var rankZero = Rank.byXp(0);

@@ -13,13 +13,13 @@ public class JsonToGenericBotResponsesConfigConverter implements Converter<Strin
 
     private static ObjectMapper OBJECT_MAPPER;
 
-    public JsonToGenericBotResponsesConfigConverter(ObjectMapper objectMapper) {
+    public JsonToGenericBotResponsesConfigConverter(final ObjectMapper objectMapper) {
         OBJECT_MAPPER = objectMapper;
     }
 
     @Override
     @SneakyThrows
-    public GenericBotResponsesConfigJson convert(String s) {
+    public GenericBotResponsesConfigJson convert(final String s) {
         if (s == null) {
             return null;
         }

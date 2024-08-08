@@ -9,7 +9,7 @@ public class SwampyGamesConfigDal {
 
     private final SwampyGamesConfigRepository swampyGamesConfigRepository;
 
-    public SwampyGamesConfigDal(SwampyGamesConfigRepository swampyGamesConfigRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+    public SwampyGamesConfigDal(final SwampyGamesConfigRepository swampyGamesConfigRepository, final JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.swampyGamesConfigRepository = swampyGamesConfigRepository;
 
         swampyGamesConfigRepository.findById(Constants.DATA_SINGLETON_ID).orElseGet(() -> {
@@ -23,7 +23,7 @@ public class SwampyGamesConfigDal {
         return swampyGamesConfigRepository.findById(Constants.DATA_SINGLETON_ID).orElseThrow();
     }
 
-    public SwampyGamesConfig update(SwampyGamesConfig swampyGamesConfig) {
+    public SwampyGamesConfig update(final SwampyGamesConfig swampyGamesConfig) {
         return swampyGamesConfigRepository.save(swampyGamesConfig);
     }
 

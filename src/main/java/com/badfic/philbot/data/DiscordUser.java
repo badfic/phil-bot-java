@@ -164,32 +164,32 @@ public class DiscordUser {
     @Column
     private long fightPoints;
 
-    public void setUpvotedPoints(long upvotedPoints) {
+    public void setUpvotedPoints(final long upvotedPoints) {
         this.upvotedPoints = upvotedPoints;
         lifetimeUpvotesReceived++;
     }
 
-    public void setUpvoterPoints(long upvoterPoints) {
+    public void setUpvoterPoints(final long upvoterPoints) {
         this.upvoterPoints = upvoterPoints;
         lifetimeUpvotesGiven++;
     }
 
-    public void setSlotsCloseEnoughPoints(long slotsPoints) {
+    public void setSlotsCloseEnoughPoints(final long slotsPoints) {
         this.slotsCloseEnoughPoints = slotsPoints;
         lifetimeSlotsLosses++;
     }
 
-    public void setSlotsWinnerWinnerPoints(long slotsWinnerWinnerPoints) {
+    public void setSlotsWinnerWinnerPoints(final long slotsWinnerWinnerPoints) {
         this.slotsWinnerWinnerPoints = slotsWinnerWinnerPoints;
         lifetimeSlotsWins++;
     }
 
-    public void setSlotsLosses(long slotsLosses) {
+    public void setSlotsLosses(final long slotsLosses) {
         this.slotsLosses = slotsLosses;
         lifetimeSlotsLosses++;
     }
 
-    public void setMapsPoints(long mapsPoints) {
+    public void setMapsPoints(final long mapsPoints) {
         if (mapsPoints > this.mapsPoints) {
             lifetimeMapsCorrect++;
         }
@@ -197,7 +197,7 @@ public class DiscordUser {
         this.mapsPoints = mapsPoints;
     }
 
-    public void setTriviaPoints(long triviaPoints) {
+    public void setTriviaPoints(final long triviaPoints) {
         if (triviaPoints > this.triviaPoints) {
             lifetimeTriviasCorrect++;
         }
@@ -205,7 +205,7 @@ public class DiscordUser {
         this.triviaPoints = triviaPoints;
     }
 
-    public void setQuoteTriviaPoints(long quoteTriviaPoints) {
+    public void setQuoteTriviaPoints(final long quoteTriviaPoints) {
         if (quoteTriviaPoints > this.quoteTriviaPoints) {
             lifetimeQuoteTriviasCorrect++;
         }
@@ -213,22 +213,22 @@ public class DiscordUser {
         this.quoteTriviaPoints = quoteTriviaPoints;
     }
 
-    public void setNoNoPoints(long noNoPoints) {
+    public void setNoNoPoints(final long noNoPoints) {
         this.noNoPoints = noNoPoints;
         lifetimeNoNoWords++;
     }
 
-    public void setMessagePoints(long messagePoints) {
+    public void setMessagePoints(final long messagePoints) {
         this.messagePoints = messagePoints;
         lifetimeMessages++;
     }
 
-    public void setPictureMessagePoints(long pictureMessagePoints) {
+    public void setPictureMessagePoints(final long pictureMessagePoints) {
         this.pictureMessagePoints = pictureMessagePoints;
         lifetimePictures++;
     }
 
-    public void setBoostPoints(long boostPoints) {
+    public void setBoostPoints(final long boostPoints) {
         this.boostPoints = boostPoints;
         lifetimeBoostParticipations++;
     }
