@@ -5,7 +5,6 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +32,7 @@ public class GamesConfigController extends BaseMembersController {
 
         final var configEntries = new LinkedMultiValueMap<ControllerConfigurable.Category, ConfigEntryGet>();
 
-        for (final Field declaredField : SwampyGamesConfig.class.getDeclaredFields()) {
+        for (final var declaredField : SwampyGamesConfig.class.getDeclaredFields()) {
             final var annotation = declaredField.getAnnotation(ControllerConfigurable.class);
             if (annotation != null) {
                 declaredField.setAccessible(true);

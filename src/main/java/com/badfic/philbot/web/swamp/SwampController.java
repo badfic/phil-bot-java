@@ -8,6 +8,7 @@ import com.badfic.philbot.service.HowWeBecameCursedService;
 import com.badfic.philbot.service.HungerGamesWinnersService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequiredArgsConstructor
 public class SwampController {
 
     private final BaseConfig baseConfig;
@@ -25,20 +27,6 @@ public class SwampController {
     private final DailyMarvelMemeService dailyMarvelMemeService;
     private final DailyRiverdaleMemeService dailyRiverdaleMemeService;
     private final DailyLegendsMemeService dailyLegendsMemeService;
-
-    public SwampController(final BaseConfig baseConfig,
-                           final HungerGamesWinnersService hungerGamesWinnersService,
-                           final HowWeBecameCursedService howWeBecameCursedService,
-                           final DailyMarvelMemeService dailyMarvelMemeService,
-                           final DailyRiverdaleMemeService dailyRiverdaleMemeService,
-                           final DailyLegendsMemeService dailyLegendsMemeService) {
-        this.baseConfig = baseConfig;
-        this.hungerGamesWinnersService = hungerGamesWinnersService;
-        this.howWeBecameCursedService = howWeBecameCursedService;
-        this.dailyMarvelMemeService = dailyMarvelMemeService;
-        this.dailyRiverdaleMemeService = dailyRiverdaleMemeService;
-        this.dailyLegendsMemeService = dailyLegendsMemeService;
-    }
 
     @GetMapping(value = {
             "/chat-popout",
