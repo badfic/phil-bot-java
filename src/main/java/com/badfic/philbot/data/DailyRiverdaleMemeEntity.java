@@ -32,7 +32,7 @@ public class DailyRiverdaleMemeEntity {
     @Column
     private LocalDateTime timeEdited;
 
-    public DailyRiverdaleMemeEntity(long messageId, String message, String imageUrl, LocalDateTime timeCreated, LocalDateTime timeEdited) {
+    public DailyRiverdaleMemeEntity(final long messageId, final String message, final String imageUrl, final LocalDateTime timeCreated, final LocalDateTime timeEdited) {
         this.messageId = messageId;
         this.message = message;
         this.imageUrl = imageUrl;

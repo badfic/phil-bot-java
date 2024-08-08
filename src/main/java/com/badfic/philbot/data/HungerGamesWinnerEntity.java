@@ -1,6 +1,7 @@
 package com.badfic.philbot.data;
 
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = "messageId")
 public class HungerGamesWinnerEntity {
 
@@ -28,12 +30,5 @@ public class HungerGamesWinnerEntity {
 
     @Column
     private LocalDateTime timeEdited;
-
-    public HungerGamesWinnerEntity(long messageId, String message, LocalDateTime timeCreated, LocalDateTime timeEdited) {
-        this.messageId = messageId;
-        this.message = message;
-        this.timeCreated = timeCreated;
-        this.timeEdited = timeEdited;
-    }
 
 }

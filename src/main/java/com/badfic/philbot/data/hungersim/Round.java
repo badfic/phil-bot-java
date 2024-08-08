@@ -33,7 +33,7 @@ public class Round {
     @Transient
     private List<Outcome> outcomes;
 
-    public Round(String name, String description, Boolean openingRound) {
+    public Round(final String name, final String description, final Boolean openingRound) {
         this.name = name;
         this.description = description;
         this.openingRound = openingRound;

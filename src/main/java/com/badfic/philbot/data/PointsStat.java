@@ -29,7 +29,7 @@ public enum PointsStat {
     private final ToLongFunction<DiscordUser> getter;
     private final BiConsumer<DiscordUser, Long> setter;
 
-    PointsStat(ToLongFunction<DiscordUser> getter, BiConsumer<DiscordUser, Long> setter) {
+    PointsStat(final ToLongFunction<DiscordUser> getter, final BiConsumer<DiscordUser, Long> setter) {
         this.getter = getter;
         this.setter = setter;
     }

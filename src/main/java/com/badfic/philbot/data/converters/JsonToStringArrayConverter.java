@@ -12,13 +12,13 @@ public class JsonToStringArrayConverter implements Converter<String, String[]> {
 
     private static ObjectMapper OBJECT_MAPPER;
 
-    public JsonToStringArrayConverter(ObjectMapper objectMapper) {
+    public JsonToStringArrayConverter(final ObjectMapper objectMapper) {
         OBJECT_MAPPER = objectMapper;
     }
 
     @Override
     @SneakyThrows
-    public String[] convert(String source) {
+    public String[] convert(final String source) {
         if (source == null) {
             return null;
         }
