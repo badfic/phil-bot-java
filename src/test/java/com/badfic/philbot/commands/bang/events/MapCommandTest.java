@@ -1,14 +1,9 @@
 package com.badfic.philbot.commands.bang.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import net.lingala.zip4j.io.inputstream.ZipInputStream;
-import net.lingala.zip4j.model.LocalFileHeader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -29,24 +24,25 @@ public class MapCommandTest {
 
     @Test
     public void testInit() throws Exception {
-        MapCommand.MapTriviaObject[] countries = mapCommand.getCountries();
+        final var countries = mapCommand.getCountries();
 
         Assertions.assertTrue(Arrays.stream(countries)
                 .noneMatch(country -> StringUtils.isBlank(country.code()) || StringUtils.isBlank(country.regex())));
 
-        Set<String> flagzipCountryCodes = new HashSet<>();
+        final var flagzipCountryCodes = new HashSet<String>();
 
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream(MapCommand.MAP_ZIP_FILENAME);
-             ZipInputStream zipFile = new ZipInputStream(stream)) {
-            LocalFileHeader fileHeader;
-            while ((fileHeader = zipFile.getNextEntry()) != null) {
-                String countryCode = fileHeader.getFileName().substring(0, fileHeader.getFileName().length() - 4);
+        try (final var stream = getClass().getClassLoader().getResourceAsStream(MapCommand.MAP_ZIP_FILENAME);
+             final var zipFile = new ZipInputStream(stream)) {
+            var fileHeader = zipFile.getNextEntry();
+            while (fileHeader != null) {
+                final var countryCode = fileHeader.getFileName().substring(0, fileHeader.getFileName().length() - 4);
                 flagzipCountryCodes.add(countryCode);
+                fileHeader = zipFile.getNextEntry();
             }
         }
 
-        List<String> jsonCountryCodes = Arrays.stream(countries).map(MapCommand.MapTriviaObject::code).toList();
-        Collection<String> disjunction = CollectionUtils.disjunction(flagzipCountryCodes, jsonCountryCodes);
+        final var jsonCountryCodes = Arrays.stream(countries).map(MapCommand.MapTriviaObject::code).toList();
+        final var disjunction = CollectionUtils.disjunction(flagzipCountryCodes, jsonCountryCodes);
 
         Assertions.assertTrue(CollectionUtils.isEmpty(disjunction));
     }

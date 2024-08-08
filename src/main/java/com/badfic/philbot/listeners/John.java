@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 class John {
     @Component
     static class Command extends BasicResponsesBot<JohnResponsesConfig> {
-        Command(JohnResponsesConfigRepository johnResponsesConfigRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+        Command(final JohnResponsesConfigRepository johnResponsesConfigRepository, final JdbcAggregateTemplate jdbcAggregateTemplate) {
             super(johnResponsesConfigRepository, jdbcAggregateTemplate, "john", JohnResponsesConfig::new,
                     SwampyGamesConfig::getJohnNickname, SwampyGamesConfig::getJohnAvatar);
         }
@@ -113,15 +113,15 @@ class John {
         private final Command johnCommand;
         private final RemindersCommand remindersCommand;
 
-        void onMessageReceived(@NotNull MessageReceivedEvent event, SwampyGamesConfig swampyGamesConfig) {
-            String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
+        void onMessageReceived(final @NotNull MessageReceivedEvent event, final SwampyGamesConfig swampyGamesConfig) {
+            final var msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
             if (REMINDER_PATTER.matcher(msgContent).find()) {
                 remindersCommand.addReminder(event.getMessage(), swampyGamesConfig);
                 return;
             }
 
-            long channelId = event.getMessage().getChannel().getIdLong();
+            final var channelId = event.getMessage().getChannel().getIdLong();
 
             if ("ayy".equals(msgContent)) {
                 discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), "lmao");

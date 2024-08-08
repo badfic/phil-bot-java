@@ -10,7 +10,6 @@ import java.util.Locale;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Component;
 class Keanu {
     @Component
     static class Command extends BasicResponsesBot<KeanuResponsesConfig> {
-        Command(KeanuResponsesConfigRepository keanuResponsesConfigRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+        Command(final KeanuResponsesConfigRepository keanuResponsesConfigRepository, final JdbcAggregateTemplate jdbcAggregateTemplate) {
             super(keanuResponsesConfigRepository, jdbcAggregateTemplate, "keanu", KeanuResponsesConfig::new,
                     SwampyGamesConfig::getKeanuNickname, SwampyGamesConfig::getKeanuAvatar);
         }
@@ -89,17 +88,17 @@ class Keanu {
 
         @Scheduled(cron = "${swampy.schedule.keanu.goodmorning}", zone = "${swampy.schedule.timezone}")
         void goodMorning() {
-            TextChannel general = philJda.getTextChannelsByName("general", false).getFirst();
-            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
+            final var general = philJda.getTextChannelsByName("general", false).getFirst();
+            final var swampyGamesConfig = swampyGamesConfigDal.get();
 
             discordWebhookSendService.sendMessage(general.getIdLong(), swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(),
                     Constants.pickRandom(GOOD_MORNING_GIFS));
         }
 
-        void onMessageReceived(@NotNull MessageReceivedEvent event, SwampyGamesConfig swampyGamesConfig) {
-            String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
+        void onMessageReceived(final @NotNull MessageReceivedEvent event, final SwampyGamesConfig swampyGamesConfig) {
+            final var msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
-            long channelId = event.getMessage().getChannel().getIdLong();
+            final var channelId = event.getMessage().getChannel().getIdLong();
 
             if (msgContent.contains("lightning mcqueen")) {
                 discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getKeanuNickname(), swampyGamesConfig.getKeanuAvatar(), "KACHOW!");
