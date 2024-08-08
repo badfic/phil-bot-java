@@ -3,20 +3,15 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.HowWeBecameCursedEntity;
 import com.badfic.philbot.data.HowWeBecameCursedRepository;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -25,19 +20,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class HowWeBecameCursedService extends BaseService implements DailyTickable {
 
     private final HowWeBecameCursedRepository howWeBecameCursedRepository;
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
-    public HowWeBecameCursedService(HowWeBecameCursedRepository howWeBecameCursedRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
-        this.howWeBecameCursedRepository = howWeBecameCursedRepository;
-        this.jdbcAggregateTemplate = jdbcAggregateTemplate;
-    }
-
     @Override
     public void runDailyTask() {
-        Optional<TextChannel> optionalChannel = philJda.getTextChannelsByName("how-we-became-cursed", false)
+        final var optionalChannel = philJda.getTextChannelsByName("how-we-became-cursed", false)
                 .stream()
                 .findFirst();
 
@@ -46,12 +37,12 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
             return;
         }
 
-        TextChannel channel = optionalChannel.get();
-        Set<Long> messageIds = new HashSet<>();
+        final var channel = optionalChannel.get();
+        final var messageIds = new HashSet<Long>();
 
-        long lastMsgId = 0;
+        var lastMsgId = 0L;
         while (lastMsgId != -1) {
-            MessageHistory history;
+            final MessageHistory history;
             if (lastMsgId == 0) {
                 history = channel.getHistoryFromBeginning(100).timeout(30, TimeUnit.SECONDS).complete();
             } else {
@@ -62,16 +53,16 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
                     ? history.getRetrievedHistory().getFirst().getIdLong()
                     : -1;
 
-            for (Message message : history.getRetrievedHistory()) {
+            for (final var message : history.getRetrievedHistory()) {
                 messageIds.add(message.getIdLong());
 
-                HowWeBecameCursedEntity storedMessage;
-                Optional<HowWeBecameCursedEntity> storedMessageOpt = howWeBecameCursedRepository.findById(message.getIdLong());
+                final var storedMessageOpt = howWeBecameCursedRepository.findById(message.getIdLong());
 
+                final HowWeBecameCursedEntity storedMessage;
                 if (storedMessageOpt.isPresent()) {
                     storedMessage = storedMessageOpt.get();
 
-                    String content = getMessageContent(message);
+                    final var content = getMessageContent(message);
                     storedMessage.setMessage(content);
 
                     if (Objects.nonNull(message.getTimeEdited()) &&
@@ -81,7 +72,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
 
                     howWeBecameCursedRepository.save(storedMessage);
                 } else {
-                    String content = getMessageContent(message);
+                    final var content = getMessageContent(message);
 
                     storedMessage = new HowWeBecameCursedEntity(message.getIdLong(), content, message.getTimeCreated().toLocalDateTime(),
                             message.getTimeEdited() != null ? message.getTimeEdited().toLocalDateTime() : message.getTimeCreated().toLocalDateTime());
@@ -90,9 +81,9 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
             }
         }
 
-        Collection<Long> deletedMessageIds = CollectionUtils.disjunction(howWeBecameCursedRepository.findAllIds(), messageIds);
+        final var deletedMessageIds = CollectionUtils.disjunction(howWeBecameCursedRepository.findAllIds(), messageIds);
 
-        for (Long deletedMessageId : deletedMessageIds) {
+        for (final var deletedMessageId : deletedMessageIds) {
             if (howWeBecameCursedRepository.existsById(deletedMessageId)) {
                 howWeBecameCursedRepository.deleteById(deletedMessageId);
             }
@@ -109,15 +100,15 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
                 .toList();
     }
 
-    private String getMessageContent(Message message) {
-        StringBuilder contentBuilder = new StringBuilder();
+    private String getMessageContent(final Message message) {
+        final var contentBuilder = new StringBuilder();
 
         contentBuilder.append("<pre style=\"white-space: pre-wrap;\">\n")
                 .append(StringEscapeUtils.escapeHtml4(message.getContentDisplay()))
                 .append("\n</pre>\n");
 
         if (CollectionUtils.isNotEmpty(message.getAttachments())) {
-            for (Message.Attachment attachment : message.getAttachments()) {
+            for (final var attachment : message.getAttachments()) {
                 if (Constants.urlIsImage(attachment.getProxyUrl())) {
                     contentBuilder.append("\n<img src=\"")
                             .append(attachment.getProxyUrl())
@@ -131,7 +122,7 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
         }
 
         if (CollectionUtils.isNotEmpty(message.getEmbeds())) {
-            for (MessageEmbed embed : message.getEmbeds()) {
+            for (final var embed : message.getEmbeds()) {
                 if (embed.getUrl() != null) {
                     if (Constants.urlIsImage(embed.getUrl())) {
                         contentBuilder.append("\n<img src=\"")
@@ -151,9 +142,9 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
             }
         }
 
-        String content = contentBuilder.toString();
+        var content = contentBuilder.toString();
         if (CollectionUtils.isNotEmpty(message.getMentions().getCustomEmojis())) {
-            for (CustomEmoji emote : message.getMentions().getCustomEmojis()) {
+            for (final var emote : message.getMentions().getCustomEmojis()) {
                 String imageUrl = emote.getImageUrl();
                 content = RegExUtils.replaceAll(
                         content,

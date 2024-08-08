@@ -6,20 +6,17 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DailyLegendsMemeEntity;
 import com.badfic.philbot.data.DailyLegendsMemeRepository;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +32,7 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
     private final DailyLegendsMemeRepository dailyLegendsMemeRepository;
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
-    public DailyLegendsMemeService(DailyLegendsMemeRepository dailyLegendsMemeRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+    public DailyLegendsMemeService(final DailyLegendsMemeRepository dailyLegendsMemeRepository, final JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.name = "updateDailyLegendsMemes";
         this.ownerCommand = true;
         this.dailyLegendsMemeRepository = dailyLegendsMemeRepository;
@@ -43,7 +40,7 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         executorService.execute(() -> {
             if (event.getArgs().contains("refresh")) {
                 refreshImageUrls();
@@ -115,18 +112,18 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
     }
 
     private void scrapeAllMemes() {
-        List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
+        final var textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
             log.error("DailyLegendsMemeService Failed to find [channel={}]", Constants.MEMES_CHANNEL);
             return;
         }
 
-        TextChannel cursedChannel = textChannelsByName.getFirst();
-        Set<Long> messageIds = new HashSet<>();
+        final var cursedChannel = textChannelsByName.getFirst();
+        final var messageIds = new HashSet<Long>();
 
-        long lastMsgId = 0;
+        var lastMsgId = 0L;
         while (lastMsgId != -1) {
-            MessageHistory history;
+            final MessageHistory history;
             if (lastMsgId == 0) {
                 history = cursedChannel.getHistoryFromBeginning(100).timeout(30, TimeUnit.SECONDS).complete();
             } else {
@@ -137,17 +134,17 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
                     ? history.getRetrievedHistory().getFirst().getIdLong()
                     : -1;
 
-            for (Message message : history.getRetrievedHistory()) {
+            for (final var message : history.getRetrievedHistory()) {
                 if (StringUtils.containsIgnoreCase(message.getContentRaw(), SEARCH_STRING)) {
                     if (CollectionUtils.isNotEmpty(message.getAttachments())) {
-                        String imageUrl = message.getAttachments().getFirst().getProxyUrl();
-                        String messageContent = message.getContentRaw();
+                        final var imageUrl = message.getAttachments().getFirst().getProxyUrl();
+                        final var messageContent = message.getContentRaw();
 
                         messageIds.add(message.getIdLong());
 
-                        DailyLegendsMemeEntity storedMessage;
-                        Optional<DailyLegendsMemeEntity> storedMessageOpt = dailyLegendsMemeRepository.findById(message.getIdLong());
+                        final var storedMessageOpt = dailyLegendsMemeRepository.findById(message.getIdLong());
 
+                        final DailyLegendsMemeEntity storedMessage;
                         if (storedMessageOpt.isPresent()) {
                             storedMessage = storedMessageOpt.get();
                             storedMessage.setImageUrl(imageUrl);
@@ -174,9 +171,9 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
             }
         }
 
-        Collection<Long> deletedMessageIds = CollectionUtils.disjunction(dailyLegendsMemeRepository.findAllIds(), messageIds);
+        final var deletedMessageIds = CollectionUtils.disjunction(dailyLegendsMemeRepository.findAllIds(), messageIds);
 
-        for (Long deletedMessageId : deletedMessageIds) {
+        for (final var deletedMessageId : deletedMessageIds) {
             if (dailyLegendsMemeRepository.existsById(deletedMessageId)) {
                 dailyLegendsMemeRepository.deleteById(deletedMessageId);
             }

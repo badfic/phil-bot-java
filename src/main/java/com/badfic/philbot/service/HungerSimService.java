@@ -3,7 +3,6 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.hungersim.Game;
 import com.badfic.philbot.data.hungersim.GameRepository;
-import com.badfic.philbot.data.hungersim.Outcome;
 import com.badfic.philbot.data.hungersim.OutcomeRepository;
 import com.badfic.philbot.data.hungersim.Player;
 import com.badfic.philbot.data.hungersim.PlayerRepository;
@@ -16,12 +15,13 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class HungerSimService extends BaseService {
 
     private final GameRepository gameRepository;
@@ -31,24 +31,14 @@ public class HungerSimService extends BaseService {
     private final PlayerRepository playerRepository;
     private final PronounRepository pronounRepository;
 
-    public HungerSimService(GameRepository gameRepository, RoundRepository roundRepository, RoundOutcomeRepository roundOutcomeRepository,
-                            OutcomeRepository outcomeRepository, PlayerRepository playerRepository, PronounRepository pronounRepository) {
-        this.gameRepository = gameRepository;
-        this.roundRepository = roundRepository;
-        this.roundOutcomeRepository = roundOutcomeRepository;
-        this.outcomeRepository = outcomeRepository;
-        this.playerRepository = playerRepository;
-        this.pronounRepository = pronounRepository;
-    }
-
     public synchronized Game runNextStep() {
-        Game game = gameRepository.findById(Constants.DATA_SINGLETON_ID)
+        final var game = gameRepository.findById(Constants.DATA_SINGLETON_ID)
                 .orElseThrow(() -> new IllegalArgumentException("You must start a new game before running a step"));
 
-        List<Player> players = playerRepository.findByGame(Constants.DATA_SINGLETON_ID);
+        final var players = playerRepository.findByGame(Constants.DATA_SINGLETON_ID);
         game.setPlayers(players);
 
-        Deque<Player> alivePlayers = game.getPlayers()
+        final var alivePlayers = game.getPlayers()
                 .stream()
                 .filter(p -> p.getHp() > 0)
                 .collect(Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> {
@@ -63,7 +53,7 @@ public class HungerSimService extends BaseService {
                 return gameRepository.save(game);
             }
 
-            Player winner = alivePlayers.pop();
+            final var winner = alivePlayers.pop();
             winner.setEffectiveNameViaJda(philJda);
             game.setCurrentOutcomes(new String[] {"<b>" + StringEscapeUtils.escapeHtml4(winner.getEffectiveName()) + "</b> has won!"});
             return gameRepository.save(game);
@@ -76,31 +66,30 @@ public class HungerSimService extends BaseService {
             }
 
             // DB Constraint guarantees there's only one opening round = true
-            Round openingRound = roundRepository.findByOpeningRound(true).getFirst();
+            final var openingRound = roundRepository.findByOpeningRound(true).getFirst();
 
             return runRoundAndGetResult(game, alivePlayers, openingRound);
         }
 
-        Round round = Constants.pickRandom(roundRepository.findByOpeningRound(false));
+        final var round = Constants.pickRandom(roundRepository.findByOpeningRound(false));
         return runRoundAndGetResult(game, alivePlayers, round);
     }
 
-    private Game runRoundAndGetResult(Game game, Deque<Player> activePlayers, Round round) {
-        List<Long> outcomes = roundOutcomeRepository.findByRound(round.getId()).stream().map(RoundOutcome::getOutcome).toList();
-        List<String> appliedOutcomes = new ArrayList<>();
+    private Game runRoundAndGetResult(final Game game, final Deque<Player> activePlayers, final Round round) {
+        final var outcomes = roundOutcomeRepository.findByRound(round.getId()).stream().map(RoundOutcome::getOutcome).toList();
+        final var appliedOutcomes = new ArrayList<String>();
 
         while (!activePlayers.isEmpty()) {
-            List<Player> outcomePlayerSet = new ArrayList<>();
-            Long outcomeId = Constants.pickRandom(outcomes);
+            final var outcomePlayerSet = new ArrayList<Player>();
 
-            Outcome outcome = outcomeRepository.findById(outcomeId).orElseThrow();
-
+            var outcomeId = Constants.pickRandom(outcomes);
+            var outcome = outcomeRepository.findById(outcomeId).orElseThrow();
             while (outcome.getNumPlayers() > activePlayers.size()) {
                 outcomeId = Constants.pickRandom(outcomes);
                 outcome = outcomeRepository.findById(outcomeId).orElseThrow();
             }
 
-            for (int i = 0; i < outcome.getNumPlayers(); i++) {
+            for (var i = 0; i < outcome.getNumPlayers(); i++) {
                 outcomePlayerSet.add(activePlayers.pop());
             }
 
