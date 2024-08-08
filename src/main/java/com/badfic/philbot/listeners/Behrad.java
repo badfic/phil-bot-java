@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 class Behrad {
     @Component
     static class Command extends BasicResponsesBot<BehradResponsesConfig> {
-        Command(BehradResponsesConfigRepository behradResponsesConfigRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+        Command(final BehradResponsesConfigRepository behradResponsesConfigRepository, final JdbcAggregateTemplate jdbcAggregateTemplate) {
             super(behradResponsesConfigRepository, jdbcAggregateTemplate, "behrad", BehradResponsesConfig::new,
                     SwampyGamesConfig::getBehradNickname, SwampyGamesConfig::getBehradAvatar);
         }
@@ -58,17 +58,17 @@ class Behrad {
         @Scheduled(cron = "${swampy.schedule.behrad.humpday}", zone = "${swampy.schedule.timezone}")
         void behradHumpDay() {
             philJda.getTextChannelsByName("general", false).stream().findAny().ifPresent(channel -> {
-                SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
+                final var swampyGamesConfig = swampyGamesConfigDal.get();
 
                 discordWebhookSendService.sendMessage(channel.getIdLong(), swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(),
                         "https://tenor.com/view/itis-wednesdaymy-dudes-wednesday-viralyoutube-gif-18012295");
             });
         }
 
-        void onMessageReceived(@NotNull MessageReceivedEvent event, SwampyGamesConfig swampyGamesConfig) {
-            String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
+        void onMessageReceived(final @NotNull MessageReceivedEvent event, final SwampyGamesConfig swampyGamesConfig) {
+            final var msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
-            long channelId = event.getMessage().getChannel().getIdLong();
+            final var channelId = event.getMessage().getChannel().getIdLong();
 
             if (msgContent.contains("i'm gay")) {
                 discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getBehradNickname(), swampyGamesConfig.getBehradAvatar(), "same");

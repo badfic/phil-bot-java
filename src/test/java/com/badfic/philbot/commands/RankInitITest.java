@@ -21,7 +21,7 @@ public class RankInitITest {
 
     @Test
     public void testRankInit() throws Exception {
-        Rank.RecordList recordList;
+        final Rank.RecordList recordList;
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("airtable-response.json")) {
             recordList = new ObjectMapper().readValue(stream, Rank.RecordList.class);
         }

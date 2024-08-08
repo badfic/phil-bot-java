@@ -12,7 +12,6 @@ import com.badfic.philbot.data.SwampyGamesConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,12 +22,9 @@ import javax.imageio.ImageIO;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
-import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
@@ -42,16 +38,19 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
     private final String fullCmdPrefix;
     @Getter private final String modHelp;
 
-    public BasicResponsesBot(BaseResponsesConfigRepository<T> configRepository, JdbcAggregateTemplate jdbcAggregateTemplate,
-                             String name, Supplier<T> responsesConfigConstructor, Function<SwampyGamesConfig, String> usernameGetter,
-                             Function<SwampyGamesConfig, String> avatarGetter) {
+    public BasicResponsesBot(final BaseResponsesConfigRepository<T> configRepository,
+                             final JdbcAggregateTemplate jdbcAggregateTemplate,
+                             final String name,
+                             final Supplier<T> responsesConfigConstructor,
+                             final Function<SwampyGamesConfig, String> usernameGetter,
+                             final Function<SwampyGamesConfig, String> avatarGetter) {
         this.configRepository = configRepository;
         this.usernameGetter = usernameGetter;
         this.avatarGetter = avatarGetter;
 
         this.name = name;
         this.fullCmdPrefix = Constants.PREFIX + name;
-        String rawHelp = "Any message containing `<name>` will make <name> respond with a random message if that channel is configured.";
+        final var rawHelp = "Any message containing `<name>` will make <name> respond with a random message if that channel is configured.";
         this.help = StringUtils.replace(rawHelp, "<name>", name, -1);
         this.modHelp = this.help + '\n' + StringUtils.replace("""
                 `!!<name> tts` responds with a random message but spoken via text-to-speech
@@ -69,11 +68,11 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
 
         // seed data if needed
         if (configRepository.findById(Constants.DATA_SINGLETON_ID).isEmpty()) {
-            GenericBotResponsesConfigJson kidFriendlyConfig = new GenericBotResponsesConfigJson(Set.of(Constants.SWAMPYS_CHANNEL), Set.of("yes", "no"));
+            final var kidFriendlyConfig = new GenericBotResponsesConfigJson(Set.of(Constants.SWAMPYS_CHANNEL), Set.of("yes", "no"));
 
-            GenericBotResponsesConfigJson nsfwConfig = new GenericBotResponsesConfigJson(Set.of(Constants.CURSED_SWAMP_CHANNEL), Set.of("heck yes", "heck no"));
+            final var nsfwConfig = new GenericBotResponsesConfigJson(Set.of(Constants.CURSED_SWAMP_CHANNEL), Set.of("heck yes", "heck no"));
 
-            T responsesConfig = responsesConfigConstructor.get();
+            final var responsesConfig = responsesConfigConstructor.get();
             responsesConfig.setId(Constants.DATA_SINGLETON_ID);
             responsesConfig.setSfwConfig(kidFriendlyConfig);
             responsesConfig.setNsfwConfig(nsfwConfig);
@@ -83,15 +82,15 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         if (event.getAuthor().isBot()) {
             return;
         }
 
-        final Guild guild = philJda.getGuildById(baseConfig.guildId);
+        final var guild = philJda.getGuildById(baseConfig.guildId);
 
-        Optional<T> optionalConfig = configRepository.findById(Constants.DATA_SINGLETON_ID);
-        long channelId = event.getChannel().getIdLong();
+        final var optionalConfig = configRepository.findById(Constants.DATA_SINGLETON_ID);
+        final var channelId = event.getChannel().getIdLong();
         if (optionalConfig.isEmpty()) {
             philJda.getTextChannelById(channelId)
                     .sendMessageFormat("%s, failed to read %s entries from database :(", event.getAuthor().getAsMention(), name)
@@ -99,8 +98,8 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
             return;
         }
 
-        T responsesConfig = optionalConfig.get();
-        String msgContent = event.getMessage().getContentRaw();
+        final var responsesConfig = optionalConfig.get();
+        final var msgContent = event.getMessage().getContentRaw();
 
         if (msgContent.startsWith(fullCmdPrefix)) {
             if (event.getMember()
@@ -115,7 +114,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 event.replyInDm(Constants.simpleEmbed(name + " Help", help));
                 return;
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw add channel")) {
-                List<TextChannel> mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
+                final var mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
                     event.getChannel().sendMessageFormat("%s, please specify a channel. `%s nsfw add channel #cursed`",
                             event.getAuthor().getAsMention(), fullCmdPrefix).queue();
@@ -133,9 +132,9 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 event.getChannel().sendMessageFormat("%s, saved %s to nsfw config", event.getAuthor().getAsMention(), mentionedChannels.getFirst().getAsMention())
                         .queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw remove channel")) {
-                List<TextChannel> mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
+                final var mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
-                    String channelName = msgContent.replace(fullCmdPrefix + " nsfw remove channel", "").trim();
+                    final var channelName = msgContent.replace(fullCmdPrefix + " nsfw remove channel", "").trim();
 
                     if (StringUtils.isEmpty(channelName)) {
                         event.getChannel().sendMessageFormat("%s, please specify a channel. `%s nsfw remove channel #general`",
@@ -160,7 +159,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 event.getChannel().sendMessageFormat("%s, removed %s from nsfw config",
                         event.getAuthor().getAsMention(), mentionedChannels.getFirst().getAsMention()).queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw add channel")) {
-                List<TextChannel> mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
+                final var mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
                     event.getChannel().sendMessageFormat("%s, please specify a channel. `%s sfw add channel #general`",
                             event.getAuthor().getAsMention(), fullCmdPrefix).queue();
@@ -178,9 +177,9 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 event.getChannel().sendMessageFormat("%s, saved %s to sfw config", event.getAuthor().getAsMention(), mentionedChannels.getFirst().getAsMention())
                         .queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw remove channel")) {
-                List<TextChannel> mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
+                final var mentionedChannels = event.getMessage().getMentions().getChannels(TextChannel.class);
                 if (CollectionUtils.isEmpty(mentionedChannels)) {
-                    String channelName = msgContent.replace(fullCmdPrefix + " sfw remove channel", "").trim();
+                    final var channelName = msgContent.replace(fullCmdPrefix + " sfw remove channel", "").trim();
 
                     if (StringUtils.isEmpty(channelName)) {
                         event.getChannel().sendMessageFormat("%s, please specify a channel. `%s sfw remove channel #general`",
@@ -205,7 +204,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 event.getChannel().sendMessageFormat("%s, removed %s from sfw config",
                         event.getAuthor().getAsMention(), mentionedChannels.getFirst().getAsMention()).queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw add")) {
-                String saying = msgContent.replace(fullCmdPrefix + " nsfw add", "").trim();
+                final var saying = msgContent.replace(fullCmdPrefix + " nsfw add", "").trim();
                 if (saying.isEmpty()) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to add").queue();
                     return;
@@ -214,7 +213,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved `" + saying + "` to nsfw config").queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw remove")) {
-                String saying = msgContent.replace(fullCmdPrefix + " nsfw remove", "").trim();
+                var saying = msgContent.replace(fullCmdPrefix + " nsfw remove", "").trim();
                 if (saying.isEmpty()) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to remove").queue();
                     return;
@@ -229,7 +228,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed `" + saying + "` from nsfw config").queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw add")) {
-                String saying = msgContent.replace(fullCmdPrefix + " sfw add", "").trim();
+                final var saying = msgContent.replace(fullCmdPrefix + " sfw add", "").trim();
                 if (saying.isEmpty()) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to add").queue();
                     return;
@@ -239,7 +238,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 configRepository.save(responsesConfig);
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", saved `" + saying + "` to sfw config").queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw remove")) {
-                String saying = msgContent.replace(fullCmdPrefix + " sfw remove", "").trim();
+                var saying = msgContent.replace(fullCmdPrefix + " sfw remove", "").trim();
                 if (saying.isEmpty()) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", please specify a saying to remove").queue();
                     return;
@@ -269,7 +268,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
             } else if (msgContent.startsWith(fullCmdPrefix + " tts")) {
                 getResponse(event, responsesConfig).ifPresent(response -> {
 
-                    MessageCreateData outboundMessage = new MessageCreateBuilder()
+                    final var outboundMessage = new MessageCreateBuilder()
                             .addContent(event.getAuthor().getAsMention() + ", " + response)
                             .setTTS(true)
                             .build();
@@ -282,7 +281,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
             return;
         }
 
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
         if (StringUtils.containsIgnoreCase(msgContent, "hug")) {
             // Width and Height for scaled profile images: 160px
@@ -290,16 +289,16 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
             // Right image coordinate: (187, 24)
 
             try {
-                long authorId = event.getAuthor().getIdLong();
-                Member authorMember = guild.getMemberById(authorId);
-                String authorAvatarUrl = authorMember != null ? authorMember.getEffectiveAvatarUrl() : event.getAuthor().getEffectiveAvatarUrl();
+                final var authorId = event.getAuthor().getIdLong();
+                final var authorMember = guild.getMemberById(authorId);
+                final var authorAvatarUrl = authorMember != null ? authorMember.getEffectiveAvatarUrl() : event.getAuthor().getEffectiveAvatarUrl();
 
-                BufferedImage hugImage;
+                final BufferedImage hugImage;
                 try (InputStream stream = BasicResponsesBot.class.getClassLoader().getResourceAsStream("flags/hug.png")) {
                     hugImage = ImageIO.read(Objects.requireNonNull(stream));
                 }
 
-                String botAvatarUrl;
+                final String botAvatarUrl;
                 if (usernameGetter == null) {
                     botAvatarUrl = philJda.getSelfUser().getEffectiveAvatarUrl();
                 } else {
@@ -311,12 +310,12 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                         .queue(msg -> {
                             // This nightmare is because Discord disallowed hot-linking.
                             // We have to "re-upload" the image, pull the newly generated proxyUrl, then delete the "re-uploaded" message.
-                            String fetchedUrl = msg.getEmbeds().getFirst().getImage().getProxyUrl();
+                            final var fetchedUrl = msg.getEmbeds().getFirst().getImage().getProxyUrl();
 
-                            byte[] bytes;
+                            final byte[] bytes;
                             try {
                                 bytes = ImageUtils.makeTwoUserMemeImageBytes(fetchedUrl, 160, 27, 63, authorAvatarUrl, 160, 187, 24, hugImage);
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 msg.delete().queue();
                                 philJda.getTextChannelById(channelId)
                                         .sendMessage("HUG!")
@@ -331,14 +330,14 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                                     .queue();
                         });
                 return;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 log.error("{} could not hug [user={}]", getClass().getSimpleName(), event.getAuthor().getAsMention(), e);
                 philJda.getTextChannelById(channelId).sendMessage("\uD83E\uDD17").queue();
             }
         }
 
         getResponse(event, responsesConfig).ifPresent(response -> {
-            String message = StringUtils.startsWithIgnoreCase(response, "http") ? response : (event.getAuthor().getAsMention() + ", " + response);
+            final var message = StringUtils.startsWithIgnoreCase(response, "http") ? response : (event.getAuthor().getAsMention() + ", " + response);
             if (usernameGetter == null) {
                 philJda.getTextChannelById(channelId)
                         .sendMessage(message)
@@ -350,9 +349,9 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
         });
     }
 
-    protected Optional<String> getResponse(CommandEvent event, T responsesConfig) {
+    protected Optional<String> getResponse(final CommandEvent event, final T responsesConfig) {
         String channelName = event.getChannel().getName();
-        Set<String> responses;
+        final Set<String> responses;
         if (responsesConfig.getSfwConfig().channels().contains(channelName)) {
             responses = responsesConfig.getSfwConfig().responses();
         } else if (responsesConfig.getNsfwConfig().channels().contains(channelName)) {
@@ -361,14 +360,14 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
             return Optional.empty();
         }
 
-        String responseValue = Constants.pickRandom(responses);
+        final var responseValue = Constants.pickRandom(responses);
 
         if (StringUtils.startsWithIgnoreCase(responseValue, "http")) {
             return Optional.of(responseValue);
         }
 
-        String msgContent = event.getMessage().getContentRaw();
-        boolean isAllUppercase = true;
+        final var msgContent = event.getMessage().getContentRaw();
+        var isAllUppercase = true;
         for (String s : msgContent.split("\\s+")) {
             isAllUppercase &= StringUtils.isAllUpperCase(s);
         }

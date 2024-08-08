@@ -5,7 +5,6 @@ import com.badfic.philbot.data.ChannelWebhookEntity;
 import com.badfic.philbot.data.ChannelWebhookRepository;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +25,13 @@ public class DiscordWebhookSendService {
     private final ChannelWebhookRepository channelWebhookRepository;
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
-    public void sendMessage(long channelId, String username, String avatarUrl, String content) {
+    public void sendMessage(final long channelId, final String username, final String avatarUrl, final String content) {
         executorService.execute(() -> {
-            Optional<ChannelWebhookEntity> optionalChannel = channelWebhookRepository.findById(channelId);
+            final var optionalChannel = channelWebhookRepository.findById(channelId);
 
-            ChannelWebhookEntity channelWebhook;
+            final ChannelWebhookEntity channelWebhook;
             if (optionalChannel.isEmpty()) {
-                CreateWebhookResponse createWebhookResponse = createWebhook(channelId, "phil");
+                final var createWebhookResponse = createWebhook(channelId, "phil");
                 channelWebhook = jdbcAggregateTemplate.insert(new ChannelWebhookEntity(channelId, createWebhookResponse.id(), createWebhookResponse.token()));
             } else {
                 channelWebhook = optionalChannel.get();
@@ -42,20 +41,20 @@ public class DiscordWebhookSendService {
         });
     }
 
-    private CreateWebhookResponse createWebhook(long channelId, String name) {
-        String endpoint = "https://discordapp.com/api/channels/{channelId}/webhooks";
+    private CreateWebhookResponse createWebhook(final long channelId, final String name) {
+        final var endpoint = "https://discordapp.com/api/channels/{channelId}/webhooks";
 
-        HttpHeaders headers = new HttpHeaders();
+        final var headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, "Bot " + baseConfig.philBotToken);
 
         return restTemplate.exchange(endpoint, HttpMethod.POST, new HttpEntity<>(new CreateWebhookRequest(name), headers),
                 CreateWebhookResponse.class, channelId).getBody();
     }
 
-    private void publishWebhook(long webhookId, String token, String username, String avatarUrl, String content) {
-        String endpoint = "https://discordapp.com/api/webhooks/{webhookId}/{webhookToken}";
+    private void publishWebhook(final long webhookId, final String token, final String username, final String avatarUrl, final String content) {
+        final var endpoint = "https://discordapp.com/api/webhooks/{webhookId}/{webhookToken}";
 
-        HttpHeaders headers = new HttpHeaders();
+        final var headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, "Bot " + baseConfig.philBotToken);
 
         restTemplate.exchange(endpoint, HttpMethod.POST, new HttpEntity<>(new ExecuteWebhook(content, username, avatarUrl), headers),

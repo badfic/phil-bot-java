@@ -3,11 +3,9 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import java.awt.Color;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,14 +35,14 @@ public class Ao3MetadataParserTest {
     @BeforeEach
     public void setup() throws Exception {
         new Constants(swampyGamesConfigDal, null, null).init();
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("ao3-test.html")) {
+        try (final var stream = getClass().getClassLoader().getResourceAsStream("ao3-test.html")) {
             work = new String(Objects.requireNonNull(stream).readAllBytes(), StandardCharsets.UTF_8);
         }
     }
 
     @Test
     public void testParser() {
-        MessageEmbed messageEmbed = ao3MetadataParser.parseWork("https://example.com", work);
+        final var messageEmbed = ao3MetadataParser.parseWork("https://example.com", work);
         Assertions.assertNotNull(messageEmbed);
         Assertions.assertEquals("AO3 Summary Report", messageEmbed.getTitle());
         Assertions.assertEquals("Words: 4123 | Chapters: 1/1 | Language: English", messageEmbed.getFooter().getText());

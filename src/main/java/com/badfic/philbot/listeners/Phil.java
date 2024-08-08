@@ -9,7 +9,6 @@ import com.badfic.philbot.commands.bang.events.MemberCount;
 import com.badfic.philbot.commands.slash.BaseSlashCommand;
 import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.data.phil.PhilResponsesConfig;
 import com.badfic.philbot.data.phil.PhilResponsesConfigRepository;
@@ -36,14 +35,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.attribute.IAgeRestrictedChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
@@ -60,7 +56,6 @@ import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +68,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -81,7 +75,7 @@ import org.springframework.web.client.RestTemplate;
 public class Phil {
     @Component
     static class Command extends BasicResponsesBot<PhilResponsesConfig> {
-        Command(PhilResponsesConfigRepository philResponsesConfigRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+        Command(final PhilResponsesConfigRepository philResponsesConfigRepository, final JdbcAggregateTemplate jdbcAggregateTemplate) {
             super(philResponsesConfigRepository, jdbcAggregateTemplate, "phil", PhilResponsesConfig::new, null, null);
         }
     }
@@ -139,10 +133,10 @@ public class Phil {
 
         @Scheduled(cron = "${swampy.schedule.phil.dadjoke}", zone = "${swampy.schedule.timezone}")
         void sayDadJoke() {
-            HttpHeaders headers = new HttpHeaders();
+            final var headers = new HttpHeaders();
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
-            ResponseEntity<DadJokeRecord> dadJoke = restTemplate.exchange("https://icanhazdadjoke.com/", HttpMethod.GET, new HttpEntity<>(headers), DadJokeRecord.class);
+            final var dadJoke = restTemplate.exchange("https://icanhazdadjoke.com/", HttpMethod.GET, new HttpEntity<>(headers), DadJokeRecord.class);
 
             if (dadJoke.getBody() != null) {
                 philJda.getTextChannelsByName("general", false).stream().findAny().ifPresent(channel -> {
@@ -159,24 +153,24 @@ public class Phil {
         }
 
         @Override
-        public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        public void onMessageReceived(final @NotNull MessageReceivedEvent event) {
             if (event.getChannelType() != ChannelType.TEXT && event.getChannelType() != ChannelType.PRIVATE) {
                 return;
             }
 
-            final long channelId = event.getChannel().getIdLong();
-            String msgContent = event.getMessage().getContentRaw();
+            final var channelId = event.getChannel().getIdLong();
+            final var msgContent = event.getMessage().getContentRaw();
             if (StringUtils.isBlank(msgContent) || event.getAuthor().isBot()) {
                 return;
             }
 
-            final boolean isCommand = StringUtils.startsWith(msgContent, Constants.PREFIX);
+            final var isCommand = StringUtils.startsWith(msgContent, Constants.PREFIX);
 
             if (!isCommand && event.getChannel().getType() == ChannelType.PRIVATE) {
                 return;
             }
 
-            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
+            final var swampyGamesConfig = swampyGamesConfigDal.get();
 
             if (swampyGamesConfig.getBoostPhrase() != null && StringUtils.containsIgnoreCase(msgContent, swampyGamesConfig.getBoostPhrase())) {
                 swampyCommand.acceptedBoost(event.getMember());
@@ -187,10 +181,10 @@ public class Phil {
                 swampyCommand.acceptedMap(event.getMember());
             }
 
-            final CommandEvent commandEvent = new CommandEvent(event);
+            final var commandEvent = new CommandEvent(event);
 
             if (isCommand) {
-                for (BaseBangCommand command : commands) {
+                for (final var command : commands) {
                     if (command.getName().equalsIgnoreCase(commandEvent.getName())
                             || Arrays.stream(command.getAliases()).anyMatch(a -> a.equalsIgnoreCase(commandEvent.getName()))) {
                         // guild only commands
@@ -207,7 +201,7 @@ public class Phil {
 
                         // required role check
                         if (Objects.nonNull(command.getRequiredRole())) {
-                            String requiredRole = command.getRequiredRole();
+                            final var requiredRole = command.getRequiredRole();
 
                             if (Objects.isNull(event.getMember()) || !command.hasRole(event.getMember(), requiredRole)) {
                                 commandEvent.replyError(String.format("You must have %s role to execute this command", requiredRole));
@@ -263,7 +257,6 @@ public class Phil {
 
             Constants.checkUserTriggerWords(event, USER_TRIGGER_WORDS, null, null, null);
 
-            final SwampyGamesConfig finalConfig = swampyGamesConfig;
             LAST_WORD_MAP.compute(channelId, (key, oldValue) -> {
                 if ("bird".equalsIgnoreCase(msgContent) || "word".equalsIgnoreCase(msgContent) || "mattgrinch".equalsIgnoreCase(msgContent)) {
                     if (oldValue == null) {
@@ -272,17 +265,17 @@ public class Phil {
 
                     if (oldValue.left().equalsIgnoreCase(msgContent)) {
                         if (oldValue.rightShort() + 1 >= 3 && "bird".equalsIgnoreCase(msgContent)) {
-                            discordWebhookSendService.sendMessage(channelId, finalConfig.getAntoniaNickname(), finalConfig.getAntoniaAvatar(),
+                            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
                                     "the bird is the word");
                             return null;
                         }
                         if (oldValue.rightShort() + 1 >= 3 && "word".equalsIgnoreCase(msgContent)) {
-                            discordWebhookSendService.sendMessage(channelId, finalConfig.getAntoniaNickname(), finalConfig.getAntoniaAvatar(),
+                            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
                                     "the word is the bird");
                             return null;
                         }
                         if (oldValue.rightShort() + 1 >= 3 && "mattgrinch".equalsIgnoreCase(msgContent)) {
-                            discordWebhookSendService.sendMessage(channelId, finalConfig.getAntoniaNickname(), finalConfig.getAntoniaAvatar(),
+                            discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(),
                                     "https://cdn.discordapp.com/attachments/707453916882665552/914409167610056734/unknown.png");
                             return null;
                         }
@@ -300,19 +293,19 @@ public class Phil {
         }
 
         @Override
-        public void onReady(@NotNull ReadyEvent event) {
+        public void onReady(final @NotNull ReadyEvent event) {
             Message.suppressContentIntentWarning(); // This is specifically for all the non-phil bots, they'll print a warning without this.
 
             log.info("Received ready event for [guild={}] [user={}]", baseConfig.guildId, event.getJDA().getSelfUser());
-            MessageEmbed messageEmbed = Constants.simpleEmbed("Restarted",
+            final var messageEmbed = Constants.simpleEmbed("Restarted",
                     String.format("I just restarted\ngit sha: %s\ncommit msg: %s", gitProperties.getCommitId(), gitProperties.get("commit.message.short")), new Color(89, 145, 17));
             event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).getFirst().sendMessageEmbeds(messageEmbed).queue();
 
-            Guild guildById = philJda.getGuildById(baseConfig.guildId);
+            final var guildById = philJda.getGuildById(baseConfig.guildId);
 
-            CommandListUpdateAction commandListUpdateAction = guildById.updateCommands();
+            var commandListUpdateAction = guildById.updateCommands();
 
-            for (BaseSlashCommand slashCommand : slashCommands) {
+            for (final var slashCommand : slashCommands) {
                 if (CollectionUtils.isNotEmpty(slashCommand.getOptions())) {
                     commandListUpdateAction = commandListUpdateAction.addCommands(Commands.slash(slashCommand.getName(), slashCommand.getHelp())
                             .addOptions(slashCommand.getOptions()));
@@ -335,8 +328,8 @@ public class Phil {
         }
 
         @Override
-        public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-            for (BaseSlashCommand slashCommand : slashCommands) {
+        public void onSlashCommandInteraction(final @NotNull SlashCommandInteractionEvent event) {
+            for (final var slashCommand : slashCommands) {
                 if (event.getName().equals(slashCommand.getName())) {
                     // no guildOnly check because all slash commands are guild only
 
@@ -348,7 +341,7 @@ public class Phil {
 
                     // required role check
                     if (Objects.nonNull(slashCommand.getRequiredRole())) {
-                        String requiredRole = slashCommand.getRequiredRole();
+                        final var requiredRole = slashCommand.getRequiredRole();
 
                         if (Objects.isNull(event.getMember()) || !slashCommand.hasRole(event.getMember(), requiredRole)) {
                             event.reply(String.format("You must have %s role to execute this command", requiredRole)).queue();
@@ -371,8 +364,8 @@ public class Phil {
         }
 
         @Override
-        public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
-            for (BaseSlashCommand slashCommand : slashCommands) {
+        public void onCommandAutoCompleteInteraction(final @NotNull CommandAutoCompleteInteractionEvent event) {
+            for (final var slashCommand : slashCommands) {
                 if (event.getName().equals(slashCommand.getName())) {
                     slashCommand.onAutoComplete(event);
                     return;
@@ -381,7 +374,7 @@ public class Phil {
         }
 
         @Override
-        public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+        public void onGuildVoiceUpdate(final @NotNull GuildVoiceUpdateEvent event) {
             if (event.getChannelJoined() != null) {
                 swampyCommand.voiceJoined(event.getMember());
             } else if (event.getChannelLeft() != null) {
@@ -390,12 +383,12 @@ public class Phil {
         }
 
         @Override
-        public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
+        public void onMessageReactionAdd(final @NotNull MessageReactionAddEvent event) {
             if (event.getUser() != null && event.getUser().isBot()) {
                 return;
             }
 
-            EmojiUnion emoji = event.getReaction().getEmoji();
+            final var emoji = event.getReaction().getEmoji();
             if (emoji.getType() == Emoji.Type.UNICODE) {
                 if (quoteCommand.getEmoji().equals(emoji.asUnicode().getName())) {
                     quoteCommand.saveQuote(event);
@@ -416,9 +409,9 @@ public class Phil {
         }
 
         @Override
-        public void onGuildMemberRoleAdd(@NotNull GuildMemberRoleAddEvent event) {
+        public void onGuildMemberRoleAdd(final @NotNull GuildMemberRoleAddEvent event) {
             if (event.getRoles().stream().anyMatch(r -> r.getName().equals(Constants.CHAOS_CHILDREN_ROLE) || r.getName().equals(Constants.EIGHTEEN_PLUS_ROLE))) {
-                String mention = event.getMember().getAsMention();
+                final var mention = event.getMember().getAsMention();
                 event.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst().sendMessage(mention + " Congratulations on not being a newbie " +
                         "anymore my chaotic friend! Now you're entered into The Swampys, our server wide chaos games. " +
                         "You don't have to actively participate, but if you'd like to join the chaos with us, take a peek at what The Swampys has to offer.\n\n" +
@@ -427,11 +420,11 @@ public class Phil {
         }
 
         @Override
-        public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+        public void onGuildMemberJoin(final @NotNull GuildMemberJoinEvent event) {
             memberCount.updateCount();
 
             event.getGuild().getTextChannelsByName("landing-zone", false).stream().findFirst().ifPresent(landingZone -> {
-                String guildName = event.getGuild().getName();
+                final var guildName = event.getGuild().getName();
                 landingZone.sendMessageEmbeds(Constants.simpleEmbed("Welcome to my humble swamp, swampling", String.format(
                         """
                         Hey %s, welcome to %s! Before you can be given full server access by a mod, there's a few things you need to do:
@@ -452,7 +445,7 @@ public class Phil {
         }
 
         @Override
-        public void onGuildBan(@NotNull GuildBanEvent event) {
+        public void onGuildBan(final @NotNull GuildBanEvent event) {
             swampyCommand.removeFromGames(event.getGuild(), event.getUser().getId());
 
             event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).stream().findAny().ifPresent(channel -> {
@@ -467,7 +460,7 @@ public class Phil {
         }
 
         @Override
-        public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+        public void onGuildMemberRemove(final @NotNull GuildMemberRemoveEvent event) {
             swampyCommand.removeFromGames(event.getGuild(), event.getUser().getId());
 
             event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).stream().findAny().ifPresent(channel -> {
@@ -482,7 +475,7 @@ public class Phil {
         }
 
         @Override
-        public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
+        public void onGuildMemberUpdateNickname(final @NotNull GuildMemberUpdateNicknameEvent event) {
             event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
                 channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
                                 event.getUser().getName() + " Updated Nickname",
@@ -494,7 +487,7 @@ public class Phil {
         }
 
         @Override
-        public void onUserUpdateName(@NotNull UserUpdateNameEvent event) {
+        public void onUserUpdateName(final @NotNull UserUpdateNameEvent event) {
             event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
                 channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
                                 event.getOldName() + " Updated Username",
@@ -505,16 +498,16 @@ public class Phil {
         }
 
         @Override
-        public void onUserUpdateAvatar(UserUpdateAvatarEvent event) {
+        public void onUserUpdateAvatar(final UserUpdateAvatarEvent event) {
             logAvatarUpdate(event.getUser(), event.getNewAvatarUrl(), event.getOldAvatarUrl());
         }
 
         @Override
-        public void onGuildMemberUpdateAvatar(@NotNull GuildMemberUpdateAvatarEvent event) {
+        public void onGuildMemberUpdateAvatar(final @NotNull GuildMemberUpdateAvatarEvent event) {
             logAvatarUpdate(event.getUser(), event.getNewAvatarUrl(), event.getOldAvatarUrl());
         }
 
-        private void logAvatarUpdate(User user, String oldAvatar, String newAvatar) {
+        private void logAvatarUpdate(final User user, final String oldAvatar, final String newAvatar) {
             philJda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
                 channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
                                 user.getEffectiveName() + " Updated Avatar",

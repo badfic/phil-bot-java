@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 class Antonia {
     @Component
     static class Command extends BasicResponsesBot<AntoniaResponsesConfig> {
-        Command(AntoniaResponsesConfigRepository antoniaResponsesConfigRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+        Command(final AntoniaResponsesConfigRepository antoniaResponsesConfigRepository, final JdbcAggregateTemplate jdbcAggregateTemplate) {
             super(antoniaResponsesConfigRepository, jdbcAggregateTemplate, "antonia", AntoniaResponsesConfig::new,
                     SwampyGamesConfig::getAntoniaNickname, SwampyGamesConfig::getAntoniaAvatar);
         }
@@ -58,10 +58,10 @@ class Antonia {
 
         private final Command antoniaCommand;
 
-        void onMessageReceived(@NotNull MessageReceivedEvent event, SwampyGamesConfig swampyGamesConfig) {
-            String msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
+        void onMessageReceived(final @NotNull MessageReceivedEvent event, final SwampyGamesConfig swampyGamesConfig) {
+            final var msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
-            long channelId = event.getMessage().getChannel().getIdLong();
+            final var channelId = event.getMessage().getChannel().getIdLong();
 
             if (msgContent.contains("kite man")) {
                 discordWebhookSendService.sendMessage(channelId, swampyGamesConfig.getAntoniaNickname(), swampyGamesConfig.getAntoniaAvatar(), "Hell yea");
