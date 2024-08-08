@@ -22,7 +22,7 @@ class DailyTicker extends BaseService {
         }
 
         executorService.submit(() -> {
-            for (DailyTickable tickable : dailyTickables) {
+            for (final var tickable : dailyTickables) {
                 try {
                     tickable.runDailyTask();
                 } catch (Exception e) {

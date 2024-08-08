@@ -6,20 +6,17 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DailyRiverdaleMemeEntity;
 import com.badfic.philbot.data.DailyRiverdaleMemeRepository;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +32,7 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
     private final DailyRiverdaleMemeRepository dailyRiverdaleMemeRepository;
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
-    public DailyRiverdaleMemeService(DailyRiverdaleMemeRepository dailyRiverdaleMemeRepository, JdbcAggregateTemplate jdbcAggregateTemplate) {
+    public DailyRiverdaleMemeService(final DailyRiverdaleMemeRepository dailyRiverdaleMemeRepository, final JdbcAggregateTemplate jdbcAggregateTemplate) {
         this.name = "updateDailyRiverdaleMemes";
         this.ownerCommand = true;
         this.dailyRiverdaleMemeRepository = dailyRiverdaleMemeRepository;
@@ -43,7 +40,7 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         executorService.execute(() -> {
             if (event.getArgs().contains("refresh")) {
                 refreshImageUrls();
@@ -115,18 +112,18 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
     }
 
     private void scrapeAllMemes() {
-        List<TextChannel> textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
+        final var textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
             log.error("DailyRiverdaleMemeService Failed to find [channel={}]", Constants.CURSED_SWAMP_CHANNEL);
             return;
         }
 
-        TextChannel cursedChannel = textChannelsByName.getFirst();
-        Set<Long> messageIds = new HashSet<>();
+        final var cursedChannel = textChannelsByName.getFirst();
+        final var messageIds = new HashSet<Long>();
 
-        long lastMsgId = 0;
+        var lastMsgId = 0L;
         while (lastMsgId != -1) {
-            MessageHistory history;
+            final MessageHistory history;
             if (lastMsgId == 0) {
                 history = cursedChannel.getHistoryFromBeginning(100).timeout(30, TimeUnit.SECONDS).complete();
             } else {
@@ -137,17 +134,17 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
                     ? history.getRetrievedHistory().getFirst().getIdLong()
                     : -1;
 
-            for (Message message : history.getRetrievedHistory()) {
+            for (final var message : history.getRetrievedHistory()) {
                 if (StringUtils.containsIgnoreCase(message.getContentRaw(), SEARCH_STRING)) {
                     if (CollectionUtils.isNotEmpty(message.getAttachments())) {
-                        String imageUrl = message.getAttachments().getFirst().getProxyUrl();
-                        String messageContent = message.getContentRaw();
+                        final var imageUrl = message.getAttachments().getFirst().getProxyUrl();
+                        final var messageContent = message.getContentRaw();
 
                         messageIds.add(message.getIdLong());
 
-                        DailyRiverdaleMemeEntity storedMessage;
-                        Optional<DailyRiverdaleMemeEntity> storedMessageOpt = dailyRiverdaleMemeRepository.findById(message.getIdLong());
+                        final var storedMessageOpt = dailyRiverdaleMemeRepository.findById(message.getIdLong());
 
+                        final DailyRiverdaleMemeEntity storedMessage;
                         if (storedMessageOpt.isPresent()) {
                             storedMessage = storedMessageOpt.get();
                             storedMessage.setImageUrl(imageUrl);
@@ -174,9 +171,9 @@ public class DailyRiverdaleMemeService extends BaseBangCommand implements DailyT
             }
         }
 
-        Collection<Long> deletedMessageIds = CollectionUtils.disjunction(dailyRiverdaleMemeRepository.findAllIds(), messageIds);
+        final var deletedMessageIds = CollectionUtils.disjunction(dailyRiverdaleMemeRepository.findAllIds(), messageIds);
 
-        for (Long deletedMessageId : deletedMessageIds) {
+        for (final var deletedMessageId : deletedMessageIds) {
             if (dailyRiverdaleMemeRepository.existsById(deletedMessageId)) {
                 dailyRiverdaleMemeRepository.deleteById(deletedMessageId);
             }

@@ -3,7 +3,6 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.awt.Color;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -14,14 +13,10 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,40 +29,40 @@ public class Ao3MetadataParser extends BaseService {
     private final Lock rateLimitLock = new ReentrantLock();
     private volatile long lastAo3Request = System.currentTimeMillis();
 
-    public boolean parseLink(String link, String channelName) {
+    public boolean parseLink(final String link, final String channelName) {
         try {
-            String work = getWork(link);
-            MessageEmbed messageEmbed = parseWork(link, work);
+            final var work = getWork(link);
+            final var messageEmbed = parseWork(link, work);
             philJda.getTextChannelsByName(channelName, false).getFirst().sendMessageEmbeds(messageEmbed).queue();
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Failed to parse ao3 [link={}]", link, e);
             return false;
         }
     }
 
-    public void sendSummaryToWebhook(String link, String webhookUrl) {
+    public void sendSummaryToWebhook(final String link, final String webhookUrl) {
         executorService.submit(() -> {
             try {
-                String work = getWork(link);
-                MessageEmbed messageEmbed = parseWork(link, work);
-                Map<String, Object> map = messageEmbed.toData().toMap();
-                JsonNode jsonNode = objectMapper.valueToTree(map);
+                final var work = getWork(link);
+                final var messageEmbed = parseWork(link, work);
+                final var map = messageEmbed.toData().toMap();
+                final var jsonNode = objectMapper.valueToTree(map);
 
                 restTemplate.exchange(webhookUrl, HttpMethod.PATCH, new HttpEntity<>(new Data(new JsonNode[]{jsonNode})), String.class);
                 log.info("Successfully sent AO3 Summary for [link={}]", link);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 log.error("Failed to send AO3 Summary for [link={}]", link, e);
             }
         });
     }
 
-    public <T> T doWithLock(Callable<T> work) throws Exception {
+    public <T> T doWithLock(final Callable<T> work) throws Exception {
         rateLimitLock.lock();
         try {
-            long difference = System.currentTimeMillis() - lastAo3Request;
+            var difference = System.currentTimeMillis() - lastAo3Request;
             while (difference < AO3_RATE_LIMIT_MILLIS) {
-                long waitTime = TimeUnit.MILLISECONDS.toNanos(AO3_RATE_LIMIT_MILLIS - difference);
+                final var waitTime = TimeUnit.MILLISECONDS.toNanos(AO3_RATE_LIMIT_MILLIS - difference);
                 LockSupport.parkNanos(waitTime);
                 difference = System.currentTimeMillis() - lastAo3Request;
             }
@@ -80,10 +75,10 @@ public class Ao3MetadataParser extends BaseService {
     }
 
     // Visible For Testing
-    MessageEmbed parseWork(String originalLink, String work) {
-        Document document = Jsoup.parse(work);
+    MessageEmbed parseWork(final String originalLink, final String work) {
+        final var document = Jsoup.parse(work);
 
-        Elements titleElement = document.getElementsByClass("title heading");
+        final var titleElement = document.getElementsByClass("title heading");
         if (CollectionUtils.isEmpty(titleElement)) {
             return Constants.simpleEmbed(
                     "AO3 Summary Report",
@@ -94,22 +89,13 @@ public class Ao3MetadataParser extends BaseService {
                     "https://cdn.discordapp.com/attachments/707453916882665552/780261925212520508/wITXDY67Xw1sAAAAABJRU5ErkJggg.png",
                     false);
         }
+        final var title = titleElement.getFirst().text();
 
-        String title = titleElement.getFirst().text();
+        final var authorElement = document.getElementsByAttributeValueContaining("rel", "author");
+        final var authorLink = CollectionUtils.isEmpty(authorElement) ? "" : authorElement.getFirst().attr("href");
+        final var authorName = CollectionUtils.isEmpty(authorElement) ? "Anonymous" : authorElement.getFirst().text();
 
-        Elements authorElement = document.getElementsByAttributeValueContaining("rel", "author");
-
-        String authorLink;
-        String authorName;
-        if (CollectionUtils.isEmpty(authorElement)) {
-            authorLink = "";
-            authorName = "Anonymous";
-        } else {
-            authorLink = authorElement.getFirst().attr("href");
-            authorName = authorElement.getFirst().text();
-        }
-
-        StringBuilder description = new StringBuilder();
+        final var description = new StringBuilder();
         description.append("[**")
                 .append(title)
                 .append("**](")
@@ -120,13 +106,13 @@ public class Ao3MetadataParser extends BaseService {
                 .append(authorLink)
                 .append(")\n\n**Rating**: ");
 
-        String rating = "Explicit";
-        Element workMetaGroup = document.getElementsByClass("work meta group").getFirst();
+        final var workMetaGroup = document.getElementsByClass("work meta group").getFirst();
 
-        for (Element tags : workMetaGroup.getElementsByClass("rating tags")) {
+        var rating = "Explicit";
+        for (final var tags : workMetaGroup.getElementsByClass("rating tags")) {
             if ("dd".equalsIgnoreCase(tags.tagName())) {
-                Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.getFirst().getElementsByTag("li")) {
+                final var tagList = tags.getElementsByTag("ul");
+                for (final var li : tagList.getFirst().getElementsByTag("li")) {
                     rating = li.getElementsByTag("a").getFirst().text();
                     description.append(rating);
                     break;
@@ -135,11 +121,11 @@ public class Ao3MetadataParser extends BaseService {
         }
 
         description.append("\n\n**Warnings**: ");
-        for (Element tags : workMetaGroup.getElementsByClass("warning tags")) {
+        for (final var tags : workMetaGroup.getElementsByClass("warning tags")) {
             if ("dd".equalsIgnoreCase(tags.tagName())) {
-                Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.getFirst().getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").getFirst().text();
+                final var tagList = tags.getElementsByTag("ul");
+                for (final var li : tagList.getFirst().getElementsByTag("li")) {
+                    final var tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -150,11 +136,11 @@ public class Ao3MetadataParser extends BaseService {
         }
 
         description.append("\n\n**Categories**: ");
-        for (Element tags : workMetaGroup.getElementsByClass("category tags")) {
+        for (final var tags : workMetaGroup.getElementsByClass("category tags")) {
             if ("dd".equalsIgnoreCase(tags.tagName())) {
-                Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.getFirst().getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").getFirst().text();
+                final var tagList = tags.getElementsByTag("ul");
+                for (final var li : tagList.getFirst().getElementsByTag("li")) {
+                    final var tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -165,20 +151,20 @@ public class Ao3MetadataParser extends BaseService {
         }
 
         description.append("\n\n**Summary**: ");
-        Elements summaryModule = document.getElementsByClass("summary module");
+        final var summaryModule = document.getElementsByClass("summary module");
         if (summaryModule.isEmpty()) {
             description.append("No Summary Provided");
         } else {
-            String summary = summaryModule.getFirst().getElementsByTag("blockquote").text();
+            final var summary = summaryModule.getFirst().getElementsByTag("blockquote").text();
             description.append(summary.length() <= 800 ? summary : (summary.substring(0, 797) + "..."));
         }
 
         description.append("\n\n**Fandoms**: ");
-        for (Element tags : workMetaGroup.getElementsByClass("fandom tags")) {
+        for (final var tags : workMetaGroup.getElementsByClass("fandom tags")) {
             if ("dd".equalsIgnoreCase(tags.tagName())) {
-                Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.getFirst().getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").getFirst().text();
+                final var tagList = tags.getElementsByTag("ul");
+                for (final var li : tagList.getFirst().getElementsByTag("li")) {
+                    final var tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -189,11 +175,11 @@ public class Ao3MetadataParser extends BaseService {
         }
 
         description.append("\n\n**Relationships**: ");
-        for (Element tags : workMetaGroup.getElementsByClass("relationship tags")) {
+        for (final var tags : workMetaGroup.getElementsByClass("relationship tags")) {
             if ("dd".equalsIgnoreCase(tags.tagName())) {
-                Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.getFirst().getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").getFirst().text();
+                final var tagList = tags.getElementsByTag("ul");
+                for (final var li : tagList.getFirst().getElementsByTag("li")) {
+                    final var tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -204,11 +190,11 @@ public class Ao3MetadataParser extends BaseService {
         }
 
         description.append("\n\n**Characters**: ");
-        for (Element tags : workMetaGroup.getElementsByClass("character tags")) {
+        for (final var tags : workMetaGroup.getElementsByClass("character tags")) {
             if ("dd".equalsIgnoreCase(tags.tagName())) {
-                Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.getFirst().getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").getFirst().text();
+                final var tagList = tags.getElementsByTag("ul");
+                for (final var li : tagList.getFirst().getElementsByTag("li")) {
+                    final var tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -219,11 +205,11 @@ public class Ao3MetadataParser extends BaseService {
         }
 
         description.append("\n\n**Tags**: ");
-        for (Element tags : workMetaGroup.getElementsByClass("freeform tags")) {
+        for (final var tags : workMetaGroup.getElementsByClass("freeform tags")) {
             if ("dd".equalsIgnoreCase(tags.tagName())) {
-                Elements tagList = tags.getElementsByTag("ul");
-                for (Element li : tagList.getFirst().getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").getFirst().text();
+                final var tagList = tags.getElementsByTag("ul");
+                for (final var li : tagList.getFirst().getElementsByTag("li")) {
+                    final var tag = li.getElementsByTag("a").getFirst().text();
                     description.append(tag).append(", ");
                 }
             }
@@ -235,10 +221,10 @@ public class Ao3MetadataParser extends BaseService {
 
         String words = null;
         String chapters = null;
-        for (Element outerStats : workMetaGroup.getElementsByClass("stats")) {
+        for (final var outerStats : workMetaGroup.getElementsByClass("stats")) {
             if ("dd".equalsIgnoreCase(outerStats.tagName())) {
-                Element innerStats = outerStats.getElementsByTag("dl").getFirst();
-                for (Element ddStats : innerStats.getElementsByTag("dd")) {
+                final var innerStats = outerStats.getElementsByTag("dl").getFirst();
+                for (final var ddStats : innerStats.getElementsByTag("dd")) {
                     if ("words".equalsIgnoreCase(ddStats.className())) {
                         words = ddStats.text();
                     }
@@ -249,15 +235,15 @@ public class Ao3MetadataParser extends BaseService {
             }
         }
 
-        StringBuilder language = new StringBuilder("Language: ");
-        for (Element tags : workMetaGroup.getElementsByClass("language")) {
+        final var language = new StringBuilder("Language: ");
+        for (final var tags : workMetaGroup.getElementsByClass("language")) {
             if ("dd".equalsIgnoreCase(tags.tagName())) {
                 language.append(tags.text());
                 break;
             }
         }
 
-        Color color = new Color(144, 7, 7);
+        var color = new Color(144, 7, 7);
         if (StringUtils.containsIgnoreCase(rating, "teen")) {
             color = new Color(214, 197, 10);
         } else if (StringUtils.containsIgnoreCase(rating, "general")) {
@@ -268,30 +254,29 @@ public class Ao3MetadataParser extends BaseService {
             color = new Color(212, 108, 5);
         }
 
-        String footer = "%s | %s | %s";
         return Constants.simpleEmbed(
                 "AO3 Summary Report",
                 description.toString(),
                 null,
-                String.format(footer, "Words: " + words, "Chapters: " + chapters, language),
+                "%s | %s | %s".formatted("Words: " + words, "Chapters: " + chapters, language),
                 color,
                 "https://cdn.discordapp.com/attachments/707453916882665552/780261925212520508/wITXDY67Xw1sAAAAABJRU5ErkJggg.png",
                 false);
     }
 
-    private String getWork(String link) throws Exception {
-        String url = UriComponentsBuilder.fromUriString(link)
+    private String getWork(final String link) throws Exception {
+        final var url = UriComponentsBuilder.fromUriString(link)
                 .replaceQuery(StringUtils.EMPTY)
                 .queryParam("view_adult", "true")
                 .queryParam("view_full_work", "true")
                 .build()
                 .toString();
 
-        LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        final var headers = new LinkedMultiValueMap<>();
         headers.add(HttpHeaders.ACCEPT, MediaType.TEXT_HTML_VALUE);
         headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
 
-        ResponseEntity<String> response = doWithLock(() -> restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class));
+        final var response = doWithLock(() -> restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class));
         return response.getBody();
     }
 
