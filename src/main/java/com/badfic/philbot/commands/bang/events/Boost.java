@@ -4,17 +4,11 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
-import com.badfic.philbot.data.SwampyGamesConfig;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +24,7 @@ public class Boost extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         doBoost(true);
     }
 
@@ -39,29 +33,29 @@ public class Boost extends BaseBangCommand {
         doBoost(false);
     }
 
-    private void doBoost(boolean force) {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+    private void doBoost(final boolean force) {
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
-        Guild guild = Objects.requireNonNull(philJda.getGuildById(baseConfig.guildId));
+        final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
+        final var guild = Objects.requireNonNull(philJda.getGuildById(baseConfig.guildId));
 
         if (swampyGamesConfig.getBoostPhrase() != null) {
-            LocalDateTime startTime = Objects.requireNonNullElseGet(swampyGamesConfig.getBoostStartTime(), () -> LocalDateTime.now().minusMinutes(61));
+            final var startTime = Objects.requireNonNullElseGet(swampyGamesConfig.getBoostStartTime(), () -> LocalDateTime.now().minusMinutes(61));
 
             swampyGamesConfig.setBoostPhrase(null);
             swampyGamesConfig.setBoostStartTime(null);
             saveSwampyGamesConfig(swampyGamesConfig);
 
-            List<CompletableFuture<?>> futures = new ArrayList<>();
-            StringBuilder description = new StringBuilder();
+            final var futures = new ArrayList<CompletableFuture<?>>();
+            final var description = new StringBuilder();
             discordUserRepository.findAll()
                     .stream()
                     .filter(u -> Objects.nonNull(u.getAcceptedBoost()) && u.getAcceptedBoost().isAfter(startTime))
                     .forEach(discordUser -> {
-                        String userId = discordUser.getId();
+                        final var userId = discordUser.getId();
 
                         try {
-                            Member memberLookedUp = guild.getMemberById(userId);
+                            final var memberLookedUp = guild.getMemberById(userId);
                             if (memberLookedUp == null) {
                                 throw new RuntimeException("member not found");
                             }
@@ -78,7 +72,7 @@ public class Boost extends BaseBangCommand {
                                         .append(userId)
                                         .append(">\n");
                             }
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             log.error("Failed to give boost points to user [id={}]", userId, e);
                             description.append("OOPS: Unable to give points to <@")
                                     .append(userId)
@@ -86,19 +80,19 @@ public class Boost extends BaseBangCommand {
                         }
                     });
 
-            MessageEmbed messageEmbed = Constants.simpleEmbed("Boost Blitz Complete", description.toString(), swampyGamesConfig.getBoostEndImg());
+            final var messageEmbed = Constants.simpleEmbed("Boost Blitz Complete", description.toString(), swampyGamesConfig.getBoostEndImg());
 
             CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> swampysChannel.sendMessageEmbeds(messageEmbed).queue());
             return;
         }
 
         if (force || randomNumberService.nextInt(100) < swampyGamesConfig.getPercentChanceBoostHappensOnHour()) {
-            String boostPhrase = Constants.pickRandom(swampyGamesConfig.getBoostWords());
+            final var boostPhrase = Constants.pickRandom(swampyGamesConfig.getBoostWords());
             swampyGamesConfig.setBoostPhrase(boostPhrase);
             swampyGamesConfig.setBoostStartTime(LocalDateTime.now());
             saveSwampyGamesConfig(swampyGamesConfig);
 
-            MessageEmbed message = Constants.simpleEmbed("BOOST BLITZ",
+            final var message = Constants.simpleEmbed("BOOST BLITZ",
                     "Type `" + boostPhrase + "` in this channel before the top of the hour* to be boosted by "
                             + swampyGamesConfig.getBoostEventPoints() + " points",
                     swampyGamesConfig.getBoostStartImg(), "* top of the hour unless it's midnight Pacific time, then the boost runs until 3am Pacific time");

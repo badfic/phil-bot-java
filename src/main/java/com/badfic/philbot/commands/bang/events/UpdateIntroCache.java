@@ -3,18 +3,12 @@ package com.badfic.philbot.commands.bang.events;
 import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.Family;
 import com.badfic.philbot.service.DailyTickable;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
@@ -32,25 +26,25 @@ public class UpdateIntroCache extends BaseBangCommand implements DailyTickable {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         executorService.execute(this::runDailyTask);
     }
 
     @Override
     public void runDailyTask() {
-        Optional<TextChannel> optionalIntroChannel = philJda.getTextChannelsByName("introductions", false).stream().findFirst();
+        final var optionalIntroChannel = philJda.getTextChannelsByName("introductions", false).stream().findFirst();
 
         if (optionalIntroChannel.isEmpty()) {
             log.error("ERROR: UpdateIntroCache could not find the #introductions channel");
             return;
         }
 
-        TextChannel introChannel = optionalIntroChannel.get();
+        final var introChannel = optionalIntroChannel.get();
 
-        Map<String, String> introMessages = new HashMap<>();
-        long lastMsgId = 0;
+        final var introMessages = new HashMap<String, String>();
+        var lastMsgId = 0L;
         while (lastMsgId != -1) {
-            MessageHistory history;
+            final MessageHistory history;
             if (lastMsgId == 0) {
                 history = introChannel.getHistoryFromBeginning(100).timeout(30, TimeUnit.SECONDS).complete();
             } else {
@@ -61,17 +55,17 @@ public class UpdateIntroCache extends BaseBangCommand implements DailyTickable {
                     ? history.getRetrievedHistory().getFirst().getIdLong()
                     : -1;
 
-            for (Message message : history.getRetrievedHistory()) {
+            for (final var message : history.getRetrievedHistory()) {
                 introMessages.put(message.getAuthor().getId(), message.getContentRaw());
             }
         }
 
-        List<DiscordUser> users = discordUserRepository.findAll();
+        final var users = discordUserRepository.findAll();
 
-        for (DiscordUser user : users) {
-            String id = user.getId();
+        for (final var user : users) {
+            final var id = user.getId();
 
-            String introMsg = introMessages.get(id);
+            final var introMsg = introMessages.get(id);
 
             if (introMsg != null) {
                 if (user.getFamily() == null) {

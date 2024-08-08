@@ -4,20 +4,10 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.NsfwQuote;
 import com.badfic.philbot.data.NsfwQuoteRepository;
-import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.DailyTickable;
-import it.unimi.dsi.fastutil.objects.ObjectIntPair;
-import java.time.DayOfWeek;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.apache.commons.collections4.CollectionUtils;
@@ -32,7 +22,7 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
 
     private final NsfwQuoteRepository nsfwQuoteRepository;
 
-    NsfwQuoteCommand(NsfwQuoteRepository nsfwQuoteRepository) {
+    NsfwQuoteCommand(final NsfwQuoteRepository nsfwQuoteRepository) {
         name = "nsfwQuote";
         aliases = new String[]{"nsfwQuotes", "cursedQuote", "cursedQuotes"};
         nsfwOnly = true;
@@ -49,22 +39,22 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
 
     @Override
     public void runDailyTask() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        long channelId = swampyGamesConfig.getNsfwSavedMemesChannelId();
+        final var swampyGamesConfig = getSwampyGamesConfig();
+        final var channelId = swampyGamesConfig.getNsfwSavedMemesChannelId();
 
         if (channelId > 0) {
-            Set<String> images = nsfwQuoteRepository.findAllNonNullImages();
+            final var images = nsfwQuoteRepository.findAllNonNullImages();
 
-            TextChannel philLookedUpChannel = philJda.getTextChannelById(channelId);
+            final var philLookedUpChannel = philJda.getTextChannelById(channelId);
 
             if (philLookedUpChannel == null) {
                 Constants.debugToTestChannel(philJda, "Could not update nsfw saved memes channel, it does not exist");
                 return;
             }
 
-            long lastMsgId = 0;
+            var lastMsgId = 0L;
             while (lastMsgId != -1) {
-                MessageHistory history;
+                final MessageHistory history;
                 if (lastMsgId == 0) {
                     history = philLookedUpChannel.getHistoryFromBeginning(100).timeout(30, TimeUnit.SECONDS).complete();
                 } else {
@@ -75,12 +65,12 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
                         ? history.getRetrievedHistory().getFirst().getIdLong()
                         : -1;
 
-                for (Message message : history.getRetrievedHistory()) {
+                for (final var message : history.getRetrievedHistory()) {
                     images.remove(message.getContentRaw());
                 }
             }
 
-            for (String image : images) {
+            for (final var image : images) {
                 discordWebhookSendService.sendMessage(philLookedUpChannel.getIdLong(), swampyGamesConfig.getKeanuNickname(),
                         swampyGamesConfig.getKeanuAvatar(), image);
                 LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
@@ -93,7 +83,7 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "cache")) {
             if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
                 event.replyError("You do not have permission to execute this command");
@@ -105,7 +95,7 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
         }
 
         if (StringUtils.isBlank(event.getArgs())) {
-            List<Long> ids = nsfwQuoteRepository.findAllIds();
+            final var ids = nsfwQuoteRepository.findAllIds();
 
             if (CollectionUtils.isEmpty(ids)) {
                 philJda.getTextChannelById(event.getChannel().getIdLong())
@@ -114,8 +104,8 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
                 return;
             }
 
-            long idx = Constants.pickRandom(ids);
-            Optional<NsfwQuote> optionalQuote = nsfwQuoteRepository.findById(idx);
+            final var idx = Constants.pickRandom(ids);
+            final var optionalQuote = nsfwQuoteRepository.findById(idx);
 
             if (optionalQuote.isEmpty()) {
                 philJda.getTextChannelById(event.getChannel().getIdLong())
@@ -130,13 +120,13 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
 
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "stat")) {
             if (CollectionUtils.isNotEmpty(event.getMessage().getMentions().getMembers())) {
-                Member member = event.getMessage().getMentions().getMembers().getFirst();
-                long memberId = member.getIdLong();
-                int[] quoteDaysOfWeekForUser = nsfwQuoteRepository.getQuoteDaysOfWeekForUser(memberId);
-                ObjectIntPair<DayOfWeek> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeekForUser);
+                final var member = event.getMessage().getMentions().getMembers().getFirst();
+                final var memberId = member.getIdLong();
+                final var quoteDaysOfWeekForUser = nsfwQuoteRepository.getQuoteDaysOfWeekForUser(memberId);
+                final var mode = Constants.isoDayOfWeekMode(quoteDaysOfWeekForUser);
 
-                DayOfWeek day = mode.left();
-                int count = mode.rightInt();
+                final var day = mode.left();
+                final var count = mode.rightInt();
 
                 philJda.getTextChannelById(event.getChannel().getIdLong()).
                         sendMessageEmbeds(Constants.simpleEmbed("User Cursed Quote Statistics",
@@ -155,14 +145,14 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
                 return;
             }
 
-            int[] quoteDaysOfWeek = nsfwQuoteRepository.getQuoteDaysOfWeek();
-            ObjectIntPair<DayOfWeek> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeek);
+            final var quoteDaysOfWeek = nsfwQuoteRepository.getQuoteDaysOfWeek();
+            final var mode = Constants.isoDayOfWeekMode(quoteDaysOfWeek);
 
-            DayOfWeek day = mode.left();
-            int count = mode.rightInt();
+            final var day = mode.left();
+            final var count = mode.rightInt();
 
-            long mostQuotedUserId = nsfwQuoteRepository.getMostQuotedUser();
-            Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
+            final var mostQuotedUserId = nsfwQuoteRepository.getMostQuotedUser();
+            final var mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
 
             philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Cursed Quote Statistics",
                     String.format("""
@@ -178,15 +168,15 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
         }
 
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "delete")) {
-            String[] split = event.getArgs().split("\\s+");
+            final var split = event.getArgs().split("\\s+");
             if (ArrayUtils.getLength(split) != 2) {
                 event.replyError("Please specify a NsfwQuote to delete: `!!nsfwQuote delete 123`");
                 return;
             }
 
             try {
-                long id = Long.parseLong(split[1]);
-                Optional<NsfwQuote> optionalQuote = nsfwQuoteRepository.findById(id);
+                final var id = Long.parseLong(split[1]);
+                final var optionalQuote = nsfwQuoteRepository.findById(id);
 
                 if (optionalQuote.isPresent()) {
                     nsfwQuoteRepository.deleteById(id);
@@ -194,7 +184,7 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
                 } else {
                     philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("NsfwQuote #" + id + " does not exist").queue();
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Could not parse quote number from: " + split[1]).queue();
             }
 
@@ -202,8 +192,8 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
         }
 
         try {
-            long id = Long.parseLong(event.getArgs());
-            Optional<NsfwQuote> optionalQuote = nsfwQuoteRepository.findById(id);
+            final var id = Long.parseLong(event.getArgs());
+            final var optionalQuote = nsfwQuoteRepository.findById(id);
 
             if (optionalQuote.isEmpty()) {
                 philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("NsfwQuote #" + id + " does not exist").queue();
@@ -211,7 +201,7 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
             }
 
             respondWithQuote(event, optionalQuote.get());
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Did not recognize number " + event.getArgs()).queue();
         }
     }
@@ -220,11 +210,11 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
         return EGGPLANT_EMOJI;
     }
 
-    public void saveQuote(MessageReactionAddEvent event) {
-        long messageId = event.getMessageIdLong();
-        long channelId = event.getChannel().getIdLong();
-        long guildId = event.getGuild().getIdLong();
-        long quoterId = event.getUserIdLong();
+    public void saveQuote(final MessageReactionAddEvent event) {
+        final var messageId = event.getMessageIdLong();
+        final var channelId = event.getChannel().getIdLong();
+        final var guildId = event.getGuild().getIdLong();
+        final var quoterId = event.getUserIdLong();
 
         if (!nsfwQuoteRepository.existsByMessageId(messageId)) {
             philJda.getTextChannelById(channelId).retrieveMessageById(messageId).queue(msg -> {
@@ -236,14 +226,14 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
                     image = msg.getAttachments().getFirst().getUrl();
                 }
 
-                NsfwQuote savedQuote = jdbcAggregateTemplate.insert(new NsfwQuote(messageId, channelId, msg.getContentRaw(), image,
+                final var savedQuote = jdbcAggregateTemplate.insert(new NsfwQuote(messageId, channelId, msg.getContentRaw(), image,
                         msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
 
                 msg.addReaction(Emoji.fromUnicode(EGGPLANT_EMOJI)).queue();
 
-                String msgLink = " [(jump)](https://discordapp.com/channels/" + guildId + '/' + channelId + '/' + messageId + ')';
+                final var msgLink = " [(jump)](https://discordapp.com/channels/" + guildId + '/' + channelId + '/' + messageId + ')';
 
-                MessageEmbed messageEmbed = Constants.simpleEmbed("NsfwQuote #" + savedQuote.getId() + " Added",
+                final var messageEmbed = Constants.simpleEmbed("NsfwQuote #" + savedQuote.getId() + " Added",
                         "<@" + quoterId + "> Added NsfwQuote #" + savedQuote.getId() + msgLink);
 
                 philJda.getTextChannelById(channelId).sendMessageEmbeds(messageEmbed).queue();
@@ -251,11 +241,11 @@ public class NsfwQuoteCommand extends BaseBangCommand implements DailyTickable {
         }
     }
 
-    private void respondWithQuote(CommandEvent event, NsfwQuote quote) {
-        String guildId = event.getGuild().getId();
-        String msgLink = "[(jump)](https://discordapp.com/channels/" + guildId + '/' + quote.getChannelId() + '/' + quote.getMessageId() + ')';
+    private void respondWithQuote(final CommandEvent event, final NsfwQuote quote) {
+        final var guildId = event.getGuild().getId();
+        final var msgLink = "[(jump)](https://discordapp.com/channels/" + guildId + '/' + quote.getChannelId() + '/' + quote.getMessageId() + ')';
 
-        StringBuilder description = new StringBuilder()
+        final var description = new StringBuilder()
                 .append(quote.getQuote())
                 .append("\n- <@")
                 .append(quote.getUserId())

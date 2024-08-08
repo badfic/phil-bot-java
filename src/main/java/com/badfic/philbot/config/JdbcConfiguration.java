@@ -2,6 +2,7 @@ package com.badfic.philbot.config;
 
 import java.util.List;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -15,6 +16,7 @@ class JdbcConfiguration extends AbstractJdbcConfiguration {
     @Setter(onMethod_ = {@Autowired})
     private List<Converter<?, ?>> converters;
 
+    @NotNull
     @Override
     protected List<?> userConverters() {
         return converters;

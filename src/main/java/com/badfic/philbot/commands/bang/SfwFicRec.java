@@ -10,7 +10,7 @@ class SfwFicRec extends BaseBangCommand {
 
     private final Ao3MetadataParser ao3MetadataParser;
 
-    SfwFicRec(Ao3MetadataParser ao3MetadataParser) {
+    SfwFicRec(final Ao3MetadataParser ao3MetadataParser) {
         name = "sfwficrec";
         aliases = new String[] {"safeficrec"};
         help = "`!!sfwficrec https://example.com` Sends this fic recommendation to the fic-recs channel for you.";
@@ -18,14 +18,14 @@ class SfwFicRec extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         if (StringUtils.isBlank(event.getArgs())) {
             event.replyError("Please specify a link. Example `!!sfwficrec https://example.com`");
             return;
         }
 
         event.getGuild().getTextChannelsByName("fic-recs", false).stream().findAny().ifPresent(textChannel -> {
-            String link = event.getArgs().trim();
+            final var link = event.getArgs().trim();
 
             textChannel.sendMessage(event.getAuthor().getAsMention() + " recommended this fic: " + link).queue();
             if (StringUtils.containsIgnoreCase(link, "archiveofourown")) {

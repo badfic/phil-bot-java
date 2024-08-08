@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -65,12 +64,12 @@ class Fam extends BaseBangCommand implements ModHelpAware {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         if (isNotEligible(event.getMember(), event)) {
             return;
         }
 
-        String args = event.getArgs();
+        final var args = event.getArgs();
 
         if (args.startsWith("help")) {
             if (hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
@@ -133,15 +132,15 @@ class Fam extends BaseBangCommand implements ModHelpAware {
         }
     }
 
-    private void tag(CommandEvent event) {
-        StringBuilder msg = new StringBuilder();
-        String endOfMessage = event.getArgs().replace("tag", "");
+    private void tag(final CommandEvent event) {
+        final var msg = new StringBuilder();
+        final var endOfMessage = event.getArgs().replace("tag", "");
 
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+        final var discordUser = getUserAndFamily(event.getMember());
 
-        Family family = discordUser.getFamily();
+        final var family = discordUser.getFamily();
 
-        String familyMentions = Stream.of(collectionToMentions(family.getSpouses()), collectionToMentions(family.getExes()),
+        final var familyMentions = Stream.of(collectionToMentions(family.getSpouses()), collectionToMentions(family.getExes()),
                 collectionToMentions(family.getChildren()), collectionToMentions(family.getGrandchildren()), collectionToMentions(family.getParents()),
                 collectionToMentions(family.getGrandparents()), collectionToMentions(family.getSiblings()))
                 .filter(StringUtils::isNotBlank)
@@ -153,11 +152,11 @@ class Fam extends BaseBangCommand implements ModHelpAware {
         event.reply(msg.toString());
     }
 
-    private String collectionToMentions(Collection<String> collection) {
+    private String collectionToMentions(final Collection<String> collection) {
         return collection.stream().filter(NumberUtils::isParsable).map(s -> "<@" + s + ">").collect(Collectors.joining(" "));
     }
 
-    private void nuke(CommandEvent event) {
+    private void nuke(final CommandEvent event) {
         if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
             event.replyError(Constants.ADMIN_ROLE + " is required to use that command");
             return;
@@ -168,117 +167,117 @@ class Fam extends BaseBangCommand implements ModHelpAware {
             return;
         }
 
-        Member memberToNuke = event.getMessage().getMentions().getMembers().getFirst();
-        DiscordUser discordUserToNuke = getUserAndFamily(memberToNuke);
+        final var memberToNuke = event.getMessage().getMentions().getMembers().getFirst();
+        final var discordUserToNuke = getUserAndFamily(memberToNuke);
         discordUserToNuke.setFamily(new Family());
         discordUserRepository.save(discordUserToNuke);
 
         event.replySuccess("Putting the 'nuke' in nuclear family: " + memberToNuke.getEffectiveName() + "'s family has been nuked.");
     }
 
-    private void adoptGrandparent(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void adoptGrandparent(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "adopt grandparent", discordUser, d -> d.getFamily().getGrandparents(), true);
     }
 
-    private void disownGrandparent(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void disownGrandparent(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "disown grandparent", discordUser, d -> d.getFamily().getGrandparents(), false);
     }
 
-    private void addEx(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void addEx(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "add ex", discordUser, d -> d.getFamily().getExes(), true);
     }
 
-    private void removeEx(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void removeEx(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "remove ex", discordUser, d -> d.getFamily().getExes(), false);
     }
 
-    private void addCousin(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void addCousin(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "add cousin", discordUser, d -> d.getFamily().getCousins(), true);
     }
 
-    private void removeCousin(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void removeCousin(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "remove cousin", discordUser, d -> d.getFamily().getCousins(), false);
     }
 
-    private void adoptParent(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void adoptParent(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "adopt parent", discordUser, d -> d.getFamily().getParents(), true);
     }
 
-    private void disownParent(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void disownParent(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "disown parent", discordUser, d -> d.getFamily().getParents(), false);
     }
 
-    private void adoptSibling(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void adoptSibling(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "adopt sibling", discordUser, d -> d.getFamily().getSiblings(), true);
     }
 
-    private void disownSibling(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void disownSibling(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "disown sibling", discordUser, d -> d.getFamily().getSiblings(), false);
     }
 
-    private void adoptNibling(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void adoptNibling(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "adopt nibling", discordUser, d -> d.getFamily().getNiblings(), true);
     }
 
-    private void disownNibling(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void disownNibling(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "disown nibling", discordUser, d -> d.getFamily().getNiblings(), false);
     }
 
-    private void adoptPibling(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void adoptPibling(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "adopt pibling", discordUser, d -> d.getFamily().getPiblings(), true);
     }
 
-    private void disownPibling(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void disownPibling(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "disown pibling", discordUser, d -> d.getFamily().getPiblings(), false);
     }
 
-    private void adoptGrandchild(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void adoptGrandchild(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "adopt grandchild", discordUser, d -> d.getFamily().getGrandchildren(), true);
     }
 
-    private void disownGrandchild(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void disownGrandchild(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "disown grandchild", discordUser, d -> d.getFamily().getGrandchildren(), false);
     }
 
-    private void adoptChild(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void adoptChild(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "adopt child", discordUser, d -> d.getFamily().getChildren(), true);
     }
 
-    private void disownChild(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void disownChild(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "disown child", discordUser, d -> d.getFamily().getChildren(), false);
     }
 
-    private void propose(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void propose(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "propose", discordUser, d -> d.getFamily().getSpouses(), true);
     }
 
-    private void divorce(CommandEvent event) {
-        DiscordUser discordUser = getUserAndFamily(event.getMember());
+    private void divorce(final CommandEvent event) {
+        final var discordUser = getUserAndFamily(event.getMember());
         addOrRemoveFamily(event, "divorce", discordUser, d -> d.getFamily().getSpouses(), false);
     }
 
-    private void addOrRemoveFamily(CommandEvent event, String argName, DiscordUser discordUser, Function<DiscordUser, Set<String>> setGetter, boolean add) {
-        String args = event.getArgs();
-        Set<String> set = setGetter.apply(discordUser);
+    private void addOrRemoveFamily(final CommandEvent event, final String argName, final DiscordUser discordUser, final Function<DiscordUser, Set<String>> setGetter, final boolean add) {
+        final var args = event.getArgs();
+        final var set = setGetter.apply(discordUser);
 
         if (set == null) {
             event.replyError("Something went terribly wrong. Try again later");
@@ -286,7 +285,7 @@ class Fam extends BaseBangCommand implements ModHelpAware {
         }
 
         if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) == 1) {
-            Member mentionedMember = event.getMessage().getMentions().getMembers().getFirst();
+            final var mentionedMember = event.getMessage().getMentions().getMembers().getFirst();
 
             if (mentionedMember.getUser().isBot()) {
                 if (add) {
@@ -317,7 +316,7 @@ class Fam extends BaseBangCommand implements ModHelpAware {
                 return;
             }
 
-            MessageEmbed message = Constants.simpleEmbed(argName,
+            final var message = Constants.simpleEmbed(argName,
                     "Hello, " + mentionedMember.getAsMention() + "\n\n" + event.getMember().getAsMention() + " would like to `" + argName
                             + "` you.\nDo you accept?\n\n(You have 15 minutes to respond or else it defaults to reject)");
 
@@ -328,7 +327,7 @@ class Fam extends BaseBangCommand implements ModHelpAware {
                 Constants.addReactionTask(msg.getIdLong(), messageReactionAddEvent -> {
                     if (messageReactionAddEvent.getUserIdLong() == mentionedMember.getIdLong()) {
                         if ("✅".equals(messageReactionAddEvent.getReaction().getEmoji().getName())) {
-                            DiscordUser relookupUser = discordUserRepository.findById(discordUser.getId()).orElse(null);
+                            final var relookupUser = discordUserRepository.findById(discordUser.getId()).orElse(null);
 
                             if (relookupUser == null) {
                                 msg.editMessage("Something went horribly wrong. Oops, try again later.").queue();
@@ -338,13 +337,13 @@ class Fam extends BaseBangCommand implements ModHelpAware {
                             setGetter.apply(relookupUser).add(mentionedMember.getId());
                             discordUserRepository.save(relookupUser);
 
-                            MessageEmbed messageSuccess = Constants.simpleEmbed(argName,
+                            final var messageSuccess = Constants.simpleEmbed(argName,
                                     mentionedMember.getAsMention() + " accepted " + event.getMember().getAsMention() + "'s `" + argName + '`');
 
                             msg.editMessageEmbeds(messageSuccess).queue();
                             return true;
                         } else if ("❌".equals(messageReactionAddEvent.getReaction().getEmoji().getName())) {
-                            MessageEmbed messageFail = Constants.simpleEmbed(argName,
+                            final var messageFail = Constants.simpleEmbed(argName,
                                     mentionedMember.getAsMention() + " rejected " + event.getMember().getAsMention() + "'s `" + argName + '`',
                                     Color.RED);
 
@@ -358,7 +357,7 @@ class Fam extends BaseBangCommand implements ModHelpAware {
             return;
         }
 
-        String right = args.replace(argName, "").trim();
+        final var right = args.replace(argName, "").trim();
         if (StringUtils.isBlank(right)) {
             event.replyError("Please either mention a user or put a name. Example `!!fam " + argName + " Somebody`");
             return;
@@ -374,15 +373,15 @@ class Fam extends BaseBangCommand implements ModHelpAware {
         event.replySuccess(event.getMember().getAsMention() + ", Successfully `" + argName + "`'d " + right);
     }
 
-    private void image(CommandEvent event) {
-        final Member member = event.getMember();
-        final String image = event.getArgs().replace("image", "").trim();
+    private void image(final CommandEvent event) {
+        final var member = event.getMember();
+        final var image = event.getArgs().replace("image", "").trim();
 
         if (isNotEligible(member, event)) {
             return;
         }
 
-        DiscordUser discordUser = getUserAndFamily(member);
+        final var discordUser = getUserAndFamily(member);
 
         if (Constants.isUrl(image) && Constants.urlIsImage(image)) {
             discordUser.getFamily().setImage(image);
@@ -393,8 +392,8 @@ class Fam extends BaseBangCommand implements ModHelpAware {
         }
     }
 
-    private void show(CommandEvent event) {
-        Member member = event.getMember();
+    private void show(final CommandEvent event) {
+        var member = event.getMember();
         if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) == 1) {
             member = event.getMessage().getMentions().getMembers().getFirst();
         }
@@ -403,10 +402,10 @@ class Fam extends BaseBangCommand implements ModHelpAware {
             return;
         }
 
-        DiscordUser discordUser = getUserAndFamily(member);
-        Family family = discordUser.getFamily();
+        final var discordUser = getUserAndFamily(member);
+        final var family = discordUser.getFamily();
 
-        StringBuilder description = new StringBuilder();
+        final var description = new StringBuilder();
 
         if (family.getIntro() != null) {
             description.append("**Introduction**\n")
@@ -426,18 +425,18 @@ class Fam extends BaseBangCommand implements ModHelpAware {
         append(family::getPiblings, "**Piblings**", description);
 
         try {
-            MessageEmbed msg = Constants.simpleEmbed(member.getEffectiveName() + "'s Family",
+            final var msg = Constants.simpleEmbed(member.getEffectiveName() + "'s Family",
                     description.toString(),
                     Objects.nonNull(family.getImage()) ? family.getImage() : member.getEffectiveAvatarUrl());
 
             event.reply(msg);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             description.append("Failed to load family member");
             event.reply(Constants.simpleEmbed(member.getEffectiveName() + "'s Family", description.toString()));
         }
     }
 
-    private Set<Member> getMemberSet(Set<String> set, CommandEvent event) {
+    private Set<Member> getMemberSet(final Set<String> set, final CommandEvent event) {
         return set.stream()
                 .filter(NumberUtils::isParsable)
                 .map(s -> event.getGuild().getMemberById(s))
@@ -445,10 +444,10 @@ class Fam extends BaseBangCommand implements ModHelpAware {
                 .collect(Collectors.toSet());
     }
 
-    private void append(Supplier<Set<String>> supplier, String relation, StringBuilder description) {
+    private void append(final Supplier<Set<String>> supplier, final String relation, final StringBuilder description) {
         if (CollectionUtils.isNotEmpty(supplier.get())) {
             description.append(relation).append(": ");
-            String joinedString = supplier.get().stream().map(id -> {
+            final var joinedString = supplier.get().stream().map(id -> {
                 if (NumberUtils.isParsable(id)) {
                     return "<@" + id + '>';
                 }
@@ -461,16 +460,16 @@ class Fam extends BaseBangCommand implements ModHelpAware {
         }
     }
 
-    private boolean isNotEligible(Member member, CommandEvent event) {
-        boolean result = !(hasRole(member, Constants.CHAOS_CHILDREN_ROLE) || hasRole(member, Constants.EIGHTEEN_PLUS_ROLE));
+    private boolean isNotEligible(final Member member, final CommandEvent event) {
+        final var result = !(hasRole(member, Constants.CHAOS_CHILDREN_ROLE) || hasRole(member, Constants.EIGHTEEN_PLUS_ROLE));
         if (result) {
             event.replyError(member.getEffectiveName() + " is not 18+ or a chaos child, they cannot have a family.");
         }
         return result;
     }
 
-    private DiscordUser getUserAndFamily(Member member) {
-        DiscordUser discordUser = getDiscordUserByMember(member);
+    private DiscordUser getUserAndFamily(final Member member) {
+        var discordUser = getDiscordUserByMember(member);
         if (discordUser.getFamily() == null) {
             discordUser.setFamily(new Family());
             discordUser = discordUserRepository.save(discordUser);

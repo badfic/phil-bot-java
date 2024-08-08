@@ -51,14 +51,14 @@ public class MemeCommandsService extends BaseService {
                 if (ArrayUtils.isEmpty(urlList)) {
                     throw new IllegalArgumentException(String.format("\"%s\" meme command value starts and ends with brackets but is empty", memeName));
                 }
-            } catch (JsonProcessingException e) {
+            } catch (final JsonProcessingException e) {
                 throw new IllegalArgumentException(String.format("\"%s\" meme command value starts and ends with brackets but is not a list", memeName));
             }
         } else {
             try {
                 final var uri = URI.create(memeUrl);
                 Objects.requireNonNull(uri.toString());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalArgumentException("A meme url must be a valid url.");
             }
         }
@@ -101,7 +101,7 @@ public class MemeCommandsService extends BaseService {
                 try {
                     final var urlList = objectMapper.readValue(url, String[].class);
                     url = Constants.pickRandom(urlList);
-                } catch (JsonProcessingException e) {
+                } catch (final JsonProcessingException e) {
                     log.error("{} meme command value starts and ends with brackets but is not a list", commandName, e);
                 }
             }

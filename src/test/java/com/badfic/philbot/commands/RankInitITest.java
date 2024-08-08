@@ -1,7 +1,6 @@
 package com.badfic.philbot.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.InputStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -22,7 +21,7 @@ public class RankInitITest {
     @Test
     public void testRankInit() throws Exception {
         final Rank.RecordList recordList;
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("airtable-response.json")) {
+        try (final var stream = getClass().getClassLoader().getResourceAsStream("airtable-response.json")) {
             recordList = new ObjectMapper().readValue(stream, Rank.RecordList.class);
         }
 

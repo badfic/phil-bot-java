@@ -2,7 +2,6 @@ package com.badfic.philbot.commands.bang;
 
 import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -16,13 +15,13 @@ class QuickPoll extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         if (StringUtils.isBlank(event.getArgs())) {
             event.replyError("Please enter a question. Example `!!qp Should I eat taco bell`");
             return;
         }
 
-        MessageEmbed messageEmbed = Constants.simpleEmbedThumbnail(
+        final var messageEmbed = Constants.simpleEmbedThumbnail(
                 "Quick Poll",
                 event.getAuthor().getAsMention() + " asks:\n\n" + event.getArgs(),
                 "https://emoji.gg/assets/emoji/4392_ablobcouncil.gif");

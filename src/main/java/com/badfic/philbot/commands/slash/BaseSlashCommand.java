@@ -64,14 +64,14 @@ public abstract class BaseSlashCommand implements BaseCommand {
     protected boolean ownerCommand;
     protected List<OptionData> options;
 
-    public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
+    public void onAutoComplete(final CommandAutoCompleteInteractionEvent event) {
         // do nothing
     }
 
-    public abstract void execute(SlashCommandInteractionEvent event);
+    public abstract void execute(final SlashCommandInteractionEvent event);
 
-    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandInteractionEvent event,
-            CompletableFuture<InteractionHook> interactionHook, MessageEmbed messageEmbed) {
+    protected CompletableFuture<InteractionHook> replyToInteractionHook(final SlashCommandInteractionEvent event,
+            final CompletableFuture<InteractionHook> interactionHook, final MessageEmbed messageEmbed) {
         return interactionHook.whenComplete((hook, err) -> {
             if (err != null) {
                 event.getChannel().sendMessageEmbeds(messageEmbed).queue();
@@ -82,8 +82,8 @@ public abstract class BaseSlashCommand implements BaseCommand {
         });
     }
 
-    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandInteractionEvent event,
-            CompletableFuture<InteractionHook> interactionHook, String message) {
+    protected CompletableFuture<InteractionHook> replyToInteractionHook(final SlashCommandInteractionEvent event,
+            final CompletableFuture<InteractionHook> interactionHook, final String message) {
         return interactionHook.whenComplete((hook, err) -> {
             if (err != null) {
                 event.getChannel().sendMessage(message).queue();
@@ -94,8 +94,8 @@ public abstract class BaseSlashCommand implements BaseCommand {
         });
     }
 
-    protected CompletableFuture<InteractionHook> replyToInteractionHook(SlashCommandInteractionEvent event,
-            CompletableFuture<InteractionHook> interactionHook, FileUpload file) {
+    protected CompletableFuture<InteractionHook> replyToInteractionHook(final SlashCommandInteractionEvent event,
+            final CompletableFuture<InteractionHook> interactionHook, final FileUpload file) {
         return interactionHook.whenComplete((hook, err) -> {
             if (err != null) {
                 event.getChannel().sendMessage(" ").addFiles(file).queue();

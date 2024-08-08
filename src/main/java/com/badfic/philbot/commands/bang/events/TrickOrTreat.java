@@ -3,18 +3,12 @@ package com.badfic.philbot.commands.bang.events;
 import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
-import com.badfic.philbot.data.SwampyGamesConfig;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -28,28 +22,28 @@ public class TrickOrTreat extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         trickOrTreat();
     }
 
     @Scheduled(cron = "${swampy.schedule.events.trickortreat}", zone = "${swampy.schedule.timezone}")
     void trickOrTreat() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
-        Guild guild = philJda.getGuildById(baseConfig.guildId);
-        List<DiscordUser> allUsers = discordUserRepository.findAll();
+        final var guild = philJda.getGuildById(baseConfig.guildId);
+        final var allUsers = discordUserRepository.findAll();
         allUsers.sort((u1, u2) -> Long.compare(u2.getXp(), u1.getXp())); // Descending sort
 
-        LocalDateTime fifteenHoursAgo = LocalDateTime.now().minusHours(15);
+        final var fifteenHoursAgo = LocalDateTime.now().minusHours(15);
 
-        long totalGiven = 0;
-        long totalTaken = 0;
-        List<CompletableFuture<?>> futures = new ArrayList<>();
-        StringBuilder description = new StringBuilder();
-        for (DiscordUser user : allUsers) {
+        var totalGiven = 0L;
+        var totalTaken = 0L;
+        final var futures = new ArrayList<CompletableFuture<?>>();
+        final var description = new StringBuilder();
+        for (final var user : allUsers) {
             if (user.getUpdateTime().isAfter(fifteenHoursAgo)) {
                 try {
-                    Member memberById = guild.getMemberById(user.getId());
+                    final var memberById = guild.getMemberById(user.getId());
                     if (memberById != null && !isNotParticipating(memberById)) {
                         if (randomNumberService.nextInt() % 2 == 0) {
                             futures.add(givePointsToMember(swampyGamesConfig.getThisOrThatPoints(), memberById, PointsStat.TRICK_OR_TREAT));
@@ -75,20 +69,20 @@ public class TrickOrTreat extends BaseBangCommand {
                                     .append(">\n");
                         }
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     log.error("Failed to trick or treat user [id={}]", user.getId(), e);
                 }
             }
         }
 
-        String footer = "I gave " + NumberFormat.getIntegerInstance().format(totalGiven) + " points and took "
+        final var footer = "I gave " + NumberFormat.getIntegerInstance().format(totalGiven) + " points and took "
                 + NumberFormat.getIntegerInstance().format(totalTaken);
 
-        String title = swampyGamesConfig.getThisOrThatGiveEmoji() + " "
+        final var title = swampyGamesConfig.getThisOrThatGiveEmoji() + " "
                 + swampyGamesConfig.getThisOrThatName() + " "
                 + swampyGamesConfig.getThisOrThatTakeEmoji();
 
-        MessageEmbed message = Constants.simpleEmbed(title, description.toString(), swampyGamesConfig.getThisOrThatImage(), footer);
+        final var message = Constants.simpleEmbed(title, description.toString(), swampyGamesConfig.getThisOrThatImage(), footer);
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
             philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false)

@@ -4,8 +4,6 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
-import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.data.Trivia;
 import com.badfic.philbot.data.TriviaRepository;
 import com.badfic.philbot.service.OnJdaReady;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,15 +11,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,7 +28,7 @@ public class TriviaCommand extends BaseBangCommand implements OnJdaReady {
 
     private final TriviaRepository triviaRepository;
 
-    public TriviaCommand(TriviaRepository triviaRepository) {
+    public TriviaCommand(final TriviaRepository triviaRepository) {
         name = "trivia";
         requiredRole = Constants.ADMIN_ROLE;
         help = """
@@ -44,7 +39,7 @@ public class TriviaCommand extends BaseBangCommand implements OnJdaReady {
 
     @Override
     public void run() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
         if (Objects.nonNull(swampyGamesConfig.getTriviaExpiration())) {
             scheduleTask(this::triviaComplete, swampyGamesConfig.getTriviaExpiration());
@@ -52,25 +47,25 @@ public class TriviaCommand extends BaseBangCommand implements OnJdaReady {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         if (event.getArgs().startsWith("dump")) {
-            List<Trivia> all = triviaRepository.findAll();
+            final var all = triviaRepository.findAll();
             try {
                 event.getChannel().sendFiles(FileUpload.fromData(objectMapper.writeValueAsBytes(all), "trivia.json")).queue();
-            } catch (JsonProcessingException e) {
+            } catch (final JsonProcessingException e) {
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send trivia dump to you").queue();
             }
         } else if (event.getArgs().startsWith("delete")) {
-            String guidStr = event.getArgs().replace("delete", "").trim();
+            final var guidStr = event.getArgs().replace("delete", "").trim();
             try {
-                UUID guid = UUID.fromString(guidStr);
+                final var guid = UUID.fromString(guidStr);
                 if (triviaRepository.existsById(guid)) {
                     triviaRepository.deleteById(guid);
                     event.replySuccess("Successfully deleted " + guid);
                 } else {
                     event.replyError("Trivia with id " + guid + " does not exist.");
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", badly formatted command." +
                         "Example: `!!trivia delete 44e04b28-7d39-41d8-8009-80ca6de5a04a`").queue();
             }
@@ -81,32 +76,32 @@ public class TriviaCommand extends BaseBangCommand implements OnJdaReady {
 
     @Scheduled(cron = "${swampy.schedule.events.trivia}", zone = "${swampy.schedule.timezone}")
     void trivia() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
+        final var swampyGamesConfig = getSwampyGamesConfig();
+        final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
 
         if (swampyGamesConfig.getTriviaGuid() != null) {
             swampysChannel.sendMessage("There is currently a trivia running, you can't trigger another.").queue();
             return;
         }
 
-        List<Trivia> allTrivias = triviaRepository.findAll();
+        final var allTrivias = triviaRepository.findAll();
 
         if (CollectionUtils.isEmpty(allTrivias)) {
             swampysChannel.sendMessage("There are no trivia questions").queue();
             return;
         }
 
-        Trivia trivia = Constants.pickRandom(allTrivias);
+        final var trivia = Constants.pickRandom(allTrivias);
 
-        String description = trivia.getQuestion() +
+        final var description = trivia.getQuestion() +
                 "\nA: " + trivia.getAnswerA() +
                 "\nB: " + trivia.getAnswerB() +
                 "\nC: " + trivia.getAnswerC();
-        String title = "Trivia time! (for " + swampyGamesConfig.getTriviaEventPoints() + " points)";
+        final var title = "Trivia time! (for " + swampyGamesConfig.getTriviaEventPoints() + " points)";
         swampysChannel.sendMessageEmbeds(Constants.simpleEmbed(title, description)).queue(success -> {
             swampyGamesConfig.setTriviaGuid(trivia.getId());
             swampyGamesConfig.setTriviaMsgId(success.getId());
-            LocalDateTime expiration = LocalDateTime.now().plusMinutes(15);
+            final var expiration = LocalDateTime.now().plusMinutes(15);
             swampyGamesConfig.setTriviaExpiration(expiration);
             saveSwampyGamesConfig(swampyGamesConfig);
 
@@ -119,49 +114,48 @@ public class TriviaCommand extends BaseBangCommand implements OnJdaReady {
     }
 
     private void triviaComplete() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
+        final var swampyGamesConfig = getSwampyGamesConfig();
+        final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
 
         if (Objects.isNull(swampyGamesConfig.getTriviaMsgId())) {
             swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
             return;
         }
 
-        String triviaMsgId = swampyGamesConfig.getTriviaMsgId();
-        UUID triviaGuid = swampyGamesConfig.getTriviaGuid();
-        int triviaEventPoints = swampyGamesConfig.getTriviaEventPoints();
+        final var triviaMsgId = swampyGamesConfig.getTriviaMsgId();
+        final var triviaGuid = swampyGamesConfig.getTriviaGuid();
+        final var triviaEventPoints = swampyGamesConfig.getTriviaEventPoints();
 
         swampyGamesConfig.setTriviaMsgId(null);
         swampyGamesConfig.setTriviaGuid(null);
         swampyGamesConfig.setTriviaExpiration(null);
         saveSwampyGamesConfig(swampyGamesConfig);
 
+        final var guild = philJda.getGuildById(baseConfig.guildId);
 
-        Guild guild = philJda.getGuildById(baseConfig.guildId);
-
-        Optional<Trivia> optTriviaQuestion = triviaRepository.findById(triviaGuid);
+        final var optTriviaQuestion = triviaRepository.findById(triviaGuid);
 
         if (optTriviaQuestion.isEmpty()) {
             swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
             return;
         }
-        Trivia triviaQuestion = optTriviaQuestion.get();
+        final var triviaQuestion = optTriviaQuestion.get();
 
-        StringBuilder description = new StringBuilder();
+        final var description = new StringBuilder();
 
-        Message msg;
+        final Message msg;
         try {
             msg = swampysChannel.retrieveMessageById(triviaMsgId).timeout(30, TimeUnit.SECONDS).complete();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             swampysChannel.sendMessage("Could not find trivia question anymore. Failed to award points.").queue();
             return;
         }
 
-        long wrongPoints = triviaEventPoints * -1;
+        final var wrongPoints = triviaEventPoints * -1;
 
-        List<CompletableFuture<?>> futures = new ArrayList<>();
+        final var futures = new ArrayList<CompletableFuture<?>>();
 
-        List<User> users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE6")).timeout(30, TimeUnit.SECONDS).complete();
+        var users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE6")).timeout(30, TimeUnit.SECONDS).complete();
         awardPoints(description, users, triviaQuestion.getCorrectAnswer() == 0 ? (long) triviaEventPoints : wrongPoints, futures, guild);
 
         users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE7")).timeout(30, TimeUnit.SECONDS).complete();
@@ -177,13 +171,13 @@ public class TriviaCommand extends BaseBangCommand implements OnJdaReady {
         });
     }
 
-    private void awardPoints(StringBuilder description, List<User> users, long points, List<CompletableFuture<?>> futures, Guild guild) {
-        for (User user : users) {
+    private void awardPoints(final StringBuilder description, final List<User> users, final long points, final List<CompletableFuture<?>> futures, final Guild guild) {
+        for (final var user : users) {
             if (user.getId().equals(philJda.getSelfUser().getId())) {
                 continue;
             }
 
-            Member memberById = guild.getMemberById(user.getId());
+            final var memberById = guild.getMemberById(user.getId());
             if (memberById == null) {
                 description.append("Could not award points to <@")
                         .append(user.getId())

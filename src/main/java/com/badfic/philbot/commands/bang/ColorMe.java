@@ -3,10 +3,6 @@ package com.badfic.philbot.commands.bang;
 import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import java.awt.Color;
-import java.util.Optional;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,25 +14,25 @@ class ColorMe extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
-        final Guild guild = event.getGuild();
-        final Member member = event.getMember();
-        final String userId = member.getUser().getId();
+    public void execute(final CommandEvent event) {
+        final var guild = event.getGuild();
+        final var member = event.getMember();
+        final var userId = member.getUser().getId();
 
-        String colorStr = event.getArgs().trim();
+        final var colorStr = event.getArgs().trim();
 
-        Color color;
+        final Color color;
         try {
             color = Color.decode(colorStr);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             event.replyError("Could not parse color: " + colorStr);
             return;
         }
 
-        Optional<Role> optionalRole = Constants.hasRole(member, userId);
+        final var optionalRole = Constants.hasRole(member, userId);
 
         if (optionalRole.isPresent()) {
-            Role role = optionalRole.get();
+            final var role = optionalRole.get();
 
             if (color.equals(role.getColor())) {
                 event.replySuccess("Your color is already set to: " + colorStr);

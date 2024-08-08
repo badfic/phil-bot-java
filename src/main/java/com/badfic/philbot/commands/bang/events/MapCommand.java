@@ -4,23 +4,15 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
-import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.OnJdaReady;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.lingala.zip4j.io.inputstream.ZipInputStream;
-import net.lingala.zip4j.model.LocalFileHeader;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -39,7 +31,7 @@ public class MapCommand extends BaseBangCommand implements OnJdaReady {
 
     @Override
     public void run() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
         if (Objects.nonNull(swampyGamesConfig.getMapPhrase()) && Objects.nonNull(swampyGamesConfig.getMapTriviaExpiration())) {
             scheduleTask(this::mapComplete, swampyGamesConfig.getMapTriviaExpiration());
@@ -47,33 +39,33 @@ public class MapCommand extends BaseBangCommand implements OnJdaReady {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         doMap();
     }
 
     @Scheduled(cron = "${swampy.schedule.events.map}", zone = "${swampy.schedule.timezone}")
     void doMap() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        var swampyGamesConfig = getSwampyGamesConfig();
 
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
+        final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
 
         if (swampyGamesConfig.getMapPhrase() != null) {
             swampysChannel.sendMessage("There is currently a map trivia running, you can't trigger another.").queue();
             return;
         }
 
-        MapTriviaObject mapTriviaObject = Constants.pickRandom(getCountries());
-        TriviaType triviaType = StringUtils.isBlank(mapTriviaObject.capital()) ? TriviaType.FLAG : Constants.pickRandom(TriviaType.values());
+        final var mapTriviaObject = Constants.pickRandom(getCountries());
+        final var triviaType = StringUtils.isBlank(mapTriviaObject.capital()) ? TriviaType.FLAG : Constants.pickRandom(TriviaType.values());
 
         swampyGamesConfig.setMapPhrase(mapTriviaObject.regex());
-        LocalDateTime mapTriviaExpiration = LocalDateTime.now().plusMinutes(15);
+        final var mapTriviaExpiration = LocalDateTime.now().plusMinutes(15);
         swampyGamesConfig.setMapTriviaExpiration(mapTriviaExpiration);
         swampyGamesConfig = saveSwampyGamesConfig(swampyGamesConfig);
 
         scheduleTask(this::mapComplete, mapTriviaExpiration);
 
-        String type = mapTriviaObject.code().startsWith("us-") ? "US State" : "Country";
-        String description = switch (triviaType) {
+        final var type = mapTriviaObject.code().startsWith("us-") ? "US State" : "Country";
+        var description = switch (triviaType) {
             case CAPITAL -> mapTriviaObject.capital() + " is the capital of what " + type + "?";
             case FLAG -> "This flag represents what " + type + "?";
         };
@@ -84,13 +76,14 @@ public class MapCommand extends BaseBangCommand implements OnJdaReady {
             return;
         }
 
-        try (InputStream mapFileStream = getClass().getClassLoader().getResourceAsStream(MAP_ZIP_FILENAME);
-             ZipInputStream zipFile = new ZipInputStream(mapFileStream)) {
-            LocalFileHeader fileHeader;
-            while ((fileHeader = zipFile.getNextEntry()) != null) {
+        try (final var mapFileStream = getClass().getClassLoader().getResourceAsStream(MAP_ZIP_FILENAME);
+             final var zipFile = new ZipInputStream(mapFileStream)) {
+            var fileHeader = zipFile.getNextEntry();
+            while (fileHeader != null) {
                 if (fileHeader.getFileName().equalsIgnoreCase(mapTriviaObject.code() + ".png")) {
                     break;
                 }
+                fileHeader = zipFile.getNextEntry();
             }
 
             if (fileHeader == null) {
@@ -101,39 +94,39 @@ public class MapCommand extends BaseBangCommand implements OnJdaReady {
             swampysChannel.sendMessageEmbeds(Constants.simpleEmbed("Map Trivia", description))
                     .addFiles(FileUpload.fromData(zipFile.readAllBytes(), "map-trivia.png"))
                     .queue();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Failed to load map image for map trivia", e);
             swampysChannel.sendMessage("Failed to load image for map trivia. The answer is " + mapTriviaObject.regex()).queue();
         }
     }
 
     private void mapComplete() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
+        final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
 
         if (Objects.isNull(swampyGamesConfig.getMapPhrase())) {
             swampysChannel.sendMessage("Map Trivia failed.").queue();
             return;
         }
 
-        LocalDateTime mapExpiration = swampyGamesConfig.getMapTriviaExpiration();
+        final var mapExpiration = swampyGamesConfig.getMapTriviaExpiration();
 
         swampyGamesConfig.setMapPhrase(null);
         swampyGamesConfig.setMapTriviaExpiration(null);
         saveSwampyGamesConfig(swampyGamesConfig);
 
-        Guild guild = philJda.getGuildById(baseConfig.guildId);
+        final var guild = philJda.getGuildById(baseConfig.guildId);
 
-        List<CompletableFuture<?>> futures = new ArrayList<>();
-        LocalDateTime startTime = mapExpiration.minusMinutes(15);
-        StringBuilder description = new StringBuilder();
+        final var futures = new ArrayList<CompletableFuture<?>>();
+        final var startTime = mapExpiration.minusMinutes(15);
+        final var description = new StringBuilder();
         discordUserRepository.findAll()
                 .stream()
                 .filter(u -> Objects.nonNull(u.getAcceptedMapTrivia()) && (u.getAcceptedMapTrivia().isEqual(startTime) || u.getAcceptedMapTrivia().isAfter(startTime)))
                 .forEach(u -> {
                     try {
-                        Member memberLookedUp = guild.getMemberById(u.getId());
+                        final var memberLookedUp = guild.getMemberById(u.getId());
                         if (memberLookedUp == null) {
                             throw new RuntimeException("member not found");
                         }
@@ -144,7 +137,7 @@ public class MapCommand extends BaseBangCommand implements OnJdaReady {
                                 .append(" points to <@")
                                 .append(u.getId())
                                 .append(">\n");
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         log.error("Failed to give map trivia points to user [id={}]", u.getId(), e);
                         description.append("OOPS: Unable to give points to <@")
                                 .append(u.getId())
@@ -152,7 +145,7 @@ public class MapCommand extends BaseBangCommand implements OnJdaReady {
                     }
                 });
 
-        MessageEmbed messageEmbed = Constants.simpleEmbed("Map Trivia Complete", description.toString());
+        final var messageEmbed = Constants.simpleEmbed("Map Trivia Complete", description.toString());
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new))
                 .thenRun(() -> swampysChannel.sendMessageEmbeds(messageEmbed).queue());
@@ -161,7 +154,7 @@ public class MapCommand extends BaseBangCommand implements OnJdaReady {
     // VisibleForTesting
     @SneakyThrows
     MapTriviaObject[] getCountries() {
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("map-trivia.json")) {
+        try (final var stream = getClass().getClassLoader().getResourceAsStream("map-trivia.json")) {
             return objectMapper.readValue(stream, MapTriviaObject[].class);
         }
     }

@@ -64,6 +64,6 @@ public abstract class BaseBangCommand implements BaseCommand {
     protected boolean ownerCommand = false;
     protected boolean nsfwOnly = false;
 
-    public abstract void execute(CommandEvent event);
+    public abstract void execute(final CommandEvent event);
 
 }

@@ -6,9 +6,6 @@ import com.badfic.philbot.data.DiscordUser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.springframework.stereotype.Component;
 
@@ -22,22 +19,22 @@ class SuperlativesCommand extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
-        long channelId = event.getChannel().getIdLong();
-        MessageChannel channel = philJda.getChannelById(MessageChannel.class, channelId);
+    public void execute(final CommandEvent event) {
+        final var channelId = event.getChannel().getIdLong();
+        final var channel = philJda.getChannelById(MessageChannel.class, channelId);
 
         if (Objects.isNull(channel)) {
             event.replyError("Channel does not exist");
             return;
         }
 
-        List<DiscordUser> allEligibleUsers = discordUserRepository.findByXpGreaterThan(0);
-        Guild guild = event.getGuild();
+        final var allEligibleUsers = discordUserRepository.findByXpGreaterThan(0);
+        final var guild = event.getGuild();
 
-        List<DiscordUser> bastards = new ArrayList<>();
-        List<DiscordUser> chaosChildren = new ArrayList<>();
-        for (DiscordUser user : allEligibleUsers) {
-            Member member = guild.getMemberById(user.getId());
+        final var bastards = new ArrayList<DiscordUser>();
+        final var chaosChildren = new ArrayList<DiscordUser>();
+        for (final var user : allEligibleUsers) {
+            final var member = guild.getMemberById(user.getId());
 
             if (Objects.nonNull(member)) {
                 if (hasRole(member, Constants.EIGHTEEN_PLUS_ROLE)) {
@@ -49,21 +46,21 @@ class SuperlativesCommand extends BaseBangCommand {
             }
         }
 
-        StringBuilder description = new StringBuilder();
+        final var description = new StringBuilder();
 
         buildSuperlativeDescription(description, bastards);
-        MessageEmbed bastardsSuperlatives = Constants.simpleEmbed("Swampy Bastards Superlatives", description.toString());
+        final var bastardsSuperlatives = Constants.simpleEmbed("Swampy Bastards Superlatives", description.toString());
 
         description.setLength(0);
 
         buildSuperlativeDescription(description, chaosChildren);
-        MessageEmbed chaosChildrenSuperlatives = Constants.simpleEmbed("Chaos Children Superlatives", description.toString());
+        final var chaosChildrenSuperlatives = Constants.simpleEmbed("Chaos Children Superlatives", description.toString());
 
         channel.sendMessageEmbeds(bastardsSuperlatives, chaosChildrenSuperlatives).queue();
     }
 
-    private void buildSuperlativeDescription(StringBuilder description, List<DiscordUser> list) {
-        String trickOrTreatName = getSwampyGamesConfig().getThisOrThatName();
+    private void buildSuperlativeDescription(final StringBuilder description, final List<DiscordUser> list) {
+        final var trickOrTreatName = getSwampyGamesConfig().getThisOrThatName();
 
         list.stream().max((a, b) -> (int) (a.getTrickOrTreatPoints() - b.getTrickOrTreatPoints())).ifPresent(user -> {
             description.append(trickOrTreatName).append(": <@").append(user.getId()).append(">\n");

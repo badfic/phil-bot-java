@@ -4,20 +4,10 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.Quote;
 import com.badfic.philbot.data.QuoteRepository;
-import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.DailyTickable;
-import it.unimi.dsi.fastutil.objects.ObjectIntPair;
-import java.time.DayOfWeek;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.apache.commons.collections4.CollectionUtils;
@@ -32,7 +22,7 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
 
     private final QuoteRepository quoteRepository;
 
-    public QuoteCommand(QuoteRepository quoteRepository) {
+    public QuoteCommand(final QuoteRepository quoteRepository) {
         name = "quote";
         aliases = new String[] {"quotes"};
         help = """
@@ -47,22 +37,22 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
 
     @Override
     public void runDailyTask() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        long channelId = swampyGamesConfig.getSfwSavedMemesChannelId();
+        final var swampyGamesConfig = getSwampyGamesConfig();
+        final var channelId = swampyGamesConfig.getSfwSavedMemesChannelId();
 
         if (channelId > 0) {
-            Set<String> images = quoteRepository.findAllNonNullImages();
+            final var images = quoteRepository.findAllNonNullImages();
 
-            TextChannel philLookedUpChannel = philJda.getTextChannelById(channelId);
+            final var philLookedUpChannel = philJda.getTextChannelById(channelId);
 
             if (philLookedUpChannel == null) {
                 Constants.debugToTestChannel(philJda, "Could not update nsfw saved memes channel, it does not exist");
                 return;
             }
 
-            long lastMsgId = 0;
+            var lastMsgId = 0L;
             while (lastMsgId != -1) {
-                MessageHistory history;
+                final MessageHistory history;
                 if (lastMsgId == 0) {
                     history = philLookedUpChannel.getHistoryFromBeginning(100).timeout(30, TimeUnit.SECONDS).complete();
                 } else {
@@ -73,12 +63,12 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
                         ? history.getRetrievedHistory().getFirst().getIdLong()
                         : -1;
 
-                for (Message message : history.getRetrievedHistory()) {
+                for (final var message : history.getRetrievedHistory()) {
                     images.remove(message.getContentRaw());
                 }
             }
 
-            for (String image : images) {
+            for (final var image : images) {
                 discordWebhookSendService.sendMessage(philLookedUpChannel.getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(), image);
                 LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
             }
@@ -90,7 +80,7 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "cache")) {
             if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
                 event.replyError("You do not have permission to execute this command");
@@ -102,7 +92,7 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
         }
 
         if (StringUtils.isBlank(event.getArgs())) {
-            List<Long> ids = quoteRepository.findAllIds();
+            final var ids = quoteRepository.findAllIds();
 
             if (CollectionUtils.isEmpty(ids)) {
                 philJda.getTextChannelById(event.getChannel().getIdLong())
@@ -111,8 +101,8 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
                 return;
             }
 
-            long idx = Constants.pickRandom(ids);
-            Optional<Quote> optionalQuote = quoteRepository.findById(idx);
+            final var idx = Constants.pickRandom(ids);
+            final var optionalQuote = quoteRepository.findById(idx);
 
             if (optionalQuote.isEmpty()) {
                 philJda.getTextChannelById(event.getChannel().getIdLong())
@@ -127,13 +117,13 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
 
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "stat")) {
             if (CollectionUtils.isNotEmpty(event.getMessage().getMentions().getMembers())) {
-                Member member = event.getMessage().getMentions().getMembers().getFirst();
-                long memberId = member.getIdLong();
-                int[] quoteDaysOfWeekForUser = quoteRepository.getQuoteDaysOfWeekForUser(memberId);
-                ObjectIntPair<DayOfWeek> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeekForUser);
+                final var member = event.getMessage().getMentions().getMembers().getFirst();
+                final var memberId = member.getIdLong();
+                final var quoteDaysOfWeekForUser = quoteRepository.getQuoteDaysOfWeekForUser(memberId);
+                final var mode = Constants.isoDayOfWeekMode(quoteDaysOfWeekForUser);
 
-                DayOfWeek day = mode.left();
-                int count = mode.rightInt();
+                final var day = mode.left();
+                final var count = mode.rightInt();
 
                 philJda.getTextChannelById(event.getChannel().getIdLong()).
                         sendMessageEmbeds(Constants.simpleEmbed("User Quote Statistics",
@@ -152,14 +142,14 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
                 return;
             }
 
-            int[] quoteDaysOfWeek = quoteRepository.getQuoteDaysOfWeek();
-            ObjectIntPair<DayOfWeek> mode = Constants.isoDayOfWeekMode(quoteDaysOfWeek);
+            final var quoteDaysOfWeek = quoteRepository.getQuoteDaysOfWeek();
+            final var mode = Constants.isoDayOfWeekMode(quoteDaysOfWeek);
 
-            DayOfWeek day = mode.left();
-            int count = mode.rightInt();
+            final var day = mode.left();
+            final var count = mode.rightInt();
 
-            long mostQuotedUserId = quoteRepository.getMostQuotedUser();
-            Member mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
+            final var mostQuotedUserId = quoteRepository.getMostQuotedUser();
+            final var mostQuotedMember = event.getGuild().getMemberById(mostQuotedUserId);
 
             philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(Constants.simpleEmbed("Overall Quote Statistics",
                     String.format("""
@@ -175,15 +165,15 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
         }
 
         if (StringUtils.startsWithIgnoreCase(event.getArgs(), "delete")) {
-            String[] split = event.getArgs().split("\\s+");
+            final var split = event.getArgs().split("\\s+");
             if (ArrayUtils.getLength(split) != 2) {
                 event.replyError("Please specify a quote to delete: `!!quote delete 123`");
                 return;
             }
 
             try {
-                long id = Long.parseLong(split[1]);
-                Optional<Quote> optionalQuote = quoteRepository.findById(id);
+                final var id = Long.parseLong(split[1]);
+                final var optionalQuote = quoteRepository.findById(id);
 
                 if (optionalQuote.isPresent()) {
                     quoteRepository.deleteById(id);
@@ -191,7 +181,7 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
                 } else {
                     philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " does not exist").queue();
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Could not parse quote number from: " + split[1]).queue();
             }
 
@@ -199,8 +189,8 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
         }
 
         try {
-            long id = Long.parseLong(event.getArgs());
-            Optional<Quote> optionalQuote = quoteRepository.findById(id);
+            final var id = Long.parseLong(event.getArgs());
+            final var optionalQuote = quoteRepository.findById(id);
 
             if (optionalQuote.isEmpty()) {
                 philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Quote #" + id + " does not exist").queue();
@@ -208,7 +198,7 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
             }
 
             respondWithQuote(event, optionalQuote.get());
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessage("Did not recognize number " + event.getArgs()).queue();
         }
     }
@@ -218,10 +208,10 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
     }
 
     public void saveQuote(MessageReactionAddEvent event) {
-        long messageId = event.getMessageIdLong();
-        long channelId = event.getChannel().getIdLong();
-        long guildId = event.getGuild().getIdLong();
-        long quoterId = event.getUserIdLong();
+        final var messageId = event.getMessageIdLong();
+        final var channelId = event.getChannel().getIdLong();
+        final var guildId = event.getGuild().getIdLong();
+        final var quoterId = event.getUserIdLong();
 
         if (!quoteRepository.existsByMessageId(messageId)) {
             philJda.getTextChannelById(channelId).retrieveMessageById(messageId).queue(msg -> {
@@ -233,14 +223,14 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
                     image = msg.getAttachments().getFirst().getUrl();
                 }
 
-                Quote savedQuote = jdbcAggregateTemplate.insert(new Quote(messageId, channelId, msg.getContentRaw(), image,
+                final var savedQuote = jdbcAggregateTemplate.insert(new Quote(messageId, channelId, msg.getContentRaw(), image,
                         msg.getAuthor().getIdLong(), msg.getTimeCreated().toLocalDateTime()));
 
                 msg.addReaction(Emoji.fromUnicode(SPEECH_BUBBLE_EMOJI)).queue();
 
-                String msgLink = " [(jump)](https://discordapp.com/channels/" + guildId + '/' + channelId + '/' + messageId + ')';
+                final var msgLink = " [(jump)](https://discordapp.com/channels/" + guildId + '/' + channelId + '/' + messageId + ')';
 
-                MessageEmbed messageEmbed = Constants.simpleEmbed("Quote #" + savedQuote.getId() + " Added",
+                final var messageEmbed = Constants.simpleEmbed("Quote #" + savedQuote.getId() + " Added",
                         "<@" + quoterId + "> Added quote #" + savedQuote.getId() + msgLink);
 
                 philJda.getTextChannelById(event.getChannel().getIdLong()).sendMessageEmbeds(messageEmbed).queue();
@@ -249,10 +239,10 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
     }
 
     private void respondWithQuote(CommandEvent event, Quote quote) {
-        String guildId = event.getGuild().getId();
-        String msgLink = "[(jump)](https://discordapp.com/channels/" + guildId + '/' + quote.getChannelId() + '/' + quote.getMessageId() + ')';
+        final var guildId = event.getGuild().getId();
+        final var msgLink = "[(jump)](https://discordapp.com/channels/" + guildId + '/' + quote.getChannelId() + '/' + quote.getMessageId() + ')';
 
-        StringBuilder description = new StringBuilder()
+        final var description = new StringBuilder()
                 .append(quote.getQuote())
                 .append("\n- <@")
                 .append(quote.getUserId())

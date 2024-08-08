@@ -3,10 +3,7 @@ package com.badfic.philbot.commands.bang.events;
 import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.DailyTickable;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -24,37 +21,37 @@ public class MemberCount extends BaseBangCommand implements DailyTickable {
     }
 
     @Override
-    public void execute(CommandEvent event) {
-        String args = event.getArgs();
+    public void execute(final CommandEvent event) {
+        var args = event.getArgs();
 
         if (StringUtils.isBlank(args)) {
             event.reply(event.getGuild().getMembers().size() + " members");
         } else if (StringUtils.containsIgnoreCase(args, "set")) {
             args = args.replace("set", "").trim();
 
-            long voiceChannelId;
+            final long voiceChannelId;
             try {
                 voiceChannelId = Long.parseLong(args);
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 event.replyError("Could not parse voice channel id as a number");
                 return;
             }
 
-            VoiceChannel voiceChannelById = event.getGuild().getVoiceChannelById(voiceChannelId);
+            final var voiceChannelById = event.getGuild().getVoiceChannelById(voiceChannelId);
 
             if (voiceChannelById == null) {
                 event.replyError("Could not find voice channel with id: " + voiceChannelId);
                 return;
             }
 
-            SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+            final var swampyGamesConfig = getSwampyGamesConfig();
             swampyGamesConfig.setMemberCountVoiceChannelId(voiceChannelId);
             saveSwampyGamesConfig(swampyGamesConfig);
 
             voiceChannelById.getManager().setName(event.getGuild().getMembers().size() + " members").queue();
             event.replySuccess("Successfully set channel and updated member count");
         } else if (StringUtils.containsIgnoreCase(args, "update")) {
-            boolean success = updateCount();
+            final var success = updateCount();
 
             if (!success) {
                 event.replyError("Failed to update count. Try setting voice channel with `!!memberCount set 12345`");
@@ -70,9 +67,9 @@ public class MemberCount extends BaseBangCommand implements DailyTickable {
     }
 
     public boolean updateCount() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        Guild guild = philJda.getGuildById(baseConfig.guildId);
-        VoiceChannel voiceChannelById = philJda.getVoiceChannelById(swampyGamesConfig.getMemberCountVoiceChannelId());
+        final var swampyGamesConfig = getSwampyGamesConfig();
+        final var guild = philJda.getGuildById(baseConfig.guildId);
+        final var voiceChannelById = philJda.getVoiceChannelById(swampyGamesConfig.getMemberCountVoiceChannelId());
         if (voiceChannelById != null) {
             voiceChannelById.getManager().setName(guild.getMembers().size() + " members").queue();
             Constants.debugToTestChannel(philJda, "Successfully updated member count channel");

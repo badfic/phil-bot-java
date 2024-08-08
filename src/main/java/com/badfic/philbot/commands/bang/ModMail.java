@@ -2,10 +2,7 @@ package com.badfic.philbot.commands.bang;
 
 import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
-import java.util.Optional;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,14 +20,14 @@ class ModMail extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
-        Optional<TextChannel> modChannel = philJda
+    public void execute(final CommandEvent event) {
+        final var modChannel = philJda
                 .getTextChannelsByName("mod-chat-and-delegation", false)
                 .stream()
                 .findFirst();
 
         if (modChannel.isPresent()) {
-            MessageEmbed msg = Constants.simpleEmbed("Incoming Mod Mail",
+            final var msg = Constants.simpleEmbed("Incoming Mod Mail",
                     "New mod mail from " + (event.getChannelType() == ChannelType.PRIVATE ? "anonymous user" : event.getAuthor().getAsMention())
                             + "\n\n" + event.getMessage().getContentRaw());
             modChannel.get().sendMessageEmbeds(msg).queue();

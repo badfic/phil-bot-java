@@ -4,7 +4,6 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.commands.bang.image.ImageUtils;
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.imageio.ImageIO;
@@ -34,36 +33,36 @@ abstract class BaseFlagCommand extends BaseBangCommand {
             "poly"
     };
 
-    BaseFlagCommand(String name) {
+    BaseFlagCommand(final String name) {
         this.name = name;
         this.help = "Display the %s emote with various pride flags.\n%s\n`!!%s demi`: display a demi %s emote"
                 .formatted(name, Arrays.toString(FLAG_NAMES), name, name);
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         try {
-            String[] split = event.getArgs().split("\\s+");
+            var split = event.getArgs().split("\\s+");
             if (StringUtils.isBlank(event.getArgs())) {
                 split = new String[] {"gay"};
             }
 
-            BufferedImage prideImage;
-            try (InputStream prideFlagStream = getClass().getClassLoader().getResourceAsStream("flags/%s.png".formatted(split[0]))) {
+            final BufferedImage prideImage;
+            try (final var prideFlagStream = getClass().getClassLoader().getResourceAsStream("flags/%s.png".formatted(split[0]))) {
                 prideImage = ImageIO.read(Objects.requireNonNull(prideFlagStream));
             }
 
-            BufferedImage emoji;
-            try (InputStream stream = getClass().getClassLoader().getResourceAsStream("flags/%s.png".formatted(name))) {
+            final BufferedImage emoji;
+            try (final var stream = getClass().getClassLoader().getResourceAsStream("flags/%s.png".formatted(name))) {
                 emoji = ImageIO.read(Objects.requireNonNull(stream));
             }
 
-            byte[] imageBytes = ImageUtils.makeOverlaidImage(prideImage, emoji, 1f);
+            final var imageBytes = ImageUtils.makeOverlaidImage(prideImage, emoji, 1f);
 
             event.getChannel().sendMessage(" ")
                     .addFiles(FileUpload.fromData(imageBytes, name + ".png"))
                     .queue();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             event.replyError("Failed to %s %s".formatted(event.getArgs(), name));
         }
     }

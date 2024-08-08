@@ -2,8 +2,6 @@ package com.badfic.philbot.commands.bang;
 
 import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
-import java.util.List;
-import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +14,9 @@ class PfpCommand extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
-        Member member = event.getMember();
-        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
+    public void execute(final CommandEvent event) {
+        var member = event.getMember();
+        final var mentionedMembers = event.getMessage().getMentions().getMembers();
         if (CollectionUtils.isNotEmpty(mentionedMembers)) {
             member = mentionedMembers.getFirst();
         }

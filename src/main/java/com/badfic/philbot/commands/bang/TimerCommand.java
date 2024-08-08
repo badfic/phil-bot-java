@@ -16,24 +16,24 @@ class TimerCommand extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
-        String[] args = event.getArgs().split("\\s+");
+    public void execute(final CommandEvent event) {
+        final var args = event.getArgs().split("\\s+");
 
         try {
-            int time = Integer.parseInt(args[0]);
+            final var time = Integer.parseInt(args[0]);
 
             if (time > 300) {
                 event.replyError("Max is 300 seconds (5 minutes)");
                 return;
             }
 
-            String id = RandomStringUtils.randomAlphabetic(4);
+            final var id = RandomStringUtils.randomAlphabetic(4);
             event.reply(Constants.simpleEmbed("Timer started for " + time + " seconds", null,
                     "https://cdn.discordapp.com/attachments/752665408770801737/777011911647690752/Webp.net-resizeimage.png", "timer id = " + id));
             event.getChannel().sendMessageEmbeds(Constants.simpleEmbed("Time's up", null,
                     "https://cdn.discordapp.com/attachments/752665408770801737/777011404536414228/Webp.net-resizeimage.jpg", "timer id = " + id))
                     .queueAfter(time, TimeUnit.SECONDS);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             event.replyError("Badly formatted command. Example `!!timer 30` for a 30 second timer.");
         }
     }
