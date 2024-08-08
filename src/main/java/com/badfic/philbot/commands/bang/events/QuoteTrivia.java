@@ -6,16 +6,13 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.Quote;
 import com.badfic.philbot.data.QuoteRepository;
-import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.OnJdaReady;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +21,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +32,7 @@ public class QuoteTrivia extends BaseBangCommand implements OnJdaReady {
 
     private final QuoteRepository quoteRepository;
 
-    public QuoteTrivia(QuoteRepository quoteRepository) {
+    public QuoteTrivia(final QuoteRepository quoteRepository) {
         name = "quoteTrivia";
         ownerCommand = true;
         this.quoteRepository = quoteRepository;
@@ -44,7 +40,7 @@ public class QuoteTrivia extends BaseBangCommand implements OnJdaReady {
 
     @Override
     public void run() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
         if (Objects.nonNull(swampyGamesConfig.getQuoteTriviaExpiration())) {
             scheduleTask(this::triviaComplete, swampyGamesConfig.getQuoteTriviaExpiration());
@@ -52,22 +48,22 @@ public class QuoteTrivia extends BaseBangCommand implements OnJdaReady {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         quoteTrivia();
     }
 
     @Scheduled(cron = "${swampy.schedule.events.quotetrivia}", zone = "${swampy.schedule.timezone}")
     void quoteTrivia() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
-        Guild guild = philJda.getGuildById(baseConfig.guildId);
+        final var swampyGamesConfig = getSwampyGamesConfig();
+        final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
+        final var guild = philJda.getGuildById(baseConfig.guildId);
 
         if (swampyGamesConfig.getQuoteTriviaMsgId() != null) {
             swampysChannel.sendMessage("There is currently a quote trivia running, you can't trigger another.").queue();
             return;
         }
 
-        List<Long> allQuotes = quoteRepository.findAllIds();
+        final var allQuotes = quoteRepository.findAllIds();
 
         if (CollectionUtils.isEmpty(allQuotes)) {
             swampysChannel.sendMessage("There are no quotes to do a quote trivia").queue();
@@ -78,8 +74,8 @@ public class QuoteTrivia extends BaseBangCommand implements OnJdaReady {
 
         Quote quote = null;
         Member member = null;
-        for (Long quoteId : allQuotes) {
-            Optional<Quote> optionalQuote = quoteRepository.findById(quoteId);
+        for (final var quoteId : allQuotes) {
+            final var optionalQuote = quoteRepository.findById(quoteId);
 
             if (optionalQuote.isPresent()) {
                 quote = optionalQuote.get();
@@ -98,14 +94,14 @@ public class QuoteTrivia extends BaseBangCommand implements OnJdaReady {
             swampysChannel.sendMessage("There are no quotes with valid active swamplings to do a quote trivia").queue();
             return;
         }
-        final Member finalMember = member;
-        final Quote finalQuote = quote;
+        final var finalMember = member;
+        final var finalQuote = quote;
 
-        List<Member> members = guild.getMemberCache().stream().collect(Collectors.toCollection(ArrayList::new));
+        final var members = guild.getMemberCache().stream().collect(Collectors.toCollection(ArrayList::new));
         Collections.shuffle(members);
 
-        Set<Member> otherTwoMembers = new HashSet<>();
-        for (Member randomMember : members) {
+        final var otherTwoMembers = new HashSet<Member>();
+        for (final var randomMember : members) {
             if (randomMember.getIdLong() != finalMember.getIdLong()) {
                 otherTwoMembers.add(randomMember);
             }
@@ -120,18 +116,18 @@ public class QuoteTrivia extends BaseBangCommand implements OnJdaReady {
             return;
         }
 
-        short correctAnswer = (short) randomNumberService.nextInt(3);
+        final var correctAnswer = (short) randomNumberService.nextInt(3);
 
-        String description = "Who said the following quote?" +
+        final var description = "Who said the following quote?" +
                 "\n\"" + finalQuote.getQuote() + '"' +
                 "\n\nA: " + getTriviaAnswer((short) 0, finalMember, otherTwoMembers, correctAnswer) +
                 "\n\nB: " + getTriviaAnswer((short) 1, finalMember, otherTwoMembers, correctAnswer) +
                 "\n\nC: " + getTriviaAnswer((short) 2, finalMember, otherTwoMembers, correctAnswer);
-        String title = "Quote Trivia time! (for " + swampyGamesConfig.getQuoteTriviaEventPoints() + " points)";
+        final var title = "Quote Trivia time! (for " + swampyGamesConfig.getQuoteTriviaEventPoints() + " points)";
         swampysChannel.sendMessageEmbeds(Constants.simpleEmbed(title, description)).queue(success -> {
             swampyGamesConfig.setQuoteTriviaCorrectAnswer(correctAnswer);
             swampyGamesConfig.setQuoteTriviaMsgId(success.getId());
-            LocalDateTime expiration = LocalDateTime.now().plusMinutes(15);
+            final var expiration = LocalDateTime.now().plusMinutes(15);
             swampyGamesConfig.setQuoteTriviaExpiration(expiration);
             saveSwampyGamesConfig(swampyGamesConfig);
 
@@ -144,40 +140,40 @@ public class QuoteTrivia extends BaseBangCommand implements OnJdaReady {
     }
 
     public void triviaComplete() {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
+        final var swampyGamesConfig = getSwampyGamesConfig();
+        final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
 
         if (Objects.isNull(swampyGamesConfig.getQuoteTriviaMsgId())) {
             swampysChannel.sendMessage("Could not find quote trivia question anymore. Failed to award points.").queue();
             return;
         }
 
-        String quoteTriviaMsgId = swampyGamesConfig.getQuoteTriviaMsgId();
-        short quoteTriviaCorrectAnswer = swampyGamesConfig.getQuoteTriviaCorrectAnswer();
-        int quoteTriviaEventPoints = swampyGamesConfig.getQuoteTriviaEventPoints();
+        final var quoteTriviaMsgId = swampyGamesConfig.getQuoteTriviaMsgId();
+        final var quoteTriviaCorrectAnswer = swampyGamesConfig.getQuoteTriviaCorrectAnswer();
+        final var quoteTriviaEventPoints = swampyGamesConfig.getQuoteTriviaEventPoints();
 
         swampyGamesConfig.setQuoteTriviaCorrectAnswer(null);
         swampyGamesConfig.setQuoteTriviaMsgId(null);
         swampyGamesConfig.setQuoteTriviaExpiration(null);
         saveSwampyGamesConfig(swampyGamesConfig);
 
-        Guild guild = philJda.getGuildById(baseConfig.guildId);
+        final var guild = philJda.getGuildById(baseConfig.guildId);
 
-        StringBuilder description = new StringBuilder();
+        final var description = new StringBuilder();
 
-        Message msg;
+        final Message msg;
         try {
             msg = swampysChannel.retrieveMessageById(quoteTriviaMsgId).timeout(30, TimeUnit.SECONDS).complete();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             swampysChannel.sendMessage("Could not find quote trivia question anymore. Failed to award points.").queue();
             return;
         }
 
-        long wrongPoints = quoteTriviaEventPoints * -1;
+        final var wrongPoints = quoteTriviaEventPoints * -1;
 
-        List<CompletableFuture<?>> futures = new ArrayList<>();
+        final var futures = new ArrayList<CompletableFuture<?>>();
 
-        List<User> users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE6")).timeout(30, TimeUnit.SECONDS).complete();
+        var users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE6")).timeout(30, TimeUnit.SECONDS).complete();
         awardPoints(description, users, quoteTriviaCorrectAnswer == 0 ? (long) quoteTriviaEventPoints : wrongPoints, futures, guild);
 
         users = msg.retrieveReactionUsers(Emoji.fromUnicode("\uD83C\uDDE7")).timeout(30, TimeUnit.SECONDS).complete();
@@ -193,13 +189,13 @@ public class QuoteTrivia extends BaseBangCommand implements OnJdaReady {
         });
     }
 
-    private void awardPoints(StringBuilder description, List<User> users, long points, List<CompletableFuture<?>> futures, Guild guild) {
-        for (User user : users) {
+    private void awardPoints(final StringBuilder description, final List<User> users, final long points, final List<CompletableFuture<?>> futures, final Guild guild) {
+        for (final var user : users) {
             if (user.getId().equals(philJda.getSelfUser().getId())) {
                 continue;
             }
 
-            Member memberById = guild.getMemberById(user.getId());
+            final var memberById = guild.getMemberById(user.getId());
             if (memberById == null) {
                 description.append("Could not award points to <@")
                         .append(user.getId())
@@ -225,13 +221,13 @@ public class QuoteTrivia extends BaseBangCommand implements OnJdaReady {
         }
     }
 
-    private String getTriviaAnswer(short position, Member correctMember, Set<Member> otherTwoMembers, short correctAnswer) {
+    private String getTriviaAnswer(final short position, final Member correctMember, final Set<Member> otherTwoMembers, final short correctAnswer) {
         final Member selectedMember;
         if (correctAnswer == position) {
             selectedMember = correctMember;
         } else {
-            Iterator<Member> i = otherTwoMembers.iterator();
-            Member next = i.next();
+            final var i = otherTwoMembers.iterator();
+            final var next = i.next();
             i.remove();
             selectedMember = next;
         }

@@ -2,21 +2,14 @@ package com.badfic.philbot.commands.slash;
 
 import com.badfic.philbot.commands.bang.SwampyCommand;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
-import com.badfic.philbot.data.SwampyGamesConfig;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,18 +20,18 @@ class SlotsSlashCommand extends BaseSlashCommand {
     }
 
     @Override
-    public void execute(SlashCommandInteractionEvent event) {
-        CompletableFuture<InteractionHook> interactionHook = event.deferReply().submit();
-        
-        Member member = event.getMember();
-        DiscordUser discordUser = getDiscordUserByMember(member);
+    public void execute(final SlashCommandInteractionEvent event) {
+        final var interactionHook = event.deferReply().submit();
 
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var member = event.getMember();
+        final var discordUser = getDiscordUserByMember(member);
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextSlotsTime = discordUser.getLastSlots().plus(swampyGamesConfig.getSlotsTimeoutMinutes(), ChronoUnit.MINUTES);
+        final var swampyGamesConfig = getSwampyGamesConfig();
+
+        final var now = LocalDateTime.now();
+        final var nextSlotsTime = discordUser.getLastSlots().plus(swampyGamesConfig.getSlotsTimeoutMinutes(), ChronoUnit.MINUTES);
         if (now.isBefore(nextSlotsTime)) {
-            Duration duration = Duration.between(now, nextSlotsTime);
+            final var duration = Duration.between(now, nextSlotsTime);
 
             if (duration.getSeconds() < 60) {
                 replyToInteractionHook(event, interactionHook, "You must wait " + (duration.getSeconds() + 1) + " seconds before playing slots again");
@@ -50,27 +43,27 @@ class SlotsSlashCommand extends BaseSlashCommand {
 
         discordUser.setLastSlots(now);
 
-        Set<String> slotsEmojis = Arrays.stream(swampyGamesConfig.getSlotsEmoji()).collect(Collectors.toSet());
-        int size = slotsEmojis.size();
+        final var slotsEmojis = Arrays.stream(swampyGamesConfig.getSlotsEmoji()).collect(Collectors.toSet());
+        final var size = slotsEmojis.size();
 
-        double oddsClosEnough = (1.0 / size) * (1.0 / size) * 300.0;
-        double oddsWinnerWinner = (1.0 / size) * (1.0 / size) * (1.0 / size) * 100.0;
-        String footer = String.format("Odds of a WINNER WINNER: %.3f%%\nOdds of a CLOSE ENOUGH: %.3f%%", oddsWinnerWinner, oddsClosEnough);
+        final var oddsClosEnough = (1.0 / size) * (1.0 / size) * 300.0;
+        final var oddsWinnerWinner = (1.0 / size) * (1.0 / size) * (1.0 / size) * 100.0;
+        final var footer = String.format("Odds of a WINNER WINNER: %.3f%%\nOdds of a CLOSE ENOUGH: %.3f%%", oddsWinnerWinner, oddsClosEnough);
 
-        String one = Constants.pickRandom(slotsEmojis);
-        String two = Constants.pickRandom(slotsEmojis);
-        String three = Constants.pickRandom(slotsEmojis);
+        final var one = Constants.pickRandom(slotsEmojis);
+        final var two = Constants.pickRandom(slotsEmojis);
+        final var three = Constants.pickRandom(slotsEmojis);
 
-        MessageEmbed winnerWinnerMessage = Constants.simpleEmbed(SwampyCommand.SLOT_MACHINE + " WINNER WINNER!! " + SwampyCommand.SLOT_MACHINE,
+        final var winnerWinnerMessage = Constants.simpleEmbed(SwampyCommand.SLOT_MACHINE + " WINNER WINNER!! " + SwampyCommand.SLOT_MACHINE,
                 String.format("%s\n%s%s%s \nYou won " + swampyGamesConfig.getSlotsWinPoints() + " points!", member.getAsMention(), one, two, three),
                 null, footer);
 
-        MessageEmbed closeEnoughMessage = Constants.simpleEmbed(SwampyCommand.SLOT_MACHINE + " CLOSE ENOUGH! " + SwampyCommand.SLOT_MACHINE,
+        final var closeEnoughMessage = Constants.simpleEmbed(SwampyCommand.SLOT_MACHINE + " CLOSE ENOUGH! " + SwampyCommand.SLOT_MACHINE,
                 String.format("%s\n%s%s%s \nYou got 2 out of 3! You won " + swampyGamesConfig.getSlotsTwoOfThreePoints() + " points!",
                         member.getAsMention(), one, two, three),
                 null, footer);
 
-        MessageEmbed lossMessage = Constants.simpleEmbed(SwampyCommand.SLOT_MACHINE + " Better luck next time! " + SwampyCommand.SLOT_MACHINE,
+        final var lossMessage = Constants.simpleEmbed(SwampyCommand.SLOT_MACHINE + " Better luck next time! " + SwampyCommand.SLOT_MACHINE,
                 String.format("%s\n%s%s%s", member.getAsMention(), one, two, three), null, footer);
 
         if (one.equals(two) && two.equals(three)) {

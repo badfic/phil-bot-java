@@ -8,20 +8,12 @@ import com.badfic.philbot.service.OnJdaReady;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageReaction;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.UserSnowflake;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +36,7 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
 
     private final CourtCaseDal courtCaseDal;
 
-    JudgeCommand(CourtCaseDal courtCaseDal) {
+    JudgeCommand(final CourtCaseDal courtCaseDal) {
         name = "judge";
         help = """
                 `!!judge @user for such and such crime` To judge a user for various crimes. People then vote on their sentence in mega-hell
@@ -55,7 +47,7 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
 
     @Override
     public void run() {
-        for (CourtCase courtCase : courtCaseDal.findAll()) {
+        for (final var courtCase : courtCaseDal.findAll()) {
             if (courtCase.getTrialDate() != null) {
                 scheduleTask(() -> trialComplete(courtCase.getDefendantId()), courtCase.getTrialDate());
             } else if (courtCase.getReleaseDate() != null) {
@@ -65,25 +57,25 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) != 1) {
             event.replyError("Please mention a user to accuse. Example `!!judge @user for such and such crime`");
             return;
         }
 
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
-        Member accuser = event.getMember();
-        Member defendant = event.getMessage().getMentions().getMembers().getFirst();
+        final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
+        final var accuser = event.getMember();
+        final var defendant = event.getMessage().getMentions().getMembers().getFirst();
 
-        Optional<CourtCase> optionalExistingCase = courtCaseDal.findById(defendant.getIdLong());
+        final var optionalExistingCase = courtCaseDal.findById(defendant.getIdLong());
 
         if (event.getArgs().startsWith("mistrial")) {
             if (optionalExistingCase.isPresent()) {
-                CourtCase courtCase = optionalExistingCase.get();
+                final var courtCase = optionalExistingCase.get();
                 if (defendant.getIdLong() == courtCase.getDefendantId()
                         && accuser.getIdLong() == courtCase.getAccuserId()
                         && courtCase.getReleaseDate() == null) {
-                    long trialMessageId = courtCase.getTrialMessageId();
+                    final var trialMessageId = courtCase.getTrialMessageId();
                     courtCaseDal.deleteById(courtCase.getDefendantId());
                     swampysChannel.retrieveMessageById(trialMessageId)
                             .queue(msg -> msg.delete().queue());
@@ -96,7 +88,7 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
         }
 
         if (optionalExistingCase.isPresent()) {
-            CourtCase courtCase = optionalExistingCase.get();
+            final var courtCase = optionalExistingCase.get();
 
             if (courtCase.getReleaseDate() != null) {
                 event.reply(defendant.getEffectiveName() + " is currently serving a sentence of "
@@ -114,23 +106,23 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
             return;
         }
 
-        String crime = event.getArgs().replace("<@" + defendant.getIdLong() + ">", "").trim();
+        var crime = event.getArgs().replace("<@" + defendant.getIdLong() + ">", "").trim();
         if (crime.startsWith("for")) {
             crime = crime.substring(3).trim();
         }
         if (StringUtils.isBlank(crime)) {
             crime = "unspecified crimes";
         }
-        String finalCrime = crime;
+        final var finalCrime = crime;
 
-        String description = accuser.getAsMention() + " is accusing " + defendant.getAsMention() +
+        final var description = accuser.getAsMention() + " is accusing " + defendant.getAsMention() +
                 " of " + crime + "\n\nReact below with a\n" + Sentence.ACQUIT.getEmoji() + " to acquit\n" +
                 Sentence.ONE_HOUR.getEmoji() + " for a 1 hour sentence\n" +
                 Sentence.FIVE_HOUR.getEmoji() + " for a 5 hour sentence\n" +
                 Sentence.ONE_DAY.getEmoji() + " for a 1 day sentence";
 
         swampysChannel.sendMessageEmbeds(Constants.simpleEmbedThumbnail("Jury Summons", description, defendant.getEffectiveAvatarUrl())).queue(msg -> {
-            CourtCase courtCase = new CourtCase(defendant.getIdLong(), accuser.getIdLong(), msg.getIdLong(), finalCrime,
+            final var courtCase = new CourtCase(defendant.getIdLong(), accuser.getIdLong(), msg.getIdLong(), finalCrime,
                     LocalDateTime.now().plusMinutes(15));
             courtCaseDal.insert(courtCase);
 
@@ -143,33 +135,33 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
         });
     }
 
-    private void trialComplete(long defendentId) {
-        Guild guild = philJda.getGuildById(baseConfig.guildId);
-        Role megaHellRole = guild.getRolesByName(Constants.MEGA_HELL_ROLE, false).getFirst();
-        TextChannel swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
-        TextChannel megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).getFirst();
+    private void trialComplete(final long defendentId) {
+        final var guild = philJda.getGuildById(baseConfig.guildId);
+        final var megaHellRole = guild.getRolesByName(Constants.MEGA_HELL_ROLE, false).getFirst();
+        final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
+        final var megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).getFirst();
 
-        Optional<CourtCase> optCourtCase = courtCaseDal.findById(defendentId);
+        final var optCourtCase = courtCaseDal.findById(defendentId);
 
         if (optCourtCase.isEmpty()) {
             swampysChannel.sendMessage("Megahell trial for <@" + defendentId + "> failed.").queue();
             return;
         }
 
-        CourtCase courtCase = optCourtCase.get();
+        final var courtCase = optCourtCase.get();
 
         try {
-            Message trialMessage = swampysChannel.retrieveMessageById(courtCase.getTrialMessageId()).timeout(30, TimeUnit.SECONDS).complete();
+            final var trialMessage = swampysChannel.retrieveMessageById(courtCase.getTrialMessageId()).timeout(30, TimeUnit.SECONDS).complete();
 
-            Map<Sentence, MutableInt> sentenceMap = Map.of(
+            final var sentenceMap = Map.of(
                     JudgeCommand.Sentence.ACQUIT, new MutableInt(-1),
                     JudgeCommand.Sentence.ONE_HOUR, new MutableInt(-1),
                     JudgeCommand.Sentence.FIVE_HOUR, new MutableInt(-1),
                     JudgeCommand.Sentence.ONE_DAY, new MutableInt(-1));
-            List<MessageReaction> reactions = trialMessage.getReactions();
-            for (MessageReaction reaction : reactions) {
+            final var reactions = trialMessage.getReactions();
+            for (final var reaction : reactions) {
                 if (reaction.getEmoji().getType() == Emoji.Type.UNICODE) {
-                    String emoji = reaction.getEmoji().asUnicode().getName();
+                    final var emoji = reaction.getEmoji().asUnicode().getName();
 
                     if (JudgeCommand.Sentence.ACQUIT.getEmoji().equals(emoji)) {
                         sentenceMap.get(JudgeCommand.Sentence.ACQUIT).add(reaction.getCount());
@@ -190,7 +182,7 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
                 return;
             }
 
-            JudgeCommand.Sentence winningSentence = sentenceMap.entrySet().stream()
+            final var winningSentence = sentenceMap.entrySet().stream()
                     .max(Comparator.comparingInt(a -> a.getValue().getValue()))
                     .orElseThrow(IllegalStateException::new)
                     .getKey();
@@ -203,7 +195,7 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
                 case ONE_HOUR -> {
                     guild.addRoleToMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
                     courtCase.setTrialDate(null);
-                    LocalDateTime releaseDate = LocalDateTime.now().plusHours(1);
+                    final var releaseDate = LocalDateTime.now().plusHours(1);
                     courtCase.setReleaseDate(releaseDate);
                     courtCaseDal.update(courtCase);
 
@@ -217,7 +209,7 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
                 case FIVE_HOUR -> {
                     guild.addRoleToMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
                     courtCase.setTrialDate(null);
-                    LocalDateTime releaseDate = LocalDateTime.now().plusHours(5);
+                    final var releaseDate = LocalDateTime.now().plusHours(5);
                     courtCase.setReleaseDate(releaseDate);
                     courtCaseDal.update(courtCase);
 
@@ -231,7 +223,7 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
                 case ONE_DAY -> {
                     guild.addRoleToMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
                     courtCase.setTrialDate(null);
-                    LocalDateTime releaseDate = LocalDateTime.now().plusDays(1);
+                    final var releaseDate = LocalDateTime.now().plusDays(1);
                     courtCase.setReleaseDate(releaseDate);
                     courtCaseDal.update(courtCase);
 
@@ -243,17 +235,17 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
                             + courtCase.getCrime()).queue();
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Error with trial sentencing for [userId={}]", defendentId, e);
             courtCaseDal.deleteById(defendentId);
             swampysChannel.sendMessage("Megahell trial sentencing for <@" + defendentId + "> failed.").queue();
         }
     }
 
-    private void releaseComplete(long defendentId) {
-        Guild guild = philJda.getGuildById(baseConfig.guildId);
-        Role megaHellRole = guild.getRolesByName(Constants.MEGA_HELL_ROLE, false).getFirst();
-        TextChannel megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).getFirst();
+    private void releaseComplete(final long defendentId) {
+        final var guild = philJda.getGuildById(baseConfig.guildId);
+        final var megaHellRole = guild.getRolesByName(Constants.MEGA_HELL_ROLE, false).getFirst();
+        final var megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).getFirst();
 
         courtCaseDal.findById(defendentId)
                 .ifPresent(courtCase -> courtCaseDal.deleteById(defendentId));
@@ -261,7 +253,7 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
         try {
             guild.removeRoleFromMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
             megaHellChannel.sendMessage("<@" + defendentId + "> has been released from mega-hell").queue();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Error with release date for [userId={}]", defendentId, e);
             megaHellChannel.sendMessage("Megahell sentence release for <@" + defendentId + "> failed.").queue();
         }

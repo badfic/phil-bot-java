@@ -11,7 +11,7 @@ class HelpCommand extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         event.reply("Find help for commands here: " + baseConfig.hostname + "/members/commands");
     }
 }

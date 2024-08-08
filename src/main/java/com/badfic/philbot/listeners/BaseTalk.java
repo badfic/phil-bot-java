@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public abstract class BaseTalk extends BaseBangCommand {
 
-    public BaseTalk(String name) {
+    public BaseTalk(final String name) {
         this.name = name;
         guildOnly = false;
         help = Constants.PREFIX + name + " #channel Type Your Message\nExample: !!philTalk #general Hello Swamplings";
@@ -26,7 +26,7 @@ public abstract class BaseTalk extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         if (event.getChannelType() != ChannelType.PRIVATE) {
             return;
         }

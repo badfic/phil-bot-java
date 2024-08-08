@@ -2,16 +2,10 @@ package com.badfic.philbot.commands.slash;
 
 import com.badfic.philbot.commands.Rank;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.DiscordUser;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.stereotype.Service;
@@ -25,11 +19,11 @@ class RankSlashCommand extends BaseSlashCommand {
     }
 
     @Override
-    public void execute(SlashCommandInteractionEvent event) {
-        CompletableFuture<InteractionHook> interactionHook = event.deferReply().submit();
-        Member member = event.getMember();
+    public void execute(final SlashCommandInteractionEvent event) {
+        final var interactionHook = event.deferReply().submit();
+        var member = event.getMember();
 
-        OptionMapping userOption = event.getOption("user");
+        final var userOption = event.getOption("user");
         if (Objects.nonNull(userOption)) {
             member = userOption.getAsMember();
         }
@@ -39,13 +33,13 @@ class RankSlashCommand extends BaseSlashCommand {
             return;
         }
 
-        DiscordUser user = getDiscordUserByMember(member);
+        final var user = getDiscordUserByMember(member);
 
-        List<Rank> allRanks = Rank.getAllRanks();
-        Rank rank = Rank.byXp(user.getXp());
-        Rank nextRank = (rank.getOrdinal() >= allRanks.size() - 1) ? rank : allRanks.get(rank.getOrdinal() + 1);
+        final var allRanks = Rank.getAllRanks();
+        final var rank = Rank.byXp(user.getXp());
+        final var nextRank = (rank.getOrdinal() >= allRanks.size() - 1) ? rank : allRanks.get(rank.getOrdinal() + 1);
 
-        String description = rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
+        final var description = rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
                 "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total points.\n\n" +
                 "The next level is level " +
                 (rank == nextRank
@@ -56,7 +50,7 @@ class RankSlashCommand extends BaseSlashCommand {
                 : NumberFormat.getIntegerInstance().format(Rank.xpRequiredForLevel(user.getXp(), nextRank.getLevel())))
                 + " points to go.\n\nBest of Luck in the Swampys!";
 
-        MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + rank.getLevel() + " | " + rank.getRoleName(),
+        final var messageEmbed = Constants.simpleEmbed("Level " + rank.getLevel() + " | " + rank.getRoleName(),
                 description,
                 null,
                 null,

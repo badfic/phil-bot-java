@@ -13,7 +13,6 @@ import com.badfic.philbot.listeners.Phil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
@@ -70,13 +68,13 @@ public class BaseConfig {
     }
 
     @Bean(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
-    public TaskExecutor applicationTaskExecutor(ExecutorService executorService) {
+    public TaskExecutor applicationTaskExecutor(final ExecutorService executorService) {
         return new TaskExecutorAdapter(executorService);
     }
 
     @Bean(name = "taskScheduler")
     public ThreadPoolTaskScheduler taskScheduler() {
-        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+        final var threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
         threadPoolTaskScheduler.setThreadFactory(Thread.ofVirtual().factory());
         threadPoolTaskScheduler.setRejectedExecutionHandler((runnable, executor) -> {
             log.error("Rejected task in taskScheduler. [runnable={}]", runnable);
@@ -90,10 +88,10 @@ public class BaseConfig {
     }
 
     @Bean
-    public OkHttpClient okHttpClient(ExecutorService executorService) {
-        Dispatcher dispatcher = new Dispatcher(executorService);
+    public OkHttpClient okHttpClient(final ExecutorService executorService) {
+        final var dispatcher = new Dispatcher(executorService);
         dispatcher.setMaxRequestsPerHost(25);
-        ConnectionPool connectionPool = new ConnectionPool(4, 10, TimeUnit.SECONDS);
+        final var connectionPool = new ConnectionPool(4, 10, TimeUnit.SECONDS);
 
         //noinspection KotlinInternalInJava
         return new OkHttpClient.Builder()
@@ -104,23 +102,23 @@ public class BaseConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
+        final var objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         return objectMapper;
     }
 
     @Bean
-    public RestTemplate restTemplate(OkHttpClient okHttpClient) {
+    public RestTemplate restTemplate(final OkHttpClient okHttpClient) {
         return new RestTemplate(new OkHttp3ClientHttpRequestFactory(okHttpClient));
     }
 
     @Bean(name = "philJda")
-    public JDA philJda(ThreadPoolTaskScheduler taskScheduler,
-                       ExecutorService executorService,
-                       OkHttpClient okHttpClient,
-                       Phil.MessageListener messageListener) throws Exception {
-        List<GatewayIntent> intents = Arrays.asList(GUILD_MEMBERS, GUILD_MODERATION, GUILD_MESSAGES, MESSAGE_CONTENT, GUILD_VOICE_STATES,
+    public JDA philJda(final ThreadPoolTaskScheduler taskScheduler,
+                       final ExecutorService executorService,
+                       final OkHttpClient okHttpClient,
+                       final Phil.MessageListener messageListener) throws Exception {
+        final var intents = Arrays.asList(GUILD_MEMBERS, GUILD_MODERATION, GUILD_MESSAGES, MESSAGE_CONTENT, GUILD_VOICE_STATES,
                 GUILD_MESSAGE_REACTIONS, GUILD_EMOJIS_AND_STICKERS, DIRECT_MESSAGES);
 
         return JDABuilder.create(philBotToken, intents)

@@ -1,16 +1,11 @@
 package com.badfic.philbot.commands.slash;
 
-import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
-import com.badfic.philbot.data.SwampyGamesConfig;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.stereotype.Service;
@@ -24,11 +19,11 @@ class DownvoteSlashCommand extends BaseSlashCommand {
     }
 
     @Override
-    public void execute(SlashCommandInteractionEvent event) {
-        CompletableFuture<InteractionHook> interactionHook = event.deferReply().submit();
+    public void execute(final SlashCommandInteractionEvent event) {
+        final var interactionHook = event.deferReply().submit();
 
-        Member member = event.getMember();
-        Member mentionedMember = event.getOption("user").getAsMember();
+        final var member = event.getMember();
+        final var mentionedMember = event.getOption("user").getAsMember();
 
         if (isNotParticipating(mentionedMember)) {
             replyToInteractionHook(event, interactionHook, mentionedMember.getEffectiveName() + " is not participating in the swampys");
@@ -40,14 +35,14 @@ class DownvoteSlashCommand extends BaseSlashCommand {
             return;
         }
 
-        DiscordUser discordUser = getDiscordUserByMember(member);
+        final var discordUser = getDiscordUserByMember(member);
 
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getDownvoteTimeoutMinutes(), ChronoUnit.MINUTES);
+        final var now = LocalDateTime.now();
+        final var nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getDownvoteTimeoutMinutes(), ChronoUnit.MINUTES);
         if (now.isBefore(nextVoteTime)) {
-            Duration duration = Duration.between(now, nextVoteTime);
+            final var duration = Duration.between(now, nextVoteTime);
 
             if (duration.getSeconds() < 60) {
                 replyToInteractionHook(event, interactionHook, "You must wait " + (duration.getSeconds() + 1) + " seconds before up/down-voting again");

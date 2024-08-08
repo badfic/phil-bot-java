@@ -10,7 +10,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import jakarta.annotation.PostConstruct;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.net.URI;
@@ -19,7 +18,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -78,7 +76,7 @@ public class Constants {
         SINGLETON = this;
     }
 
-    public static void addReactionTask(long messageId, Function<MessageReactionAddEvent, Boolean> function) {
+    public static void addReactionTask(final long messageId, final Function<MessageReactionAddEvent, Boolean> function) {
         OUTSTANDING_REACTION_TASKS.put(messageId, function);
 
         SINGLETON.taskScheduler.schedule(() -> {
@@ -86,9 +84,9 @@ public class Constants {
         }, Instant.now().plus(15, ChronoUnit.MINUTES));
     }
 
-    public static void computeReactionTask(MessageReactionAddEvent event) {
+    public static void computeReactionTask(final MessageReactionAddEvent event) {
         OUTSTANDING_REACTION_TASKS.computeIfPresent(event.getMessageIdLong(), (key, function) -> {
-            boolean taskIsComplete = function.apply(event);
+            final var taskIsComplete = function.apply(event);
 
             if (taskIsComplete) {
                 return null;
@@ -98,124 +96,111 @@ public class Constants {
     }
 
     public static Color colorOfTheMonth() {
-        String[] colors = SINGLETON.swampyGamesConfigDal.get().getMonthlyColors();
-        String color = pickRandom(colors);
+        final var colors = SINGLETON.swampyGamesConfigDal.get().getMonthlyColors();
+        final var color = pickRandom(colors);
         return Color.decode(color);
     }
 
-    public static boolean isUrl(String string) {
+    public static boolean isUrl(final String string) {
         if (StringUtils.isBlank(string)) {
             return false;
         }
 
         try {
-            URI uri = URI.create(string);
+            final var uri = URI.create(string);
             return Objects.nonNull(uri.toString());
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             return false;
         }
     }
 
-    public static Optional<String> getFilenameExtension(String filename) {
+    public static Optional<String> getFilenameExtension(final String filename) {
         return Optional.ofNullable(filename)
                 .filter(f -> f.contains("."))
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 
-    public static boolean urlIsImage(String url) {
+    public static boolean urlIsImage(final String url) {
         if (StringUtils.isBlank(url)) {
             return false;
         }
 
-        Optional<String> fileExtension = getFilenameExtension(url);
+        final var fileExtension = getFilenameExtension(url);
 
         return fileExtension.map(ext -> Constants.IMAGE_EXTENSION_PATTERN.matcher(ext).find()).orElse(false);
     }
 
-    public static String imageUrlOrElseNull(String url) {
+    public static String imageUrlOrElseNull(final String url) {
         return urlIsImage(url) ? url : null;
     }
 
-    public static BufferedImage scaleImageUrlTo(int width, int height, String imageUrl) throws Exception {
+    public static BufferedImage scaleImageUrlTo(final int width, final int height, final String imageUrl) throws Exception {
         if (width <= 0) {
             return null;
         }
 
-        BufferedImage image = ImageIO.read(URI.create(imageUrl).toURL());
+        final var image = ImageIO.read(URI.create(imageUrl).toURL());
 
         if (image.getWidth() == width && image.getHeight() == height) {
             return image;
         }
 
-        Image scaledTmp = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        final var scaledTmp = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        final var scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-        Graphics2D graphics = scaledImage.createGraphics();
+        final var graphics = scaledImage.createGraphics();
         graphics.drawImage(scaledTmp, 0, 0, null);
         graphics.dispose();
 
         return scaledImage;
     }
 
-    public static Optional<Role> hasRole(Member member, String roleName) {
-        List<Role> roles = member.getRoles();
-
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0; i < roles.size(); i++) {
-            Role r = roles.get(i);
-            if (r.getName().equalsIgnoreCase(roleName)) {
-                return Optional.of(r);
-            }
-        }
-
-        return Optional.empty();
+    public static Optional<Role> hasRole(final Member member, final String roleName) {
+        return member.getRoles().stream().filter(r -> r.getName().equalsIgnoreCase(roleName)).findFirst();
     }
 
-    public static <T> T pickRandom(Collection<T> collection) {
-        int index = SINGLETON.randomNumberService.nextInt(collection.size());
+    public static <T> T pickRandom(final Collection<T> collection) {
+        final var index = SINGLETON.randomNumberService.nextInt(collection.size());
         if (collection instanceof List<T> list) {
             return list.get(index);
         }
 
-        Iterator<T> iterator = collection.iterator();
-        for (int i = 0; i < index; i++) {
+        final var iterator = collection.iterator();
+        for (var i = 0; i < index; i++) {
             iterator.next();
         }
         return iterator.next();
     }
 
-    public static <T> T pickRandom(T[] collection) {
-        int index = SINGLETON.randomNumberService.nextInt(collection.length);
+    public static <T> T pickRandom(final T[] collection) {
+        final var index = SINGLETON.randomNumberService.nextInt(collection.length);
         return collection[index];
     }
 
-    public static String prettyPrintDuration(Duration duration) {
+    public static String prettyPrintDuration(final Duration duration) {
         return duration.toString()
                 .substring(2)
                 .replaceAll("(\\d[HMS])(?!$)", "$1 ")
                 .toLowerCase();
     }
 
-    public static Pattern compileWords(String s) {
+    public static Pattern compileWords(final String s) {
         return Pattern.compile("\\b(" + s + ")\\b", Pattern.CASE_INSENSITIVE);
     }
 
-    public static ObjectIntPair<DayOfWeek> isoDayOfWeekMode(int[] array) {
+    public static ObjectIntPair<DayOfWeek> isoDayOfWeekMode(final int[] array) {
         if (ArrayUtils.isEmpty(array)) {
             return ObjectIntPair.of(DayOfWeek.SUNDAY, 0);
         }
 
-        int mode = 1;
-        int maxCount = 0;
+        var mode = 1;
+        var maxCount = 0;
 
-        int[] counts = new int[7];
+        final var counts = new int[7];
 
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0; i < array.length; i++) {
-            int currentValue = array[i];
-
+        for (final var currentValue : array) {
             // ISO days are 1 through 7, so we subtract 1 for our counts array indexing
-            int currentFrequency = counts[currentValue - 1]++;
+            final var currentFrequency = counts[currentValue - 1]++;
             if (currentFrequency > maxCount) {
                 maxCount = currentFrequency;
                 mode = currentValue;
@@ -225,17 +210,18 @@ public class Constants {
         return ObjectIntPair.of(DayOfWeek.of(mode), maxCount);
     }
 
-    public static void checkUserTriggerWords(MessageReceivedEvent event, Long2ObjectMap<List<Pair<Pattern, String>>> userTriggerWords,
-                                             String username, String avatar, DiscordWebhookSendService discordWebhookSendService) {
-        List<Pair<Pattern, String>> userTriggers = userTriggerWords.get(event.getAuthor().getIdLong());
+    public static void checkUserTriggerWords(final MessageReceivedEvent event,
+                                             final Long2ObjectMap<List<Pair<Pattern, String>>> userTriggerWords,
+                                             final String username,
+                                             final String avatar,
+                                             final DiscordWebhookSendService discordWebhookSendService) {
+        final var userTriggers = userTriggerWords.get(event.getAuthor().getIdLong());
         if (CollectionUtils.isNotEmpty(userTriggers)) {
-            Optional<String> match = Optional.empty();
+            var match = Optional.<String>empty();
 
-            //noinspection ForLoopReplaceableByForEach
-            for (int i = 0; i < userTriggers.size(); i++) {
-                Pair<Pattern, String> t = userTriggers.get(i);
+            for (final var t : userTriggers) {
                 if (t.left().matcher(event.getMessage().getContentRaw()).find()) {
-                    String right = t.right();
+                    final var right = t.right();
                     match = Optional.of(right);
                     break;
                 }
@@ -252,52 +238,52 @@ public class Constants {
         }
     }
 
-    public static void debugToTestChannel(JDA jda, String msg) {
+    public static void debugToTestChannel(final JDA jda, final String msg) {
         log.info(msg);
         jda.getTextChannelsByName(Constants.TEST_CHANNEL, false).getFirst().sendMessage(msg).queue();
     }
 
-    public static void debugToModLogsChannel(JDA jda, MessageEmbed messageEmbed) {
+    public static void debugToModLogsChannel(final JDA jda, final MessageEmbed messageEmbed) {
         jda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).getFirst().sendMessageEmbeds(messageEmbed).queue();
     }
 
-    public static MessageEmbed simpleEmbedThumbnail(String title, String description, String thumbnail) {
+    public static MessageEmbed simpleEmbedThumbnail(final String title, final String description, final String thumbnail) {
         return simpleEmbed(title, description, null, null, null, thumbnail);
     }
 
-    public static MessageEmbed simpleEmbedThumbnail(String title, String description, String image, String thumbnail) {
+    public static MessageEmbed simpleEmbedThumbnail(final String title, final String description, final String image, final String thumbnail) {
         return simpleEmbed(title, description, image, null, null, thumbnail);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description) {
+    public static MessageEmbed simpleEmbed(final String title, final String description) {
         return simpleEmbed(title, description, null, null, null, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, Color color) {
+    public static MessageEmbed simpleEmbed(final String title, final String description, final Color color) {
         return simpleEmbed(title, description, null, null, color, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, String image) {
+    public static MessageEmbed simpleEmbed(final String title, final String description, final String image) {
         return simpleEmbed(title, description, image, null, null, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, String image, Color color) {
+    public static MessageEmbed simpleEmbed(final String title, final String description, final String image, final Color color) {
         return simpleEmbed(title, description, image, null, color, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, String image, String footer) {
+    public static MessageEmbed simpleEmbed(final String title, final String description, final String image, final String footer) {
         return simpleEmbed(title, description, image, footer, null, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color) {
+    public static MessageEmbed simpleEmbed(final String title, final String description, final String image, final String footer, final Color color) {
         return simpleEmbed(title, description, image, footer, color, null);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color, String thumbnail) {
+    public static MessageEmbed simpleEmbed(final String title, final String description, final String image, final String footer, final Color color, final String thumbnail) {
         return simpleEmbed(title, description, image, footer, color, thumbnail, true);
     }
 
-    public static MessageEmbed simpleEmbed(String title, String description, String image, String footer, Color color, String thumbnail, boolean include777) {
+    public static MessageEmbed simpleEmbed(final String title, final String description, final String image, final String footer, final Color color, final String thumbnail, final boolean include777) {
         final String finalDesc;
         if (StringUtils.isNotBlank(description)) {
             finalDesc = description.length() > 2048 ? (description.substring(0, 2044) + "...") : description;
@@ -305,14 +291,15 @@ public class Constants {
             finalDesc = null;
         }
 
+        var fullFooter = footer;
         if (include777) {
-            String[] footers = SINGLETON.swampyGamesConfigDal.get().getEmbedFooters();
-            String footerAddition = pickRandom(footers);
+            final var footers = SINGLETON.swampyGamesConfigDal.get().getEmbedFooters();
+            final var footerAddition = pickRandom(footers);
 
-            footer = footer != null ? (footer + "\n" + footerAddition) : footerAddition;
-            footer = footer.length() > 2048 ? (footer.substring(0, 2044) + "777") : footer;
-        } else if (footer != null && footer.length() > 2048) {
-            footer = footer.substring(0, 2044) + "...";
+            fullFooter = fullFooter != null ? (fullFooter + "\n" + footerAddition) : footerAddition;
+            fullFooter = fullFooter.length() > 2048 ? (fullFooter.substring(0, 2044) + "777") : fullFooter;
+        } else if (fullFooter != null && fullFooter.length() > 2048) {
+            fullFooter = fullFooter.substring(0, 2044) + "...";
         }
 
         return new EmbedBuilder()
@@ -320,7 +307,7 @@ public class Constants {
                 .setDescription(finalDesc)
                 .setImage(imageUrlOrElseNull(image))
                 .setColor(color != null ? color : colorOfTheMonth())
-                .setFooter(footer)
+                .setFooter(fullFooter)
                 .setThumbnail(imageUrlOrElseNull(thumbnail))
                 .build();
     }

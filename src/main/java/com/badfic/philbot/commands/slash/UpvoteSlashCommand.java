@@ -1,19 +1,13 @@
 package com.badfic.philbot.commands.slash;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
-import com.badfic.philbot.data.SwampyGamesConfig;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.collections4.CollectionUtils;
@@ -28,22 +22,23 @@ class UpvoteSlashCommand extends BaseSlashCommand {
     }
 
     @Override
-    public void execute(SlashCommandInteractionEvent event) {
-        CompletableFuture<InteractionHook> interactionHook = event.deferReply().submit();
-        Member member = event.getMember();
-        OptionMapping option = event.getOption("user");
+    public void execute(final SlashCommandInteractionEvent event) {
+        final var interactionHook = event.deferReply().submit();
+        final var member = event.getMember();
+        final var option = event.getOption("user");
 
         if (Objects.isNull(option)) {
             replyToInteractionHook(event, interactionHook, "You must mention at least one user to upvote");
             return;
         }
 
-        List<Member> mentionedMembers = option.getMentions().getMembers();
+        final var mentionedMembers = option.getMentions().getMembers();
 
-        StringBuilder description = new StringBuilder();
-        List<Member> eligibleMembers = mentionedMembers.stream().filter(mentionedMember -> {
+        final var description = new StringBuilder();
+        final var eligibleMembers = mentionedMembers.stream().filter(mentionedMember -> {
             if (isNotParticipating(mentionedMember)) {
-                description.append(mentionedMember.getEffectiveName() + " is not participating in the swampys\n");
+                description.append(mentionedMember.getEffectiveName())
+                        .append(" is not participating in the swampys\n");
                 return false;
             }
 
@@ -60,14 +55,14 @@ class UpvoteSlashCommand extends BaseSlashCommand {
             return;
         }
 
-        DiscordUser discordUser = getDiscordUserByMember(member);
+        final var discordUser = getDiscordUserByMember(member);
 
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getUpvoteTimeoutMinutes(), ChronoUnit.MINUTES);
+        final var now = LocalDateTime.now();
+        final var nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getUpvoteTimeoutMinutes(), ChronoUnit.MINUTES);
         if (now.isBefore(nextVoteTime)) {
-            Duration duration = Duration.between(now, nextVoteTime);
+            final var duration = Duration.between(now, nextVoteTime);
 
             if (duration.getSeconds() < 60) {
                 replyToInteractionHook(event, interactionHook, "You must wait " + (duration.getSeconds() + 1) + " seconds before up/down-voting again");
@@ -80,7 +75,7 @@ class UpvoteSlashCommand extends BaseSlashCommand {
 
         givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvoter(), member, discordUser, PointsStat.UPVOTER);
 
-        for (Member mentionedMember : eligibleMembers) {
+        for (final var mentionedMember : eligibleMembers) {
             givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvotee(), mentionedMember, PointsStat.UPVOTED);
             description.append(mentionedMember.getEffectiveName()).append('\n');
         }

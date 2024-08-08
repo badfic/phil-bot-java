@@ -4,10 +4,7 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.commands.ModHelpAware;
 import com.badfic.philbot.commands.Rank;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.PointsStat;
-import com.badfic.philbot.data.SwampyGamesConfig;
-import com.badfic.philbot.data.hungersim.Player;
 import com.badfic.philbot.data.hungersim.PlayerRepository;
 import java.text.NumberFormat;
 import java.time.Duration;
@@ -15,10 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,12 +20,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
@@ -57,7 +47,7 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
     private final String modHelp;
     private final PlayerRepository playerRepository;
 
-    public SwampyCommand(PlayerRepository playerRepository) {
+    public SwampyCommand(final PlayerRepository playerRepository) {
         name = "swampy";
         help = "NOTE: the \"help\", \"rank\", \"up\", \"down\", and \"slots\" swampy commands can now be used with ANY `!!` alias you want.\n\n" +
                 "`!!swampy up @Santiago` upvote a user for the swampys\n" +
@@ -76,9 +66,9 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
     }
 
     @Override
-    public void execute(CommandEvent event) {
-        String args = event.getArgs();
-        String msgContent = event.getMessage().getContentRaw();
+    public void execute(final CommandEvent event) {
+        final var args = event.getArgs();
+        final var msgContent = event.getMessage().getContentRaw();
 
         if (msgContent.startsWith(Constants.PREFIX) && isNotParticipating(event.getMember())) {
             event.replyError("Please ask a mod to check your roles to participate in the swampys");
@@ -132,23 +122,23 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
                 event.replyError("Unrecognized command");
             }
         } else {
-            SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+            final var swampyGamesConfig = getSwampyGamesConfig();
 
             if (NO_NO_WORDS.matcher(msgContent).find()) {
                 takePointsFromMember(swampyGamesConfig.getNoNoWordsPoints(), event.getMember(), PointsStat.NO_NO);
             }
 
-            Message message = event.getMessage();
+            final var message = event.getMessage();
 
-            DiscordUser discordUser = getDiscordUserByMember(event.getMember());
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime nextMsgBonusTime = discordUser.getLastMessageBonus().plus(swampyGamesConfig.getPictureMsgTimeoutMinutes(), ChronoUnit.MINUTES);
+            final var discordUser = getDiscordUserByMember(event.getMember());
+            final var now = LocalDateTime.now();
+            final var nextMsgBonusTime = discordUser.getLastMessageBonus().plus(swampyGamesConfig.getPictureMsgTimeoutMinutes(), ChronoUnit.MINUTES);
 
-            boolean bonus = CollectionUtils.isNotEmpty(message.getAttachments()) || CollectionUtils.isNotEmpty(message.getEmbeds());
+            final var bonus = CollectionUtils.isNotEmpty(message.getAttachments()) || CollectionUtils.isNotEmpty(message.getEmbeds());
 
-            PointsStat pointsStat = PointsStat.MESSAGE;
-            long pointsToGive = swampyGamesConfig.getNormalMsgPoints();
-            String eventChannelName = event.getChannel().getName();
+            var pointsStat = PointsStat.MESSAGE;
+            var pointsToGive = swampyGamesConfig.getNormalMsgPoints();
+            final var eventChannelName = event.getChannel().getName();
             if ("bot-space".equals(eventChannelName) || "sim-games".equals(eventChannelName) || "pokemon".equals(eventChannelName)) {
                 pointsToGive = 1;
             } else if (bonus && now.isAfter(nextMsgBonusTime)) {
@@ -161,32 +151,32 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
         }
     }
 
-    public void voiceJoined(Member member) {
+    public void voiceJoined(final Member member) {
         if (isNotParticipating(member)) {
             return;
         }
 
-        DiscordUser user = getDiscordUserByMember(member);
+        final var user = getDiscordUserByMember(member);
         user.setVoiceJoined(LocalDateTime.now());
         discordUserRepository.save(user);
     }
 
-    public void voiceLeft(Member member) {
+    public void voiceLeft(final Member member) {
         if (isNotParticipating(member)) {
             return;
         }
 
-        DiscordUser user = getDiscordUserByMember(member);
-        LocalDateTime timeTheyJoinedVoice = user.getVoiceJoined();
+        final var user = getDiscordUserByMember(member);
+        final var timeTheyJoinedVoice = user.getVoiceJoined();
 
         if (timeTheyJoinedVoice == null) {
             return;
         }
 
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
-        long minutes = ChronoUnit.MINUTES.between(timeTheyJoinedVoice, LocalDateTime.now());
-        long points = minutes * swampyGamesConfig.getVcPointsPerMinute();
+        final var minutes = ChronoUnit.MINUTES.between(timeTheyJoinedVoice, LocalDateTime.now());
+        final var points = minutes * swampyGamesConfig.getVcPointsPerMinute();
         user.setVoiceJoined(null);
         user.setLifetimeVoiceChatMinutes(user.getLifetimeVoiceChatMinutes() + minutes);
         discordUserRepository.save(user);
@@ -194,27 +184,27 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
         givePointsToMember(points, member, PointsStat.VOICE_CHAT);
     }
 
-    public void emote(MessageReactionAddEvent event) {
+    public void emote(final MessageReactionAddEvent event) {
         if (event.getUser() == null || event.getUser().isBot()) {
             return;
         }
 
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
         givePointsToMember(swampyGamesConfig.getReactionPoints(), event.getMember(), PointsStat.REACTOR_POINTS);
-        long messageId = event.getMessageIdLong();
-        long reactionGiverId = event.getMember().getIdLong();
-        GuildMessageChannel channel = event.getChannel().asGuildMessageChannel();
+        final var messageId = event.getMessageIdLong();
+        final var reactionGiverId = event.getMember().getIdLong();
+        final var channel = event.getChannel().asGuildMessageChannel();
         channel.retrieveMessageById(messageId).queue(msg -> {
             if (msg != null && msg.getMember() != null && msg.getMember().getIdLong() != reactionGiverId) {
                 givePointsToMember(swampyGamesConfig.getReactionPoints(), msg.getMember(), PointsStat.REACTED_POINTS);
             }
         });
 
-        EmojiUnion reactionEmote = event.getReaction().getEmoji();
-        long guildId = event.getGuild().getIdLong();
+        final var reactionEmote = event.getReaction().getEmoji();
+        final var guildId = event.getGuild().getIdLong();
 
-        MessageEmbed messageEmbed;
+        final MessageEmbed messageEmbed;
         if (reactionEmote.getType() == Emoji.Type.CUSTOM) {
             messageEmbed = Constants.simpleEmbedThumbnail("Reaction Event",
                     String.format("<@%d> reacted %s (see thumbnail) to\n%s\nhttps://discordapp.com/channels/%d/%d/%d\nat %s",
@@ -231,14 +221,14 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
         Constants.debugToModLogsChannel(event.getJDA(), messageEmbed);
     }
 
-    public void removeFromGames(Guild guild, String id) {
-        Role roleById = guild.getRoleById(id);
+    public void removeFromGames(final Guild guild, final String id) {
+        final var roleById = guild.getRoleById(id);
 
         if (roleById != null) {
             roleById.delete().queue();
         }
 
-        Optional<Player> optionalPlayer = playerRepository.findByDiscordUser(id);
+        final var optionalPlayer = playerRepository.findByDiscordUser(id);
         optionalPlayer.ifPresent(playerRepository::delete);
 
         if (discordUserRepository.existsById(id)) {
@@ -246,28 +236,28 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
         }
     }
 
-    public void acceptedBoost(Member member) {
-        DiscordUser discordUser = getDiscordUserByMember(member);
+    public void acceptedBoost(final Member member) {
+        final var discordUser = getDiscordUserByMember(member);
         discordUser.setAcceptedBoost(LocalDateTime.now());
         discordUserRepository.save(discordUser);
     }
 
-    public void acceptedMap(Member member) {
-        DiscordUser discordUser = getDiscordUserByMember(member);
+    public void acceptedMap(final Member member) {
+        final var discordUser = getDiscordUserByMember(member);
         discordUser.setAcceptedMapTrivia(LocalDateTime.now());
         discordUserRepository.save(discordUser);
     }
 
-    private void slots(CommandEvent event) {
-        Member member = event.getMember();
-        DiscordUser discordUser = getDiscordUserByMember(member);
+    private void slots(final CommandEvent event) {
+        final var member = event.getMember();
+        final var discordUser = getDiscordUserByMember(member);
 
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextSlotsTime = discordUser.getLastSlots().plus(swampyGamesConfig.getSlotsTimeoutMinutes(), ChronoUnit.MINUTES);
+        final var now = LocalDateTime.now();
+        final var nextSlotsTime = discordUser.getLastSlots().plus(swampyGamesConfig.getSlotsTimeoutMinutes(), ChronoUnit.MINUTES);
         if (now.isBefore(nextSlotsTime)) {
-            Duration duration = Duration.between(now, nextSlotsTime);
+            final var duration = Duration.between(now, nextSlotsTime);
 
             if (duration.getSeconds() < 60) {
                 event.replyError("You must wait " + (duration.getSeconds() + 1) + " seconds before playing slots again");
@@ -279,16 +269,16 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
 
         discordUser.setLastSlots(now);
 
-        Set<String> slotsEmojis = Arrays.stream(swampyGamesConfig.getSlotsEmoji()).collect(Collectors.toSet());
-        int size = slotsEmojis.size();
+        final var slotsEmojis = Arrays.stream(swampyGamesConfig.getSlotsEmoji()).collect(Collectors.toSet());
+        final var size = slotsEmojis.size();
 
-        double oddsClosEnough = (1.0 / size) * (1.0 / size) * 300.0;
-        double oddsWinnerWinner = (1.0 / size) * (1.0 / size) * (1.0 / size) * 100.0;
-        String footer = String.format("Odds of a WINNER WINNER: %.3f%%\nOdds of a CLOSE ENOUGH: %.3f%%", oddsWinnerWinner, oddsClosEnough);
+        final var oddsClosEnough = (1.0 / size) * (1.0 / size) * 300.0;
+        final var oddsWinnerWinner = (1.0 / size) * (1.0 / size) * (1.0 / size) * 100.0;
+        final var footer = String.format("Odds of a WINNER WINNER: %.3f%%\nOdds of a CLOSE ENOUGH: %.3f%%", oddsWinnerWinner, oddsClosEnough);
 
-        String one = Constants.pickRandom(slotsEmojis);
-        String two = Constants.pickRandom(slotsEmojis);
-        String three = Constants.pickRandom(slotsEmojis);
+        final var one = Constants.pickRandom(slotsEmojis);
+        final var two = Constants.pickRandom(slotsEmojis);
+        final var three = Constants.pickRandom(slotsEmojis);
 
         if (one.equals(two) && two.equals(three)) {
             givePointsToMember(swampyGamesConfig.getSlotsWinPoints(), member, discordUser, PointsStat.SLOTS_WINNER_WINNER).thenRun(() -> {
@@ -318,8 +308,8 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
         }
     }
 
-    private void showRank(CommandEvent event) {
-        Member member = event.getMember();
+    private void showRank(final CommandEvent event) {
+        var member = event.getMember();
         if (CollectionUtils.size(event.getMessage().getMentions().getMembers()) == 1) {
             member = event.getMessage().getMentions().getMembers().getFirst();
         }
@@ -329,13 +319,13 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
             return;
         }
 
-        DiscordUser user = getDiscordUserByMember(member);
+        final var user = getDiscordUserByMember(member);
 
-        List<Rank> allRanks = Rank.getAllRanks();
-        Rank rank = Rank.byXp(user.getXp());
-        Rank nextRank = (rank.getOrdinal() >= allRanks.size() - 1) ? rank : allRanks.get(rank.getOrdinal() + 1);
+        final var allRanks = Rank.getAllRanks();
+        final var rank = Rank.byXp(user.getXp());
+        final var nextRank = (rank.getOrdinal() >= allRanks.size() - 1) ? rank : allRanks.get(rank.getOrdinal() + 1);
 
-        String description = rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
+        final var description = rank.getRankUpMessage().replace("<name>", member.getAsMention()).replace("<rolename>", rank.getRoleName()) +
                 "\n\nYou have " + NumberFormat.getIntegerInstance().format(user.getXp()) + " total points.\n\n" +
                 "The next level is level " +
                 (rank == nextRank
@@ -346,7 +336,7 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
                 : NumberFormat.getIntegerInstance().format(Rank.xpRequiredForLevel(user.getXp(), nextRank.getLevel())))
                 + " points to go.\n\nBest of Luck in the Swampys!";
 
-        MessageEmbed messageEmbed = Constants.simpleEmbed("Level " + rank.getLevel() + " | " + rank.getRoleName(),
+        final var messageEmbed = Constants.simpleEmbed("Level " + rank.getLevel() + " | " + rank.getRoleName(),
                 description,
                 null,
                 null,
@@ -356,22 +346,22 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
         event.reply(messageEmbed);
     }
 
-    private void leaderboard(CommandEvent event) {
-        String[] split = event.getArgs().split("\\s+");
+    private void leaderboard(final CommandEvent event) {
+        final var split = event.getArgs().split("\\s+");
         if (split.length != 2) {
             event.replyError("Badly formatted command. Example `!!swampy leaderboard bastard`, `!!swampy leaderboard chaos`, or `!!swampy leaderboard full`");
             return;
         }
 
-        List<DiscordUser> swampyUsers = discordUserRepository.findAll();
+        final var swampyUsers = discordUserRepository.findAll();
 
         if ("full".equalsIgnoreCase(split[1])) {
-            AtomicInteger place = new AtomicInteger(1);
-            StringBuilder description = new StringBuilder();
+            final var place = new AtomicInteger(1);
+            final var description = new StringBuilder();
             swampyUsers.stream()
                     .sorted((u1, u2) -> Long.compare(u2.getXp(), u1.getXp()))
                     .forEachOrdered(swampyUser -> {
-                        Member memberById = event.getGuild().getMemberById(swampyUser.getId());
+                        final var memberById = event.getGuild().getMemberById(swampyUser.getId());
 
                         description.append(place.getAndIncrement());
                         if (memberById != null) {
@@ -399,13 +389,13 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
             return;
         }
 
-        Optional<PointsStat> optionalPointsStat = Arrays.stream(PointsStat.values())
+        final var optionalPointsStat = Arrays.stream(PointsStat.values())
                 .filter(stat -> split[1].trim().equalsIgnoreCase(stat.name()))
                 .findAny();
 
         if (optionalPointsStat.isPresent()) {
-            PointsStat stat = optionalPointsStat.get();
-            StringBuilder description = new StringBuilder();
+            final var stat = optionalPointsStat.get();
+            final var description = new StringBuilder();
 
             swampyUsers.stream()
                     .sorted((u1, u2) -> Long.compare(stat.getter().applyAsLong(u2), stat.getter().applyAsLong(u1)))
@@ -417,20 +407,20 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
                                 .append(NumberFormat.getIntegerInstance().format(stat.getter().applyAsLong(swampyUser)))
                                 .append('\n');
                     });
-            MessageEmbed messageEmbed = Constants.simpleEmbed(stat.name() + " Leaderboard", description.toString());
+            final var messageEmbed = Constants.simpleEmbed(stat.name() + " Leaderboard", description.toString());
 
             event.reply(messageEmbed);
             return;
         }
 
-        AtomicInteger place = new AtomicInteger(0);
-        StringBuilder description = new StringBuilder();
+        final var place = new AtomicInteger(0);
+        final var description = new StringBuilder();
         swampyUsers.stream().filter(u -> {
             try {
-                Member member = Objects.requireNonNull(event.getGuild().getMemberById(u.getId()));
+                final var member = Objects.requireNonNull(event.getGuild().getMemberById(u.getId()));
 
                 return hasRole(member, StringUtils.containsIgnoreCase(split[1], "bastard") ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 log.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);
                 return false;
             }
@@ -443,23 +433,23 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
                     .append('\n');
         });
 
-        MessageEmbed messageEmbed = Constants.simpleEmbed(StringUtils.containsIgnoreCase(split[1], "bastard") ? "Bastard Leaderboard" : "Chaos Leaderboard",
+        final var messageEmbed = Constants.simpleEmbed(StringUtils.containsIgnoreCase(split[1], "bastard") ? "Bastard Leaderboard" : "Chaos Leaderboard",
                 description.toString());
 
         event.reply(messageEmbed);
     }
 
-    private void upvote(CommandEvent event) {
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+    private void upvote(final CommandEvent event) {
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
-        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
+        final var mentionedMembers = event.getMessage().getMentions().getMembers();
 
         if (CollectionUtils.isEmpty(mentionedMembers)) {
             event.replyError("Please mention at least one user to upvote. Example `!!swampy up @Santiago`");
             return;
         }
 
-        List<Member> eligibleMembers = mentionedMembers.stream().filter(mentionedMember -> {
+        final var eligibleMembers = mentionedMembers.stream().filter(mentionedMember -> {
             if (isNotParticipating(mentionedMember)) {
                 event.replyError(mentionedMember.getEffectiveName() + " is not participating in the swampys");
                 return false;
@@ -478,12 +468,12 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
             return;
         }
 
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+        final var discordUser = getDiscordUserByMember(event.getMember());
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getUpvoteTimeoutMinutes(), ChronoUnit.MINUTES);
+        final var now = LocalDateTime.now();
+        final var nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getUpvoteTimeoutMinutes(), ChronoUnit.MINUTES);
         if (now.isBefore(nextVoteTime)) {
-            Duration duration = Duration.between(now, nextVoteTime);
+            final var duration = Duration.between(now, nextVoteTime);
 
             if (duration.getSeconds() < 60) {
                 event.replyError("You must wait " + (duration.getSeconds() + 1) + " seconds before up/down-voting again");
@@ -497,21 +487,21 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
 
         givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvoter(), event.getMember(), PointsStat.UPVOTER);
 
-        for (Member mentionedMember : eligibleMembers) {
+        for (final var mentionedMember : eligibleMembers) {
             givePointsToMember(swampyGamesConfig.getUpvotePointsToUpvotee(), mentionedMember, PointsStat.UPVOTED);
             event.replySuccess("Successfully upvoted " + mentionedMember.getEffectiveName());
         }
     }
 
-    private void downvote(CommandEvent event) {
-        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
+    private void downvote(final CommandEvent event) {
+        final var mentionedMembers = event.getMessage().getMentions().getMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
             event.replyError("Please mention one user to downvote. Example `!!swampy down @Santiago`");
             return;
         }
 
-        Member mentionedMember = mentionedMembers.getFirst();
+        final var mentionedMember = mentionedMembers.getFirst();
         if (isNotParticipating(mentionedMember)) {
             event.replyError(mentionedMember.getEffectiveName() + " is not participating in the swampys");
             return;
@@ -522,14 +512,14 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
             return;
         }
 
-        DiscordUser discordUser = getDiscordUserByMember(event.getMember());
+        final var discordUser = getDiscordUserByMember(event.getMember());
 
-        SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+        final var swampyGamesConfig = getSwampyGamesConfig();
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getDownvoteTimeoutMinutes(), ChronoUnit.MINUTES);
+        final var now = LocalDateTime.now();
+        final var nextVoteTime = discordUser.getLastVote().plus(swampyGamesConfig.getDownvoteTimeoutMinutes(), ChronoUnit.MINUTES);
         if (now.isBefore(nextVoteTime)) {
-            Duration duration = Duration.between(now, nextVoteTime);
+            final var duration = Duration.between(now, nextVoteTime);
 
             if (duration.getSeconds() < 60) {
                 event.replyError("You must wait " + (duration.getSeconds() + 1) + " seconds before up/down-voting again");
@@ -552,22 +542,22 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
         }
     }
 
-    private void give(CommandEvent event) {
+    private void give(final CommandEvent event) {
         if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
             event.replyError("You do not have permission to use this command");
             return;
         }
 
-        String[] split = event.getArgs().split("\\s+");
+        final var split = event.getArgs().split("\\s+");
         if (split.length != 3) {
             event.replyError("Badly formatted command. Example `!!swampy give 100 @Santiago`");
             return;
         }
 
-        long pointsToGive;
+        final long pointsToGive;
         try {
             pointsToGive = Long.parseLong(split[1]);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             event.replyError("Failed to parse the number you provided.");
             return;
         }
@@ -577,14 +567,14 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
             return;
         }
 
-        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
+        final var mentionedMembers = event.getMessage().getMentions().getMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
             event.replyError("Please specify only one user. Example `!!swampy give 100 @Santiago`");
             return;
         }
 
-        Member mentionedMember = mentionedMembers.getFirst();
+        final var mentionedMember = mentionedMembers.getFirst();
         if (isNotParticipating(mentionedMember)) {
             event.replyError(mentionedMember.getEffectiveName() + " is not participating in the swampys");
             return;
@@ -595,22 +585,22 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
         event.reply(String.format("Added %s xp to %s", NumberFormat.getIntegerInstance().format(pointsToGive), mentionedMember.getEffectiveName()));
     }
 
-    private void take(CommandEvent event) {
+    private void take(final CommandEvent event) {
         if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
             event.replyError("You do not have permission to use this command");
             return;
         }
 
-        String[] split = event.getArgs().split("\\s+");
+        final var split = event.getArgs().split("\\s+");
         if (split.length != 3) {
             event.replyError("Badly formatted command. Example `!!swampy take 100 @Santiago`");
             return;
         }
 
-        long pointsToTake;
+        final long pointsToTake;
         try {
             pointsToTake = Long.parseLong(split[1]);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             event.replyError("Failed to parse the number you provided.");
             return;
         }
@@ -620,14 +610,14 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
             return;
         }
 
-        List<Member> mentionedMembers = event.getMessage().getMentions().getMembers();
+        final var mentionedMembers = event.getMessage().getMentions().getMembers();
 
         if (CollectionUtils.size(mentionedMembers) != 1) {
             event.replyError("Please specify only one user. Example `!!swampy take 100 @Santiago`");
             return;
         }
 
-        Member mentionedMember = mentionedMembers.getFirst();
+        final var mentionedMember = mentionedMembers.getFirst();
         if (isNotParticipating(mentionedMember)) {
             event.replyError(mentionedMember.getEffectiveName() + " is not participating in the swampy games");
             return;
@@ -638,17 +628,17 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
         event.reply(String.format("Removed %s xp from %s", NumberFormat.getIntegerInstance().format(pointsToTake), mentionedMember.getEffectiveName()));
     }
 
-    private void reset(CommandEvent event) {
+    private void reset(final CommandEvent event) {
         if (!hasRole(event.getMember(), Constants.ADMIN_ROLE)) {
             event.replyError("You do not have permission to use this command");
             return;
         }
 
         event.reply("Resetting, please wait...");
-        for (DiscordUser discordUser : discordUserRepository.findAll()) {
+        for (final var discordUser : discordUserRepository.findAll()) {
             discordUser.setXp(0);
 
-            for (PointsStat stat : PointsStat.values()) {
+            for (final var stat : PointsStat.values()) {
                 stat.setter().accept(discordUser, 0L);
             }
 
@@ -657,7 +647,7 @@ public class SwampyCommand extends BaseBangCommand implements ModHelpAware {
 
         try {
             Rank.init(restTemplate, baseConfig.airtableApiToken);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             event.replyError("Failed to refresh ranks from Airtable, please manually run the !!rankRefresh command");
             return;
         }

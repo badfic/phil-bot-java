@@ -11,7 +11,6 @@ import com.badfic.philbot.data.GenericBotResponsesConfigJson;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -256,13 +255,13 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw config")) {
                 try {
                     event.getChannel().sendFiles(FileUpload.fromData(objectMapper.writeValueAsBytes(responsesConfig.getNsfwConfig()), name + "-nsfwconfig.json")).queue();
-                } catch (JsonProcessingException e) {
+                } catch (final JsonProcessingException e) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send nsfw config to you").queue();
                 }
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw config")) {
                 try {
                     event.getChannel().sendFiles(FileUpload.fromData(objectMapper.writeValueAsBytes(responsesConfig.getSfwConfig()), name + "-sfwconfig.json")).queue();
-                } catch (JsonProcessingException e) {
+                } catch (final JsonProcessingException e) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send sfw config to you").queue();
                 }
             } else if (msgContent.startsWith(fullCmdPrefix + " tts")) {
@@ -294,7 +293,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 final var authorAvatarUrl = authorMember != null ? authorMember.getEffectiveAvatarUrl() : event.getAuthor().getEffectiveAvatarUrl();
 
                 final BufferedImage hugImage;
-                try (InputStream stream = BasicResponsesBot.class.getClassLoader().getResourceAsStream("flags/hug.png")) {
+                try (final var stream = BasicResponsesBot.class.getClassLoader().getResourceAsStream("flags/hug.png")) {
                     hugImage = ImageIO.read(Objects.requireNonNull(stream));
                 }
 
@@ -368,7 +367,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
 
         final var msgContent = event.getMessage().getContentRaw();
         var isAllUppercase = true;
-        for (String s : msgContent.split("\\s+")) {
+        for (final var s : msgContent.split("\\s+")) {
             isAllUppercase &= StringUtils.isAllUpperCase(s);
         }
 

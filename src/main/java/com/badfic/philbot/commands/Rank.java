@@ -59,7 +59,7 @@ public class Rank {
 
         records.sort(Comparator.comparingLong(r -> r.fields().level()));
 
-        for (int i = 0; i < records.size(); i++) {
+        for (var i = 0; i < records.size(); i++) {
             TableRecord record = records.get(i);
             RecordFields fields = record.fields();
 

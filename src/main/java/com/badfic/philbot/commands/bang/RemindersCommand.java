@@ -4,19 +4,14 @@ import com.badfic.philbot.CommandEvent;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.Reminder;
 import com.badfic.philbot.data.ReminderDal;
-import com.badfic.philbot.data.SnarkyReminderResponse;
 import com.badfic.philbot.data.SnarkyReminderResponseRepository;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.service.OnJdaReady;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +24,7 @@ public class RemindersCommand extends BaseBangCommand implements OnJdaReady {
     private final ReminderDal reminderDal;
     private final SnarkyReminderResponseRepository snarkyReminderResponseRepository;
 
-    public RemindersCommand(ReminderDal reminderDal, SnarkyReminderResponseRepository snarkyReminderResponseRepository) {
+    public RemindersCommand(final ReminderDal reminderDal, final SnarkyReminderResponseRepository snarkyReminderResponseRepository) {
         name = "reminders";
         aliases = new String[] {"reminder"};
         help = """
@@ -43,20 +38,20 @@ public class RemindersCommand extends BaseBangCommand implements OnJdaReady {
 
     @Override
     public void run() {
-        for (Reminder reminder : reminderDal.findAll()) {
+        for (final var reminder : reminderDal.findAll()) {
             scheduleTask(() -> remind(reminder.getId()), reminder.getDueDate());
         }
     }
 
     @Override
-    public void execute(CommandEvent event) {
-        LocalDateTime now = LocalDateTime.now();
+    public void execute(final CommandEvent event) {
+        final var now = LocalDateTime.now();
 
         if (StringUtils.isBlank(event.getArgs())) {
-            Collection<Reminder> reminders = reminderDal.findAll();
+            final var reminders = reminderDal.findAll();
 
-            StringBuilder description = new StringBuilder();
-            for (Reminder reminder : reminders) {
+            final var description = new StringBuilder();
+            for (final var reminder : reminders) {
                 description.append('#')
                         .append(reminder.getId())
                         .append(" <@")
@@ -70,29 +65,29 @@ public class RemindersCommand extends BaseBangCommand implements OnJdaReady {
 
             event.reply(Constants.simpleEmbed("Reminders", description.toString()));
         } else if (StringUtils.containsIgnoreCase(event.getArgs(), "delete")) {
-            String number = event.getArgs().replace("delete", "").trim();
+            final var number = event.getArgs().replace("delete", "").trim();
 
             try {
-                long toDelete = Long.parseLong(number);
+                final var toDelete = Long.parseLong(number);
                 if (reminderDal.existsById(toDelete)) {
                     reminderDal.deleteById(toDelete);
                     event.replySuccess("Deleted reminder #" + toDelete);
                 } else {
                     event.replySuccess("Reminder #" + toDelete + " doesn't exist");
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 event.replyError("Failed to parse number " + number);
             }
         } else if (StringUtils.isNotBlank(event.getArgs())) {
-            String number = event.getArgs().trim();
+            final var number = event.getArgs().trim();
 
             try {
-                long toLookup = Long.parseLong(number);
-                Optional<Reminder> optionalReminder = reminderDal.findById(toLookup);
+                final var toLookup = Long.parseLong(number);
+                final var optionalReminder = reminderDal.findById(toLookup);
 
                 if (optionalReminder.isPresent()) {
-                    Reminder reminder = optionalReminder.get();
-                    StringBuilder description = new StringBuilder();
+                    final var reminder = optionalReminder.get();
+                    final var description = new StringBuilder();
                     description.append('#')
                             .append(reminder.getId())
                             .append(" <@")
@@ -102,7 +97,7 @@ public class RemindersCommand extends BaseBangCommand implements OnJdaReady {
                             .append(" in ")
                             .append(Constants.prettyPrintDuration(Duration.between(now, reminder.getDueDate())));
 
-                    String finalString = description.toString();
+                    final var finalString = description.toString();
                     if (finalString.length() > 2_000) {
                         event.getChannel().sendFiles(FileUpload.fromData(finalString.getBytes(), "active-reminders.txt")).queue();
                     } else {
@@ -111,7 +106,7 @@ public class RemindersCommand extends BaseBangCommand implements OnJdaReady {
                 } else {
                     event.replyError("Reminder #" + toLookup + " does not exist");
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 event.replyError("Failed to parse number " + number);
             }
         } else {
@@ -119,12 +114,12 @@ public class RemindersCommand extends BaseBangCommand implements OnJdaReady {
         }
     }
 
-    public void addReminder(Message message, SwampyGamesConfig swampyGamesConfig) {
+    public void addReminder(final Message message, final SwampyGamesConfig swampyGamesConfig) {
         try {
             String reminder;
-            int remindIdx = StringUtils.indexOfIgnoreCase(message.getContentRaw(), "remind");
+            final var remindIdx = StringUtils.indexOfIgnoreCase(message.getContentRaw(), "remind");
 
-            Member member = message.getMember();
+            var member = message.getMember();
             if (CollectionUtils.isNotEmpty(message.getMentions().getMembers())) {
                 member = message.getMentions().getMembers().getFirst();
 
@@ -132,17 +127,16 @@ public class RemindersCommand extends BaseBangCommand implements OnJdaReady {
             } else {
                 reminder = message.getContentRaw().substring(remindIdx + "remind me in ".length());
             }
-            String[] split = reminder.split("\\s+");
-            int number = Integer.parseInt(split[0]);
-            String temporal = split[1];
+            final var split = reminder.split("\\s+");
+            final var number = Integer.parseInt(split[0]);
+            final var temporal = split[1];
             reminder = reminder.substring((split[0] + split[1]).length() + 1).trim();
 
             if (StringUtils.startsWithIgnoreCase(reminder, "to")) {
                 reminder = reminder.substring(2).trim();
             }
 
-            LocalDateTime dueDate = LocalDateTime.now();
-
+            var dueDate = LocalDateTime.now();
             if (StringUtils.containsIgnoreCase(temporal, "minute")) {
                 dueDate = dueDate.plus(number, ChronoUnit.MINUTES);
             } else if (StringUtils.containsIgnoreCase(temporal, "hour")) {
@@ -151,15 +145,15 @@ public class RemindersCommand extends BaseBangCommand implements OnJdaReady {
                 dueDate = dueDate.plus(number, ChronoUnit.DAYS);
             }
 
-            Reminder savedReminder = reminderDal.insert(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
+            final var savedReminder = reminderDal.insert(new Reminder(member.getIdLong(), message.getChannel().getIdLong(), reminder, dueDate));
 
             scheduleTask(() -> remind(savedReminder.getId()), dueDate);
 
-            SnarkyReminderResponse snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
+            final var snarkyReminderResponse = Constants.pickRandom(snarkyReminderResponseRepository.findAll());
 
             discordWebhookSendService.sendMessage(message.getChannel().getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
                     "(reminder #" + savedReminder.getId() + ") " + snarkyReminderResponse.getResponse().replace("<name>", "<@" + message.getAuthor().getId() + ">"));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Exception trying to parse a reminder. [msgText={}]", message.getContentRaw(), e);
 
             discordWebhookSendService.sendMessage(message.getChannel().getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
@@ -167,12 +161,12 @@ public class RemindersCommand extends BaseBangCommand implements OnJdaReady {
         }
     }
 
-    private void remind(long reminderId) {
+    private void remind(final long reminderId) {
         reminderDal.findById(reminderId).ifPresent(reminder -> {
-            TextChannel textChannelById = philJda.getTextChannelById(reminder.getChannelId());
+            final var textChannelById = philJda.getTextChannelById(reminder.getChannelId());
 
             if (textChannelById != null) {
-                SwampyGamesConfig swampyGamesConfig = getSwampyGamesConfig();
+                final var swampyGamesConfig = getSwampyGamesConfig();
                 discordWebhookSendService.sendMessage(textChannelById.getIdLong(), swampyGamesConfig.getJohnNickname(), swampyGamesConfig.getJohnAvatar(),
                         "(reminder #" + reminder.getId() + ") <@" + reminder.getUserId() + "> " + reminder.getReminder());
                 reminderDal.deleteById(reminder.getId());

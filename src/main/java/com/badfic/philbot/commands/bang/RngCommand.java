@@ -30,9 +30,9 @@ class RngCommand extends BaseBangCommand {
     }
 
     @Override
-    public void execute(CommandEvent event) {
-        String args = event.getArgs();
-        String[] split = args.split("-");
+    public void execute(final CommandEvent event) {
+        final var args = event.getArgs();
+        final var split = args.split("-");
 
         if (ArrayUtils.getLength(split) != 2) {
             event.replyError("Please specify a lower and upper bounds. Example: `!!rng 1-10`. (negative numbers do not work)");
@@ -40,20 +40,20 @@ class RngCommand extends BaseBangCommand {
         }
 
         try {
-            long left = Long.parseLong(split[0]);
-            long right = Long.parseLong(split[1]);
+            final var left = Long.parseLong(split[0]);
+            final var right = Long.parseLong(split[1]);
 
             if (left > right) {
                 event.replyError("Lower bound must be less than upper bound");
                 return;
             }
 
-            long result = randomNumberService.nextLong(left, right + 1);
+            final var result = randomNumberService.nextLong(left, right + 1);
 
             event.reply(Constants.simpleEmbedThumbnail("RNG",
                     "Your random number between " + left + " and " + right + " is\n\n**" + result + "**",
                     Constants.pickRandom(THUMBNAILS)));
-        } catch (NumberFormatException nfe) {
+        } catch (final NumberFormatException nfe) {
             event.replyError("Failed to parse lower and upper bounds as numbers");
         }
     }

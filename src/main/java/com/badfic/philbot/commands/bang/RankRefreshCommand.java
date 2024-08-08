@@ -20,18 +20,18 @@ class RankRefreshCommand extends BaseBangCommand {
 
         try {
             Rank.init(restTemplate, baseConfig.airtableApiToken);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Failed to load ranks from Airtable", e);
             throw new IllegalStateException("Failed to load ranks from Airtable", e);
         }
     }
 
     @Override
-    public void execute(CommandEvent event) {
+    public void execute(final CommandEvent event) {
         try {
             Rank.init(restTemplate, baseConfig.airtableApiToken);
             event.replySuccess("Refreshed ranks from Airtable");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Failed to load ranks from Airtable", e);
             event.replyError("Failed to load ranks from Airtable");
         }

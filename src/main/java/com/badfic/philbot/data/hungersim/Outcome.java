@@ -96,7 +96,7 @@ public class Outcome {
     private String getOutcomeResultString(JDA jda, List<Player> playerList, PronounRepository pronounRepository) {
         String result = outcomeText;
 
-        for (int i = 0; i < playerList.size(); i++) {
+        for (var i = 0; i < playerList.size(); i++) {
             Player player = playerList.get(i);
 
             player.setEffectiveNameViaJda(jda);

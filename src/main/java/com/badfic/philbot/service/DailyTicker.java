@@ -16,7 +16,7 @@ class DailyTicker extends BaseService {
     void tick() {
         try {
             philJda.awaitReady();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Failed to run daily tasks, Discord API did not initialize", e);
             return;
         }
@@ -25,7 +25,7 @@ class DailyTicker extends BaseService {
             for (final var tickable : dailyTickables) {
                 try {
                     tickable.runDailyTask();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     log.error("Exception in daily tickable [{}]", tickable.getClass().getName(), e);
                 }
             }

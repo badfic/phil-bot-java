@@ -2,21 +2,14 @@ package com.badfic.philbot.commands.slash;
 
 import com.badfic.philbot.commands.bang.SwampyCommand;
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.DiscordUser;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.stereotype.Service;
@@ -31,27 +24,27 @@ class LeaderboardSlashCommand extends BaseSlashCommand {
     }
 
     @Override
-    public void execute(SlashCommandInteractionEvent event) {
-        CompletableFuture<InteractionHook> interactionHook = event.deferReply().submit();
-        List<DiscordUser> swampyUsers = discordUserRepository.findAll();
-        OptionMapping type = event.getOption("type");
-        Guild guild = event.getGuild();
+    public void execute(final SlashCommandInteractionEvent event) {
+        final var interactionHook = event.deferReply().submit();
+        final var swampyUsers = discordUserRepository.findAll();
+        final var type = event.getOption("type");
+        final var guild = event.getGuild();
 
         if (Objects.isNull(type)) {
             replyToInteractionHook(event, interactionHook, "You must pick a leaderboard type");
             return;
         }
 
-        AtomicInteger place = new AtomicInteger(0);
-        StringBuilder description = new StringBuilder();
+        final var place = new AtomicInteger(0);
+        final var description = new StringBuilder();
         swampyUsers.stream().filter(u -> {
             try {
-                Member member = Objects.requireNonNull(guild.getMemberById(u.getId()));
+                final var member = Objects.requireNonNull(guild.getMemberById(u.getId()));
 
                 return member.getRoles()
                         .stream()
                         .anyMatch(r -> r.getName().equalsIgnoreCase(type.getAsLong() == 1 ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 log.error("Unable to lookup user [id={}] for leaderboard", u.getId(), e);
                 return false;
             }
@@ -64,7 +57,7 @@ class LeaderboardSlashCommand extends BaseSlashCommand {
                     .append('\n');
         });
 
-        MessageEmbed messageEmbed = Constants.simpleEmbed(type.getAsLong() == 1 ? "Bastard Leaderboard" : "Chaos Leaderboard",
+        final var messageEmbed = Constants.simpleEmbed(type.getAsLong() == 1 ? "Bastard Leaderboard" : "Chaos Leaderboard",
                 description.toString());
 
         replyToInteractionHook(event, interactionHook, messageEmbed);
