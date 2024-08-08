@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class BotApplication {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> log.error("Uncaught exception in [thread={}]", t.getName(), e));
         SpringApplication.run(BotApplication.class, args);

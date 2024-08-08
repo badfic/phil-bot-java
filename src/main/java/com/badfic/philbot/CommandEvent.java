@@ -15,16 +15,15 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-@Getter
 public class CommandEvent {
     private final MessageReceivedEvent event;
-    private final String name;
-    private final String args;
+    @Getter private final String name;
+    @Getter private final String args;
 
-    public CommandEvent(MessageReceivedEvent event) {
+    public CommandEvent(final MessageReceivedEvent event) {
         this.event = event;
 
-        String message = event.getMessage().getContentRaw();
+        var message = event.getMessage().getContentRaw();
 
         if (!StringUtils.startsWith(message, Constants.PREFIX)) {
             this.name = StringUtils.EMPTY;
@@ -34,7 +33,7 @@ public class CommandEvent {
 
         message = message.substring(Constants.PREFIX.length()).trim();
 
-        String[] split = message.split("\\s+");
+        final var split = message.split("\\s+");
 
         if (ArrayUtils.getLength(split) < 1) {
             this.name = StringUtils.EMPTY;
@@ -49,10 +48,6 @@ public class CommandEvent {
         } else {
             this.args = StringUtils.EMPTY;
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     public User getAuthor() {

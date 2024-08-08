@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class LogoutController extends BaseMembersController {
 
     @GetMapping(value = "/logout", produces = MediaType.TEXT_HTML_VALUE)
-    public ResponseEntity<String> logout(HttpSession httpSession) {
+    public ResponseEntity<String> logout(final HttpSession httpSession) {
         if (httpSession.isNew()) {
             throw new NewSessionException();
         }

@@ -2,7 +2,6 @@ package com.badfic.philbot.web.members;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +13,10 @@ public class HungerSimController extends BaseMembersController {
     /** PAGES **/
 
     @GetMapping(value = "/hunger-sim", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getMainPage(HttpServletRequest httpServletRequest) throws Exception {
+    public ModelAndView getMainPage(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Hunger Sim");
         addCommonProps(httpServletRequest.getSession(), props);
 
@@ -25,10 +24,10 @@ public class HungerSimController extends BaseMembersController {
     }
 
     @GetMapping(value = "/hunger-sim-pronouns", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getPronounsPage(HttpServletRequest httpServletRequest) throws Exception {
+    public ModelAndView getPronounsPage(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Hunger Sim - Pronouns");
         addCommonProps(httpServletRequest.getSession(), props);
 
@@ -36,10 +35,10 @@ public class HungerSimController extends BaseMembersController {
     }
 
     @GetMapping(value = "/hunger-sim-players", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getPlayersPage(HttpServletRequest httpServletRequest) throws Exception {
+    public ModelAndView getPlayersPage(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Hunger Sim - Players");
         addCommonProps(httpServletRequest.getSession(), props);
 
@@ -47,10 +46,10 @@ public class HungerSimController extends BaseMembersController {
     }
 
     @GetMapping(value = "/hunger-sim-outcomes", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getOutcomesPage(HttpServletRequest httpServletRequest) throws Exception {
+    public ModelAndView getOutcomesPage(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Hunger Sim - Outcomes");
         addCommonProps(httpServletRequest.getSession(), props);
 
@@ -58,10 +57,10 @@ public class HungerSimController extends BaseMembersController {
     }
 
     @GetMapping(value = "/hunger-sim-rounds", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getRoundsPage(HttpServletRequest httpServletRequest) throws Exception {
+    public ModelAndView getRoundsPage(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Hunger Sim - Rounds");
         addCommonProps(httpServletRequest.getSession(), props);
 
@@ -69,10 +68,10 @@ public class HungerSimController extends BaseMembersController {
     }
 
     @GetMapping(value = "/hunger-sim-new-game", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getNewGamePage(HttpServletRequest httpServletRequest) throws Exception {
+    public ModelAndView getNewGamePage(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Hunger Sim - New Game");
         addCommonProps(httpServletRequest.getSession(), props);
 
@@ -80,10 +79,10 @@ public class HungerSimController extends BaseMembersController {
     }
 
     @GetMapping(value = "/hunger-sim-game", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getRunGamePage(HttpServletRequest httpServletRequest) throws Exception {
+    public ModelAndView getRunGamePage(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Hunger Sim - Run Game");
         addCommonProps(httpServletRequest.getSession(), props);
 

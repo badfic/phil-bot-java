@@ -1,7 +1,6 @@
 package com.badfic.philbot.web.members;
 
 import com.badfic.philbot.config.Constants;
-import com.badfic.philbot.data.DiscordUser;
 import com.badfic.philbot.data.hungersim.Game;
 import com.badfic.philbot.data.hungersim.GameRepository;
 import com.badfic.philbot.data.hungersim.Outcome;
@@ -22,11 +21,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -41,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 public class HungerSimRestController extends BaseMembersController {
 
     public record GameDto(String name, Set<Long> playerIds) {}
@@ -59,31 +59,18 @@ public class HungerSimRestController extends BaseMembersController {
     private final RoundRepository roundRepository;
     private final RoundOutcomeRepository roundOutcomeRepository;
 
-    public HungerSimRestController(JdbcAggregateTemplate jdbcAggregateTemplate, HungerSimService hungerSimService, GameRepository gameRepository,
-                                   PlayerRepository playerRepository, PronounRepository pronounRepository, OutcomeRepository outcomeRepository,
-                                   RoundRepository roundRepository, RoundOutcomeRepository roundOutcomeRepository) {
-        this.jdbcAggregateTemplate = jdbcAggregateTemplate;
-        this.hungerSimService = hungerSimService;
-        this.gameRepository = gameRepository;
-        this.playerRepository = playerRepository;
-        this.pronounRepository = pronounRepository;
-        this.outcomeRepository = outcomeRepository;
-        this.roundRepository = roundRepository;
-        this.roundOutcomeRepository = roundOutcomeRepository;
-    }
-
     /** PRONOUNS **/
 
     @GetMapping(value = "/hunger-sim/pronoun", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Pronoun> getPronouns(HttpServletRequest httpServletRequest) throws Exception {
+    public List<Pronoun> getPronouns(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        List<Pronoun> pronouns = pronounRepository.findAll();
+        final var pronouns = pronounRepository.findAll();
         pronouns.sort(comparingReverse(Pronoun::getId));
         return pronouns;
     }
 
     @PostMapping(value = "/hunger-sim/pronoun", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Pronoun newPronoun(HttpServletRequest httpServletRequest, @RequestBody PronounDto pronoun) throws Exception {
+    public Pronoun newPronoun(final HttpServletRequest httpServletRequest, final @RequestBody PronounDto pronoun) throws Exception {
         checkSession(httpServletRequest, true);
 
         if (Stream.of(pronoun.subject, pronoun.object, pronoun.possessive, pronoun.self).anyMatch(StringUtils::isBlank)) {
@@ -92,13 +79,13 @@ public class HungerSimRestController extends BaseMembersController {
 
         try {
             return jdbcAggregateTemplate.insert(new Pronoun(pronoun.subject, pronoun.object, pronoun.possessive, pronoun.self));
-        } catch (DataIntegrityViolationException e) {
+        } catch (final DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Failed to save pronoun, it's likely a pronoun with these values already exists", e);
         }
     }
 
     @PutMapping(value = "/hunger-sim/pronoun/{pronounId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Pronoun editPronoun(HttpServletRequest httpServletRequest, @PathVariable("pronounId") Long pronounId, @RequestBody PronounDto pronoun)
+    public Pronoun editPronoun(final HttpServletRequest httpServletRequest, final @PathVariable("pronounId") Long pronounId, final @RequestBody PronounDto pronoun)
             throws Exception {
         checkSession(httpServletRequest, true);
 
@@ -106,7 +93,7 @@ public class HungerSimRestController extends BaseMembersController {
             throw new IllegalArgumentException("subject, object, possessive, and self must not be empty");
         }
 
-        Pronoun existingPronoun = pronounRepository.findById(pronounId).orElseThrow(() -> new IllegalArgumentException("pronoun by that id not found"));
+        final var existingPronoun = pronounRepository.findById(pronounId).orElseThrow(() -> new IllegalArgumentException("pronoun by that id not found"));
 
         existingPronoun.setSubject(pronoun.subject);
         existingPronoun.setObject(pronoun.object);
@@ -117,14 +104,14 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @DeleteMapping(value = "/hunger-sim/pronoun/{pronounId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deletePronoun(HttpServletRequest httpServletRequest, @PathVariable("pronounId") Long pronounId) throws Exception {
+    public void deletePronoun(final HttpServletRequest httpServletRequest, final @PathVariable("pronounId") Long pronounId) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Pronoun pronoun = pronounRepository.findById(pronounId).orElseThrow(() -> new IllegalArgumentException("Could not find Pronoun with that ID"));
+        final var pronoun = pronounRepository.findById(pronounId).orElseThrow(() -> new IllegalArgumentException("Could not find Pronoun with that ID"));
 
         try {
             pronounRepository.delete(pronoun);
-        } catch (DataIntegrityViolationException e) {
+        } catch (final DataIntegrityViolationException e) {
             throw new IllegalArgumentException("You can't delete a pronoun that still has player(s) attached to it. Delete the player(s) first.", e);
         }
     }
@@ -132,12 +119,12 @@ public class HungerSimRestController extends BaseMembersController {
     /** PLAYERS **/
 
     @GetMapping(value = "/hunger-sim/player", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PlayerDisplayDto> getPlayers(HttpServletRequest httpServletRequest) throws Exception {
+    public List<PlayerDisplayDto> getPlayers(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        List<Player> players = playerRepository.findAll();
+        final var players = playerRepository.findAll();
         players.sort(comparingReverse(Player::getId));
 
-        Map<Long, Pronoun> pronounsMap = pronounRepository.findAll().stream().collect(Collectors.toMap(Pronoun::getId, Function.identity()));
+        final var pronounsMap = pronounRepository.findAll().stream().collect(Collectors.toMap(Pronoun::getId, Function.identity()));
 
         return players.stream().map(p -> {
             p.setEffectiveNameViaJda(philJda);
@@ -148,25 +135,25 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @PostMapping(value = "/hunger-sim/player", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Player newPlayer(HttpServletRequest httpServletRequest, @RequestBody PlayerDto player) throws Exception {
+    public Player newPlayer(final HttpServletRequest httpServletRequest, final @RequestBody PlayerDto player) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Pronoun pronouns = pronounRepository.findById(Objects.requireNonNull(player.pronounId))
+        final var pronouns = pronounRepository.findById(Objects.requireNonNull(player.pronounId))
                 .orElseThrow(() -> new IllegalArgumentException("Pronouns not found by id"));
 
         if (player.discordId != null) {
-            DiscordUser discordUser = discordUserRepository.findById(String.valueOf(player.discordId))
+            final var discordUser = discordUserRepository.findById(String.valueOf(player.discordId))
                     .orElseThrow(() -> new IllegalArgumentException("discordId not recognized as a member of this server"));
 
             try {
                 return jdbcAggregateTemplate.insert(new Player(discordUser, pronouns));
-            } catch (DataIntegrityViolationException e) {
+            } catch (final DataIntegrityViolationException e) {
                 throw new IllegalArgumentException("Failed to save player, it's likely a player with this discordId already exists", e);
             }
         } else if (StringUtils.isNotBlank(player.name)) {
             try {
                 return jdbcAggregateTemplate.insert(new Player(player.name, pronouns));
-            } catch (DataIntegrityViolationException e) {
+            } catch (final DataIntegrityViolationException e) {
                 throw new IllegalArgumentException("Failed to save player, it's likely a player with this name already exists", e);
             }
         }
@@ -175,25 +162,25 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @DeleteMapping(value = "/hunger-sim/player/{playerId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deletePlayer(HttpServletRequest httpServletRequest, @PathVariable("playerId") Long playerId) throws Exception {
+    public void deletePlayer(final HttpServletRequest httpServletRequest, final @PathVariable("playerId") Long playerId) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Player player = playerRepository.findById(playerId).orElseThrow(() -> new IllegalArgumentException("Player by that ID not found"));
+        final var player = playerRepository.findById(playerId).orElseThrow(() -> new IllegalArgumentException("Player by that ID not found"));
         playerRepository.delete(player);
     }
 
     /** OUTCOMES **/
 
     @GetMapping(value = "/hunger-sim/outcome", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Outcome> getOutcomes(HttpServletRequest httpServletRequest) throws Exception {
+    public List<Outcome> getOutcomes(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        List<Outcome> outcomes = outcomeRepository.findAll();
+        final var outcomes = outcomeRepository.findAll();
         outcomes.sort(comparingReverse(Outcome::getId));
         return outcomes;
     }
 
     @GetMapping(value = "/hunger-sim/outcome/variables", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<Integer, List<String>> getOutcomeVariables(HttpServletRequest httpServletRequest) throws Exception {
+    public Map<Integer, List<String>> getOutcomeVariables(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
         return Map.of(
                 1, List.of("{player1}", "{player1_subject}", "{player1_object}", "{player1_possessive}", "{player1_self}"),
@@ -204,7 +191,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @PostMapping(value = "/hunger-sim/outcome", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Outcome newOutcome(HttpServletRequest httpServletRequest, @RequestBody OutcomeDto outcome) throws Exception {
+    public Outcome newOutcome(final HttpServletRequest httpServletRequest, final @RequestBody OutcomeDto outcome) throws Exception {
         checkSession(httpServletRequest, true);
 
         validateOutcome(outcome);
@@ -212,21 +199,21 @@ public class HungerSimRestController extends BaseMembersController {
         try {
             return jdbcAggregateTemplate.insert(new Outcome(
                     outcome.outcomeText, outcome.numPlayers, outcome.player1Hp, outcome.player2Hp, outcome.player3Hp, outcome.player4Hp));
-        } catch (DataIntegrityViolationException e) {
+        } catch (final DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Failed to save outcome, it's likely an outcome with this outcomeText already exists", e);
         }
     }
 
     @DeleteMapping(value = "/hunger-sim/outcome/{outcomeId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteOutcome(HttpServletRequest httpServletRequest, @PathVariable("outcomeId") Long outcomeId) throws Exception {
+    public void deleteOutcome(final HttpServletRequest httpServletRequest, final @PathVariable("outcomeId") Long outcomeId) throws Exception {
         checkSession(httpServletRequest, true);
-        Outcome outcome = outcomeRepository.findById(outcomeId).orElseThrow(() -> new IllegalArgumentException("Outcome by that ID does not exist"));
-        List<RoundOutcome> roundOutcomes = roundOutcomeRepository.findByOutcome(outcome.getId());
+        final var outcome = outcomeRepository.findById(outcomeId).orElseThrow(() -> new IllegalArgumentException("Outcome by that ID does not exist"));
+        final var roundOutcomes = roundOutcomeRepository.findByOutcome(outcome.getId());
 
-        for (RoundOutcome roundOutcome : roundOutcomes) {
-            Long roundId = roundOutcome.getRound();
+        for (final var roundOutcome : roundOutcomes) {
+            final var roundId = roundOutcome.getRound();
 
-            List<Long> outcomes = roundOutcomeRepository.findByRound(roundId).stream().map(RoundOutcome::getOutcome).toList();
+            final var outcomes = roundOutcomeRepository.findByRound(roundId).stream().map(RoundOutcome::getOutcome).toList();
 
             if (outcomes.size() <= 1) {
                 throw new IllegalArgumentException(String.format(
@@ -241,14 +228,14 @@ public class HungerSimRestController extends BaseMembersController {
     /** ROUNDS **/
 
     @GetMapping(value = "/hunger-sim/round", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Round> getRounds(HttpServletRequest httpServletRequest) throws Exception {
+    public List<Round> getRounds(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        List<Round> rounds = roundRepository.findAll();
+        final var rounds = roundRepository.findAll();
         rounds.sort(comparingReverse(Round::getId));
 
-        for (Round round : rounds) {
-            List<Long> outcomeIds = roundOutcomeRepository.findByRound(round.getId()).stream().map(RoundOutcome::getOutcome).toList();
-            List<Outcome> outcomes = outcomeRepository.findAllById(outcomeIds);
+        for (final var round : rounds) {
+            final var outcomeIds = roundOutcomeRepository.findByRound(round.getId()).stream().map(RoundOutcome::getOutcome).toList();
+            final var outcomes = outcomeRepository.findAllById(outcomeIds);
 
             round.setOutcomes(outcomes);
         }
@@ -257,7 +244,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @PostMapping(value = "/hunger-sim/round", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Round newRound(HttpServletRequest httpServletRequest, @RequestBody RoundDto round) throws Exception {
+    public Round newRound(final HttpServletRequest httpServletRequest, final @RequestBody RoundDto round) throws Exception {
         checkSession(httpServletRequest, true);
 
         if (CollectionUtils.isEmpty(round.outcomeIds)) {
@@ -265,15 +252,15 @@ public class HungerSimRestController extends BaseMembersController {
         }
 
         try {
-            Round savedRound = jdbcAggregateTemplate.insert(new Round(round.name, round.description, round.openingRound));
+            final var savedRound = jdbcAggregateTemplate.insert(new Round(round.name, round.description, round.openingRound));
 
-            List<Outcome> outcomes = outcomeRepository.findAllById(round.outcomeIds.stream().map(Long::parseLong).toList());
-            for (Outcome outcome : outcomes) {
+            final var outcomes = outcomeRepository.findAllById(round.outcomeIds.stream().map(Long::parseLong).toList());
+            for (final var outcome : outcomes) {
                 jdbcAggregateTemplate.insert(new RoundOutcome(savedRound, outcome));
             }
 
             return roundRepository.findById(savedRound.getId()).orElseThrow(() -> new IllegalArgumentException("Failed to save round"));
-        } catch (DataIntegrityViolationException e) {
+        } catch (final DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Failed to save round, it's likely a round with this same name or OpeningRound=YES already exists", e);
         }
     }
@@ -286,22 +273,22 @@ public class HungerSimRestController extends BaseMembersController {
             throw new IllegalArgumentException("A round must include at least one outcome");
         }
 
-        Round existingRound = roundRepository.findById(roundId).orElseThrow(() -> new IllegalArgumentException("Could not found round with that ID"));
+        final var existingRound = roundRepository.findById(roundId).orElseThrow(() -> new IllegalArgumentException("Could not found round with that ID"));
 
         try {
             existingRound.setName(round.name);
             existingRound.setDescription(round.description);
             existingRound.setOpeningRound(round.openingRound);
 
-            Set<Long> outcomeIds = round.outcomeIds.stream().map(Long::parseLong).collect(Collectors.toSet());
-            for (RoundOutcome roundOutcome : roundOutcomeRepository.findByRound(roundId)) {
+            final var outcomeIds = round.outcomeIds.stream().map(Long::parseLong).collect(Collectors.toSet());
+            for (final var roundOutcome : roundOutcomeRepository.findByRound(roundId)) {
                 if (!outcomeIds.contains(roundOutcome.getOutcome())) {
                     roundOutcomeRepository.delete(roundOutcome);
                 }
             }
 
-            for (Long outcomeId : outcomeIds) {
-                Outcome outcome = outcomeRepository.findById(outcomeId)
+            for (final var outcomeId : outcomeIds) {
+                final var outcome = outcomeRepository.findById(outcomeId)
                         .orElseThrow(() -> new IllegalArgumentException("Outcome id " + outcomeId + " does not exist"));
 
                 if (!roundOutcomeRepository.existsByRoundAndOutcome(roundId, outcomeId)) {
@@ -310,16 +297,16 @@ public class HungerSimRestController extends BaseMembersController {
             }
 
             return roundRepository.save(existingRound);
-        } catch (DataIntegrityViolationException e) {
+        } catch (final DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Failed to update round, it's likely a round with this same name or OpeningRound=YES already exists", e);
         }
     }
 
     @DeleteMapping(value = "/hunger-sim/round/{roundId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteRound(HttpServletRequest httpServletRequest, @PathVariable("roundId") Long roundId) throws Exception {
+    public void deleteRound(final HttpServletRequest httpServletRequest, @PathVariable("roundId") Long roundId) throws Exception {
         checkSession(httpServletRequest, true);
 
-        Round round = roundRepository.findById(roundId).orElseThrow(() -> new IllegalArgumentException("Round by that ID does not exist"));
+        final var round = roundRepository.findById(roundId).orElseThrow(() -> new IllegalArgumentException("Round by that ID does not exist"));
         roundOutcomeRepository.deleteAll(roundOutcomeRepository.findByRound(roundId));
         roundRepository.delete(round);
     }
@@ -327,10 +314,10 @@ public class HungerSimRestController extends BaseMembersController {
     /** GAME **/
 
     @PostMapping(value = "/hunger-sim/game", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Game newGame(HttpServletRequest httpServletRequest, @RequestBody GameDto game) throws Exception {
+    public Game newGame(final HttpServletRequest httpServletRequest, final @RequestBody GameDto game) throws Exception {
         checkSession(httpServletRequest, true);
 
-        List<Round> openingRound = roundRepository.findByOpeningRound(true);
+        final var openingRound = roundRepository.findByOpeningRound(true);
         if (CollectionUtils.size(openingRound) != 1) {
             throw new IllegalArgumentException("You must make only one round and mark it as \"Opening Round\"");
         }
@@ -343,9 +330,9 @@ public class HungerSimRestController extends BaseMembersController {
             throw new IllegalArgumentException("You can't start a game with less than 2 players");
         }
 
-        Optional<Game> optionalGame = gameRepository.findById(Constants.DATA_SINGLETON_ID);
+        final var optionalGame = gameRepository.findById(Constants.DATA_SINGLETON_ID);
 
-        Game gameEntity = optionalGame.orElseGet(Game::new);
+        var gameEntity = optionalGame.orElseGet(Game::new);
 
         gameEntity.setId(Constants.DATA_SINGLETON_ID);
         gameEntity.setName(game.name);
@@ -359,27 +346,27 @@ public class HungerSimRestController extends BaseMembersController {
         }
 
         // Reset all players to "not in a game"
-        List<Player> allPlayers = playerRepository.findAll();
-        for (Player player : allPlayers) {
+        final var allPlayers = playerRepository.findAll();
+        for (final var player : allPlayers) {
             player.setGame(null);
         }
         playerRepository.saveAll(allPlayers);
 
         // Set only the specific players in this game to 10HP and Game.SINGLETON_ID
-        List<Player> players = playerRepository.findAllById(game.playerIds);
-        for (Player player : players) {
+        var players = playerRepository.findAllById(game.playerIds);
+        for (final var player : players) {
             player.setHp(10);
             player.setGame(Constants.DATA_SINGLETON_ID);
         }
         players = playerRepository.saveAll(players);
 
-        for (Player player : players) {
+        for (final var player : players) {
             player.setEffectiveNameViaJda(philJda);
         }
 
-        List<String> outcomes = new ArrayList<>();
+        final var outcomes = new ArrayList<String>();
         outcomes.add("Here are our tributes!");
-        for (Player player : players) {
+        for (final var player : players) {
             outcomes.add(player.getEffectiveName());
         }
 
@@ -390,9 +377,9 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @GetMapping(value = "/hunger-sim/game", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Game getGame(HttpServletRequest httpServletRequest) throws Exception {
+    public Game getGame(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
-        Game game = gameRepository.findById(Constants.DATA_SINGLETON_ID).orElseThrow(() -> new IllegalArgumentException("Unable to load game"));
+        final var game = gameRepository.findById(Constants.DATA_SINGLETON_ID).orElseThrow(() -> new IllegalArgumentException("Unable to load game"));
 
         game.setPlayers(playerRepository.findByGame(game.getId()));
 
@@ -402,17 +389,17 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @PostMapping(value = "/hunger-sim/game/step", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Game runStep(HttpServletRequest httpServletRequest) throws Exception {
+    public Game runStep(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
         return hungerSimService.runNextStep();
     }
 
-    private void validateOutcome(OutcomeDto outcome) {
+    private void validateOutcome(final OutcomeDto outcome) {
         if (outcome.numPlayers < 1 || outcome.numPlayers > 4) {
             throw new IllegalArgumentException("numPlayers must be 1, 2, 3, or 4");
         }
 
-        for (int i = 1; i < (outcome.numPlayers + 1); i++) {
+        for (var i = 1; i < (outcome.numPlayers + 1); i++) {
             if (!StringUtils.contains(outcome.outcomeText, "{player" + i + '}')) {
                 throw new IllegalArgumentException("Outcome must mention {player" + i + '}');
             }
@@ -432,7 +419,7 @@ public class HungerSimRestController extends BaseMembersController {
         }
     }
 
-    private static <T, U extends Comparable<? super U>> Comparator<T> comparingReverse(Function<? super T, ? extends U> keyExtractor) {
+    private static <T, U extends Comparable<? super U>> Comparator<T> comparingReverse(final Function<? super T, ? extends U> keyExtractor) {
         Objects.requireNonNull(keyExtractor);
         return (Comparator<T> & Serializable) (c1, c2) -> keyExtractor.apply(c2).compareTo(keyExtractor.apply(c1));
     }

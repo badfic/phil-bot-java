@@ -7,14 +7,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,15 +26,15 @@ public class GamesConfigController extends BaseMembersController {
     private final ObjectMapper objectMapper;
 
     @GetMapping(value = "/games-config", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
+    public ModelAndView get(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
-        SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
+        final var swampyGamesConfig = swampyGamesConfigDal.get();
 
-        MultiValueMap<ControllerConfigurable.Category, ConfigEntryGet> configEntries = new LinkedMultiValueMap<>();
+        final var configEntries = new LinkedMultiValueMap<ControllerConfigurable.Category, ConfigEntryGet>();
 
-        for (Field declaredField : SwampyGamesConfig.class.getDeclaredFields()) {
-            ControllerConfigurable annotation = declaredField.getAnnotation(ControllerConfigurable.class);
+        for (final Field declaredField : SwampyGamesConfig.class.getDeclaredFields()) {
+            final var annotation = declaredField.getAnnotation(ControllerConfigurable.class);
             if (annotation != null) {
                 declaredField.setAccessible(true);
 
@@ -52,7 +50,7 @@ public class GamesConfigController extends BaseMembersController {
             }
         }
 
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Games Config");
         addCommonProps(httpServletRequest.getSession(), props);
         props.put("configEntries", configEntries.entrySet());
@@ -62,39 +60,38 @@ public class GamesConfigController extends BaseMembersController {
     }
 
     @PostMapping(value = "/games-config", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> post(HttpServletRequest httpServletRequest, @RequestBody ConfigEntryPut configEntry) throws Exception {
+    public ResponseEntity<String> post(final HttpServletRequest httpServletRequest, final @RequestBody ConfigEntryPut configEntry) throws Exception {
         checkSession(httpServletRequest, true);
 
         if (configEntry != null && StringUtils.isNotBlank(configEntry.fieldName()) && StringUtils.isNotBlank(configEntry.fieldValue())) {
-            Field declaredField = SwampyGamesConfig.class.getDeclaredField(configEntry.fieldName());
+            final var declaredField = SwampyGamesConfig.class.getDeclaredField(configEntry.fieldName());
             declaredField.setAccessible(true);
 
-            ControllerConfigurable controllerConfigurableAnnotation = declaredField.getAnnotation(ControllerConfigurable.class);
+            final var controllerConfigurableAnnotation = declaredField.getAnnotation(ControllerConfigurable.class);
 
             if (controllerConfigurableAnnotation == null) {
                 return ResponseEntity.badRequest().build();
             }
 
-            SwampyGamesConfig swampyGamesConfig = swampyGamesConfigDal.get();
+            final var swampyGamesConfig = swampyGamesConfigDal.get();
 
             switch (controllerConfigurableAnnotation.type()) {
                 case INT -> {
-                    int realValue = Integer.parseInt(configEntry.fieldValue());
+                    final var realValue = Integer.parseInt(configEntry.fieldValue());
                     declaredField.set(swampyGamesConfig, realValue);
                 }
                 case LONG -> {
-                    long realValue = Long.parseLong(configEntry.fieldValue());
+                    final var realValue = Long.parseLong(configEntry.fieldValue());
                     declaredField.set(swampyGamesConfig, realValue);
                 }
                 case STRING, IMG -> declaredField.set(swampyGamesConfig, configEntry.fieldValue());
                 case STRING_SET -> {
-                    String fieldValueRaw = configEntry.fieldValue();
+                    final var fieldValueRaw = configEntry.fieldValue();
 
-                    String[] fieldValue = objectMapper.readValue(fieldValueRaw, String[].class);
+                    final var fieldValue = objectMapper.readValue(fieldValueRaw, String[].class);
 
                     declaredField.set(swampyGamesConfig, fieldValue);
                 }
-                default -> throw new IllegalStateException();
             }
 
             swampyGamesConfigDal.update(swampyGamesConfig);

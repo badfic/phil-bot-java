@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
@@ -54,19 +52,19 @@ public abstract class BaseMembersController {
     @Setter(onMethod_ = {@Autowired})
     protected JDA philJda;
 
-    protected void checkSession(HttpServletRequest httpServletRequest, boolean requiresAdmin) throws UnsupportedEncodingException {
-        HttpSession session = httpServletRequest.getSession();
+    protected void checkSession(final HttpServletRequest httpServletRequest, final boolean requiresAdmin) throws UnsupportedEncodingException {
+        final var session = httpServletRequest.getSession();
         if (session.isNew()) {
             session.setAttribute(AWAITING_REDIRECT_URL, httpServletRequest.getRequestURI());
             throw new NewSessionException();
         }
 
-        String discordId = (String) session.getAttribute(DISCORD_ID);
+        final var discordId = (String) session.getAttribute(DISCORD_ID);
         if (StringUtils.isBlank(discordId)) {
             throw new UnauthorizedException("You do not have a valid session. Please refresh and login again");
         }
 
-        Member memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(discordId);
+        final var memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(discordId);
         if (memberById == null || (requiresAdmin && !hasRole(memberById, Constants.ADMIN_ROLE))) {
             throw new UnauthorizedException(discordId + " You are not authorized, you must be a swamp "
                     + (requiresAdmin ? "admin" : "member")
@@ -76,29 +74,30 @@ public abstract class BaseMembersController {
         refreshTokenIfNeeded(httpServletRequest);
     }
 
-    protected boolean hasRole(Member member, String role) {
+    protected boolean hasRole(final Member member, final String role) {
         return member.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
     }
 
-    protected void addCommonProps(HttpSession session, Map<String, Object> props) {
+    protected void addCommonProps(final HttpSession session, final Map<String, Object> props) {
         props.put("username", session.getAttribute(DISCORD_USERNAME));
         props.put("isMod", session.getAttribute(DISCORD_IS_MOD));
         props.put("is18", session.getAttribute(DISCORD_IS_18));
     }
 
-    private void refreshTokenIfNeeded(HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession();
+    private void refreshTokenIfNeeded(final HttpServletRequest httpServletRequest) {
+        final var session = httpServletRequest.getSession();
         try {
-            LocalDateTime expiresAt = ((LocalDateTime) session.getAttribute(DISCORD_TOKEN_EXPIRES_AT));
+            final var expiresAt = ((LocalDateTime) session.getAttribute(DISCORD_TOKEN_EXPIRES_AT));
 
             if (LocalDateTime.now().plusHours(1).isAfter(expiresAt)) {
                 refreshToken(session);
             }
-        } catch (UnauthorizedException e) {
+        } catch (final UnauthorizedException e) {
             throw e;
-        } catch (Exception e) {
-            for (Iterator<String> it = session.getAttributeNames().asIterator(); it.hasNext(); ) {
-                String name = it.next();
+        } catch (final Exception e) {
+            final var it = session.getAttributeNames().asIterator();
+            while (it.hasNext()) {
+                final var name = it.next();
                 session.removeAttribute(name);
             }
             session.setAttribute(AWAITING_REDIRECT_URL, httpServletRequest.getRequestURI());
@@ -107,9 +106,9 @@ public abstract class BaseMembersController {
         }
     }
 
-    private void refreshToken(HttpSession session) {
-        String authApi = "https://discordapp.com/api/oauth2/token";
-        String body = new StringBuilder()
+    private void refreshToken(final HttpSession session) {
+        final var authApi = "https://discordapp.com/api/oauth2/token";
+        final var body = new StringBuilder()
                 .append("client_id=")
                 .append(baseConfig.discordClientId)
                 .append("&client_secret=")
@@ -119,15 +118,14 @@ public abstract class BaseMembersController {
                 .append(session.getAttribute(DISCORD_REFRESH_TOKEN))
                 .toString();
 
-        HttpHeaders headers = new HttpHeaders();
+        final var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
 
-        ResponseEntity<DiscordApiLoginResponse> loginResponse = restTemplate.exchange(authApi, HttpMethod.POST,
-                new HttpEntity<>(body, headers), DiscordApiLoginResponse.class);
+        final var loginResponse = restTemplate.exchange(authApi, HttpMethod.POST, new HttpEntity<>(body, headers), DiscordApiLoginResponse.class);
 
-        DiscordApiLoginResponse discordApiLoginResponse = loginResponse.getBody();
+        final var discordApiLoginResponse = loginResponse.getBody();
 
         session.setAttribute(DISCORD_TOKEN, discordApiLoginResponse.accessToken());
         session.setAttribute(DISCORD_TOKEN_EXPIRES_AT, LocalDateTime.now().plusSeconds(discordApiLoginResponse.expiresIn()));
@@ -147,7 +145,7 @@ public abstract class BaseMembersController {
     public static class NewSessionException extends RuntimeException {}
 
     public static class UnauthorizedException extends RuntimeException {
-        public UnauthorizedException(String message) {
+        public UnauthorizedException(final String message) {
             super(message);
         }
     }

@@ -8,7 +8,6 @@ import com.badfic.philbot.service.HowWeBecameCursedService;
 import com.badfic.philbot.service.HungerGamesWinnersService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,9 +26,12 @@ public class SwampController {
     private final DailyRiverdaleMemeService dailyRiverdaleMemeService;
     private final DailyLegendsMemeService dailyLegendsMemeService;
 
-    public SwampController(BaseConfig baseConfig, HungerGamesWinnersService hungerGamesWinnersService, HowWeBecameCursedService howWeBecameCursedService,
-                           DailyMarvelMemeService dailyMarvelMemeService, DailyRiverdaleMemeService dailyRiverdaleMemeService,
-                           DailyLegendsMemeService dailyLegendsMemeService) {
+    public SwampController(final BaseConfig baseConfig,
+                           final HungerGamesWinnersService hungerGamesWinnersService,
+                           final HowWeBecameCursedService howWeBecameCursedService,
+                           final DailyMarvelMemeService dailyMarvelMemeService,
+                           final DailyRiverdaleMemeService dailyRiverdaleMemeService,
+                           final DailyLegendsMemeService dailyLegendsMemeService) {
         this.baseConfig = baseConfig;
         this.hungerGamesWinnersService = hungerGamesWinnersService;
         this.howWeBecameCursedService = howWeBecameCursedService;
@@ -51,7 +53,7 @@ public class SwampController {
             "/reminders",
             "/trivia"
     })
-    public ResponseEntity<String> getOldCommandsPage(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<String> getOldCommandsPage(final HttpServletRequest httpServletRequest) {
         return ResponseEntity.status(HttpStatus.FOUND)
                 .header(HttpHeaders.LOCATION, baseConfig.hostname + "/members" + httpServletRequest.getRequestURI())
                 .build();
@@ -59,21 +61,21 @@ public class SwampController {
 
     @GetMapping(value = {"/", "/index.html", "/index"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHome() {
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Home — The Swamp");
         return new ModelAndView("swamp-home", props);
     }
 
     @GetMapping(value = {"/the-swampys.html", "/the-swampys"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getSwampys() {
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "The Swampys — The Swamp");
         return new ModelAndView("the-swampys", props);
     }
 
     @GetMapping(value = {"/daily-riverdale-memes.html", "/daily-riverdale-memes"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getRiverdaleMemes() {
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Riverdale Memes — The Swamp");
         props.put("messages", dailyRiverdaleMemeService.getMessages());
         return new ModelAndView("riverdale-memes", props);
@@ -81,7 +83,7 @@ public class SwampController {
 
     @GetMapping(value = {"/daily-marvel-memes.html", "/daily-marvel-memes"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getMarvelMemes() {
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Marvel Memes — The Swamp");
         props.put("messages", dailyMarvelMemeService.getMessages());
         return new ModelAndView("marvel-memes", props);
@@ -89,7 +91,7 @@ public class SwampController {
 
     @GetMapping(value = {"/daily-legends-memes.html", "/daily-legends-memes"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getLegendsMemes() {
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Legends of Tomorrow Memes — The Swamp");
         props.put("messages", dailyLegendsMemeService.getMessages());
         return new ModelAndView("legends-memes", props);
@@ -97,7 +99,7 @@ public class SwampController {
 
     @GetMapping(value = {"/cursed-timeline.html", "/cursed-timeline"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getCursedTimeline() {
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Cursed Timeline — The Swamp");
         props.put("messages", howWeBecameCursedService.getMessages());
         return new ModelAndView("cursed-timeline", props);
@@ -105,7 +107,7 @@ public class SwampController {
 
     @GetMapping(value = {"/hunger-games-winners.html", "/hunger-games-winners"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getHungerGames() {
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Cursed Timeline — The Swamp");
         props.put("messages", hungerGamesWinnersService.getMessages());
         return new ModelAndView("hunger-games", props);
@@ -113,7 +115,7 @@ public class SwampController {
 
     @GetMapping(value = {"/about-the-swamp.html", "/about-the-swamp"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView getAbout() {
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "About — The Swamp");
         return new ModelAndView("about-the-swamp", props);
     }

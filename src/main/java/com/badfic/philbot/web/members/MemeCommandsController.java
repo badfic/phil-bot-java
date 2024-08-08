@@ -1,12 +1,10 @@
 package com.badfic.philbot.web.members;
 
-import com.badfic.philbot.data.MemeCommandEntity;
 import com.badfic.philbot.service.MemeCommandsService;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,21 +16,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@RequiredArgsConstructor
 public class MemeCommandsController extends BaseMembersController {
 
     private final MemeCommandsService memeCommandsService;
 
-    public MemeCommandsController(MemeCommandsService memeCommandsService) {
-        this.memeCommandsService = memeCommandsService;
-    }
-
     @GetMapping(value = "/meme-commands", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
+    public ModelAndView get(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
 
-        List<MemeCommandEntity> memes = memeCommandsService.findAll();
+        final var memes = memeCommandsService.findAll();
 
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Meme Commands");
         addCommonProps(httpServletRequest.getSession(), props);
         props.put("commands", memes);
@@ -41,20 +36,20 @@ public class MemeCommandsController extends BaseMembersController {
     }
 
     @PostMapping(value = "/meme-commands", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> postMemeForm(@RequestBody MemeForm form, HttpServletRequest httpServletRequest) throws Exception {
+    public ResponseEntity<String> postMemeForm(final @RequestBody MemeForm form, final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
         memeCommandsService.saveMeme(form.memeUrl(), form.memeName());
 
-        return ResponseEntity.ok("Successfully created new meme command! Refresh the page to see it below.");
+        return ResponseEntity.ok("Successfully created new meme %s. Refresh the page to see it below.".formatted(form.memeName()));
     }
 
     @DeleteMapping(value = "/meme-commands/{memeName}", produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> deleteMeme(@PathVariable("memeName") String memeName, HttpServletRequest httpServletRequest) throws Exception {
+    public ResponseEntity<String> deleteMeme(final @PathVariable("memeName") String memeName, final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
         memeCommandsService.deleteMeme(memeName);
-        return ResponseEntity.ok("Successfully deleted: " + memeName + ". Refresh the page to see it disappear");
+        return ResponseEntity.ok("Successfully deleted: %s. Refresh the page to see it disappear".formatted(memeName));
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

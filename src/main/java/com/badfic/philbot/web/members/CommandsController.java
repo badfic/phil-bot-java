@@ -4,14 +4,11 @@ import com.badfic.philbot.commands.ModHelpAware;
 import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,14 +25,14 @@ public class CommandsController extends BaseMembersController {
     private final List<BaseBangCommand> commands;
 
     @GetMapping(value = "/commands", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView get(HttpServletRequest httpServletRequest) throws Exception {
+    public ModelAndView get(final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, false);
-        HttpSession session = httpServletRequest.getSession();
-        boolean isMod = Boolean.TRUE.equals(session.getAttribute(DISCORD_IS_MOD));
+        final var session = httpServletRequest.getSession();
+        final var isMod = Boolean.TRUE.equals(session.getAttribute(DISCORD_IS_MOD));
 
-        MutableObject<SimpleCommand> swampyCommand = new MutableObject<>();
+        final var swampyCommand = new MutableObject<SimpleCommand>();
 
-        List<SimpleCommand> simpleCommandsList = commands.stream()
+        final var simpleCommandsList = commands.stream()
                 .filter(c -> {
                     if ("swampy".equalsIgnoreCase(c.getName())) {
                         swampyCommand.setValue(new SimpleCommand(c.getName(), StringUtils.join(emptyToNull(c.getAliases()), ", "), c.getRequiredRole(), c.getHelp(),
@@ -67,9 +64,9 @@ public class CommandsController extends BaseMembersController {
                 .sorted(Comparator.comparing(SimpleCommand::name))
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        simpleCommandsList = Stream.concat(Stream.of(swampyCommand.getValue()), simpleCommandsList.stream()).toList();
+        simpleCommandsList.addFirst(swampyCommand.getValue());
 
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Commands");
         addCommonProps(session, props);
         props.put("commands", simpleCommandsList);
@@ -77,11 +74,11 @@ public class CommandsController extends BaseMembersController {
         return new ModelAndView("commands", props);
     }
 
-    private static Object[] emptyToNull(Object[] array) {
+    private static Object[] emptyToNull(final Object[] array) {
         return ArrayUtils.isEmpty(array) ? null : array;
     }
 
-    private static String getModHelp(boolean isMod, BaseBangCommand command) {
+    private static String getModHelp(final boolean isMod, final BaseBangCommand command) {
         if (isMod && command instanceof ModHelpAware modHelpAware) {
             return modHelpAware.getModHelp();
         }
