@@ -3,20 +3,16 @@ package com.badfic.philbot.web.members;
 import com.badfic.philbot.config.Constants;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import net.dv8tion.jda.api.entities.Member;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,23 +23,23 @@ public class HomeController extends BaseMembersController {
 
     @GetMapping(value = {"", "/", "/home"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView home(
-            @RequestParam(value = "code") Optional<String> code,
-            HttpServletRequest httpServletRequest) throws Exception {
-        HttpSession session = httpServletRequest.getSession();
+            final @RequestParam(value = "code") Optional<String> code,
+            final HttpServletRequest httpServletRequest) throws Exception {
+        final var session = httpServletRequest.getSession();
 
         if (code.isPresent() && session.getAttribute(DISCORD_TOKEN) == null) {
-            DiscordApiLoginResponse discordApiLoginResponse = getDiscordApiLoginResponse(code);
+            final var discordApiLoginResponse = getDiscordApiLoginResponse(code);
 
             session.setAttribute(DISCORD_TOKEN, discordApiLoginResponse.accessToken());
             session.setAttribute(DISCORD_TOKEN_EXPIRES_AT, LocalDateTime.now().plusSeconds(discordApiLoginResponse.expiresIn()));
             session.setAttribute(DISCORD_REFRESH_TOKEN, discordApiLoginResponse.refreshToken());
 
-            DiscordApiIdentityResponse discordApiIdentityResponse = getDiscordApiIdentityResponse(discordApiLoginResponse.accessToken());
+            final var discordApiIdentityResponse = getDiscordApiIdentityResponse(discordApiLoginResponse.accessToken());
 
-            Member memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(discordApiIdentityResponse.id());
+            final var memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(discordApiIdentityResponse.id());
             if (memberById != null) {
-                Boolean isMod = hasRole(memberById, Constants.ADMIN_ROLE);
-                Boolean is18 = hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE);
+                final var isMod = hasRole(memberById, Constants.ADMIN_ROLE);
+                final var is18 = hasRole(memberById, Constants.EIGHTEEN_PLUS_ROLE);
 
                 session.setAttribute(DISCORD_ID, discordApiIdentityResponse.id());
                 session.setAttribute(DISCORD_USERNAME, discordApiIdentityResponse.username());
@@ -56,22 +52,22 @@ public class HomeController extends BaseMembersController {
         }
         checkSession(httpServletRequest, false);
 
-        Object awaitingRedirectUrl = session.getAttribute(AWAITING_REDIRECT_URL);
+        final var awaitingRedirectUrl = session.getAttribute(AWAITING_REDIRECT_URL);
         if (awaitingRedirectUrl != null) {
             session.removeAttribute(AWAITING_REDIRECT_URL);
             throw new LoginRedirectException(((String) awaitingRedirectUrl));
         }
 
-        Map<String, Object> props = new HashMap<>();
+        final var props = new HashMap<String, Object>();
         props.put("pageTitle", "Phil's Swamp");
         addCommonProps(session, props);
 
         return new ModelAndView("members-home", props);
     }
 
-    private DiscordApiLoginResponse getDiscordApiLoginResponse(Optional<String> code) {
-        String authApi = "https://discordapp.com/api/oauth2/token";
-        String body = new StringBuilder()
+    private DiscordApiLoginResponse getDiscordApiLoginResponse(final Optional<String> code) {
+        final var authApi = "https://discordapp.com/api/oauth2/token";
+        final var body = new StringBuilder()
                 .append("client_id=")
                 .append(baseConfig.discordClientId)
                 .append("&client_secret=")
@@ -84,24 +80,23 @@ public class HomeController extends BaseMembersController {
                 .append("&scope=identify")
                 .toString();
 
-        HttpHeaders headers = new HttpHeaders();
+        final var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
 
-        ResponseEntity<DiscordApiLoginResponse> loginResponse = restTemplate.exchange(authApi, HttpMethod.POST,
-                new HttpEntity<>(body, headers), DiscordApiLoginResponse.class);
+        final var loginResponse = restTemplate.exchange(authApi, HttpMethod.POST, new HttpEntity<>(body, headers), DiscordApiLoginResponse.class);
 
         return loginResponse.getBody();
     }
 
-    private DiscordApiIdentityResponse getDiscordApiIdentityResponse(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
+    private DiscordApiIdentityResponse getDiscordApiIdentityResponse(final String accessToken) {
+        final var headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setBearerAuth(accessToken);
         headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
 
-        ResponseEntity<DiscordApiIdentityResponse> identityResponse = restTemplate.exchange("https://discord.com/api/users/@me", HttpMethod.GET,
+        final var identityResponse = restTemplate.exchange("https://discord.com/api/users/@me", HttpMethod.GET,
                 new HttpEntity<>(headers), DiscordApiIdentityResponse.class);
 
         return identityResponse.getBody();

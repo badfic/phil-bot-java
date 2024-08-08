@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,16 +17,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class GlobalControllerExceptionHandler {
     private final BaseConfig baseConfig;
 
-    public GlobalControllerExceptionHandler(BaseConfig baseConfig) {
-        this.baseConfig = baseConfig;
-    }
-
     @ExceptionHandler(BaseMembersController.NewSessionException.class)
-    public ResponseEntity<Object> handleNewSessionException(BaseMembersController.NewSessionException e) {
-        StringBuilder urlBuilder = new StringBuilder()
+    public ResponseEntity<Object> handleNewSessionException(final BaseMembersController.NewSessionException e) {
+        final var urlBuilder = new StringBuilder()
                 .append("https://discord.com/api/oauth2/authorize?client_id=")
                 .append(baseConfig.discordClientId)
                 .append("&redirect_uri=")
@@ -35,24 +33,24 @@ public class GlobalControllerExceptionHandler {
     }
 
     @ExceptionHandler(HomeController.LoginRedirectException.class)
-    public ResponseEntity<Object> handleLoginRedirectException(HomeController.LoginRedirectException e) {
+    public ResponseEntity<Object> handleLoginRedirectException(final HomeController.LoginRedirectException e) {
         return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, baseConfig.hostname + e.getUrl()).build();
     }
 
     @ExceptionHandler(BaseMembersController.UnauthorizedException.class)
-    public ResponseEntity<Object> handleUnauthorizedException(BaseMembersController.UnauthorizedException e, HttpSession httpSession) {
+    public ResponseEntity<Object> handleUnauthorizedException(final BaseMembersController.UnauthorizedException e, final HttpSession httpSession) {
         log.error("Unauthorized Exception caught at top level", e);
         httpSession.invalidate();
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException e) {
+    public ResponseEntity<Object> handleIllegalArgumentException(final IllegalArgumentException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleException(Exception e, HttpServletRequest request) {
+    public ResponseEntity<Object> handleException(final Exception e, final HttpServletRequest request) {
         log.error("Controller Exception caught at top level", e);
         return new ResponseEntity<>("Generic Top Level Exception, ask Santiago. Something might have broke.", HttpStatus.UNAUTHORIZED);
     }
