@@ -3,6 +3,7 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.awt.Color;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
@@ -272,8 +272,8 @@ public class Ao3MetadataParser extends BaseService {
                 .build()
                 .toString();
 
-        final var headers = new LinkedMultiValueMap<>();
-        headers.add(HttpHeaders.ACCEPT, MediaType.TEXT_HTML_VALUE);
+        final var headers = new HttpHeaders();
+        headers.setAccept(List.of(MediaType.TEXT_HTML));
         headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
 
         final var response = doWithLock(() -> restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class));
