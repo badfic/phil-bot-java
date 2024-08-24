@@ -12,6 +12,16 @@ import static net.dv8tion.jda.api.requests.GatewayIntent.MESSAGE_CONTENT;
 import com.badfic.philbot.listeners.Phil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.clients.AndroidMusicWithThumbnail;
+import dev.lavalink.youtube.clients.AndroidTestsuiteWithThumbnail;
+import dev.lavalink.youtube.clients.MusicWithThumbnail;
+import dev.lavalink.youtube.clients.TvHtml5EmbeddedWithThumbnail;
+import dev.lavalink.youtube.clients.WebWithThumbnail;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -113,6 +123,22 @@ public class BaseConfig {
         return new RestTemplate(new OkHttp3ClientHttpRequestFactory(okHttpClient));
     }
 
+    @Bean
+    public AudioPlayerManager audioPlayerManager() {
+        final var youtube = new YoutubeAudioSourceManager(true, new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidTestsuiteWithThumbnail(),
+                new AndroidMusicWithThumbnail(), new TvHtml5EmbeddedWithThumbnail());
+
+        final var manager = new DefaultAudioPlayerManager();
+        manager.registerSourceManager(youtube);
+        AudioSourceManagers.registerRemoteSources(manager, com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager.class);
+        return manager;
+    }
+
+    @Bean
+    public AudioPlayer audioPlayer(final AudioPlayerManager audioPlayerManager) {
+        return audioPlayerManager.createPlayer();
+    }
+
     @Bean(name = "philJda")
     public JDA philJda(final ThreadPoolTaskScheduler taskScheduler,
                        final ExecutorService executorService,
@@ -131,6 +157,7 @@ public class BaseConfig {
                 .setGatewayPool(taskScheduler.getScheduledExecutor(), false)
                 .setHttpClient(okHttpClient)
                 .addEventListeners(messageListener)
+                .setAudioPool(taskScheduler.getScheduledExecutor(), false)
                 .setActivity(Activity.playing("with our feelings"))
                 .build();
     }

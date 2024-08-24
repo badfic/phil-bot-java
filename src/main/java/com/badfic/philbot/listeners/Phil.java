@@ -379,6 +379,10 @@ public class Phil {
                 swampyCommand.voiceJoined(event.getMember());
             } else if (event.getChannelLeft() != null) {
                 swampyCommand.voiceLeft(event.getMember());
+
+                if (CollectionUtils.size(event.getChannelLeft().asVoiceChannel().getMembers()) == 1) {
+                    event.getGuild().getAudioManager().closeAudioConnection();
+                }
             }
         }
 
