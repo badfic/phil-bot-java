@@ -12,7 +12,6 @@ import lombok.Synchronized;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 @Getter
@@ -48,22 +47,22 @@ public class Rank {
     public static void init(RestTemplate restTemplate, String airtableApiToken) throws Exception {
         LEVEL_MAP.clear();
 
-        HttpHeaders httpHeaders = new HttpHeaders();
+        final var httpHeaders = new HttpHeaders();
         httpHeaders.set(HttpHeaders.AUTHORIZATION, "Bearer " + airtableApiToken);
-        ResponseEntity<RecordList> response = restTemplate.exchange("https://api.airtable.com/v0/appYjP1F2Li4DAR1m/tblqH0ym9Dcza7oDG",
+        final var response = restTemplate.exchange("https://api.airtable.com/v0/appYjP1F2Li4DAR1m/tblqH0ym9Dcza7oDG",
                 HttpMethod.GET, new HttpEntity<>(httpHeaders), RecordList.class);
 
-        RecordList recordList = response.getBody();
+        final var recordList = response.getBody();
 
-        List<TableRecord> records = recordList.records();
+        final var records = recordList.records();
 
         records.sort(Comparator.comparingLong(r -> r.fields().level()));
 
         for (var i = 0; i < records.size(); i++) {
-            TableRecord record = records.get(i);
-            RecordFields fields = record.fields();
+            final var record = records.get(i);
+            final var fields = record.fields();
 
-            Rank rank = new Rank(i, fields.role(), fields.level(), fields.image(), fields.blurb(), Color.decode(fields.colour()));
+            final var rank = new Rank(i, fields.role(), fields.level(), fields.image(), fields.blurb(), Color.decode(fields.colour()));
             if (LEVEL_MAP.get(fields.level()) != null) {
                 throw new IllegalStateException("Check swampy levels airtable, there's a duplicate level: " + fields.level());
             }
@@ -74,9 +73,9 @@ public class Rank {
 
     @Synchronized
     public static Rank byXp(long xp) {
-        long level = Math.round(LEVEL_MODIFIER * Math.sqrt(xp));
+        final var level = Math.round(LEVEL_MODIFIER * Math.sqrt(xp));
 
-        for (long i = level; i > 0; i--) {
+        for (var i = level; i > 0; i--) {
             if (LEVEL_MAP.containsKey(i)) {
                 return LEVEL_MAP.get(i);
             }

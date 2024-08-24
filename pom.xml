@@ -20,6 +20,8 @@
 		<fastutil.version>8.5.13</fastutil.version>
 		<jda.version>5.0.1</jda.version>
 		<jsoup.version>1.18.1</jsoup.version>
+		<lavalink-youtube.version>1.7.2</lavalink-youtube.version>
+		<lavaplayer.version>2.2.1</lavaplayer.version>
 		<rome.version>2.1.0</rome.version>
 		<sentry.io.version>7.12.0</sentry.io.version>
 		<zip4j.version>2.11.5</zip4j.version>
@@ -96,6 +98,16 @@
 			<artifactId>sentry-logback</artifactId>
 			<version>${sentry.io.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>dev.arbjerg</groupId>
+			<artifactId>lavaplayer</artifactId>
+			<version>${lavaplayer.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>dev.lavalink.youtube</groupId>
+			<artifactId>v2</artifactId>
+			<version>${lavalink-youtube.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -163,6 +175,10 @@
 			<id>central</id>
 			<name>Central Repository</name>
 			<url>https://repo.maven.apache.org/maven2</url>
+		</repository>
+		<repository>
+			<id>lavalink</id>
+			<url>https://maven.lavalink.dev/releases</url>
 		</repository>
 	</repositories>
 
