@@ -34,6 +34,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -71,6 +72,12 @@ public class BaseConfig {
 
     @Value("${AO3_SUMMARY_API_KEY}")
     public String ao3SummaryApiKey;
+
+    @Value("${YOUTUBE_PO_TOKEN:}")
+    private String youtubePoToken;
+
+    @Value("${YOUTUBE_VISITOR_DATA:}")
+    private String youtubeVisitorData;
 
     @Bean
     public ExecutorService executorService() {
@@ -125,6 +132,10 @@ public class BaseConfig {
 
     @Bean
     public AudioPlayerManager audioPlayerManager() {
+        if (StringUtils.isNotBlank(youtubePoToken) && StringUtils.isNotBlank(youtubeVisitorData)) {
+            WebWithThumbnail.setPoTokenAndVisitorData(youtubePoToken, youtubeVisitorData);
+        }
+
         final var youtube = new YoutubeAudioSourceManager(true, new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidTestsuiteWithThumbnail(),
                 new AndroidMusicWithThumbnail(), new TvHtml5EmbeddedWithThumbnail());
 
