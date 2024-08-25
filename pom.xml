@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.2</version>
+		<version>3.3.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.badfic</groupId>
@@ -17,13 +17,13 @@
 	<properties>
 		<java.version>21</java.version>
 
-		<fastutil.version>8.5.13</fastutil.version>
-		<jda.version>5.0.1</jda.version>
+		<fastutil.version>8.5.14</fastutil.version>
+		<jda.version>5.1.0</jda.version>
 		<jsoup.version>1.18.1</jsoup.version>
 		<lavalink-youtube.version>1.7.2</lavalink-youtube.version>
 		<lavaplayer.version>2.2.1</lavaplayer.version>
 		<rome.version>2.1.0</rome.version>
-		<sentry.io.version>7.12.0</sentry.io.version>
+		<sentry.io.version>7.14.0</sentry.io.version>
 		<zip4j.version>2.11.5</zip4j.version>
 	</properties>
 
