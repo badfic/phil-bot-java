@@ -5,6 +5,8 @@ import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DailyMarvelMemeEntity;
 import com.badfic.philbot.data.DailyMarvelMemeRepository;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -21,11 +23,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @Slf4j
-public class DailyMarvelMemeService extends BaseBangCommand implements DailyTickable {
+public class DailyMarvelMemeService extends BaseBangCommand {
 
     private static final String SEARCH_STRING = "Out of context Marvel meme";
 
@@ -37,11 +41,6 @@ public class DailyMarvelMemeService extends BaseBangCommand implements DailyTick
         this.ownerCommand = true;
         this.dailyMarvelMemeRepository = dailyMarvelMemeRepository;
         this.jdbcAggregateTemplate = jdbcAggregateTemplate;
-    }
-
-    @Override
-    public void runDailyTask() {
-        refreshImageUrls();
     }
 
     @Override
@@ -63,6 +62,7 @@ public class DailyMarvelMemeService extends BaseBangCommand implements DailyTick
                 .toList();
     }
 
+    @Scheduled(cron = "0 0 * * * *")
     private void refreshImageUrls() {
         final var textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
@@ -71,7 +71,24 @@ public class DailyMarvelMemeService extends BaseBangCommand implements DailyTick
         }
         final var channel = textChannelsByName.getFirst();
 
-        final var messageIds = dailyMarvelMemeRepository.findAllIds();
+        final var messageIds = new LongArrayList();
+        final var memeEntities = dailyMarvelMemeRepository.findAll();
+        for (final var memeEntity : memeEntities) {
+            final var imageUrl = memeEntity.getImageUrl();
+            if (StringUtils.startsWithIgnoreCase(imageUrl, "https://media.discordapp.net/")) {
+                final var builtUri = UriComponentsBuilder.fromHttpUrl(imageUrl).build();
+                final var expirationHex = builtUri.getQueryParams().getFirst("ex");
+
+                if (expirationHex != null) {
+                    final var expiration = Long.parseLong(expirationHex, 16);
+                    final var now = Instant.now().getEpochSecond();
+
+                    if (expiration <= now) {
+                        messageIds.add(memeEntity.getMessageId());
+                    }
+                }
+            }
+        }
 
         final var futures = new ArrayList<CompletableFuture<Message>>();
         for (final var messageId : messageIds) {
@@ -113,7 +130,7 @@ public class DailyMarvelMemeService extends BaseBangCommand implements DailyTick
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
 
-        Constants.debugToTestChannel(philJda, "Successfully updated daily marvel memes image URLs");
+        Constants.debugToModLogsChannel(philJda, "Successfully updated %d daily marvel memes image URLs".formatted(messageIds.size()));
     }
 
     private void scrapeAllMemes() {
@@ -135,11 +152,12 @@ public class DailyMarvelMemeService extends BaseBangCommand implements DailyTick
                 history = cursedChannel.getHistoryAfter(lastMsgId, 100).timeout(30, TimeUnit.SECONDS).complete();
             }
 
-            lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())
-                    ? history.getRetrievedHistory().getFirst().getIdLong()
+            final var historyList = history.getRetrievedHistory();
+            lastMsgId = CollectionUtils.isNotEmpty(historyList)
+                    ? historyList.getFirst().getIdLong()
                     : -1;
 
-            for (final var message : history.getRetrievedHistory()) {
+            for (final var message : historyList) {
                 if (StringUtils.containsIgnoreCase(message.getContentRaw(), SEARCH_STRING)) {
                     if (CollectionUtils.isNotEmpty(message.getAttachments())) {
                         final var imageUrl = message.getAttachments().getFirst().getProxyUrl();
