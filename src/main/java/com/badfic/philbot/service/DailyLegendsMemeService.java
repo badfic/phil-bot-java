@@ -5,6 +5,8 @@ import com.badfic.philbot.commands.bang.BaseBangCommand;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DailyLegendsMemeEntity;
 import com.badfic.philbot.data.DailyLegendsMemeRepository;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -21,7 +23,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @Slf4j
@@ -63,6 +67,7 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
                 .toList();
     }
 
+    @Scheduled(cron = "0 0 * * * *")
     private void refreshImageUrls() {
         final var textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
@@ -71,7 +76,24 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
         }
         final var channel = textChannelsByName.getFirst();
 
-        final var messageIds = dailyLegendsMemeRepository.findAllIds();
+        final var memeEntities = dailyLegendsMemeRepository.findAll();
+        final var messageIds = new LongArrayList();
+        for (final var memeEntity : memeEntities) {
+            final var imageUrl = memeEntity.getImageUrl();
+            if (StringUtils.startsWithIgnoreCase(imageUrl, "https://media.discordapp.net/")) {
+                final var builtUri = UriComponentsBuilder.fromHttpUrl(imageUrl).build();
+                final var expirationHex = builtUri.getQueryParams().getFirst("ex");
+
+                if (expirationHex != null) {
+                    final var expiration = Long.parseLong(expirationHex, 16);
+                    final var now = Instant.now().getEpochSecond();
+
+                    if (expiration <= now) {
+                        messageIds.add(memeEntity.getMessageId());
+                    }
+                }
+            }
+        }
 
         final var futures = new ArrayList<CompletableFuture<Message>>();
         for (final var messageId : messageIds) {
@@ -108,7 +130,7 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
 
-        Constants.debugToTestChannel(philJda, "Successfully updated daily legends memes image URLs");
+        Constants.debugToModLogsChannel(philJda, "Successfully updated %d daily legends memes image URLs".formatted(messageIds.size()));
     }
 
     private void scrapeAllMemes() {
@@ -130,11 +152,12 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
                 history = cursedChannel.getHistoryAfter(lastMsgId, 100).timeout(30, TimeUnit.SECONDS).complete();
             }
 
-            lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())
-                    ? history.getRetrievedHistory().getFirst().getIdLong()
+            final var historyList = history.getRetrievedHistory();
+            lastMsgId = CollectionUtils.isNotEmpty(historyList)
+                    ? historyList.getFirst().getIdLong()
                     : -1;
 
-            for (final var message : history.getRetrievedHistory()) {
+            for (final var message : historyList) {
                 if (StringUtils.containsIgnoreCase(message.getContentRaw(), SEARCH_STRING)) {
                     if (CollectionUtils.isNotEmpty(message.getAttachments())) {
                         final var imageUrl = message.getAttachments().getFirst().getProxyUrl();

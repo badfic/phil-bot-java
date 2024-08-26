@@ -247,6 +247,10 @@ public class Constants {
         jda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).getFirst().sendMessageEmbeds(messageEmbed).queue();
     }
 
+    public static void debugToModLogsChannel(final JDA jda, final String message) {
+        jda.getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).getFirst().sendMessage(message).queue();
+    }
+
     public static MessageEmbed simpleEmbedThumbnail(final String title, final String description, final String thumbnail) {
         return simpleEmbed(title, description, null, null, null, thumbnail);
     }

@@ -49,11 +49,12 @@ public class HowWeBecameCursedService extends BaseService implements DailyTickab
                 history = channel.getHistoryAfter(lastMsgId, 100).timeout(30, TimeUnit.SECONDS).complete();
             }
 
-            lastMsgId = CollectionUtils.isNotEmpty(history.getRetrievedHistory())
-                    ? history.getRetrievedHistory().getFirst().getIdLong()
+            final var historyList = history.getRetrievedHistory();
+            lastMsgId = CollectionUtils.isNotEmpty(historyList)
+                    ? historyList.getFirst().getIdLong()
                     : -1;
 
-            for (final var message : history.getRetrievedHistory()) {
+            for (final var message : historyList) {
                 messageIds.add(message.getIdLong());
 
                 final var storedMessageOpt = howWeBecameCursedRepository.findById(message.getIdLong());
