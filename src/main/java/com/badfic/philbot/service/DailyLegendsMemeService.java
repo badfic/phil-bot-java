@@ -131,7 +131,9 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
 
-        Constants.debugToModLogsChannel(philJda, "Successfully updated %d daily legends memes image URLs".formatted(messageIds.size()));
+        if (!messageIds.isEmpty()) {
+            Constants.debugToModLogsChannel(philJda, "Successfully updated %d daily legends memes image URLs".formatted(messageIds.size()));
+        }
     }
 
     private void scrapeAllMemes() {

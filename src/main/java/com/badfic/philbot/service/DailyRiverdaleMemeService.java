@@ -126,7 +126,9 @@ public class DailyRiverdaleMemeService extends BaseBangCommand {
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
 
-        Constants.debugToModLogsChannel(philJda, "Successfully updated %d daily riverdale memes image URLs".formatted(messageIds.size()));
+        if (!messageIds.isEmpty()) {
+            Constants.debugToModLogsChannel(philJda, "Successfully updated %d daily riverdale memes image URLs".formatted(messageIds.size()));
+        }
     }
 
     private void scrapeAllMemes() {

@@ -131,7 +131,9 @@ public class DailyMarvelMemeService extends BaseBangCommand {
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
 
-        Constants.debugToModLogsChannel(philJda, "Successfully updated %d daily marvel memes image URLs".formatted(messageIds.size()));
+        if (!messageIds.isEmpty()) {
+            Constants.debugToModLogsChannel(philJda, "Successfully updated %d daily marvel memes image URLs".formatted(messageIds.size()));
+        }
     }
 
     private void scrapeAllMemes() {
