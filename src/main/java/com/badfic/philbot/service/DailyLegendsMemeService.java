@@ -67,11 +67,11 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
                 .toList();
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "${swampy.schedule.imagerefresh}", zone = "${swampy.schedule.timezone}")
     private void refreshImageUrls() {
-        final var textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
+        final var textChannelsByName = philJda.getTextChannelsByName(Constants.MEMES_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
-            log.error("DailyLegendsMemeService Failed to find [channel={}]", Constants.CURSED_SWAMP_CHANNEL);
+            log.error("DailyLegendsMemeService Failed to find [channel={}]", Constants.MEMES_CHANNEL);
             return;
         }
         final var channel = textChannelsByName.getFirst();
@@ -80,7 +80,8 @@ public class DailyLegendsMemeService extends BaseBangCommand implements DailyTic
         final var messageIds = new LongArrayList();
         for (final var memeEntity : memeEntities) {
             final var imageUrl = memeEntity.getImageUrl();
-            if (StringUtils.startsWithIgnoreCase(imageUrl, "https://media.discordapp.net/")) {
+            if (StringUtils.startsWithIgnoreCase(imageUrl, "https://media.discordapp.net/")
+                    || StringUtils.startsWithIgnoreCase(imageUrl, "https://cdn.discordapp.com/")) {
                 final var builtUri = UriComponentsBuilder.fromHttpUrl(imageUrl).build();
                 final var expirationHex = builtUri.getQueryParams().getFirst("ex");
 
