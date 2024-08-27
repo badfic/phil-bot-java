@@ -62,7 +62,7 @@ public class DailyRiverdaleMemeService extends BaseBangCommand {
                 .toList();
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "${swampy.schedule.imagerefresh}", zone = "${swampy.schedule.timezone}")
     private void refreshImageUrls() {
         final var textChannelsByName = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false);
         if (CollectionUtils.isEmpty(textChannelsByName)) {
@@ -75,7 +75,8 @@ public class DailyRiverdaleMemeService extends BaseBangCommand {
         final var messageIds = new LongArrayList();
         for (final var memeEntity : memeEntities) {
             final var imageUrl = memeEntity.getImageUrl();
-            if (StringUtils.startsWithIgnoreCase(imageUrl, "https://media.discordapp.net/")) {
+            if (StringUtils.startsWithIgnoreCase(imageUrl, "https://media.discordapp.net/")
+                    || StringUtils.startsWithIgnoreCase(imageUrl, "https://cdn.discordapp.com/")) {
                 final var builtUri = UriComponentsBuilder.fromHttpUrl(imageUrl).build();
                 final var expirationHex = builtUri.getQueryParams().getFirst("ex");
 
