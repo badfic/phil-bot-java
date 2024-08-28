@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -113,8 +114,10 @@ public class Phil {
         private final DiscordWebhookSendService discordWebhookSendService;
         private final SwampyGamesConfigDal swampyGamesConfigDal;
         private final BaseConfig baseConfig;
-        private final GitProperties gitProperties;
         private final RestTemplate restTemplate;
+
+        @Setter(onMethod_ = {@Autowired(required = false)})
+        private GitProperties gitProperties;
 
         @Setter(onMethod_ = {@Autowired})
         private Command philCommand;
@@ -297,8 +300,14 @@ public class Phil {
             Message.suppressContentIntentWarning(); // This is specifically for all the non-phil bots, they'll print a warning without this.
 
             log.info("Received ready event for [guild={}] [user={}]", baseConfig.guildId, event.getJDA().getSelfUser());
-            final var messageEmbed = Constants.simpleEmbed("Restarted",
-                    String.format("I just restarted\ngit sha: %s\ncommit msg: %s", gitProperties.getCommitId(), gitProperties.get("commit.message.short")), new Color(89, 145, 17));
+
+            final var commitId = Optional.ofNullable(gitProperties).map(GitProperties::getCommitId).orElse(null);
+            final var commitMessage = Optional.ofNullable(gitProperties).map(g -> g.get("commit.message.short")).orElse(null);
+
+            final var messageEmbed = Constants.simpleEmbed(
+                    "Restarted",
+                    "I just restarted\ngit sha: %s\ncommit msg: %s".formatted(commitId, commitMessage),
+                    new Color(89, 145, 17));
             event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).getFirst().sendMessageEmbeds(messageEmbed).queue();
 
             final var guildById = philJda.getGuildById(baseConfig.guildId);
