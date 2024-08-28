@@ -46,7 +46,7 @@ class AnimeSlashCommand extends BaseSlashCommand {
             return;
         }
 
-        final var category = EnumUtils.getEnumIgnoreCase(Category.class, categoryString.getAsString());
+        final var category = EnumUtils.getEnumIgnoreCase(Category.class, categoryString.getAsString(), Category.nope);
 
         try {
             final var result = restTemplate.getForObject("https://nekos.best/api/v2/" + category.name(), AnimeResultList.class).results()[0];
