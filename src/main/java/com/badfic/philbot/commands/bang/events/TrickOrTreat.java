@@ -27,7 +27,11 @@ public class TrickOrTreat extends BaseBangCommand {
     }
 
     @Scheduled(cron = "${swampy.schedule.events.trickortreat}", zone = "${swampy.schedule.timezone}")
-    void trickOrTreat() {
+    private void onSchedule() {
+        Thread.startVirtualThread(this::trickOrTreat);
+    }
+
+    private void trickOrTreat() {
         final var swampyGamesConfig = getSwampyGamesConfig();
 
         final var guild = philJda.getGuildById(baseConfig.guildId);

@@ -30,7 +30,7 @@ public class Boost extends BaseBangCommand {
 
     @Scheduled(cron = "${swampy.schedule.events.boost}", zone = "${swampy.schedule.timezone}")
     void boost() {
-        doBoost(false);
+        Thread.startVirtualThread(() -> doBoost(false));
     }
 
     private void doBoost(final boolean force) {

@@ -136,16 +136,18 @@ public class Phil {
 
         @Scheduled(cron = "${swampy.schedule.phil.dadjoke}", zone = "${swampy.schedule.timezone}")
         void sayDadJoke() {
-            final var headers = new HttpHeaders();
-            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-            headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
-            final var dadJoke = restTemplate.exchange("https://icanhazdadjoke.com/", HttpMethod.GET, new HttpEntity<>(headers), DadJokeRecord.class);
+            Thread.startVirtualThread(() -> {
+                final var headers = new HttpHeaders();
+                headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+                headers.add(HttpHeaders.USER_AGENT, Constants.USER_AGENT);
+                final var dadJoke = restTemplate.exchange("https://icanhazdadjoke.com/", HttpMethod.GET, new HttpEntity<>(headers), DadJokeRecord.class);
 
-            if (dadJoke.getBody() != null) {
-                philJda.getTextChannelsByName("general", false).stream().findAny().ifPresent(channel -> {
-                    channel.sendMessage(dadJoke.getBody().joke()).queue();
-                });
-            }
+                if (dadJoke.getBody() != null) {
+                    philJda.getTextChannelsByName("general", false).stream().findAny().ifPresent(channel -> {
+                        channel.sendMessage(dadJoke.getBody().joke()).queue();
+                    });
+                }
+            });
         }
 
         @Scheduled(cron = "${swampy.schedule.phil.humpday}", zone = "${swampy.schedule.timezone}")

@@ -53,7 +53,11 @@ public class QuoteTrivia extends BaseBangCommand implements OnJdaReady {
     }
 
     @Scheduled(cron = "${swampy.schedule.events.quotetrivia}", zone = "${swampy.schedule.timezone}")
-    void quoteTrivia() {
+    private void onSchedule() {
+        Thread.startVirtualThread(this::quoteTrivia);
+    }
+
+    private void quoteTrivia() {
         final var swampyGamesConfig = getSwampyGamesConfig();
         final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
         final var guild = philJda.getGuildById(baseConfig.guildId);

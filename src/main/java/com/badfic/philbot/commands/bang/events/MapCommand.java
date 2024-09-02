@@ -44,7 +44,11 @@ public class MapCommand extends BaseBangCommand implements OnJdaReady {
     }
 
     @Scheduled(cron = "${swampy.schedule.events.map}", zone = "${swampy.schedule.timezone}")
-    void doMap() {
+    private void onSchedule() {
+        Thread.startVirtualThread(this::doMap);
+    }
+
+    private void doMap() {
         var swampyGamesConfig = getSwampyGamesConfig();
 
         final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
