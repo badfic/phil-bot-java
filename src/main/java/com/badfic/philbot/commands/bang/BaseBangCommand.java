@@ -54,7 +54,7 @@ public abstract class BaseBangCommand implements BaseCommand {
     protected RandomNumberService randomNumberService;
 
     @Setter(onMethod_ = {@Autowired})
-    private ThreadPoolTaskScheduler taskScheduler;
+    protected ThreadPoolTaskScheduler taskScheduler;
 
     protected String name;
     protected String requiredRole;
