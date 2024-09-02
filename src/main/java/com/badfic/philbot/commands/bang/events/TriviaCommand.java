@@ -75,7 +75,11 @@ public class TriviaCommand extends BaseBangCommand implements OnJdaReady {
     }
 
     @Scheduled(cron = "${swampy.schedule.events.trivia}", zone = "${swampy.schedule.timezone}")
-    void trivia() {
+    private void onSchedule() {
+        Thread.startVirtualThread(this::trivia);
+    }
+
+    private void trivia() {
         final var swampyGamesConfig = getSwampyGamesConfig();
         final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
 

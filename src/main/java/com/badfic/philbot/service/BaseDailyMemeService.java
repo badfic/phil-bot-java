@@ -6,10 +6,10 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.BaseDailyMemeEntity;
 import com.badfic.philbot.data.DailyMemeRepository;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
-import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
-public abstract class BaseDailyMemeService extends BaseBangCommand {
+public abstract class BaseDailyMemeService extends BaseBangCommand implements OnJdaReady {
 
     private final DailyMemeRepository<? extends BaseDailyMemeEntity> dailyMemeRepository;
     private final String searchString;
@@ -42,9 +42,11 @@ public abstract class BaseDailyMemeService extends BaseBangCommand {
         this.ownerCommand = true;
     }
 
-    @PostConstruct
-    public void init() {
-        taskScheduler.scheduleWithFixedDelay(this::refreshImageUrls, Duration.ofMinutes(15));
+    @Override
+    public void run() {
+        taskScheduler.scheduleWithFixedDelay(() -> {
+            Thread.startVirtualThread(this::refreshImageUrls);
+        }, Instant.now().plus(15, ChronoUnit.MINUTES), Duration.ofMinutes(15));
     }
 
     @Override

@@ -142,7 +142,9 @@ public interface BaseCommand {
     }
 
     default void scheduleTask(final Runnable task, final LocalDateTime executionTime) {
-        getTaskScheduler().schedule(task, executionTime.toInstant(ZoneOffset.UTC));
+        getTaskScheduler().schedule(() -> {
+            Thread.startVirtualThread(task);
+        }, executionTime.toInstant(ZoneOffset.UTC));
     }
 
 }
