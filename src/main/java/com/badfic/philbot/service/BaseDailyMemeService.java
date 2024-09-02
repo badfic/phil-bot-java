@@ -10,6 +10,7 @@ import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -44,7 +45,9 @@ public abstract class BaseDailyMemeService extends BaseBangCommand {
 
     @PostConstruct
     public void init() {
-        taskScheduler.scheduleWithFixedDelay(this::refreshImageUrls, Duration.ofMinutes(15));
+        taskScheduler.scheduleWithFixedDelay(() -> {
+            Thread.startVirtualThread(this::refreshImageUrls);
+        }, Instant.now().plus(15, ChronoUnit.MINUTES), Duration.ofMinutes(15));
     }
 
     @Override
