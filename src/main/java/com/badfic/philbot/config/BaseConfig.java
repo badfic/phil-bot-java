@@ -17,11 +17,11 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
-import dev.lavalink.youtube.clients.AndroidMusicWithThumbnail;
-import dev.lavalink.youtube.clients.AndroidTestsuiteWithThumbnail;
-import dev.lavalink.youtube.clients.MusicWithThumbnail;
-import dev.lavalink.youtube.clients.TvHtml5EmbeddedWithThumbnail;
-import dev.lavalink.youtube.clients.WebWithThumbnail;
+import dev.lavalink.youtube.clients.AndroidMusic;
+import dev.lavalink.youtube.clients.AndroidTestsuite;
+import dev.lavalink.youtube.clients.Music;
+import dev.lavalink.youtube.clients.TvHtml5Embedded;
+import dev.lavalink.youtube.clients.Web;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -133,11 +133,11 @@ public class BaseConfig {
     @Bean
     public AudioPlayerManager audioPlayerManager() {
         if (StringUtils.isNotBlank(youtubePoToken) && StringUtils.isNotBlank(youtubeVisitorData)) {
-            WebWithThumbnail.setPoTokenAndVisitorData(youtubePoToken, youtubeVisitorData);
+            Web.setPoTokenAndVisitorData(youtubePoToken, youtubeVisitorData);
         }
 
-        final var youtube = new YoutubeAudioSourceManager(true, new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidTestsuiteWithThumbnail(),
-                new AndroidMusicWithThumbnail(), new TvHtml5EmbeddedWithThumbnail());
+        final var youtube = new YoutubeAudioSourceManager(true, new Music(), new Web(), new AndroidTestsuite(),
+                new AndroidMusic(), new TvHtml5Embedded());
 
         final var manager = new DefaultAudioPlayerManager();
         manager.registerSourceManager(youtube);
