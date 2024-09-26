@@ -32,8 +32,6 @@ swampy:
 
     daily: "0 0 2 * * *"
 
-    imagerefresh: "0 0,15,30,45 0,1-23 * * *"
-
     rss: "0 30 * * * *"
 
     phil:
@@ -43,9 +41,6 @@ swampy:
 
     behrad:
       humpday: "0 2 7 * * WED"
-
-    keanu:
-      goodmorning: "0 0 7 * * *"
 
     events:
       # We're skipping the hours surrounding 2am (because of the daily tasks)
