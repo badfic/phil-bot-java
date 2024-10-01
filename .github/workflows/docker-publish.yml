@@ -45,6 +45,10 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      # https://github.com/buildpacks/github-actions
+      - name: Setup Pack
+        uses: buildpacks/github-actions/setup-pack@v5.7.4
+
       - name: Pack Build (arm64)
         run: pack build --builder bellsoft/buildpacks.builder:musl --platform linux/arm64 --publish --tag ${{steps.meta.outputs.tags}} ${{env.REGISTRY}}/${{env.IMAGE_NAME}} --env BP_JVM_VERSION=${{env.JAVA_VERSION}}
 
