@@ -50,13 +50,10 @@ jobs:
         uses: buildpacks/github-actions/setup-pack@v5.7.4
 
       - name: Pack Default Builder
-        run: pack config default-builder heroku/builder:24 # apparently only the heroku builder supports arm64
+        run: pack config default-builder gcr.io/paketo-buildpacks/java
 
       - name: Pack Build (arm64)
         run: pack build --platform linux/arm64 --publish --tag ${{steps.meta.outputs.tags}} ${{env.REGISTRY}}/${{env.IMAGE_NAME}} --env BP_JVM_VERSION=${{env.JAVA_VERSION}}
-
-      - name: Pack Build (amd64)
-        run: pack build --platform linux/amd64 --publish --tag ${{steps.meta.outputs.tags}} ${{env.REGISTRY}}/${{env.IMAGE_NAME}} --env BP_JVM_VERSION=${{env.JAVA_VERSION}}
 
       # https://github.com/appleboy/ssh-action
       - name: Deploy Via SSH
