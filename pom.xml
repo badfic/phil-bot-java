@@ -204,5 +204,10 @@
 			<url>https://maven.lavalink.dev/releases</url>
 		</repository>
 	</repositories>
-
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/libs-milestone-local</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
