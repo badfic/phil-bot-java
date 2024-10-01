@@ -49,6 +49,9 @@ jobs:
       - name: Setup Pack
         uses: buildpacks/github-actions/setup-pack@v5.7.4
 
+      - name: Pack Default Builder
+        run: pack config default-builder paketobuildpacks/builder-jammy-tiny
+
       - name: Pack Build (arm64)
         run: pack build --platform linux/arm64 --publish --tag ${{steps.meta.outputs.tags}} ${{env.REGISTRY}}/${{env.IMAGE_NAME}} --env BP_JVM_VERSION=${{env.JAVA_VERSION}}
 
