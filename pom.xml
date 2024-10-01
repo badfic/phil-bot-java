@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.0-M3</version>
+		<version>3.3.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.badfic</groupId>
@@ -151,27 +151,10 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>build-image-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
-					<docker>
-						<publishRegistry>
-							<username>${env.DOCKER_USERNAME}</username>
-							<password>${env.DOCKER_PASSWORD}</password>
-							<url>${env.REGISTRY}</url>
-						</publishRegistry>
-					</docker>
-					<image>
-						<name>ghcr.io/badfic/phil-bot-java</name>
-						<tags>${env.DOCKER_TAGS}</tags>
-						<publish>${env.DO_PUBLISH}</publish>
-						<imagePlatform>linux/arm64</imagePlatform>
-					</image>
+					<layers>
+						<enabled>true</enabled>
+					</layers>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -190,10 +173,6 @@
 
 	<repositories>
 		<repository>
-			<id>spring-milestones</id>
-			<url>https://repo.spring.io/milestone</url>
-		</repository>
-		<repository>
 			<id>central</id>
 			<name>Central Repository</name>
 			<url>https://repo.maven.apache.org/maven2</url>
@@ -203,10 +182,4 @@
 			<url>https://maven.lavalink.dev/releases</url>
 		</repository>
 	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>spring-milestones</id>
-			<url>https://repo.spring.io/libs-milestone-local</url>
-		</pluginRepository>
-	</pluginRepositories>
 </project>
