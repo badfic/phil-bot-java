@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.4</version>
+		<version>3.4.0-M3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.badfic</groupId>
@@ -170,6 +170,8 @@
 						<name>ghcr.io/badfic/phil-bot-java</name>
 						<tags>${env.DOCKER_TAGS}</tags>
 						<publish>${env.DO_PUBLISH}</publish>
+						<builder>bellsoft/buildpacks.builder:musl</builder>
+						<imagePlatform>linux/arm64</imagePlatform>
 					</image>
 				</configuration>
 			</plugin>
@@ -188,6 +190,10 @@
 	</build>
 
 	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/milestone</url>
+		</repository>
 		<repository>
 			<id>central</id>
 			<name>Central Repository</name>
