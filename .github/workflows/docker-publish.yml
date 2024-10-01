@@ -50,10 +50,10 @@ jobs:
         uses: buildpacks/github-actions/setup-pack@v5.7.4
 
       - name: Pack Build (arm64)
-        run: pack build --builder bellsoft/buildpacks.builder:musl --platform linux/arm64 --publish --tag ${{steps.meta.outputs.tags}} ${{env.REGISTRY}}/${{env.IMAGE_NAME}} --env BP_JVM_VERSION=${{env.JAVA_VERSION}}
+        run: pack build --builder gcr.io/paketo-buildpacks/bellsoft-liberica --platform linux/arm64 --publish --tag ${{steps.meta.outputs.tags}} ${{env.REGISTRY}}/${{env.IMAGE_NAME}} --env BP_JVM_VERSION=${{env.JAVA_VERSION}}
 
       - name: Pack Build (amd64)
-        run: pack build --builder bellsoft/buildpacks.builder:musl --platform linux/amd64 --publish --tag ${{steps.meta.outputs.tags}} ${{env.REGISTRY}}/${{env.IMAGE_NAME}} --env BP_JVM_VERSION=${{env.JAVA_VERSION}}
+        run: pack build --builder gcr.io/paketo-buildpacks/bellsoft-liberica --platform linux/amd64 --publish --tag ${{steps.meta.outputs.tags}} ${{env.REGISTRY}}/${{env.IMAGE_NAME}} --env BP_JVM_VERSION=${{env.JAVA_VERSION}}
 
       # https://github.com/appleboy/ssh-action
       - name: Deploy Via SSH
