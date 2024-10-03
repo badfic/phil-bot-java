@@ -10,4 +10,4 @@ COPY --from=builder spring-boot-loader/ ./
 COPY --from=builder snapshot-dependencies/ ./
 COPY --from=builder application/ ./
 EXPOSE 8080
-ENTRYPOINT ["java", "-cp BOOT-INF/classes:BOOT-INF/lib/* com.badfic.philbot.BotApplication"]
+ENTRYPOINT ["java", "-cp", "BOOT-INF/classes:BOOT-INF/lib/*", "com.badfic.philbot.BotApplication"]
