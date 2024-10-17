@@ -1,6 +1,5 @@
 package com.badfic.philbot.commands.slash;
 
-import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.service.AudioPlayerSendHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -29,8 +28,8 @@ public class PlaySlashCommand extends BaseSlashCommand {
         this.audioPlayer = audioPlayer;
         this.audioPlayerSendHandler = audioPlayerSendHandler;
         name = "play";
-        options = List.of(new OptionData(OptionType.STRING, "track", "Either a URL or a search term for the track to play", true, false));
-        help = "Play a track by URL or by searching";
+        options = List.of(new OptionData(OptionType.STRING, "track", "A URL of the track to play", true, false));
+        help = "Play an audio track by URL";
     }
 
     @Override
@@ -38,14 +37,13 @@ public class PlaySlashCommand extends BaseSlashCommand {
         final var interactionHook = event.deferReply().submit();
 
         final var songQuery = event.getOption("track").getAsString().strip();
-        final var songUrl = Constants.isUrl(songQuery) ? songQuery : "ytmsearch: " + songQuery;
 
-        audioPlayerManager.loadItem(songUrl, new AudioLoadResultHandler() {
+        audioPlayerManager.loadItem(songQuery, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 getVoiceChannel(event, interactionHook).ifPresent(voiceChannel -> {
                     connectToVoiceChannelAndPlay(voiceChannel, audioTrack);
-                    replyToInteractionHook(event, interactionHook, songUrl + " added to queue.");
+                    replyToInteractionHook(event, interactionHook, songQuery + " added to queue.");
                 });
             }
 
@@ -60,13 +58,13 @@ public class PlaySlashCommand extends BaseSlashCommand {
 
                     connectToVoiceChannelAndPlay(voiceChannel, firstTrack);
 
-                    replyToInteractionHook(event, interactionHook, songUrl + " playlist added to queue.");
+                    replyToInteractionHook(event, interactionHook, songQuery + " playlist added to queue.");
                 });
             }
 
             @Override
             public void noMatches() {
-                replyToInteractionHook(event, interactionHook, "No track found at " + songUrl);
+                replyToInteractionHook(event, interactionHook, "No track found at " + songQuery);
             }
 
             @Override

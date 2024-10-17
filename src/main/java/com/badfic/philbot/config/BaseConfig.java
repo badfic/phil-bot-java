@@ -16,6 +16,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -120,7 +121,7 @@ public class BaseConfig {
     @Bean
     public AudioPlayerManager audioPlayerManager() {
         final var manager = new DefaultAudioPlayerManager();
-        AudioSourceManagers.registerRemoteSources(manager);
+        AudioSourceManagers.registerRemoteSources(manager, YoutubeAudioSourceManager.class);
         return manager;
     }
 
