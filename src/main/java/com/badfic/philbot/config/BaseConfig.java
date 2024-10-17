@@ -16,12 +16,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import dev.lavalink.youtube.YoutubeAudioSourceManager;
-import dev.lavalink.youtube.clients.AndroidMusic;
-import dev.lavalink.youtube.clients.AndroidTestsuite;
-import dev.lavalink.youtube.clients.Music;
-import dev.lavalink.youtube.clients.TvHtml5Embedded;
-import dev.lavalink.youtube.clients.Web;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,7 +28,6 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -72,12 +65,6 @@ public class BaseConfig {
 
     @Value("${AO3_SUMMARY_API_KEY}")
     public String ao3SummaryApiKey;
-
-    @Value("${YOUTUBE_PO_TOKEN:}")
-    private String youtubePoToken;
-
-    @Value("${YOUTUBE_VISITOR_DATA:}")
-    private String youtubeVisitorData;
 
     @Bean
     public ExecutorService executorService() {
@@ -132,16 +119,8 @@ public class BaseConfig {
 
     @Bean
     public AudioPlayerManager audioPlayerManager() {
-        if (StringUtils.isNotBlank(youtubePoToken) && StringUtils.isNotBlank(youtubeVisitorData)) {
-            Web.setPoTokenAndVisitorData(youtubePoToken, youtubeVisitorData);
-        }
-
-        final var youtube = new YoutubeAudioSourceManager(true, new Music(), new Web(), new AndroidTestsuite(),
-                new AndroidMusic(), new TvHtml5Embedded());
-
         final var manager = new DefaultAudioPlayerManager();
-        manager.registerSourceManager(youtube);
-        AudioSourceManagers.registerRemoteSources(manager, com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager.class);
+        AudioSourceManagers.registerRemoteSources(manager);
         return manager;
     }
 
