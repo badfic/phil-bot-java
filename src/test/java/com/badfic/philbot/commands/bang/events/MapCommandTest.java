@@ -3,7 +3,7 @@ package com.badfic.philbot.commands.bang.events;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.HashSet;
-import net.lingala.zip4j.io.inputstream.ZipInputStream;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -33,11 +33,11 @@ public class MapCommandTest {
 
         try (final var stream = getClass().getClassLoader().getResourceAsStream(MapCommand.MAP_ZIP_FILENAME);
              final var zipFile = new ZipInputStream(stream)) {
-            var fileHeader = zipFile.getNextEntry();
-            while (fileHeader != null) {
-                final var countryCode = fileHeader.getFileName().substring(0, fileHeader.getFileName().length() - 4);
+            var zipEntry = zipFile.getNextEntry();
+            while (zipEntry != null) {
+                final var countryCode = zipEntry.getName().substring(0, zipEntry.getName().length() - 4);
                 flagzipCountryCodes.add(countryCode);
-                fileHeader = zipFile.getNextEntry();
+                zipEntry = zipFile.getNextEntry();
             }
         }
 
