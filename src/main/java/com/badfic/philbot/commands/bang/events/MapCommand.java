@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.zip.ZipInputStream;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.utils.FileUpload;
-import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -82,15 +82,15 @@ public class MapCommand extends BaseBangCommand implements OnJdaReady {
 
         try (final var mapFileStream = getClass().getClassLoader().getResourceAsStream(MAP_ZIP_FILENAME);
              final var zipFile = new ZipInputStream(mapFileStream)) {
-            var fileHeader = zipFile.getNextEntry();
-            while (fileHeader != null) {
-                if (fileHeader.getFileName().equalsIgnoreCase(mapTriviaObject.code() + ".png")) {
+            var zipEntry = zipFile.getNextEntry();
+            while (zipEntry != null) {
+                if (zipEntry.getName().equalsIgnoreCase(mapTriviaObject.code() + ".png")) {
                     break;
                 }
-                fileHeader = zipFile.getNextEntry();
+                zipEntry = zipFile.getNextEntry();
             }
 
-            if (fileHeader == null) {
+            if (zipEntry == null) {
                 swampysChannel.sendMessage("Failed to load image for map trivia. The answer is " + mapTriviaObject.regex()).queue();
                 return;
             }
