@@ -12,11 +12,6 @@ import static net.dv8tion.jda.api.requests.GatewayIntent.MESSAGE_CONTENT;
 import com.badfic.philbot.listeners.Phil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -116,18 +111,6 @@ public class BaseConfig {
     @Bean
     public RestTemplate restTemplate(final OkHttpClient okHttpClient) {
         return new RestTemplate(new OkHttp3ClientHttpRequestFactory(okHttpClient));
-    }
-
-    @Bean
-    public AudioPlayerManager audioPlayerManager() {
-        final var manager = new DefaultAudioPlayerManager();
-        AudioSourceManagers.registerRemoteSources(manager, YoutubeAudioSourceManager.class);
-        return manager;
-    }
-
-    @Bean
-    public AudioPlayer audioPlayer(final AudioPlayerManager audioPlayerManager) {
-        return audioPlayerManager.createPlayer();
     }
 
     @Bean(name = "philJda")
