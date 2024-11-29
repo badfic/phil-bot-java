@@ -135,16 +135,16 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
         });
     }
 
-    private void trialComplete(final long defendentId) {
+    private void trialComplete(final long defendantId) {
         final var guild = philJda.getGuildById(baseConfig.guildId);
         final var megaHellRole = guild.getRolesByName(Constants.MEGA_HELL_ROLE, false).getFirst();
         final var swampysChannel = philJda.getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst();
         final var megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).getFirst();
 
-        final var optCourtCase = courtCaseDal.findById(defendentId);
+        final var optCourtCase = courtCaseDal.findById(defendantId);
 
         if (optCourtCase.isEmpty()) {
-            swampysChannel.sendMessage("Megahell trial for <@" + defendentId + "> failed.").queue();
+            swampysChannel.sendMessage("Megahell trial for <@" + defendantId + "> failed.").queue();
             return;
         }
 
@@ -177,8 +177,8 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
             trialMessage.clearReactions().queue();
 
             if (sentenceMap.entrySet().stream().allMatch(e -> e.getValue().getValue() == 0)) {
-                swampysChannel.sendMessage("<@" + defendentId + "> has been acquitted").queue();
-                courtCaseDal.deleteById(defendentId);
+                swampysChannel.sendMessage("<@" + defendantId + "> has been acquitted").queue();
+                courtCaseDal.deleteById(defendantId);
                 return;
             }
 
@@ -189,73 +189,73 @@ class JudgeCommand extends BaseBangCommand implements OnJdaReady {
 
             switch (winningSentence) {
                 case ACQUIT -> {
-                    swampysChannel.sendMessage("<@" + defendentId + "> has been acquitted").queue();
-                    courtCaseDal.deleteById(defendentId);
+                    swampysChannel.sendMessage("<@" + defendantId + "> has been acquitted").queue();
+                    courtCaseDal.deleteById(defendantId);
                 }
                 case ONE_HOUR -> {
-                    guild.addRoleToMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
+                    guild.addRoleToMember(UserSnowflake.fromId(defendantId), megaHellRole).queue();
                     courtCase.setTrialDate(null);
                     final var releaseDate = LocalDateTime.now().plusHours(1);
                     courtCase.setReleaseDate(releaseDate);
                     courtCaseDal.update(courtCase);
 
-                    scheduleTask(() -> releaseComplete(defendentId), releaseDate);
+                    scheduleTask(() -> releaseComplete(defendantId), releaseDate);
 
-                    swampysChannel.sendMessage("<@" + defendentId + "> has been sentenced to 1 hour in mega hell for "
+                    swampysChannel.sendMessage("<@" + defendantId + "> has been sentenced to 1 hour in mega hell for "
                             + courtCase.getCrime()).queue();
-                    megaHellChannel.sendMessage("<@" + defendentId + "> has been sentenced to 1 hour in mega hell for "
+                    megaHellChannel.sendMessage("<@" + defendantId + "> has been sentenced to 1 hour in mega hell for "
                             + courtCase.getCrime()).queue();
                 }
                 case FIVE_HOUR -> {
-                    guild.addRoleToMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
+                    guild.addRoleToMember(UserSnowflake.fromId(defendantId), megaHellRole).queue();
                     courtCase.setTrialDate(null);
                     final var releaseDate = LocalDateTime.now().plusHours(5);
                     courtCase.setReleaseDate(releaseDate);
                     courtCaseDal.update(courtCase);
 
-                    scheduleTask(() -> releaseComplete(defendentId), releaseDate);
+                    scheduleTask(() -> releaseComplete(defendantId), releaseDate);
 
-                    swampysChannel.sendMessage("<@" + defendentId + "> has been sentenced to 5 hours in mega hell for "
+                    swampysChannel.sendMessage("<@" + defendantId + "> has been sentenced to 5 hours in mega hell for "
                             + courtCase.getCrime()).queue();
-                    megaHellChannel.sendMessage("<@" + defendentId + "> has been sentenced to 5 hours in mega hell for "
+                    megaHellChannel.sendMessage("<@" + defendantId + "> has been sentenced to 5 hours in mega hell for "
                             + courtCase.getCrime()).queue();
                 }
                 case ONE_DAY -> {
-                    guild.addRoleToMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
+                    guild.addRoleToMember(UserSnowflake.fromId(defendantId), megaHellRole).queue();
                     courtCase.setTrialDate(null);
                     final var releaseDate = LocalDateTime.now().plusDays(1);
                     courtCase.setReleaseDate(releaseDate);
                     courtCaseDal.update(courtCase);
 
-                    scheduleTask(() -> releaseComplete(defendentId), releaseDate);
+                    scheduleTask(() -> releaseComplete(defendantId), releaseDate);
 
-                    swampysChannel.sendMessage("<@" + defendentId + "> has been sentenced to 1 day in mega hell for "
+                    swampysChannel.sendMessage("<@" + defendantId + "> has been sentenced to 1 day in mega hell for "
                             + courtCase.getCrime()).queue();
-                    megaHellChannel.sendMessage("<@" + defendentId + "> has been sentenced to 1 day in mega hell for "
+                    megaHellChannel.sendMessage("<@" + defendantId + "> has been sentenced to 1 day in mega hell for "
                             + courtCase.getCrime()).queue();
                 }
             }
         } catch (final Exception e) {
-            log.error("Error with trial sentencing for [userId={}]", defendentId, e);
-            courtCaseDal.deleteById(defendentId);
-            swampysChannel.sendMessage("Megahell trial sentencing for <@" + defendentId + "> failed.").queue();
+            log.error("Error with trial sentencing for [userId={}]", defendantId, e);
+            courtCaseDal.deleteById(defendantId);
+            swampysChannel.sendMessage("Megahell trial sentencing for <@" + defendantId + "> failed.").queue();
         }
     }
 
-    private void releaseComplete(final long defendentId) {
+    private void releaseComplete(final long defendantId) {
         final var guild = philJda.getGuildById(baseConfig.guildId);
         final var megaHellRole = guild.getRolesByName(Constants.MEGA_HELL_ROLE, false).getFirst();
         final var megaHellChannel = philJda.getTextChannelsByName(Constants.MEGA_HELL_CHANNEL, false).getFirst();
 
-        courtCaseDal.findById(defendentId)
-                .ifPresent(courtCase -> courtCaseDal.deleteById(defendentId));
+        courtCaseDal.findById(defendantId)
+                .ifPresent(courtCase -> courtCaseDal.deleteById(defendantId));
 
         try {
-            guild.removeRoleFromMember(UserSnowflake.fromId(defendentId), megaHellRole).queue();
-            megaHellChannel.sendMessage("<@" + defendentId + "> has been released from mega-hell").queue();
+            guild.removeRoleFromMember(UserSnowflake.fromId(defendantId), megaHellRole).queue();
+            megaHellChannel.sendMessage("<@" + defendantId + "> has been released from mega-hell").queue();
         } catch (final Exception e) {
-            log.error("Error with release date for [userId={}]", defendentId, e);
-            megaHellChannel.sendMessage("Megahell sentence release for <@" + defendentId + "> failed.").queue();
+            log.error("Error with release date for [userId={}]", defendantId, e);
+            megaHellChannel.sendMessage("Megahell sentence release for <@" + defendantId + "> failed.").queue();
         }
     }
 

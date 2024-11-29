@@ -64,7 +64,7 @@ class LeaderboardSlashCommand extends BaseSlashCommand {
     }
 
     @Override
-    public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
+    public void onAutoComplete(final CommandAutoCompleteInteractionEvent event) {
         event.replyChoices(new Command.Choice("bastards", 1L), new Command.Choice("chaos", 0)).queue();
     }
 }

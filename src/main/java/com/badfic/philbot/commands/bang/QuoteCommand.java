@@ -207,7 +207,7 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
         return SPEECH_BUBBLE_EMOJI;
     }
 
-    public void saveQuote(MessageReactionAddEvent event) {
+    public void saveQuote(final MessageReactionAddEvent event) {
         final var messageId = event.getMessageIdLong();
         final var channelId = event.getChannel().getIdLong();
         final var guildId = event.getGuild().getIdLong();
@@ -238,7 +238,7 @@ public class QuoteCommand extends BaseBangCommand implements DailyTickable {
         }
     }
 
-    private void respondWithQuote(CommandEvent event, Quote quote) {
+    private void respondWithQuote(final CommandEvent event, final Quote quote) {
         final var guildId = event.getGuild().getId();
         final var msgLink = "[(jump)](https://discordapp.com/channels/" + guildId + '/' + quote.getChannelId() + '/' + quote.getMessageId() + ')';
 

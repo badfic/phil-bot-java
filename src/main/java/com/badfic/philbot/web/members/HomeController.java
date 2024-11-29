@@ -23,7 +23,7 @@ public class HomeController extends BaseMembersController {
 
     @GetMapping(value = {"", "/", "/home"}, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView home(
-            final @RequestParam(value = "code") Optional<String> code,
+            @RequestParam(value = "code") final Optional<String> code,
             final HttpServletRequest httpServletRequest) throws Exception {
         final var session = httpServletRequest.getSession();
 

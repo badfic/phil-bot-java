@@ -74,27 +74,27 @@ public class CommandEvent {
         return event.getMember();
     }
 
-    public void reply(String message) {
+    public void reply(final String message) {
         event.getChannel().sendMessage(message).queue();
     }
 
-    public void reply(MessageEmbed embed) {
+    public void reply(final MessageEmbed embed) {
         event.getChannel().sendMessageEmbeds(embed).queue();
     }
 
-    public void reply(MessageEmbed embed, Consumer<Message> messageConsumer) {
+    public void reply(final MessageEmbed embed, final Consumer<Message> messageConsumer) {
         event.getChannel().sendMessageEmbeds(embed).queue(messageConsumer);
     }
 
-    public void replySuccess(String message) {
+    public void replySuccess(final String message) {
         event.getChannel().sendMessage("✅ " + message).queue();
     }
 
-    public void replyError(String message) {
+    public void replyError(final String message) {
         event.getChannel().sendMessage("❌ " + message).queue();
     }
 
-    public void replyInDm(MessageEmbed embed) {
+    public void replyInDm(final MessageEmbed embed) {
         event.getAuthor().openPrivateChannel().flatMap(privateChannel -> {
             return privateChannel.sendMessage(MessageCreateData.fromEmbeds(embed));
         }).queue();

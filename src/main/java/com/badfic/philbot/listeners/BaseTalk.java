@@ -44,12 +44,12 @@ public abstract class BaseTalk extends BaseBangCommand {
         }
 
         var msg = event.getMessage().getContentRaw();
-        msg = StringUtils.replaceIgnoreCase(msg, Constants.PREFIX + name + " ", "");
-        msg = msg.replace(split[0], "").trim();
+        msg = StringUtils.replaceIgnoreCase(msg, Constants.PREFIX + name + " ", StringUtils.EMPTY);
+        msg = msg.replace(split[0], StringUtils.EMPTY).trim();
         final var finalMsg = msg;
 
         final var swampyGamesConfig = getSwampyGamesConfig();
-        philJda.getTextChannelsByName(split[0].replace("#", ""), true)
+        philJda.getTextChannelsByName(split[0].replace("#", StringUtils.EMPTY), true)
                 .stream()
                 .findFirst()
                 .ifPresent(channel -> {

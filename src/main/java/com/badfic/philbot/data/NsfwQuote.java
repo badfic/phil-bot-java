@@ -10,7 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 public class NsfwQuote extends BaseQuote {
 
-    public NsfwQuote(long messageId, long channelId, String quote, String image, long userId, LocalDateTime created) {
+    public NsfwQuote(final long messageId, final long channelId, final String quote, final String image, final long userId, final LocalDateTime created) {
         super(messageId, channelId, quote, image, userId, created);
     }
 

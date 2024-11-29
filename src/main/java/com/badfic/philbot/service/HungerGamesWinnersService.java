@@ -97,7 +97,7 @@ public class HungerGamesWinnersService extends BaseBangCommand implements DailyT
         Constants.debugToTestChannel(philJda, "Successfully updated hunger games winners image URLs");
     }
 
-    public void addWinner(MessageReactionAddEvent event) {
+    public void addWinner(final MessageReactionAddEvent event) {
         final var messageId = event.getMessageIdLong();
         final var channelId = event.getChannel().getIdLong();
 

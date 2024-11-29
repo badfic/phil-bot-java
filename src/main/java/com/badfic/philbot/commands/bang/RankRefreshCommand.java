@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 class RankRefreshCommand extends BaseBangCommand {
 
-    public RankRefreshCommand(RestTemplate restTemplate, BaseConfig baseConfig) {
+    public RankRefreshCommand(final RestTemplate restTemplate, final BaseConfig baseConfig) {
         this.name = "rankRefresh";
         this.aliases = new String[] {"refreshRanks"};
         this.requiredRole = Constants.ADMIN_ROLE;

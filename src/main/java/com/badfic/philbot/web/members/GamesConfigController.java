@@ -59,7 +59,7 @@ public class GamesConfigController extends BaseMembersController {
     }
 
     @PostMapping(value = "/games-config", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> post(final HttpServletRequest httpServletRequest, final @RequestBody ConfigEntryPut configEntry) throws Exception {
+    public ResponseEntity<String> post(final HttpServletRequest httpServletRequest, @RequestBody final ConfigEntryPut configEntry) throws Exception {
         checkSession(httpServletRequest, true);
 
         if (configEntry != null && StringUtils.isNotBlank(configEntry.fieldName()) && StringUtils.isNotBlank(configEntry.fieldValue())) {
