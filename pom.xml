@@ -129,6 +129,28 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>build-image-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<docker>
+						<publishRegistry>
+							<username>${env.DOCKER_USERNAME}</username>
+							<password>${env.DOCKER_PASSWORD}</password>
+							<url>${env.REGISTRY}</url>
+						</publishRegistry>
+					</docker>
+					<image>
+						<name>ghcr.io/badfic/phil-bot-java</name>
+						<tags>${env.DOCKER_TAGS}</tags>
+						<publish>true</publish>
+						<imagePlatform>linux/arm64</imagePlatform>
+					</image>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>io.github.git-commit-id</groupId>

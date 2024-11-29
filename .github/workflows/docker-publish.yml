@@ -8,6 +8,9 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  DOCKER_USERNAME: ${{ github.actor }}
+  DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build:
@@ -44,15 +47,18 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository }}
 
-      # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
+      - name: Set DOCKER_TAGS environment variable
+        run: echo "DOCKER_TAGS=${{ steps.meta.outputs.tags }}" >> $GITHUB_ENV
+
+      # https://github.com/actions/setup-java
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
-          context: .
-          push: true
-          platforms: "linux/amd64,linux/arm64"
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          distribution: 'liberica'
+          java-version: 21
+
+      - name: Build and Publish Buildpack Docker Image
+        run: mvn package
 
       # https://github.com/appleboy/ssh-action
       - name: Deploy Via SSH
