@@ -50,6 +50,13 @@ jobs:
       - name: Set DOCKER_TAGS environment variable
         run: echo "DOCKER_TAGS=${{ steps.meta.outputs.tags }}" >> $GITHUB_ENV
 
+      # https://github.com/actions/setup-java
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'liberica'
+          java-version: 21
+
       - name: Build and Publish Buildpack Docker Image
         run: mvn package
 
