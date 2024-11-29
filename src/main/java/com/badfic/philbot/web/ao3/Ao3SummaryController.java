@@ -20,7 +20,7 @@ public class Ao3SummaryController {
     private final Ao3MetadataParser ao3MetadataParser;
 
     @PostMapping(value = "/ao3/summary", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> getAo3Summary(final @RequestBody Ao3SummaryRequest ao3SummaryRequest) {
+    public ResponseEntity<String> getAo3Summary(@RequestBody final Ao3SummaryRequest ao3SummaryRequest) {
         if (!baseConfig.ao3SummaryApiKey.equals(ao3SummaryRequest.apiKey())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

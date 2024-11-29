@@ -158,7 +158,7 @@ public class Phil {
         }
 
         @Override
-        public void onMessageReceived(final @NotNull MessageReceivedEvent event) {
+        public void onMessageReceived(@NotNull final MessageReceivedEvent event) {
             if (event.getChannelType() != ChannelType.TEXT && event.getChannelType() != ChannelType.PRIVATE) {
                 return;
             }
@@ -298,7 +298,7 @@ public class Phil {
         }
 
         @Override
-        public void onReady(final @NotNull ReadyEvent event) {
+        public void onReady(@NotNull final ReadyEvent event) {
             Message.suppressContentIntentWarning(); // This is specifically for all the non-phil bots, they'll print a warning without this.
 
             log.info("Received ready event for [guild={}] [user={}]", baseConfig.guildId, event.getJDA().getSelfUser());
@@ -339,7 +339,7 @@ public class Phil {
         }
 
         @Override
-        public void onSlashCommandInteraction(final @NotNull SlashCommandInteractionEvent event) {
+        public void onSlashCommandInteraction(@NotNull final SlashCommandInteractionEvent event) {
             for (final var slashCommand : slashCommands) {
                 if (event.getName().equals(slashCommand.getName())) {
                     // no guildOnly check because all slash commands are guild only
@@ -375,7 +375,7 @@ public class Phil {
         }
 
         @Override
-        public void onCommandAutoCompleteInteraction(final @NotNull CommandAutoCompleteInteractionEvent event) {
+        public void onCommandAutoCompleteInteraction(@NotNull final CommandAutoCompleteInteractionEvent event) {
             for (final var slashCommand : slashCommands) {
                 if (event.getName().equals(slashCommand.getName())) {
                     slashCommand.onAutoComplete(event);
@@ -385,7 +385,7 @@ public class Phil {
         }
 
         @Override
-        public void onGuildVoiceUpdate(final @NotNull GuildVoiceUpdateEvent event) {
+        public void onGuildVoiceUpdate(@NotNull final GuildVoiceUpdateEvent event) {
             if (event.getChannelJoined() != null) {
                 swampyCommand.voiceJoined(event.getMember());
             } else if (event.getChannelLeft() != null) {
@@ -398,7 +398,7 @@ public class Phil {
         }
 
         @Override
-        public void onMessageReactionAdd(final @NotNull MessageReactionAddEvent event) {
+        public void onMessageReactionAdd(@NotNull final MessageReactionAddEvent event) {
             if (event.getUser() != null && event.getUser().isBot()) {
                 return;
             }
@@ -424,7 +424,7 @@ public class Phil {
         }
 
         @Override
-        public void onGuildMemberRoleAdd(final @NotNull GuildMemberRoleAddEvent event) {
+        public void onGuildMemberRoleAdd(@NotNull final GuildMemberRoleAddEvent event) {
             if (event.getRoles().stream().anyMatch(r -> r.getName().equals(Constants.CHAOS_CHILDREN_ROLE) || r.getName().equals(Constants.EIGHTEEN_PLUS_ROLE))) {
                 final var mention = event.getMember().getAsMention();
                 event.getGuild().getTextChannelsByName(Constants.SWAMPYS_CHANNEL, false).getFirst().sendMessage(mention + " Congratulations on not being a newbie " +
@@ -435,7 +435,7 @@ public class Phil {
         }
 
         @Override
-        public void onGuildMemberJoin(final @NotNull GuildMemberJoinEvent event) {
+        public void onGuildMemberJoin(@NotNull final GuildMemberJoinEvent event) {
             memberCount.updateCount();
 
             event.getGuild().getTextChannelsByName("landing-zone", false).stream().findFirst().ifPresent(landingZone -> {
@@ -460,7 +460,7 @@ public class Phil {
         }
 
         @Override
-        public void onGuildBan(final @NotNull GuildBanEvent event) {
+        public void onGuildBan(@NotNull final GuildBanEvent event) {
             swampyCommand.removeFromGames(event.getGuild(), event.getUser().getId());
 
             event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).stream().findAny().ifPresent(channel -> {
@@ -475,7 +475,7 @@ public class Phil {
         }
 
         @Override
-        public void onGuildMemberRemove(final @NotNull GuildMemberRemoveEvent event) {
+        public void onGuildMemberRemove(@NotNull final GuildMemberRemoveEvent event) {
             swampyCommand.removeFromGames(event.getGuild(), event.getUser().getId());
 
             event.getJDA().getTextChannelsByName(Constants.TEST_CHANNEL, false).stream().findAny().ifPresent(channel -> {
@@ -490,7 +490,7 @@ public class Phil {
         }
 
         @Override
-        public void onGuildMemberUpdateNickname(final @NotNull GuildMemberUpdateNicknameEvent event) {
+        public void onGuildMemberUpdateNickname(@NotNull final GuildMemberUpdateNicknameEvent event) {
             event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
                 channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
                                 event.getUser().getName() + " Updated Nickname",
@@ -502,7 +502,7 @@ public class Phil {
         }
 
         @Override
-        public void onUserUpdateName(final @NotNull UserUpdateNameEvent event) {
+        public void onUserUpdateName(@NotNull final UserUpdateNameEvent event) {
             event.getJDA().getTextChannelsByName(Constants.MOD_LOGS_CHANNEL, false).stream().findAny().ifPresent(channel -> {
                 channel.sendMessageEmbeds(Constants.simpleEmbedThumbnail(
                                 event.getOldName() + " Updated Username",
@@ -518,7 +518,7 @@ public class Phil {
         }
 
         @Override
-        public void onGuildMemberUpdateAvatar(final @NotNull GuildMemberUpdateAvatarEvent event) {
+        public void onGuildMemberUpdateAvatar(@NotNull final GuildMemberUpdateAvatarEvent event) {
             logAvatarUpdate(event.getUser(), event.getNewAvatarUrl(), event.getOldAvatarUrl());
         }
 

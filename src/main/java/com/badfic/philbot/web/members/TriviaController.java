@@ -41,7 +41,7 @@ public class TriviaController extends BaseMembersController {
     }
 
     @PostMapping(value = "/trivia", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> postTriviaForm(final @RequestBody TriviaForm form, final HttpServletRequest httpServletRequest) throws Exception {
+    public ResponseEntity<String> postTriviaForm(@RequestBody final TriviaForm form, final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
         if (Stream.of(form.question(), form.answerA(), form.answerB(), form.answerC()).anyMatch(StringUtils::isBlank)) {

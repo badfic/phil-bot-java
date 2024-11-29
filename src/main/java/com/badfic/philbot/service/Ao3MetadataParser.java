@@ -92,7 +92,7 @@ public class Ao3MetadataParser extends BaseService {
         final var title = titleElement.getFirst().text();
 
         final var authorElement = document.getElementsByAttributeValueContaining("rel", "author");
-        final var authorLink = CollectionUtils.isEmpty(authorElement) ? "" : authorElement.getFirst().attr("href");
+        final var authorLink = CollectionUtils.isEmpty(authorElement) ? StringUtils.EMPTY : authorElement.getFirst().attr("href");
         final var authorName = CollectionUtils.isEmpty(authorElement) ? "Anonymous" : authorElement.getFirst().text();
 
         final var description = new StringBuilder();

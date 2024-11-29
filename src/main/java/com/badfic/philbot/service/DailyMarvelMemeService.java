@@ -16,7 +16,7 @@ public class DailyMarvelMemeService extends BaseDailyMemeService {
     }
 
     @Override
-    public BaseDailyMemeEntity create(long messageId, String message, String imageUrl, LocalDateTime timeCreated, LocalDateTime timeEdited) {
+    public BaseDailyMemeEntity create(final long messageId, final String message, final String imageUrl, final LocalDateTime timeCreated, final LocalDateTime timeEdited) {
         return new DailyMarvelMemeEntity(messageId, message, imageUrl, timeCreated, timeEdited);
     }
 }

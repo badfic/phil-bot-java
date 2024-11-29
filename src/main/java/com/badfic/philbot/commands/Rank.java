@@ -32,7 +32,7 @@ public class Rank {
     private final boolean newCardDeck;
     private final boolean firstRank;
 
-    private Rank(int ordinal, String roleName, long level, String rankUpImage, String rankupMessage, Color color) {
+    private Rank(final int ordinal, final String roleName, final long level, final String rankUpImage, final String rankupMessage, final Color color) {
         this.ordinal = ordinal;
         this.roleName = roleName;
         this.level = level;
@@ -44,7 +44,7 @@ public class Rank {
     }
 
     @Synchronized
-    public static void init(RestTemplate restTemplate, String airtableApiToken) throws Exception {
+    public static void init(final RestTemplate restTemplate, final String airtableApiToken) {
         LEVEL_MAP.clear();
 
         final var httpHeaders = new HttpHeaders();
@@ -72,7 +72,7 @@ public class Rank {
     }
 
     @Synchronized
-    public static Rank byXp(long xp) {
+    public static Rank byXp(final long xp) {
         final var level = Math.round(LEVEL_MODIFIER * Math.sqrt(xp));
 
         for (var i = level; i > 0; i--) {
@@ -84,7 +84,7 @@ public class Rank {
         return LEVEL_MAP.get(0L);
     }
 
-    public static long xpRequiredForLevel(long xp, long level) {
+    public static long xpRequiredForLevel(final long xp, final long level) {
         return Math.round(Math.pow(level/ LEVEL_MODIFIER, 2) - xp);
     }
 

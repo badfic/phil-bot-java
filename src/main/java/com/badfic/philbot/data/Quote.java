@@ -10,7 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 public class Quote extends BaseQuote {
 
-    public Quote(long messageId, long channelId, String quote, String image, long userId, LocalDateTime created) {
+    public Quote(final long messageId, final long channelId, final String quote, final String image, final long userId, final LocalDateTime created) {
         super(messageId, channelId, quote, image, userId, created);
     }
 

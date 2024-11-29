@@ -58,7 +58,7 @@ class Antonia {
 
         private final Command antoniaCommand;
 
-        void onMessageReceived(final @NotNull MessageReceivedEvent event, final SwampyGamesConfig swampyGamesConfig) {
+        void onMessageReceived(@NotNull final MessageReceivedEvent event, final SwampyGamesConfig swampyGamesConfig) {
             final var msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
             final var channelId = event.getMessage().getChannel().getIdLong();
@@ -77,7 +77,6 @@ class Antonia {
 
             if (ANTONIA_PATTERN.matcher(msgContent).find()) {
                 antoniaCommand.execute(new CommandEvent(event));
-                return;
             }
         }
     }

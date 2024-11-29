@@ -65,7 +65,7 @@ class Behrad {
             });
         }
 
-        void onMessageReceived(final @NotNull MessageReceivedEvent event, final SwampyGamesConfig swampyGamesConfig) {
+        void onMessageReceived(@NotNull final MessageReceivedEvent event, final SwampyGamesConfig swampyGamesConfig) {
             final var msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
             final var channelId = event.getMessage().getChannel().getIdLong();
@@ -95,7 +95,6 @@ class Behrad {
 
             if (BEHRAD_PATTERN.matcher(msgContent).find()) {
                 behradCommand.execute(new CommandEvent(event));
-                return;
             }
         }
     }

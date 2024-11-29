@@ -70,7 +70,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @PostMapping(value = "/hunger-sim/pronoun", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Pronoun newPronoun(final HttpServletRequest httpServletRequest, final @RequestBody PronounDto pronoun) throws Exception {
+    public Pronoun newPronoun(final HttpServletRequest httpServletRequest, @RequestBody final PronounDto pronoun) throws Exception {
         checkSession(httpServletRequest, true);
 
         if (Stream.of(pronoun.subject, pronoun.object, pronoun.possessive, pronoun.self).anyMatch(StringUtils::isBlank)) {
@@ -85,7 +85,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @PutMapping(value = "/hunger-sim/pronoun/{pronounId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Pronoun editPronoun(final HttpServletRequest httpServletRequest, final @PathVariable("pronounId") Long pronounId, final @RequestBody PronounDto pronoun)
+    public Pronoun editPronoun(final HttpServletRequest httpServletRequest, @PathVariable("pronounId") final Long pronounId, @RequestBody final PronounDto pronoun)
             throws Exception {
         checkSession(httpServletRequest, true);
 
@@ -104,7 +104,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @DeleteMapping(value = "/hunger-sim/pronoun/{pronounId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deletePronoun(final HttpServletRequest httpServletRequest, final @PathVariable("pronounId") Long pronounId) throws Exception {
+    public void deletePronoun(final HttpServletRequest httpServletRequest, @PathVariable("pronounId") final Long pronounId) throws Exception {
         checkSession(httpServletRequest, true);
 
         final var pronoun = pronounRepository.findById(pronounId).orElseThrow(() -> new IllegalArgumentException("Could not find Pronoun with that ID"));
@@ -135,7 +135,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @PostMapping(value = "/hunger-sim/player", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Player newPlayer(final HttpServletRequest httpServletRequest, final @RequestBody PlayerDto player) throws Exception {
+    public Player newPlayer(final HttpServletRequest httpServletRequest, @RequestBody final PlayerDto player) throws Exception {
         checkSession(httpServletRequest, true);
 
         final var pronouns = pronounRepository.findById(Objects.requireNonNull(player.pronounId))
@@ -162,7 +162,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @DeleteMapping(value = "/hunger-sim/player/{playerId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deletePlayer(final HttpServletRequest httpServletRequest, final @PathVariable("playerId") Long playerId) throws Exception {
+    public void deletePlayer(final HttpServletRequest httpServletRequest, @PathVariable("playerId") final Long playerId) throws Exception {
         checkSession(httpServletRequest, true);
 
         final var player = playerRepository.findById(playerId).orElseThrow(() -> new IllegalArgumentException("Player by that ID not found"));
@@ -191,7 +191,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @PostMapping(value = "/hunger-sim/outcome", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Outcome newOutcome(final HttpServletRequest httpServletRequest, final @RequestBody OutcomeDto outcome) throws Exception {
+    public Outcome newOutcome(final HttpServletRequest httpServletRequest, @RequestBody final OutcomeDto outcome) throws Exception {
         checkSession(httpServletRequest, true);
 
         validateOutcome(outcome);
@@ -205,7 +205,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @DeleteMapping(value = "/hunger-sim/outcome/{outcomeId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteOutcome(final HttpServletRequest httpServletRequest, final @PathVariable("outcomeId") Long outcomeId) throws Exception {
+    public void deleteOutcome(final HttpServletRequest httpServletRequest, @PathVariable("outcomeId") final Long outcomeId) throws Exception {
         checkSession(httpServletRequest, true);
         final var outcome = outcomeRepository.findById(outcomeId).orElseThrow(() -> new IllegalArgumentException("Outcome by that ID does not exist"));
         final var roundOutcomes = roundOutcomeRepository.findByOutcome(outcome.getId());
@@ -244,7 +244,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @PostMapping(value = "/hunger-sim/round", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Round newRound(final HttpServletRequest httpServletRequest, final @RequestBody RoundDto round) throws Exception {
+    public Round newRound(final HttpServletRequest httpServletRequest, @RequestBody final RoundDto round) throws Exception {
         checkSession(httpServletRequest, true);
 
         if (CollectionUtils.isEmpty(round.outcomeIds)) {
@@ -266,7 +266,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @PutMapping(value = "/hunger-sim/round/{roundId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Round updateRound(HttpServletRequest httpServletRequest, @PathVariable("roundId") Long roundId, @RequestBody RoundDto round) throws Exception {
+    public Round updateRound(final HttpServletRequest httpServletRequest, @PathVariable("roundId") final Long roundId, @RequestBody final RoundDto round) throws Exception {
         checkSession(httpServletRequest, true);
 
         if (CollectionUtils.isEmpty(round.outcomeIds)) {
@@ -303,7 +303,7 @@ public class HungerSimRestController extends BaseMembersController {
     }
 
     @DeleteMapping(value = "/hunger-sim/round/{roundId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteRound(final HttpServletRequest httpServletRequest, @PathVariable("roundId") Long roundId) throws Exception {
+    public void deleteRound(final HttpServletRequest httpServletRequest, @PathVariable("roundId") final Long roundId) throws Exception {
         checkSession(httpServletRequest, true);
 
         final var round = roundRepository.findById(roundId).orElseThrow(() -> new IllegalArgumentException("Round by that ID does not exist"));
@@ -314,7 +314,7 @@ public class HungerSimRestController extends BaseMembersController {
     /** GAME **/
 
     @PostMapping(value = "/hunger-sim/game", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Game newGame(final HttpServletRequest httpServletRequest, final @RequestBody GameDto game) throws Exception {
+    public Game newGame(final HttpServletRequest httpServletRequest, @RequestBody final GameDto game) throws Exception {
         checkSession(httpServletRequest, true);
 
         final var openingRound = roundRepository.findByOpeningRound(true);

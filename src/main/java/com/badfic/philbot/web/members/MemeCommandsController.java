@@ -36,7 +36,7 @@ public class MemeCommandsController extends BaseMembersController {
     }
 
     @PostMapping(value = "/meme-commands", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> postMemeForm(final @RequestBody MemeForm form, final HttpServletRequest httpServletRequest) throws Exception {
+    public ResponseEntity<String> postMemeForm(@RequestBody final MemeForm form, final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
         memeCommandsService.saveMeme(form.memeUrl(), form.memeName());
@@ -45,7 +45,7 @@ public class MemeCommandsController extends BaseMembersController {
     }
 
     @DeleteMapping(value = "/meme-commands/{memeName}", produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> deleteMeme(final @PathVariable("memeName") String memeName, final HttpServletRequest httpServletRequest) throws Exception {
+    public ResponseEntity<String> deleteMeme(@PathVariable("memeName") final String memeName, final HttpServletRequest httpServletRequest) throws Exception {
         checkSession(httpServletRequest, true);
 
         memeCommandsService.deleteMeme(memeName);

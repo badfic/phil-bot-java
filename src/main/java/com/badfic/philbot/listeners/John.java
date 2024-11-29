@@ -113,7 +113,7 @@ class John {
         private final Command johnCommand;
         private final RemindersCommand remindersCommand;
 
-        void onMessageReceived(final @NotNull MessageReceivedEvent event, final SwampyGamesConfig swampyGamesConfig) {
+        void onMessageReceived(@NotNull final MessageReceivedEvent event, final SwampyGamesConfig swampyGamesConfig) {
             final var msgContent = event.getMessage().getContentRaw().toLowerCase(Locale.ENGLISH);
 
             if (REMINDER_PATTER.matcher(msgContent).find()) {
@@ -161,7 +161,6 @@ class John {
 
             if (JOHN_PATTERN.matcher(msgContent).find()) {
                 johnCommand.execute(new CommandEvent(event));
-                return;
             }
         }
     }
