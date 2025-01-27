@@ -59,6 +59,7 @@ public class Constants {
     public static final String MOD_LOGS_CHANNEL = "super-secret-mod-announcements";
     public static final String HUNGERDOME_CHANNEL = "the-hungerdome";
     public static final String CURSED_SWAMP_CHANNEL = "cursed-swamp";
+    public static final String NSFW_QUOTE_TRIVIA_CHANNEL = "nsfw-trivia";
     public static final String MEMES_CHANNEL = "memes";
 
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";

@@ -59,7 +59,7 @@ public class NsfwQuoteTrivia extends BaseBangCommand implements OnJdaReady {
 
     private void quoteTrivia() {
         final var swampyGamesConfig = getSwampyGamesConfig();
-        final var triviaChannel = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false).getFirst();
+        final var triviaChannel = philJda.getTextChannelsByName(Constants.NSFW_QUOTE_TRIVIA_CHANNEL, false).getFirst();
         final var guild = philJda.getGuildById(baseConfig.guildId);
 
         if (swampyGamesConfig.getNsfwQuoteTriviaMsgId() != null) {
@@ -145,7 +145,7 @@ public class NsfwQuoteTrivia extends BaseBangCommand implements OnJdaReady {
 
     private void triviaComplete() {
         final var swampyGamesConfig = getSwampyGamesConfig();
-        final var swampysChannel = philJda.getTextChannelsByName(Constants.CURSED_SWAMP_CHANNEL, false).getFirst();
+        final var swampysChannel = philJda.getTextChannelsByName(Constants.NSFW_QUOTE_TRIVIA_CHANNEL, false).getFirst();
 
         if (Objects.isNull(swampyGamesConfig.getNsfwQuoteTriviaMsgId())) {
             swampysChannel.sendMessage("Could not find nsfw quote trivia question anymore. Failed to award points.").queue();
