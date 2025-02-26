@@ -62,4 +62,5 @@ jobs:
 
       - name: Send watchtower webhook
         #if: ${{ github.event_name != 'pull_request' }}
-        run: curl -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}" ${{ secrets.WATCHTOWER_HOST }}/v1/update?image=${{ env.REGISTRY }}/${{ github.repository }}
+        run: |
+          curl -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}" ${{ secrets.WATCHTOWER_HOST }}/v1/update?image=${{ env.REGISTRY }}/${{ github.repository }}
