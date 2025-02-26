@@ -60,16 +60,7 @@ jobs:
       - name: Build and Publish Buildpack Docker Image
         run: mvn package
 
-      # https://github.com/appleboy/ssh-action
-#      - name: Deploy Via SSH
-#        uses: appleboy/ssh-action@v1.0.3
-#        if: ${{ github.event_name != 'pull_request' }}
-#        with:
-#          host: ${{ secrets.SSH_HOST }}
-#          username: ${{ secrets.SSH_USERNAME }}
-#          key: ${{ secrets.SSH_KEY }}
-#          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
-#          script: |
-#            cd philbot-java
-#            docker compose pull
-#            docker compose up -d
+      - name: Send watchtower webhook
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          curl --fail-with-body -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}" ${{ secrets.WATCHTOWER_HOST }}/v1/update?image=${{ env.REGISTRY }}/${{ github.repository }}
