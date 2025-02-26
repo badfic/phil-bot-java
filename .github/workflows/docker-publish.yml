@@ -61,15 +61,15 @@ jobs:
         run: mvn package
 
       # https://github.com/appleboy/ssh-action
-      - name: Deploy Via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        if: ${{ github.event_name != 'pull_request' }}
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
-          script: |
-            cd philbot-java
-            docker compose pull
-            docker compose up -d
+#      - name: Deploy Via SSH
+#        uses: appleboy/ssh-action@v1.0.3
+#        if: ${{ github.event_name != 'pull_request' }}
+#        with:
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ${{ secrets.SSH_USERNAME }}
+#          key: ${{ secrets.SSH_KEY }}
+#          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+#          script: |
+#            cd philbot-java
+#            docker compose pull
+#            docker compose up -d

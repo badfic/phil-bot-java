@@ -148,7 +148,7 @@
 						<name>ghcr.io/badfic/phil-bot-java</name>
 						<tags>${env.DOCKER_TAGS}</tags>
 						<publish>true</publish>
-						<imagePlatform>linux/arm64</imagePlatform>
+						<imagePlatform>linux/amd64</imagePlatform>
 					</image>
 				</configuration>
 			</plugin>
