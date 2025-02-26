@@ -61,6 +61,6 @@ jobs:
         run: mvn package
 
       - name: Send watchtower webhook
-        #if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' }}
         run: |
           curl --fail-with-body -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}" ${{ secrets.WATCHTOWER_HOST }}/v1/update?image=${{ env.REGISTRY }}/${{ github.repository }}
