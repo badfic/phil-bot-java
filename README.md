@@ -30,7 +30,3 @@ For error handling, a sentry.io account can be setup and the following env var i
 ```
 SENTRY_URL
 ```
-
----
-
-IntelliJ IDEA product subscription provided by JetBrains: https://www.jetbrains.com/community/opensource
