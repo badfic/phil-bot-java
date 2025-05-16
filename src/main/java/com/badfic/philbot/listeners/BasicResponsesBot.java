@@ -102,7 +102,7 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
 
         if (msgContent.startsWith(fullCmdPrefix)) {
             if (event.getMember()
-                    .getRoles()
+                    .getUnsortedRoles()
                     .stream()
                     .noneMatch(r -> r.getName().equalsIgnoreCase(Constants.ADMIN_ROLE))) {
                 event.replyError("You do not have the correct role to use the " + name + " command");
