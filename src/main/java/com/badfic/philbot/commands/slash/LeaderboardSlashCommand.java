@@ -41,7 +41,7 @@ class LeaderboardSlashCommand extends BaseSlashCommand {
             try {
                 final var member = Objects.requireNonNull(guild.getMemberById(u.getId()));
 
-                return member.getRoles()
+                return member.getUnsortedRoles()
                         .stream()
                         .anyMatch(r -> r.getName().equalsIgnoreCase(type.getAsLong() == 1 ? Constants.EIGHTEEN_PLUS_ROLE : Constants.CHAOS_CHILDREN_ROLE));
             } catch (final Exception e) {

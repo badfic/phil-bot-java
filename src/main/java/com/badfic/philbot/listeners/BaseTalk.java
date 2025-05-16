@@ -32,7 +32,7 @@ public abstract class BaseTalk extends BaseBangCommand {
         }
 
         final var memberById = philJda.getGuildById(baseConfig.guildId).getMemberById(event.getAuthor().getId());
-        if (memberById == null || memberById.getRoles().stream().noneMatch(r -> r.getName().equalsIgnoreCase(Constants.ADMIN_ROLE))) {
+        if (memberById == null || memberById.getUnsortedRoles().stream().noneMatch(r -> r.getName().equalsIgnoreCase(Constants.ADMIN_ROLE))) {
             event.replyError("Failed, either you're not an admin or you left the server or the member cache is broken");
             return;
         }

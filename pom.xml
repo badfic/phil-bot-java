@@ -18,7 +18,7 @@
 		<java.version>21</java.version>
 
 		<fastutil.version>8.5.15</fastutil.version>
-		<jda.version>5.5.0</jda.version>
+		<jda.version>5.5.1</jda.version>
 		<jsoup.version>1.20.1</jsoup.version>
 		<rome.version>2.1.0</rome.version>
 		<sentry.io.version>8.11.1</sentry.io.version>

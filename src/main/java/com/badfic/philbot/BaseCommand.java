@@ -116,7 +116,7 @@ public interface BaseCommand {
     }
 
     default boolean isNotParticipating(final Member member) {
-        final var roles = member.getRoles();
+        final var roles = member.getUnsortedRoles();
 
         for (final var role : roles) {
             final var roleName = role.getName();
@@ -130,7 +130,7 @@ public interface BaseCommand {
     }
 
     default boolean hasRole(final Member member, final String role) {
-        return member.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
+        return member.getUnsortedRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
     }
 
     default SwampyGamesConfig getSwampyGamesConfig()  {

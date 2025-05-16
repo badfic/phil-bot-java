@@ -75,7 +75,7 @@ public abstract class BaseMembersController {
     }
 
     protected boolean hasRole(final Member member, final String role) {
-        return member.getRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
+        return member.getUnsortedRoles().stream().anyMatch(r -> r.getName().equalsIgnoreCase(role));
     }
 
     protected void addCommonProps(final HttpSession session, final Map<String, Object> props) {

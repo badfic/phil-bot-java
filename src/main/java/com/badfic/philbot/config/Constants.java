@@ -157,7 +157,7 @@ public class Constants {
     }
 
     public static Optional<Role> hasRole(final Member member, final String roleName) {
-        return member.getRoles().stream().filter(r -> r.getName().equalsIgnoreCase(roleName)).findFirst();
+        return member.getUnsortedRoles().stream().filter(r -> r.getName().equalsIgnoreCase(roleName)).findFirst();
     }
 
     public static <T> T pickRandom(final Collection<T> collection) {
