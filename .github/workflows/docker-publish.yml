@@ -55,7 +55,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'liberica'
-          java-version: 21
+          java-version: 25
 
       - name: Build and Publish Buildpack Docker Image
         run: mvn package
