@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
+        <version>3.5.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.badfic</groupId>
@@ -17,13 +17,9 @@
     <properties>
         <java.version>25</java.version>
 
-        <commons-lang3.version>3.19.0</commons-lang3.version>
         <fastutil.version>8.5.18</fastutil.version>
-        <flyway.version>11.14.0</flyway.version>
         <jda.version>5.6.1</jda.version> <!-- TODO: Update to JDA 6.x -->
         <jsoup.version>1.21.2</jsoup.version>
-        <lombok.version>1.18.42</lombok.version>
-        <postgres-jdbc.version>42.7.8</postgres-jdbc.version>
         <rome.version>2.1.0</rome.version>
         <sentry.io.version>8.23.0</sentry.io.version>
     </properties>
@@ -68,17 +64,14 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>${postgres-jdbc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>${flyway.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>it.unimi.dsi</groupId>
@@ -121,7 +114,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -173,20 +165,11 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>central</id>
-            <name>Central Repository</name>
-            <url>https://repo.maven.apache.org/maven2</url>
-        </repository>
-    </repositories>
 
 </project>
