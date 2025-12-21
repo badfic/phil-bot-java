@@ -1,7 +1,6 @@
 package com.badfic.philbot.config;
 
 import static net.dv8tion.jda.api.requests.GatewayIntent.DIRECT_MESSAGES;
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_EMOJIS_AND_STICKERS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MEMBERS;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGES;
 import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MESSAGE_REACTIONS;
@@ -119,7 +118,7 @@ public class BaseConfig {
                        final OkHttpClient okHttpClient,
                        final Phil.MessageListener messageListener) throws Exception {
         final var intents = Arrays.asList(GUILD_MEMBERS, GUILD_MODERATION, GUILD_MESSAGES, MESSAGE_CONTENT, GUILD_VOICE_STATES,
-                GUILD_MESSAGE_REACTIONS, GUILD_EMOJIS_AND_STICKERS, DIRECT_MESSAGES);
+                GUILD_MESSAGE_REACTIONS, DIRECT_MESSAGES);
 
         return JDABuilder.create(philBotToken, intents)
                 .disableCache(CacheFlag.ACTIVITY, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.FORUM_TAGS,

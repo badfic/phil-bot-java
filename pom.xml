@@ -18,7 +18,7 @@
         <java.version>25</java.version>
 
         <fastutil.version>8.5.18</fastutil.version>
-        <jda.version>5.6.1</jda.version> <!-- TODO: Update to JDA 6.x -->
+        <jda.version>6.2.0</jda.version>
         <jsoup.version>1.21.2</jsoup.version>
         <rome.version>2.1.0</rome.version>
         <sentry.io.version>8.23.0</sentry.io.version>
