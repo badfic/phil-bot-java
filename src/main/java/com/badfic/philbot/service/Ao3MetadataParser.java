@@ -1,7 +1,6 @@
 package com.badfic.philbot.service;
 
 import com.badfic.philbot.config.Constants;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.awt.Color;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.databind.JsonNode;
 
 @Component
 @Slf4j
@@ -47,7 +47,7 @@ public class Ao3MetadataParser extends BaseService {
                 final var work = getWork(link);
                 final var messageEmbed = parseWork(link, work);
                 final var map = messageEmbed.toData().toMap();
-                final var jsonNode = objectMapper.valueToTree(map);
+                final var jsonNode = jsonMapper.valueToTree(map);
 
                 restTemplate.exchange(webhookUrl, HttpMethod.PATCH, new HttpEntity<>(new Data(new JsonNode[]{jsonNode})), String.class);
                 log.info("Successfully sent AO3 Summary for [link={}]", link);

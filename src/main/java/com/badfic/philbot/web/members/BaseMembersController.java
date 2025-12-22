@@ -5,7 +5,6 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
@@ -25,6 +24,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.json.JsonMapper;
 
 @RequestMapping("/members")
 public abstract class BaseMembersController {
@@ -41,7 +41,7 @@ public abstract class BaseMembersController {
     protected BaseConfig baseConfig;
 
     @Setter(onMethod_ = {@Autowired})
-    protected ObjectMapper objectMapper;
+    protected JsonMapper jsonMapper;
 
     @Setter(onMethod_ = {@Autowired})
     protected RestTemplate restTemplate;

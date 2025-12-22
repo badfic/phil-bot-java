@@ -1,20 +1,20 @@
 package com.badfic.philbot.data.converters;
 
 import com.badfic.philbot.data.GenericBotResponsesConfigJson;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.json.JsonMapper;
 
 @Component
 @ReadingConverter
 public class JsonToGenericBotResponsesConfigConverter implements Converter<String, GenericBotResponsesConfigJson> {
 
-    private static ObjectMapper OBJECT_MAPPER;
+    private static JsonMapper JSON_MAPPER;
 
-    public JsonToGenericBotResponsesConfigConverter(final ObjectMapper objectMapper) {
-        OBJECT_MAPPER = objectMapper;
+    public JsonToGenericBotResponsesConfigConverter(final JsonMapper jsonMapper) {
+        JSON_MAPPER = jsonMapper;
     }
 
     @Override
@@ -23,6 +23,6 @@ public class JsonToGenericBotResponsesConfigConverter implements Converter<Strin
         if (s == null) {
             return null;
         }
-        return OBJECT_MAPPER.readValue(s, GenericBotResponsesConfigJson.class);
+        return JSON_MAPPER.readValue(s, GenericBotResponsesConfigJson.class);
     }
 }

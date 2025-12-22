@@ -159,7 +159,7 @@ public class MapCommand extends BaseBangCommand implements OnJdaReady {
     @SneakyThrows
     MapTriviaObject[] getCountries() {
         try (final var stream = getClass().getClassLoader().getResourceAsStream("map-trivia.json")) {
-            return objectMapper.readValue(stream, MapTriviaObject[].class);
+            return jsonMapper.readValue(stream, MapTriviaObject[].class);
         }
     }
 

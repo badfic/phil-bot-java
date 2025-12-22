@@ -3,7 +3,6 @@ package com.badfic.philbot.web.members;
 import com.badfic.philbot.config.ControllerConfigurable;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class GamesConfigController extends BaseMembersController {
 
     private final SwampyGamesConfigDal swampyGamesConfigDal;
-    private final ObjectMapper objectMapper;
 
     @GetMapping(value = "/games-config", produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get(final HttpServletRequest httpServletRequest) throws Exception {
@@ -43,7 +41,7 @@ public class GamesConfigController extends BaseMembersController {
                     case IMG ->
                             configEntries.add(annotation.category(), new ConfigEntryGet(declaredField.getName(), declaredField.get(swampyGamesConfig).toString(), true, false));
                     case STRING_SET ->
-                            configEntries.add(annotation.category(), new ConfigEntryGet(declaredField.getName(), objectMapper.writeValueAsString(declaredField.get(swampyGamesConfig)), false, true));
+                            configEntries.add(annotation.category(), new ConfigEntryGet(declaredField.getName(), jsonMapper.writeValueAsString(declaredField.get(swampyGamesConfig)), false, true));
                     default -> throw new IllegalStateException();
                 }
             }
@@ -87,7 +85,7 @@ public class GamesConfigController extends BaseMembersController {
                 case STRING_SET -> {
                     final var fieldValueRaw = configEntry.fieldValue();
 
-                    final var fieldValue = objectMapper.readValue(fieldValueRaw, String[].class);
+                    final var fieldValue = jsonMapper.readValue(fieldValueRaw, String[].class);
 
                     declaredField.set(swampyGamesConfig, fieldValue);
                 }

@@ -5,7 +5,6 @@ import com.badfic.philbot.config.BaseConfig;
 import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.service.RandomNumberService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -23,6 +22,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.json.JsonMapper;
 
 @Getter
 public abstract class BaseSlashCommand implements BaseCommand {
@@ -37,7 +37,7 @@ public abstract class BaseSlashCommand implements BaseCommand {
     protected SwampyGamesConfigDal swampyGamesConfigDal;
 
     @Setter(onMethod_ = {@Autowired})
-    protected ObjectMapper objectMapper;
+    protected JsonMapper jsonMapper;
 
     @Setter(onMethod_ = {@Autowired})
     protected JdbcAggregateTemplate jdbcAggregateTemplate;

@@ -9,7 +9,6 @@ import com.badfic.philbot.data.BaseResponsesConfig;
 import com.badfic.philbot.data.BaseResponsesConfigRepository;
 import com.badfic.philbot.data.GenericBotResponsesConfigJson;
 import com.badfic.philbot.data.SwampyGamesConfig;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.awt.image.BufferedImage;
 import java.util.Locale;
 import java.util.Objects;
@@ -27,6 +26,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import tools.jackson.core.JacksonException;
 
 @Slf4j
 public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends BaseBangCommand implements ModHelpAware {
@@ -254,14 +254,14 @@ public abstract class BasicResponsesBot<T extends BaseResponsesConfig> extends B
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", removed `" + saying + "` from sfw config").queue();
             } else if (msgContent.startsWith(fullCmdPrefix + " nsfw config")) {
                 try {
-                    event.getChannel().sendFiles(FileUpload.fromData(objectMapper.writeValueAsBytes(responsesConfig.getNsfwConfig()), name + "-nsfwconfig.json")).queue();
-                } catch (final JsonProcessingException e) {
+                    event.getChannel().sendFiles(FileUpload.fromData(jsonMapper.writeValueAsBytes(responsesConfig.getNsfwConfig()), name + "-nsfwconfig.json")).queue();
+                } catch (final JacksonException e) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send nsfw config to you").queue();
                 }
             } else if (msgContent.startsWith(fullCmdPrefix + " sfw config")) {
                 try {
-                    event.getChannel().sendFiles(FileUpload.fromData(objectMapper.writeValueAsBytes(responsesConfig.getSfwConfig()), name + "-sfwconfig.json")).queue();
-                } catch (final JsonProcessingException e) {
+                    event.getChannel().sendFiles(FileUpload.fromData(jsonMapper.writeValueAsBytes(responsesConfig.getSfwConfig()), name + "-sfwconfig.json")).queue();
+                } catch (final JacksonException e) {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send sfw config to you").queue();
                 }
             } else if (msgContent.startsWith(fullCmdPrefix + " tts")) {

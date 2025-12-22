@@ -9,8 +9,7 @@ import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_VOICE_STATES;
 import static net.dv8tion.jda.api.requests.GatewayIntent.MESSAGE_CONTENT;
 
 import com.badfic.philbot.listeners.Phil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import java.net.http.HttpClient;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,7 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.support.TaskExecutorAdapter;
-import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
@@ -100,16 +99,8 @@ public class BaseConfig {
     }
 
     @Bean
-    public ObjectMapper objectMapper() {
-        final var objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules();
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return objectMapper;
-    }
-
-    @Bean
-    public RestTemplate restTemplate(final OkHttpClient okHttpClient) {
-        return new RestTemplate(new OkHttp3ClientHttpRequestFactory(okHttpClient));
+    public RestTemplate restTemplate(final ExecutorService executorService) {
+        return new RestTemplate(new JdkClientHttpRequestFactory(HttpClient.newBuilder().build(), executorService));
     }
 
     @Bean(name = "philJda")

@@ -48,7 +48,7 @@ public class AdviceSlashCommand extends BaseSlashCommand {
                 return;
             }
 
-            final var result = objectMapper.readValue(resultString, AdviceSlip.class);
+            final var result = jsonMapper.readValue(resultString, AdviceSlip.class);
 
             replyToInteractionHook(event, interactionHook, Constants.simpleEmbed("Advice " + result.slip.id, result.slip.advice));
         } catch (final Exception e) {

@@ -1,19 +1,19 @@
 package com.badfic.philbot.data.converters;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.json.JsonMapper;
 
 @Component
 @ReadingConverter
 public class JsonToStringArrayConverter implements Converter<String, String[]> {
 
-    private static ObjectMapper OBJECT_MAPPER;
+    private static JsonMapper JSON_MAPPER;
 
-    public JsonToStringArrayConverter(final ObjectMapper objectMapper) {
-        OBJECT_MAPPER = objectMapper;
+    public JsonToStringArrayConverter(final JsonMapper jsonMapper) {
+        JSON_MAPPER = jsonMapper;
     }
 
     @Override
@@ -22,6 +22,6 @@ public class JsonToStringArrayConverter implements Converter<String, String[]> {
         if (source == null) {
             return null;
         }
-        return OBJECT_MAPPER.readValue(source, String[].class);
+        return JSON_MAPPER.readValue(source, String[].class);
     }
 }
