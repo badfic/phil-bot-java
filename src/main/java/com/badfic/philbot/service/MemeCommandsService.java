@@ -3,7 +3,6 @@ package com.badfic.philbot.service;
 import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.MemeCommandEntity;
 import com.badfic.philbot.data.MemeCommandRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +14,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
 
 @Component
 @Slf4j
@@ -46,12 +46,12 @@ public class MemeCommandsService extends BaseService {
 
         if (StringUtils.startsWith(memeUrl, "[") && StringUtils.endsWith(memeUrl, "]")) {
             try {
-                final var urlList = objectMapper.readValue(memeUrl, String[].class);
+                final var urlList = jsonMapper.readValue(memeUrl, String[].class);
 
                 if (ArrayUtils.isEmpty(urlList)) {
                     throw new IllegalArgumentException(String.format("\"%s\" meme command value starts and ends with brackets but is empty", memeName));
                 }
-            } catch (final JsonProcessingException e) {
+            } catch (final JacksonException e) {
                 throw new IllegalArgumentException(String.format("\"%s\" meme command value starts and ends with brackets but is not a list", memeName));
             }
         } else {
@@ -99,9 +99,9 @@ public class MemeCommandsService extends BaseService {
             var url = memeCommand.getUrl();
             if (StringUtils.startsWith(url, "[") && StringUtils.endsWith(url, "]")) {
                 try {
-                    final var urlList = objectMapper.readValue(url, String[].class);
+                    final var urlList = jsonMapper.readValue(url, String[].class);
                     url = Constants.pickRandom(urlList);
-                } catch (final JsonProcessingException e) {
+                } catch (final JacksonException e) {
                     log.error("{} meme command value starts and ends with brackets but is not a list", commandName, e);
                 }
             }

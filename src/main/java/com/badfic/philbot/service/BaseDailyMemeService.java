@@ -82,7 +82,7 @@ public abstract class BaseDailyMemeService extends BaseBangCommand implements On
             final var imageUrl = memeEntity.getImageUrl();
             if (StringUtils.startsWithIgnoreCase(imageUrl, "https://media.discordapp.net/")
                     || StringUtils.startsWithIgnoreCase(imageUrl, "https://cdn.discordapp.com/")) {
-                final var builtUri = UriComponentsBuilder.fromHttpUrl(imageUrl).build();
+                final var builtUri = UriComponentsBuilder.fromUriString(imageUrl).build();
                 final var expirationHex = builtUri.getQueryParams().getFirst("ex");
 
                 if (expirationHex != null) {

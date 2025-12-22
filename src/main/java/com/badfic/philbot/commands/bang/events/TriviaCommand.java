@@ -6,7 +6,6 @@ import com.badfic.philbot.config.Constants;
 import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.TriviaRepository;
 import com.badfic.philbot.service.OnJdaReady;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +21,7 @@ import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
 
 @Component
 public class TriviaCommand extends BaseBangCommand implements OnJdaReady {
@@ -51,8 +51,8 @@ public class TriviaCommand extends BaseBangCommand implements OnJdaReady {
         if (event.getArgs().startsWith("dump")) {
             final var all = triviaRepository.findAll();
             try {
-                event.getChannel().sendFiles(FileUpload.fromData(objectMapper.writeValueAsBytes(all), "trivia.json")).queue();
-            } catch (final JsonProcessingException e) {
+                event.getChannel().sendFiles(FileUpload.fromData(jsonMapper.writeValueAsBytes(all), "trivia.json")).queue();
+            } catch (final JacksonException e) {
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + ", fatal error could not send trivia dump to you").queue();
             }
         } else if (event.getArgs().startsWith("delete")) {

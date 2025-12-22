@@ -32,7 +32,7 @@ class FightCommand extends BaseBangCommand {
 
         final FightOutcome[] fightOutcomes;
         try (final var stream = getClass().getClassLoader().getResourceAsStream("fight-outcomes.json")) {
-            fightOutcomes = objectMapper.readValue(stream, FightOutcome[].class);
+            fightOutcomes = jsonMapper.readValue(stream, FightOutcome[].class);
         } catch (final Exception e) {
             log.error("Failed to load fight outcomes", e);
             event.replyError("Could not load fight outcomes, nobody wins!");

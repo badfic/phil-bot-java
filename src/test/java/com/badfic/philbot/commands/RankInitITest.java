@@ -1,6 +1,5 @@
 package com.badfic.philbot.commands;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -11,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.json.JsonMapper;
 
 @ExtendWith(MockitoExtension.class)
 public class RankInitITest {
@@ -22,7 +22,7 @@ public class RankInitITest {
     public void testRankInit() throws Exception {
         final Rank.RecordList recordList;
         try (final var stream = getClass().getClassLoader().getResourceAsStream("airtable-response.json")) {
-            recordList = new ObjectMapper().readValue(stream, Rank.RecordList.class);
+            recordList = new JsonMapper().readValue(stream, Rank.RecordList.class);
         }
 
         Mockito.doReturn(new ResponseEntity<>(recordList, HttpStatusCode.valueOf(200)))

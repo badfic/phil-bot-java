@@ -9,7 +9,6 @@ import com.badfic.philbot.data.PointsStat;
 import com.badfic.philbot.data.SwampyGamesConfig;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.service.RandomNumberService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -21,6 +20,7 @@ import net.dv8tion.jda.api.entities.Member;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.json.JsonMapper;
 
 public interface BaseCommand {
 
@@ -32,7 +32,7 @@ public interface BaseCommand {
 
     SwampyGamesConfigDal getSwampyGamesConfigDal();
 
-    ObjectMapper getObjectMapper();
+    JsonMapper getJsonMapper();
 
     JdbcAggregateTemplate getJdbcAggregateTemplate();
 

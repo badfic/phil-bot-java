@@ -7,7 +7,6 @@ import com.badfic.philbot.data.DiscordUserRepository;
 import com.badfic.philbot.data.SwampyGamesConfigDal;
 import com.badfic.philbot.listeners.DiscordWebhookSendService;
 import com.badfic.philbot.service.RandomNumberService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.ExecutorService;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +18,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.json.JsonMapper;
 
 @Getter
 public abstract class BaseBangCommand implements BaseCommand {
@@ -36,7 +36,7 @@ public abstract class BaseBangCommand implements BaseCommand {
     protected DiscordWebhookSendService discordWebhookSendService;
 
     @Setter(onMethod_ = {@Autowired})
-    protected ObjectMapper objectMapper;
+    protected JsonMapper jsonMapper;
 
     @Setter(onMethod_ = {@Autowired})
     protected JdbcAggregateTemplate jdbcAggregateTemplate;
