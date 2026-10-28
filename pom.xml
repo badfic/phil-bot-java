@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.badfic</groupId>
@@ -17,11 +17,11 @@
     <properties>
         <java.version>25</java.version>
 
-        <fastutil.version>8.5.18</fastutil.version>
-        <jda.version>6.3.1</jda.version>
-        <jsoup.version>1.22.1</jsoup.version>
+        <fastutil.version>8.5.19</fastutil.version>
+        <jda.version>6.7.0</jda.version>
+        <jsoup.version>1.23.2</jsoup.version>
         <rome.version>2.1.0</rome.version>
-        <sentry.io.version>8.33.0</sentry.io.version>
+        <sentry.io.version>8.61.1</sentry.io.version>
     </properties>
 
     <dependencies>
